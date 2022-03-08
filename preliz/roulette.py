@@ -74,7 +74,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
     fig.canvas.mpl_connect(
         "figure_leave_event",
         lambda event: on_leave_fig(
-            event, grid, cvars, quantiles, x_min_entry, x_max_entry, y_bins_entry, ax_fit, rv_frozen
+            event, grid, cvars, quantiles, x_min_entry, x_max_entry, x_bins_entry, ax_fit, rv_frozen
         ),
     )
 
@@ -136,20 +136,22 @@ class Rectangles:
             y = event.ydata
             idx = floor(x)
             idy = ceil(y)
-            if self.weights[idx] >= idy:
-                idy -= 1
-                for row in range(self.nrows):
-                    self.coll[row, idx].set_facecolor("0.8")
-            self.weights[idx] = idy
-            for idy in range(idy):
-                self.coll[idy, idx].set_facecolor("C1")
-            self.fig.canvas.draw()
+
+            if 0 <= idx < self.ncols and 0 <= idy <= self.nrows:
+                if self.weights[idx] >= idy:
+                    idy -= 1
+                    for row in range(self.nrows):
+                        self.coll[row, idx].set_facecolor("0.8")
+                self.weights[idx] = idy
+                for row in range(idy):
+                    self.coll[row, idx].set_facecolor("C1")
+                self.fig.canvas.draw()
 
 
-def on_leave_fig(event, grid, cvars, quantiles, x_min, x_max, y_bins_entry, ax, rv_frozen):
+def on_leave_fig(event, grid, cvars, quantiles, x_min, x_max, x_bins_entry, ax, rv_frozen):
     x_min = float(x_min.get())
     x_max = float(x_max.get())
-    ncols = float(y_bins_entry.get())
+    ncols = float(x_bins_entry.get())
     x_range = x_max - x_min
 
     sample, filled_columns = weights_to_sample(grid.weights, x_min, x_range, ncols)
