@@ -1,8 +1,9 @@
+import numpy as np
 from scipy import stats
 from scipy.optimize import least_squares
 import matplotlib.pyplot as plt
 
-from utils.constraints_utils import (
+from .utils.constraints_utils import (
     get_parametrization,
     check_boundaries,
     relative_error,
@@ -55,6 +56,12 @@ def constraints(
     opt: scipy.optimize.OptimizeResult
         Represents the optimization result.
     """
+    if not 0 < mass <= 1:
+        raise ValueError("mass should be larger than 0 and smaller or equal to 1")
+
+    if upper <= lower:
+        raise ValueError("upper should be larger than lower")
+
     check_boundaries(name, lower, upper)
 
     opt = get_normal(lower, upper, mass)
@@ -89,6 +96,8 @@ def constraints(
             a = mu_init
             b = sigma_init
             dist = stats.t
+        else:
+            raise NotImplementedError(f"The distribution {name} is not implemented")
 
         opt = least_squares(func, x0=(a, b), args=(dist, lower, upper, mass, extra))
         a, b = opt["x"]

@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 
-from utils.roulette_utils import weights_to_sample, get_scipy_distributions, fit_to_sample
-from utils.plot_utils import plot_boxlike
+from .utils.roulette_utils import weights_to_sample, get_scipy_distributions, fit_to_sample
+from .utils.plot_utils import plot_boxlike
 
 
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figsize=None):
