@@ -75,12 +75,12 @@ def compute_xvals(rv_frozen):
     if np.isfinite(rv_frozen.a):
         lq = rv_frozen.a
     else:
-        lq = 0.001
+        lq = 0.0001
 
     if np.isfinite(rv_frozen.b):
         uq = rv_frozen.b
     else:
-        uq = 0.999
+        uq = 0.9999
 
     x = np.linspace(rv_frozen.ppf(lq), rv_frozen.ppf(uq), 1000)
     return x
@@ -98,7 +98,7 @@ def func(params, dist, lower, upper, mass, extra=None):
 def get_normal(lower, upper, mass):
     mu_init = (lower + upper) / 2
     sigma_init = ((upper - lower) / 4) / mass
-    opt = least_squares(func, x0=(mu_init, sigma_init), args=(stats.norm, lower, upper, mass))
+    opt = least_squares(func, x0=(mu_init, sigma_init), method='dogbox', args=(stats.norm, lower, upper, mass))
     return opt
 
 

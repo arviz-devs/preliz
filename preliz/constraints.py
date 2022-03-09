@@ -76,6 +76,10 @@ def constraints(
             kappa = (mu_init * (1 - mu_init) / (sigma_init) ** 2) - 1
             a = mu_init * kappa
             b = (1 - mu_init) * kappa
+            if a <= 0:
+                a = 0.001
+            if b <= 0:
+                b = 0.001
             dist = stats.beta
 
         elif name == "lognormal":
@@ -99,7 +103,7 @@ def constraints(
         else:
             raise NotImplementedError(f"The distribution {name} is not implemented")
 
-        opt = least_squares(func, x0=(a, b), args=(dist, lower, upper, mass, extra))
+        opt = least_squares(func, x0=(a, b), method='dogbox', args=(dist, lower, upper, mass, extra))
         a, b = opt["x"]
         rv_frozen = sane_scipy(dist, a, b, extra)
 
