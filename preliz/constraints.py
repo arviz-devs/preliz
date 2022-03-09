@@ -74,9 +74,9 @@ def constraints(
     else:
         if name == "beta":
             kappa = (mu_init * (1 - mu_init) / (sigma_init) ** 2) - 1
-            # for small masses we can get small negative values
-            a = np.abs(mu_init * kappa)
-            b = np.abs((1 - mu_init) * kappa)
+            # avoid using a,b < 1 as initial parameters
+            a = max(1, mu_init * kappa)
+            b = max(1, (1 - mu_init) * kappa)
             dist = stats.beta
 
         elif name == "lognormal":
