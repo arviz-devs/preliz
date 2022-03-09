@@ -16,6 +16,7 @@ def weights_to_sample(weights, x_min, x_range, ncols):
                 filled_columns += 1
             la = np.repeat((k / ncols * x_range) + x_min + ((x_range / ncols) / 2), v * 100 + 1)
             sample.extend(la)
+
     return sample, filled_columns
 
 
