@@ -149,6 +149,7 @@ def cdf_loss(params, dist, lower, upper, mass, extra=None):
     cdf_loss = (cdf1 - cdf0) - mass
     return cdf_loss
 
+
 def optimize(lower, upper, mass, dist=None, a=None, b=None, extra=None):
     """Use least squares to perform a constraints optimization
 
@@ -216,8 +217,8 @@ def method_of_moments(name, mu, sigma):
         dist = stats.beta
 
     elif name == "lognormal":
-        a = np.log(mu ** 2 / (sigma ** 2 + mu ** 2) ** 0.5)
-        b = np.log(sigma ** 2 / mu ** 2 + 1) ** 0.5
+        a = np.log(mu**2 / (sigma**2 + mu**2) ** 0.5)
+        b = np.log(sigma**2 / mu**2 + 1) ** 0.5
         dist = stats.lognorm
 
     elif name == "exponential":
@@ -226,8 +227,8 @@ def method_of_moments(name, mu, sigma):
         dist = stats.expon
 
     elif name == "gamma":
-        a = mu ** 2 / sigma ** 2
-        b = sigma ** 2 / mu
+        a = mu**2 / sigma**2
+        b = sigma**2 / mu
         dist = stats.gamma
     elif name == "student":
         a = mu
