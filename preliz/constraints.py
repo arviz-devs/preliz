@@ -9,9 +9,8 @@ from .utils.constraints_utils import (
     relative_error,
     sane_scipy,
     compute_xvals,
-    func,
-    get_normal,
-    dist_dict,
+    optimize,
+    method_of_moments,
 )
 
 
@@ -31,7 +30,7 @@ def constraints(
 
     Parameters
     ----------
-    name: str
+    name : str
         Name of the distribution to use as prior
     lower : float
         Lower bound
@@ -39,11 +38,11 @@ def constraints(
         Upper bound
     mass: float
         Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.9
-    plot: bool
+    plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defautls to True.
-    figsize: tuple
+    figsize : tuple
         size of the figure when ``plot=True``
-    ax: matplotlib axes
+    ax : matplotlib axes
 
     Returns
     -------
@@ -53,7 +52,7 @@ def constraints(
         Notice that the returned rv_frozen object always use the scipy parametrization,
         irrespective of the value of `parametrization` argument.
         Unlike standard rv_frozen objects this one has a name attribute
-    opt: scipy.optimize.OptimizeResult
+    opt : scipy.optimize.OptimizeResult
         Represents the optimization result.
     """
     if not 0 < mass <= 1:
@@ -64,45 +63,18 @@ def constraints(
 
     check_boundaries(name, lower, upper)
 
-    opt = get_normal(lower, upper, mass)
-    mu_init, sigma_init = opt["x"]
-
+    # Use least squares assuming a Gaussian
+    opt = optimize(lower=lower, upper=upper, mass=mass)
+    a, b = opt["x"]
     if name == "normal":
-        rv_frozen = stats.norm(mu_init, sigma_init)
-        rv_frozen.name = name
-        a, b = opt["x"]
+        dist = stats.norm
     else:
-        if name == "beta":
-            kappa = (mu_init * (1 - mu_init) / (sigma_init) ** 2) - 1
-            # avoid using a,b < 1 as initial parameters
-            a = max(1, mu_init * kappa)
-            b = max(1, (1 - mu_init) * kappa)
-            dist = stats.beta
-
-        elif name == "lognormal":
-            a = np.log(mu_init ** 2 / (sigma_init ** 2 + mu_init ** 2) ** 0.5)
-            b = np.log(sigma_init ** 2 / mu_init ** 2 + 1) ** 0.5
-            dist = stats.lognorm
-
-        elif name == "exponential":
-            a = mu_init
-            b = sigma_init
-            dist = stats.expon
-
-        elif name == "gamma":
-            a = mu_init ** 2 / sigma_init ** 2
-            b = sigma_init ** 2 / mu_init
-            dist = stats.gamma
-        elif name == "student":
-            a = mu_init
-            b = sigma_init
-            dist = stats.t
-        else:
-            raise NotImplementedError(f"The distribution {name} is not implemented")
-
-        opt = least_squares(func, x0=(a, b), method='dogbox', args=(dist, lower, upper, mass, extra))
+        # Use mu (a) and sigma (b) values to obtain parameters for distribution other than normal
+        a, b, dist = method_of_moments(name, a, b)
+        # Use least squares given a distribution
+        opt = optimize(lower=lower, upper=upper, mass=mass, dist=dist, a=a, b=b, extra=extra)
         a, b = opt["x"]
-        rv_frozen = sane_scipy(dist, a, b, extra)
+    rv_frozen = sane_scipy(dist, a, b, extra)
 
     if plot:
         r_error = relative_error(rv_frozen, upper, lower, mass)
@@ -111,7 +83,7 @@ def constraints(
             _, ax = plt.subplots(figsize=figsize)
         color = next(ax._get_lines.prop_cycler)["color"]
         ax.plot([lower, upper], [0, 0], "o", color=color, alpha=0.5)
-        title = get_parametrization(name, a, b, extra, dist_dict, parametrization)
+        title = get_parametrization(name, a, b, extra, parametrization)
         subtitle = f"relative error = {r_error:.2f}"
         ax.plot(x, rv_frozen.pdf(x), label=title + "\n" + subtitle, color=color)
 
