@@ -13,7 +13,7 @@ dist_dict = {
 }  # This names could be different for different "parametrizations"
 
 
-def get_parametrization(name, a, b, extra, dist_dict, parametrization):
+def get_parametrization(name, a, b, extra, parametrization):
     if parametrization == "pymc":
         if name == "gamma":
             title = f"{name}({dist_dict[name][0]}={a:.2f}, {dist_dict[name][1]}={1/b:.2f})"
@@ -24,29 +24,35 @@ def get_parametrization(name, a, b, extra, dist_dict, parametrization):
         elif name in ["normal", "beta"]:
             title = f"{name}({dist_dict[name][0]}={a:.2f}, {dist_dict[name][1]}={b:.2f})"
         elif name == "student":
-            title = f"{name}({dist_dict[name][0]}={extra:.2f}, {dist_dict[name][1]}={a:.2f}, {dist_dict[name][2]}={b:.2f})"
+            title = (
+                f"{name}({dist_dict[name][0]}={extra:.2f}, {dist_dict[name][1]}={a:.2f}, "
+                f"{dist_dict[name][2]}={b:.2f})"
+            )
     elif parametrization == "scipy":
         if name in ["gamma", "lognormal", "normal"]:
             title = f"{name}({dist_dict[name][0]}={a:.2f}, {dist_dict[name][1]}={b:.2f})"
         elif name == "exponential":
             title = f"{name}({dist_dict[name][0]}={a:.2f})"
         elif name == "student":
-            title = f"{name}({dist_dict[name][0]}={extra:.2f}, {dist_dict[name][1]}={a:.2f}, {dist_dict[name][2]}={b:.2f})"
+            title = (
+                f"{name}({dist_dict[name][0]}={extra:.2f}, {dist_dict[name][1]}={a:.2f}, "
+                f"{dist_dict[name][2]}={b:.2f})"
+            )
     return title
 
 
 def check_boundaries(name, lower, upper):
-    DOMAIN_ERROR = f"The provided boundaries are outside the domain of the {name} distribution"
+    domain_error = f"The provided boundaries are outside the domain of the {name} distribution"
     if name == "beta":
         if lower == 0 and upper == 1:
             raise ValueError(
                 "Given the provided boundaries, mass will be always 1. Please provide other values"
             )
         if lower < 0 or upper > 1:
-            raise ValueError(DOMAIN_ERROR)
+            raise ValueError(domain_error)
     elif name in ["exponential", "gamma", "lognormal"]:
         if lower < 0:
-            raise ValueError(DOMAIN_ERROR)
+            raise ValueError(domain_error)
 
 
 def relative_error(rv_frozen, upper, lower, requiered_mass):

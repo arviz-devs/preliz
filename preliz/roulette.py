@@ -5,16 +5,15 @@ from math import ceil, floor
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-import matplotlib.patches as patches
-import matplotlib.pyplot as plt
+from matplotlib import patches
 
 import numpy as np
-from scipy import stats
+
 
 from .utils.roulette_utils import weights_to_sample, get_scipy_distributions, fit_to_sample
 from .utils.plot_utils import plot_boxlike
 
-
+# pylint: disable=unused-argument
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figsize=None):
     """
     Prior elicitation for 1D distribution using the roulette method.
@@ -50,22 +49,22 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
     * See roulette mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
     """
 
-    BGCOLOR = "#F2F2F2"  # tkinter background color
-    BUCOLOR = "#E2E2E2"  # tkinter button color
+    bg_color = "#F2F2F2"  # tkinter background color
+    bu_color = "#E2E2E2"  # tkinter button color
 
     if figsize is None:
         figsize = (8, 6)
 
-    root = create_main(BGCOLOR)
-    frame_grid_controls, frame_matplotib, frame_cbuttons = create_frames(root, BGCOLOR)
+    root = create_main(bg_color)  # pylint: disable=assignment-from-no-return
+    frame_grid_controls, frame_matplotib, frame_cbuttons = create_frames(root, bg_color)
     canvas, fig, ax_grid, ax_fit = create_figure(frame_matplotib, figsize)
 
     coll = create_grid(x_min, x_max, nrows, ncols, ax=ax_grid)
     grid = Rectangles(fig, coll, nrows, ncols, ax_grid)
 
-    cvars = create_cbuttons(frame_cbuttons, BGCOLOR, BUCOLOR)
-    x_min_entry, x_max_entry, x_bins_entry, y_bins_entry = create_entries_xrange_grid(
-        x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit, frame_grid_controls, canvas, BGCOLOR
+    cvars = create_cbuttons(frame_cbuttons, bg_color, bu_color)
+    x_min_entry, x_max_entry, x_bins_entry = create_entries_xrange_grid(
+        x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit, frame_grid_controls, canvas, bg_color
     )
 
     quantiles = [0.05, 0.25, 0.75, 0.95]
@@ -218,17 +217,19 @@ def select_all(cbuttons):
     """
     select all cbuttons
     """
-    [cbutton.select() for cbutton in cbuttons]
+    for cbutton in cbuttons:
+        cbutton.select()
 
 
 def deselect_all(cbuttons):
     """
     deselect all cbuttons
     """
-    [cbutton.deselect() for cbutton in cbuttons]
+    for cbutton in cbuttons:
+        cbutton.deselect()
 
 
-def create_cbuttons(frame_cbuttons, BGCOLOR, BUCOLOR):
+def create_cbuttons(frame_cbuttons, bg_color, bu_color):
     """
     Create check buttons to select distributions
     """
@@ -244,7 +245,7 @@ def create_cbuttons(frame_cbuttons, BGCOLOR, BUCOLOR):
             variable=var,
             onvalue=value,
             offvalue="",
-            bg=BGCOLOR,
+            bg=bg_color,
             highlightthickness=0,
         )
         cbutton.select()
@@ -252,18 +253,18 @@ def create_cbuttons(frame_cbuttons, BGCOLOR, BUCOLOR):
         cbuttons.append(cbutton)
         cvars.append(var)
 
-    tk.Button(frame_cbuttons, text="all ", command=lambda: select_all(cbuttons), bg=BUCOLOR).pack(
+    tk.Button(frame_cbuttons, text="all ", command=lambda: select_all(cbuttons), bg=bu_color).pack(
         side=tk.LEFT, padx=5, pady=5
     )
-    tk.Button(frame_cbuttons, text="none", command=lambda: deselect_all(cbuttons), bg=BUCOLOR).pack(
-        side=tk.LEFT
-    )
+    tk.Button(
+        frame_cbuttons, text="none", command=lambda: deselect_all(cbuttons), bg=bu_color
+    ).pack(side=tk.LEFT)
 
     return cvars
 
 
 def create_entries_xrange_grid(
-    x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit, frame_grid_controls, canvas, BGCOLOR
+    x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit, frame_grid_controls, canvas, bg_color
 ):
     """
     Create text entries to change grid x_range and numbers of bins
@@ -271,20 +272,20 @@ def create_entries_xrange_grid(
 
     # Set text boxes for x-range
     x_min = tk.DoubleVar(value=x_min)
-    x_min_label = tk.Label(frame_grid_controls, text="x_min", bg=BGCOLOR)
+    x_min_label = tk.Label(frame_grid_controls, text="x_min", bg=bg_color)
     x_min_entry = tk.Entry(frame_grid_controls, textvariable=x_min, width=10, font="None 11")
 
     x_max = tk.DoubleVar(value=x_max)
-    x_max_label = tk.Label(frame_grid_controls, text="x_max", bg=BGCOLOR)
+    x_max_label = tk.Label(frame_grid_controls, text="x_max", bg=bg_color)
     x_max_entry = tk.Entry(frame_grid_controls, textvariable=x_max, width=10, font="None 11")
 
     # Set text boxes for grid rows and columns
     x_bins = tk.IntVar(value=nrows)
-    x_bins_label = tk.Label(frame_grid_controls, text="x_bins", bg=BGCOLOR)
+    x_bins_label = tk.Label(frame_grid_controls, text="x_bins", bg=bg_color)
     x_bins_entry = tk.Entry(frame_grid_controls, textvariable=x_bins, width=10, font="None 11")
 
     y_bins = tk.IntVar(value=ncols)
-    y_bins_label = tk.Label(frame_grid_controls, text="y_bins", bg=BGCOLOR)
+    y_bins_label = tk.Label(frame_grid_controls, text="y_bins", bg=bg_color)
     y_bins_entry = tk.Entry(frame_grid_controls, textvariable=y_bins, width=10, font="None 11")
 
     x_min_entry.bind(
@@ -304,7 +305,7 @@ def create_entries_xrange_grid(
     x_max_label.grid(row=1, column=0)
     x_max_entry.grid(row=1, column=1)
 
-    spacer = tk.Label(frame_grid_controls, text="", bg=BGCOLOR)
+    spacer = tk.Label(frame_grid_controls, text="", bg=bg_color)
     spacer.grid(row=2, column=0)
 
     x_bins_entry.bind(
@@ -324,30 +325,30 @@ def create_entries_xrange_grid(
     y_bins_label.grid(row=4, column=0)
     y_bins_entry.grid(row=4, column=1)
 
-    return x_min_entry, x_max_entry, x_bins_entry, y_bins_entry
+    return x_min_entry, x_max_entry, x_bins_entry
 
 
-def create_main(BGCOLOR):
+def create_main(bg_color):
     """
     Create main tkinter window
     """
     root = tk.Tk()
     font = tk.font.nametofont("TkDefaultFont")
     font.configure(size=16)
-    root.configure(bg=BGCOLOR)
+    root.configure(bg=bg_color)
     root.columnconfigure(0, weight=1)
     root.rowconfigure(1, weight=1)
     root.wm_title("Draw your distribution")
 
 
-def create_frames(root, BGCOLOR):
+def create_frames(root, bg_color):
     """
     Create tkinter frames.
     One for the grid controls, one for the matplotlib plot and one for the checkbuttons
     """
-    frame_grid_controls = tk.Frame(root, bg=BGCOLOR)
+    frame_grid_controls = tk.Frame(root, bg=bg_color)
     frame_matplotib = tk.Frame(root)
-    frame_cbuttons = tk.Frame(root, bg=BGCOLOR)
+    frame_cbuttons = tk.Frame(root, bg=bg_color)
     frame_grid_controls.grid(row=0, column=1, padx=15, pady=15)
     frame_matplotib.grid(row=0, rowspan=2, column=0, sticky="we", padx=25, pady=15)
     frame_cbuttons.grid(row=3, sticky="w", padx=25, pady=15)

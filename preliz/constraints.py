@@ -11,7 +11,6 @@ from .utils.constraints_utils import (
     compute_xvals,
     func,
     get_normal,
-    dist_dict,
 )
 
 
@@ -111,9 +110,9 @@ def constraints(
         x = compute_xvals(rv_frozen)
         if ax is None:
             _, ax = plt.subplots(figsize=figsize)
-        color = next(ax._get_lines.prop_cycler)["color"]
+        color = next(ax._get_lines.prop_cycler)["color"]  # pylint: disable=protected-access
         ax.plot([lower, upper], [0, 0], "o", color=color, alpha=0.5)
-        title = get_parametrization(name, a, b, extra, dist_dict, parametrization)
+        title = get_parametrization(name, a, b, extra, parametrization)
         subtitle = f"relative error = {r_error:.2f}"
         ax.plot(x, rv_frozen.pdf(x), label=title + "\n" + subtitle, color=color)
 
