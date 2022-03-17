@@ -98,7 +98,7 @@ def func(params, dist, lower, upper, mass, extra=None):
 def get_normal(lower, upper, mass):
     mu_init = (lower + upper) / 2
     sigma_init = ((upper - lower) / 4) / mass
-    opt = least_squares(func, x0=(mu_init, sigma_init), method='dogbox', args=(stats.norm, lower, upper, mass))
+    opt = least_squares(
+        func, x0=(mu_init, sigma_init), method="dogbox", args=(stats.norm, lower, upper, mass)
+    )
     return opt
-
-

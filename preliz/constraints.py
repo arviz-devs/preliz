@@ -100,7 +100,9 @@ def constraints(
         else:
             raise NotImplementedError(f"The distribution {name} is not implemented")
 
-        opt = least_squares(func, x0=(a, b), method='dogbox', args=(dist, lower, upper, mass, extra))
+        opt = least_squares(
+            func, x0=(a, b), method="dogbox", args=(dist, lower, upper, mass, extra)
+        )
         a, b = opt["x"]
         rv_frozen = sane_scipy(dist, a, b, extra)
 
