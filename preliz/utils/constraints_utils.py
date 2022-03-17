@@ -146,8 +146,8 @@ def cdf_loss(params, dist, lower, upper, mass, extra=None):
     rv_frozen = sane_scipy(dist, a, b, extra)
     cdf0 = rv_frozen.cdf(lower)
     cdf1 = rv_frozen.cdf(upper)
-    cdf_loss = (cdf1 - cdf0) - mass
-    return cdf_loss
+    loss = (cdf1 - cdf0) - mass
+    return loss
 
 
 def optimize(lower, upper, mass, dist=None, a=None, b=None, extra=None):
@@ -190,14 +190,14 @@ def optimize(lower, upper, mass, dist=None, a=None, b=None, extra=None):
     return opt
 
 
-def method_of_moments(name, mu, sigma):
+def method_of_moments(name, mean, sigma):
     """Use mean and standard deviation values to estimate parameters of a given distribution
 
     Parameters
     ----------
     name : str
         Name of a distribution.
-    mu : float
+    mean : float
         mean value.
     sigma : float
         standard deviation.
@@ -211,27 +211,27 @@ def method_of_moments(name, mu, sigma):
     dist : scipy distribution.
     """
     if name == "beta":
-        kappa = (mu * (1 - mu) / (sigma) ** 2) - 1
-        a = max(0.5, mu * kappa)
-        b = max(0.5, (1 - mu) * kappa)
+        kappa = (mean * (1 - mean) / (sigma) ** 2) - 1
+        a = max(0.5, mean * kappa)
+        b = max(0.5, (1 - mean) * kappa)
         dist = stats.beta
 
     elif name == "lognormal":
-        a = np.log(mu**2 / (sigma**2 + mu**2) ** 0.5)
-        b = np.log(sigma**2 / mu**2 + 1) ** 0.5
+        a = np.log(mean**2 / (sigma**2 + mean**2) ** 0.5)
+        b = np.log(sigma**2 / mean**2 + 1) ** 0.5
         dist = stats.lognorm
 
     elif name == "exponential":
-        a = mu
+        a = mean
         b = sigma
         dist = stats.expon
 
     elif name == "gamma":
-        a = mu**2 / sigma**2
-        b = sigma**2 / mu
+        a = mean**2 / sigma**2
+        b = sigma**2 / mean
         dist = stats.gamma
     elif name == "student":
-        a = mu
+        a = mean
         b = sigma
         dist = stats.t
     else:

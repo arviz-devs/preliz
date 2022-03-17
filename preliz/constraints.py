@@ -1,6 +1,4 @@
-import numpy as np
 from scipy import stats
-from scipy.optimize import least_squares
 import matplotlib.pyplot as plt
 
 from .utils.constraints_utils import (
