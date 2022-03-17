@@ -80,8 +80,8 @@ def constraints(
             dist = stats.beta
 
         elif name == "lognormal":
-            a = np.log(mu_init ** 2 / (sigma_init ** 2 + mu_init ** 2) ** 0.5)
-            b = np.log(sigma_init ** 2 / mu_init ** 2 + 1) ** 0.5
+            a = np.log(mu_init**2 / (sigma_init**2 + mu_init**2) ** 0.5)
+            b = np.log(sigma_init**2 / mu_init**2 + 1) ** 0.5
             dist = stats.lognorm
 
         elif name == "exponential":
@@ -90,8 +90,8 @@ def constraints(
             dist = stats.expon
 
         elif name == "gamma":
-            a = mu_init ** 2 / sigma_init ** 2
-            b = sigma_init ** 2 / mu_init
+            a = mu_init**2 / sigma_init**2
+            b = sigma_init**2 / mu_init
             dist = stats.gamma
         elif name == "student":
             a = mu_init
