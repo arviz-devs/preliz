@@ -1,6 +1,7 @@
 from scipy import stats
 import matplotlib.pyplot as plt
 
+
 from .utils.constraints_utils import (
     get_parametrization,
     check_boundaries,
