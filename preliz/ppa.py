@@ -15,6 +15,24 @@ _log = logging.getLogger("preliz")
 
 
 def ppa(idata, model, prepros="octiles", method="affinity", random_seed=None, backfitting=True):
+    """
+    Prior predictive check assistant.
+
+    This is experimental
+
+    idata : InferenceData
+        With samples from the prior and prior predictive distributions
+    model : PyMC model
+        Model associated to ``ìdata``.
+    summary : str
+        summary statistic using for clustering
+    method : str
+        clustering method
+    random_seed : int
+        random seed passed to the clustering method
+    backfitting : bool
+        This is not doing anything at this point
+    """
     _log.info(
         """Enter at your own risk."""
         """This is highly experimental code and not recommended for regular use."""
