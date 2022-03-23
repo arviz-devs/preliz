@@ -1,3 +1,5 @@
+"""Prior predictive check assistant."""
+
 import logging
 
 import matplotlib.pyplot as plt
