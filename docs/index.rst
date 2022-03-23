@@ -45,6 +45,7 @@ Contents
    :maxdepth: 4
 
    api_reference
+   examples/interactive_examples
 
 Indices
 =======
