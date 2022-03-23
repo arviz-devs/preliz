@@ -9,7 +9,7 @@ from .constraints import constraints
 from .ppa import ppa
 from .roulette import roulette
 
-__all__ = ["roulette", "constraints", "ppa"]
+__all__ = ["constraints", "ppa", "roulette"]
 
 __version__ = "0.0.1.dev0"
 

@@ -1,8 +1,7 @@
 API Reference
 ***************
 
-This reference provides detailed documentation for all modules, classes, and
-methods in the current release of PreliZ.
+This reference provides detailed documentation for user functions in the current release of PreliZ.
 
 
 .. toctree::
