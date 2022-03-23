@@ -23,8 +23,8 @@ classifiers = [
 ]
 dynamic = ["version", "description"]
 dependencies = [
-  "numpy",
-  "scipy",
+  "numpy>=1.12",
+  "scipy>=0.19",
   "matplotlib>=3.0",
   "arviz",
   "scikit-learn",
