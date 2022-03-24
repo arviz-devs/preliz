@@ -20,6 +20,9 @@ def ppa(idata, model, prepros="octiles", method="affinity", random_seed=None, ba
 
     This is experimental
 
+    Parameters
+    ----------
+
     idata : InferenceData
         With samples from the prior and prior predictive distributions
     model : PyMC model
