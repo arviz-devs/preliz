@@ -21,9 +21,9 @@ sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 
-project = "preliz"
-copyright = "2022, arviz-devs"
-author = "arviz-devs"
+project = "PreliZ"
+author = "ArviZ contributors"
+copyright = f"2022, {author}"
 
 # The short X.Y version
 version = __version__
@@ -45,10 +45,21 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
-    "nbsphinx",
+    "sphinx_copybutton",
+    "sphinx_thebe",
+    "myst_nb",
 ]
 
-nbsphinx_execute = "never"
+# -- Extension configuration -------------------------------------------------
+jupyter_execute_notebooks = "off"
+myst_enable_extensions = ["colon_fence", "deflist"]
+
+thebe_config = {
+    "always_load": True,
+    "repository_url": "https://github.com/arviz-devs/arviz_sandbox",
+    "repository_branch": "main",
+    "selector": "div.highlight-ipython3"
+}
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ["_templates"]
@@ -108,7 +119,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
 
 # -- Options for HTMLHelp output ---------------------------------------------
 

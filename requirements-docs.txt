@@ -1,3 +1,5 @@
-nbsphinx>=0.4.2
 pydata-sphinx-theme>=0.6.3
+myst-nb
 sphinx>=4
+sphinx_thebe
+sphinx-copybutton
