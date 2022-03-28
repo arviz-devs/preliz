@@ -5,4 +5,3 @@ continuous = ["Beta", "Exponential", "Gamma", "LogNormal", "Normal", "Student"]
 discrete = ["Poisson"]
 
 __all__ = continuous + discrete
-

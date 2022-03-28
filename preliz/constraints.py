@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 
 from .distributions import Normal
@@ -10,7 +9,7 @@ def constraints(
     lower=-1,
     upper=1,
     mass=0.90,
-    #parametrization="pymc",
+    # parametrization="pymc",
     plot=True,
     figsize=(10, 4),
     ax=None,

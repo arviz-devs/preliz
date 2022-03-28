@@ -10,6 +10,7 @@ from ..utils.constraints_utils import optimize
 
 class Beta(Continuous):
     def __init__(self, alpha=None, beta=None):
+
         super().__init__()
         self.alpha = alpha
         self.beta = beta
@@ -79,7 +80,7 @@ class Exponential(Continuous):
         self.params = (self.lam, None)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma=None): #pylint: disable=unused-argument
+    def fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
         lam = mean
         self._update(lam)
 
