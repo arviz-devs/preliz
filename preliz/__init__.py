@@ -8,6 +8,7 @@ import logging
 from .constraints import constraints
 from .ppa import ppa
 from .roulette import roulette
+from .distributions import *
 
 __all__ = ["constraints", "ppa", "roulette"]
 
