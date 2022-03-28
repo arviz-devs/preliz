@@ -243,6 +243,8 @@ good-names=a,
            ax,
            la,
            lq,
+           mu,
+           nu,
            sq,
            uq,
            xi,
@@ -407,7 +409,11 @@ exclude-protected=_asdict,
                   _fields,
                   _replace,
                   _source,
-                  _make
+                  _make,
+                  _cdf_loss,
+                  _check_boundaries,
+                  _optimize,
+                  _xvals,
 
 # List of valid names for the first argument in a class method.
 valid-classmethod-first-arg=cls

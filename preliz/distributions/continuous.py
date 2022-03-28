@@ -7,6 +7,7 @@ from scipy import stats
 from .distributions import Continuous
 from ..utils.constraints_utils import optimize
 
+
 class Beta(Continuous):
     def __init__(self, alpha=None, beta=None):
         super().__init__()
@@ -44,7 +45,6 @@ class Beta(Continuous):
         beta = max(0.5, (1 - mean) * kappa)
         self._update(alpha, beta)
 
-
     def fit_mle(self, sample, **kwargs):
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
@@ -79,14 +79,13 @@ class Exponential(Continuous):
         self.params = (self.lam, None)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma=None):
+    def fit_moments(self, mean, sigma=None): #pylint: disable=unused-argument
         lam = mean
         self._update(lam)
 
     def fit_mle(self, sample, **kwargs):
         lam, _ = self.dist.fit(sample, **kwargs)
         self._update(lam)
-
 
 
 class Gamma(Continuous):
@@ -167,9 +166,12 @@ class LogNormal(Continuous):
         self._update(mu, sigma)
 
     def fit_mle(self, sample, **kwargs):
-        sigma, _, mu,  = self.dist.fit(sample, **kwargs)
+        (
+            sigma,
+            _,
+            mu,
+        ) = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
-
 
 
 class Normal(Continuous):
@@ -252,5 +254,3 @@ class Student(Continuous):
     def fit_mle(self, sample, **kwargs):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, nu)
-
-

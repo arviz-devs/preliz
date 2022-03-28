@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 
 from .distributions import Normal
@@ -9,8 +10,7 @@ def constraints(
     lower=-1,
     upper=1,
     mass=0.90,
-    extra=None,
-    parametrization="pymc",
+    #parametrization="pymc",
     plot=True,
     figsize=(10, 4),
     ax=None,
@@ -53,7 +53,7 @@ def constraints(
         raise ValueError("upper should be larger than lower")
 
     if distribution is None:
-        distribution = pz.Normal()
+        distribution = Normal()
 
     distribution._check_boundaries(lower, upper)
 
