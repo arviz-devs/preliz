@@ -23,11 +23,12 @@ class Beta(Continuous):
         :context: close-figs
 
         import arviz as az
+        from preliz import Beta
         az.style.use('arviz-white')
         alphas = [.5, 5., 2.]
         betas = [.5, 5., 5.]
         for alpha, beta in zip(alphas, betas):
-            pz.Beta(alpha, beta).plot()
+            Beta(alpha, beta).plot()
 
     ========  ==============================================================
     Support   :math:`x \in (0, 1)`
