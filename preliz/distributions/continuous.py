@@ -9,8 +9,41 @@ from ..utils.constraints_utils import optimize
 
 
 class Beta(Continuous):
-    def __init__(self, alpha=None, beta=None):
+    r"""
+    Beta distribution.
 
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \alpha, \beta) =
+           \frac{x^{\alpha - 1} (1 - x)^{\beta - 1}}{B(\alpha, \beta)}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        az.style.use('arviz-white')
+        alphas = [.5, 5., 2.]
+        betas = [.5, 5., 5.]
+        for alpha, beta in zip(alphas, betas):
+            pz.Beta(alpha, beta).plot()
+
+    ========  ==============================================================
+    Support   :math:`x \in (0, 1)`
+    Mean      :math:`\dfrac{\alpha}{\alpha + \beta}`
+    Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)}`
+    ========  ==============================================================
+
+    Parameters
+    ----------
+    alpha : float
+        alpha param > 0
+    beta : float
+        beta param > 0
+    """
+
+    def __init__(self, alpha=None, beta=None):
         super().__init__()
         self.alpha = alpha
         self.beta = beta
@@ -41,12 +74,18 @@ class Beta(Continuous):
         self._update_rv_frozen()
 
     def fit_moments(self, mean, sigma):
+        """
+        Estimate the parameters of the distribution from the mean and standard deviation.
+        """
         kappa = (mean * (1 - mean) / (sigma) ** 2) - 1
         alpha = max(0.5, mean * kappa)
         beta = max(0.5, (1 - mean) * kappa)
         self._update(alpha, beta)
 
     def fit_mle(self, sample, **kwargs):
+        """
+        Estimate the parameters of the distribution from a sample by maximizing the likelihood.
+        """
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 

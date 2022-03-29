@@ -19,6 +19,10 @@ class Distribution:
         self.opt = None
 
     def _cdf_loss(self, params, lower, upper, mass):
+        """
+        Difference between the cumulative distribuion function in the lower-upper interval with
+        respect to a given mass.
+        """
         self._update(*params)
         rv_frozen = self.rv_frozen
         cdf0 = rv_frozen.cdf(lower)
@@ -27,6 +31,7 @@ class Distribution:
         return loss
 
     def _check_boundaries(self, lower, upper):
+        """Evaluate if the lower and upper values are in the support of the distribution"""
         domain_error = (
             f"The provided boundaries are outside the domain of the {self.name} distribution"
         )
@@ -45,12 +50,16 @@ class Distribution:
                 )
 
     def _update_rv_frozen(self):
+        """Update the rv_frozen object when the parameters are not None"""
         self.is_frozen = any(self.params)
         if self.is_frozen:
             self.rv_frozen = self._get_frozen()
             self.rv_frozen.name = self.name
 
     def _xvals(self):
+        """Provide x values in the support of the distribuion. This is useful for example when
+        plotting.
+        """
         if np.isfinite(self.rv_frozen.a):
             lq = self.rv_frozen.a
         else:
@@ -68,6 +77,21 @@ class Distribution:
         return x
 
     def plot(self, box=False, quantiles=None, figsize=None, ax=None):
+        """
+        Plot the  pdf/pmf.
+
+        Parameters
+        ----------
+            box : bool
+                Whether to incluide a plot of the mean as a dot and two interquantile ranges as
+                lines. Defaults to False.
+            quantiles : list
+                Values of the four quantiles to use when ``box=True`` if None (default) the values
+                will be used ``[0.05, 0.25, 0.75, 0.95]``.
+            figsize : tuple
+                Size of the figure
+            ax : matplotlib axes
+        """
         if self.is_frozen:
             return plot_dist(self, box, quantiles, figsize, ax)
         else:
@@ -78,12 +102,16 @@ class Distribution:
 
 
 class Continuous(Distribution):
+    """Base class for continuous distributions."""
+
     def __init__(self):
         super().__init__()
         self.kind = "continuous"
 
 
 class Discrete(Distribution):
+    """Base class for discrete distributions."""
+
     def __init__(self):
         super().__init__()
         self.kind = "discrete"
