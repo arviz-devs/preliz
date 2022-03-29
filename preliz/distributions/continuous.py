@@ -142,12 +142,12 @@ class Gamma(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name.capitalize()}(alpha={self.alpha:.2f}, beta={1/self.beta:.2f})"
+            return f"{name.capitalize()}(alpha={self.alpha:.2f}, beta={self.beta:.2f})"
         else:
             return name
 
     def _get_frozen(self):
-        return self.dist(a=self.alpha, scale=self.beta)
+        return self.dist(a=self.alpha, scale=1 / self.beta)
 
     def _optimize(self, lower, upper, mass):
         self.opt = optimize(self, self.params, lower, upper, mass)
@@ -162,7 +162,7 @@ class Gamma(Continuous):
 
     def fit_moments(self, mean, sigma):
         alpha = mean**2 / sigma**2
-        beta = sigma**2 / mean
+        beta = mean / sigma**2
         self._update(alpha, beta)
 
     def fit_mle(self, sample, **kwargs):

@@ -32,13 +32,7 @@ def plot_boxlike2(sample, ax):
 
 
 def plot_dist(dist, box, quantiles, figsize, ax):
-    if ax is None:
-        fig_manager = _pylab_helpers.Gcf.get_active()
-        if fig_manager is not None:
-            ax = fig_manager.canvas.figure.gca()
-        else:
-            _, ax = plt.subplots(figsize=figsize)
-
+    ax = get_ax(ax, figsize)
     x = dist._xvals()
     color = next(ax._get_lines.prop_cycler)["color"]  # pylint: disable=protected-access
     title = dist.__repr__()
@@ -53,6 +47,20 @@ def plot_dist(dist, box, quantiles, figsize, ax):
     else:
         ax.plot(x, dist.rv_frozen.pmf(x), "-o", label=title, color=color)
 
+    side_legend(ax)
+
+
+def get_ax(ax, figsize):
+    if ax is None:
+        fig_manager = _pylab_helpers.Gcf.get_active()
+        if fig_manager is not None:
+            ax = fig_manager.canvas.figure.gca()
+        else:
+            _, ax = plt.subplots(figsize=figsize)
+    return ax
+
+
+def side_legend(ax):
     bbox = ax.get_position()
     ax.set_position([bbox.x0, bbox.y0, bbox.width, bbox.height])
     ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))

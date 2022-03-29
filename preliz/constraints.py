@@ -1,7 +1,6 @@
-import matplotlib.pyplot as plt
-
 from .distributions import Normal
 from .utils.constraints_utils import relative_error
+from .utils.plot_utils import get_ax, side_legend
 
 
 def constraints(
@@ -67,19 +66,15 @@ def constraints(
     distribution._optimize(lower, upper, mass)
 
     if plot:
+        ax = get_ax(ax, figsize)
         r_error = relative_error(distribution.rv_frozen, upper, lower, mass)
         x = distribution._xvals()
-        if ax is None:
-            _, ax = plt.subplots(figsize=figsize)
         color = next(ax._get_lines.prop_cycler)["color"]  # pylint: disable=protected-access
         ax.plot([lower, upper], [0, 0], "o", color=color, alpha=0.5)
         title = distribution.__repr__()
         subtitle = f"relative error = {r_error:.2f}"
         ax.plot(x, distribution.rv_frozen.pdf(x), label=title + "\n" + subtitle, color=color)
-
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width, box.height])
-    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
-    ax.set_yticks([])
+        ax.set_yticks([])
+        side_legend(ax)
 
     return ax
