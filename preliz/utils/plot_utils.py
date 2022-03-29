@@ -45,6 +45,7 @@ def plot_dist(dist, box, quantiles, figsize, ax):
     if dist.kind == "continuous":
         pdf = dist.rv_frozen.pdf(x)
         ax.plot(x, pdf, label=title, color=color)
+        ax.set_yticks([])
         if box:
             if quantiles is None:
                 quantiles = default_quantiles
