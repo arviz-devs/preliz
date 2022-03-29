@@ -14,7 +14,7 @@ from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, St
         (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.082, 9.110)),
         (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (1.696, 4.822)),
         (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (0.601, 1.023)),
-        (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (1.737)),
+        (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
         (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
     ],
