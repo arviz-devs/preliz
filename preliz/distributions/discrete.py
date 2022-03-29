@@ -7,11 +7,47 @@ from .distributions import Discrete
 
 
 class Poisson(Discrete):
+    R"""
+    Poisson log-likelihood.
+
+    Often used to model the number of events occurring in a fixed period
+    of time when the times at which events occur are independent.
+    The pmf of this distribution is
+
+    .. math:: f(x \mid \mu) = \frac{e^{-\mu}\mu^x}{x!}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Poisson
+        az.style.use('arviz-white')
+        for mu in [0.5, 3, 8]:
+            Poisson(mu).plot()
+
+    ========  ==========================
+    Support   :math:`x \in \mathbb{N}_0`
+    Mean      :math:`\mu`
+    Variance  :math:`\mu`
+    ========  ==========================
+
+    Parameters
+    ----------
+    mu: float
+        Expected number of occurrences during the given interval
+        (mu >= 0).
+
+    Notes
+    -----
+    The Poisson distribution can be derived as a limiting case of the
+    binomial distribution.
+    """
+
     def __init__(self, mu=None):
         super().__init__()
         self.mu = mu
         self.name = "Poisson"
-        self.params = self.mu
+        self.params = (self.mu, None)
         self.dist = stats.poisson
         self._update_rv_frozen()
 

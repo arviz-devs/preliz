@@ -27,7 +27,7 @@ class Distribution:
         rv_frozen = self.rv_frozen
         cdf0 = rv_frozen.cdf(lower)
         cdf1 = rv_frozen.cdf(upper)
-        loss = (cdf1 - cdf0) - mass
+        loss = (cdf1 - cdf0) - mass  # - rv_frozen.entropy()/100
         return loss
 
     def _check_boundaries(self, lower, upper):
@@ -56,25 +56,19 @@ class Distribution:
             self.rv_frozen = self._get_frozen()
             self.rv_frozen.name = self.name
 
-    def _xvals(self):
-        """Provide x values in the support of the distribuion. This is useful for example when
-        plotting.
+    def _finite_endpoints(self):
         """
-        if np.isfinite(self.rv_frozen.a):
-            lq = self.rv_frozen.a
-        else:
-            lq = 0.001
+        Return finite end-points even for unbounded distributions
+        """
+        lower_ep = self.rv_frozen.a
+        upper_ep = self.rv_frozen.b
 
-        if np.isfinite(self.rv_frozen.b):
-            uq = self.rv_frozen.b
-        else:
-            uq = 0.999
+        if not np.isfinite(lower_ep):
+            lower_ep = self.rv_frozen.ppf(0.001)
+        if not np.isfinite(upper_ep):
+            upper_ep = self.rv_frozen.ppf(0.999)
 
-        if self.kind == "continuous":
-            x = np.linspace(self.rv_frozen.ppf(lq), self.rv_frozen.ppf(uq), 1000)
-        else:
-            x = np.arange(int(self.rv_frozen.ppf(lq)), int(self.rv_frozen.ppf(uq)))
-        return x
+        return lower_ep, upper_ep
 
     def plot(self, box=False, quantiles=None, figsize=None, ax=None):
         """
@@ -108,6 +102,14 @@ class Continuous(Distribution):
         super().__init__()
         self.kind = "continuous"
 
+    def _xvals(self):
+        """Provide x values in the support of the distribuion. This is useful for example when
+        plotting.
+        """
+        lower_ep, upper_ep = self._finite_endpoints()
+        x_vals = np.linspace(lower_ep, upper_ep, 1000)
+        return x_vals
+
 
 class Discrete(Distribution):
     """Base class for discrete distributions."""
@@ -115,3 +117,11 @@ class Discrete(Distribution):
     def __init__(self):
         super().__init__()
         self.kind = "discrete"
+
+    def _xvals(self):
+        """Provide x values in the support of the distribuion. This is useful for example when
+        plotting.
+        """
+        lower_ep, upper_ep = self._finite_endpoints()
+        x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
+        return x_vals

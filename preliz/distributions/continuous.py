@@ -103,12 +103,12 @@ class Exponential(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(mu={1/self.lam:.2f})"
+            return f"{name}(mu={self.lam:.2f})"
         else:
             return name
 
     def _get_frozen(self):
-        return self.dist(scale=self.lam)
+        return self.dist(scale=1 / self.lam)
 
     def _optimize(self, lower, upper, mass):
         self.opt = optimize(self, self.params[0], lower, upper, mass)
