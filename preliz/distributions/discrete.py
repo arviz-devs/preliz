@@ -46,7 +46,7 @@ class Poisson(Discrete):
     def __init__(self, mu=None):
         super().__init__()
         self.mu = mu
-        self.name = "Poisson"
+        self.name = "poisson"
         self.params = (self.mu, None)
         self.dist = stats.poisson
         self._update_rv_frozen()
@@ -54,7 +54,7 @@ class Poisson(Discrete):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(mu={self.mu:.2f})"
+            return f"{name.capitalize()}(mu={self.mu:.2f})"
         else:
             return name
 

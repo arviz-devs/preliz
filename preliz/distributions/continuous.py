@@ -56,7 +56,7 @@ class Beta(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(alpha={self.alpha:.2f}, beta={self.beta:.2f})"
+            return f"{name.capitalize()}(alpha={self.alpha:.2f}, beta={self.beta:.2f})"
         else:
             return name
 
@@ -103,7 +103,7 @@ class Exponential(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(mu={self.lam:.2f})"
+            return f"{name.capitalize()}(mu={self.lam:.2f})"
         else:
             return name
 
@@ -142,7 +142,7 @@ class Gamma(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(alpha={self.alpha:.2f}, beta={1/self.beta:.2f})"
+            return f"{name.capitalize()}(alpha={self.alpha:.2f}, beta={1/self.beta:.2f})"
         else:
             return name
 
@@ -183,7 +183,7 @@ class LogNormal(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(mu={self.mu:.2f}, sigma={self.sigma:.2f})"
+            return f"{name.capitalize()}(mu={self.mu:.2f}, sigma={self.sigma:.2f})"
         else:
             return name
 
@@ -228,7 +228,7 @@ class Normal(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(mu={self.mu:.2f}, sigma={self.sigma:.2f})"
+            return f"{name.capitalize()}(mu={self.mu:.2f}, sigma={self.sigma:.2f})"
         else:
             return name
 
@@ -268,7 +268,9 @@ class Student(Continuous):
     def __repr__(self):
         name = self.name
         if self.is_frozen:
-            return f"{name}(nu={self.nu:.2f}, mu={self.mu:.2f}, sigma={self.sigma:.2f})"
+            return (
+                f"{name.capitalize()}(nu={self.nu:.2f}, mu={self.mu:.2f}, sigma={self.sigma:.2f})"
+            )
         else:
             return name
 
