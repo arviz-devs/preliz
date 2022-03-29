@@ -27,7 +27,7 @@ class Distribution:
         rv_frozen = self.rv_frozen
         cdf0 = rv_frozen.cdf(lower)
         cdf1 = rv_frozen.cdf(upper)
-        loss = (cdf1 - cdf0) - mass  # - rv_frozen.entropy()/100
+        loss = (cdf1 - cdf0) - mass
         return loss
 
     def _check_boundaries(self, lower, upper):
