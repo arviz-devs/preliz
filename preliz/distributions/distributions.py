@@ -76,15 +76,15 @@ class Distribution:
 
         Parameters
         ----------
-            box : bool
-                Whether to incluide a plot of the mean as a dot and two interquantile ranges as
-                lines. Defaults to False.
-            quantiles : list
-                Values of the four quantiles to use when ``box=True`` if None (default) the values
-                will be used ``[0.05, 0.25, 0.75, 0.95]``.
-            figsize : tuple
-                Size of the figure
-            ax : matplotlib axes
+        box : bool
+            Whether to incluide a plot of the mean as a dot and two interquantile ranges as
+            lines. Defaults to False.
+        quantiles : list
+            Values of the four quantiles to use when ``box=True`` if None (default) the values
+            will be used ``[0.05, 0.25, 0.75, 0.95]``.
+        figsize : tuple
+            Size of the figure
+        ax : matplotlib axes
         """
         if self.is_frozen:
             return plot_dist(self, box, quantiles, figsize, ax)
