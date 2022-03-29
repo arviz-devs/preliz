@@ -5,6 +5,8 @@ Tools to help you pick a prior
 """
 import logging
 
+from matplotlib import rcParams
+
 from .constraints import constraints
 from .ppa import ppa
 from .roulette import roulette
@@ -21,3 +23,7 @@ if not logging.root.handlers:
     if len(_log.handlers) == 0:
         handler = logging.StreamHandler()
         _log.addHandler(handler)
+
+# Allow legend outside plot in constraints to be included when saving a figure
+# We may want to make this more explicit by having preliz.rcParams
+rcParams["savefig.bbox"] = "tight"
