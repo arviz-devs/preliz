@@ -48,6 +48,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_thebe",
     "myst_nb",
+    "matplotlib.sphinxext.plot_directive",
 ]
 
 # -- Extension configuration -------------------------------------------------
