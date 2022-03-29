@@ -13,3 +13,10 @@ This reference provides detailed documentation for user functions in the current
 
 .. automodule:: preliz
    :members:
+
+
+:mod:`preliz.distributions`
+=============================
+
+.. automodule:: preliz.distributions
+   :members:
