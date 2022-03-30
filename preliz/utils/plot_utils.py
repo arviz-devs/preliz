@@ -35,7 +35,7 @@ def plot_dist(dist, box, quantiles, figsize, ax):
     ax = get_ax(ax, figsize)
     x = dist._xvals()
     color = next(ax._get_lines.prop_cycler)["color"]  # pylint: disable=protected-access
-    title = dist.__repr__()
+    title = repr_to_matplotlib(dist)
     if dist.kind == "continuous":
         pdf = dist.rv_frozen.pdf(x)
         ax.plot(x, pdf, label=title, color=color)
@@ -64,3 +64,10 @@ def side_legend(ax):
     bbox = ax.get_position()
     ax.set_position([bbox.x0, bbox.y0, bbox.width, bbox.height])
     ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+
+
+def repr_to_matplotlib(distribution):
+    string = distribution.__repr__()
+    string = string.replace("\x1b[1m", r"$\bf{")
+    string = string.replace("\x1b[0m", "}$")
+    return string

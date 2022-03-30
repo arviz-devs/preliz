@@ -1,6 +1,6 @@
 from .distributions import Normal
 from .utils.constraints_utils import relative_error
-from .utils.plot_utils import get_ax, side_legend
+from .utils.plot_utils import get_ax, side_legend, repr_to_matplotlib
 
 
 def constraints(
@@ -71,7 +71,7 @@ def constraints(
         x = distribution._xvals()
         color = next(ax._get_lines.prop_cycler)["color"]  # pylint: disable=protected-access
         ax.plot([lower, upper], [0, 0], "o", color=color, alpha=0.5)
-        title = distribution.__repr__()
+        title = repr_to_matplotlib(distribution)
         subtitle = f"relative error = {r_error:.2f}"
         ax.plot(x, distribution.rv_frozen.pdf(x), label=title + "\n" + subtitle, color=color)
         ax.set_yticks([])
