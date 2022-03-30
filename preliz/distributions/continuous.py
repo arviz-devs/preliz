@@ -5,7 +5,7 @@ import numpy as np
 from scipy import stats
 
 from .distributions import Continuous
-from ..utils.constraints_utils import optimize
+from ..utils.maxent_utils import optimize
 
 
 class Beta(Continuous):
@@ -109,7 +109,7 @@ class Exponential(Continuous):
         self._update_rv_frozen()
 
     def fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
-        lam = mean
+        lam = 1 / mean
         self._update(lam)
 
     def fit_mle(self, sample, **kwargs):

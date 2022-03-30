@@ -28,6 +28,11 @@ class Distribution:
         else:
             return self.name
 
+    def _entropy_loss(self, params):
+        self._update(*params)
+        rv_frozen = self.rv_frozen
+        return -rv_frozen.entropy()
+
     def _cdf_loss(self, params, lower, upper, mass):
         """
         Difference between the cumulative distribution function in the lower-upper interval with

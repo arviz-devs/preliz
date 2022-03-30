@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 
-from preliz import constraints
+from preliz import maxent
 from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, Student
 
 
@@ -11,20 +11,20 @@ from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, St
     [
         (Normal, "normal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
         (Normal, "normal", 10, 12, 0.99, None, (-np.inf, np.inf), (11, 0.388)),
-        (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.082, 9.110)),
-        (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (1.089, 0.131)),
-        (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (0.601, 1.023)),
+        (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.090, 9.107)),
+        (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (0.868, 0.103)),
+        (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (1.216, 0.859)),
         (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
         (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
     ],
 )
-def test_constraints(distribution, name, lower, upper, mass, nu, support, result):
+def test_maxent(distribution, name, lower, upper, mass, nu, support, result):
     if nu is None:
         dist = distribution()
     else:
         dist = distribution(nu=nu)
-    _ = constraints(dist, lower, upper, mass)
+    _ = maxent(dist, lower, upper, mass)
     opt = dist.opt
     rv_frozen = dist.rv_frozen
 
