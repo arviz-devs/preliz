@@ -1,20 +1,19 @@
 from .distributions import Normal
-from .utils.constraints_utils import relative_error
+from .utils.maxent_utils import relative_error
 from .utils.plot_utils import get_ax, side_legend, repr_to_matplotlib
 
 
-def constraints(
+def maxent(
     distribution=None,
     lower=-1,
     upper=1,
     mass=0.90,
-    # parametrization="pymc",
     plot=True,
     figsize=(10, 4),
     ax=None,
 ):
     """
-    Find parameters for a given distribution with `mass` in the interval defined by `lower` and
+    Find the maximum entropy distribution with `mass` in the interval defined by the `lower` and
     `upper` end-points.
 
     Parameters
@@ -58,11 +57,13 @@ def constraints(
     # Use least squares assuming a Gaussian
     mu_init = (lower + upper) / 2
     sigma_init = ((upper - lower) / 4) / mass
+
     normal_dist = Normal(mu_init, sigma_init)
     normal_dist._optimize(lower, upper, mass)
 
     # I am doing one extra step for the normal!!!
     distribution.fit_moments(mean=normal_dist.mu, sigma=normal_dist.sigma)
+
     distribution._optimize(lower, upper, mass)
 
     if plot:

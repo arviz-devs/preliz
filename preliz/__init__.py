@@ -7,12 +7,12 @@ import logging
 
 from matplotlib import rcParams
 
-from .constraints import constraints
+from .maxent import maxent
 from .ppa import ppa
 from .roulette import roulette
 from .distributions import *
 
-__all__ = ["constraints", "ppa", "roulette"]
+__all__ = ["maxent", "ppa", "roulette"]
 
 __version__ = "0.0.1.dev0"
 
@@ -24,6 +24,6 @@ if not logging.root.handlers:
         handler = logging.StreamHandler()
         _log.addHandler(handler)
 
-# Allow legend outside plot in constraints to be included when saving a figure
+# Allow legend outside plot in maxent to be included when saving a figure
 # We may want to make this more explicit by having preliz.rcParams
 rcParams["savefig.bbox"] = "tight"
