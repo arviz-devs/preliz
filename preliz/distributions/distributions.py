@@ -18,9 +18,19 @@ class Distribution:
         self.is_frozen = False
         self.opt = None
 
+    def __repr__(self):
+        if self.is_frozen:
+            bolded_name = "\033[1m" + self.name.capitalize() + "\033[0m"
+            description = "".join(
+                f"{n}={v:.2f}," for n, v in zip(self.param_names, self.params)
+            ).strip(",")
+            return f"{bolded_name}({description})"
+        else:
+            return self.name
+
     def _cdf_loss(self, params, lower, upper, mass):
         """
-        Difference between the cumulative distribuion function in the lower-upper interval with
+        Difference between the cumulative distribution function in the lower-upper interval with
         respect to a given mass.
         """
         self._update(*params)
@@ -103,7 +113,7 @@ class Continuous(Distribution):
         self.kind = "continuous"
 
     def _xvals(self):
-        """Provide x values in the support of the distribuion. This is useful for example when
+        """Provide x values in the support of the distribution. This is useful for example when
         plotting.
         """
         lower_ep, upper_ep = self._finite_endpoints()
@@ -119,7 +129,7 @@ class Discrete(Distribution):
         self.kind = "discrete"
 
     def _xvals(self):
-        """Provide x values in the support of the distribuion. This is useful for example when
+        """Provide x values in the support of the distribution. This is useful for example when
         plotting.
         """
         lower_ep, upper_ep = self._finite_endpoints()

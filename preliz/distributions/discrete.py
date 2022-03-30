@@ -48,15 +48,9 @@ class Poisson(Discrete):
         self.mu = mu
         self.name = "poisson"
         self.params = (self.mu, None)
+        self.param_names = ("mu",)
         self.dist = stats.poisson
         self._update_rv_frozen()
-
-    def __repr__(self):
-        name = self.name
-        if self.is_frozen:
-            return f"{name.capitalize()}(mu={self.mu:.2f})"
-        else:
-            return name
 
     def _get_frozen(self):
         return self.dist(self.mu)

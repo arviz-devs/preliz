@@ -50,15 +50,9 @@ class Beta(Continuous):
         self.beta = beta
         self.name = "beta"
         self.params = (self.alpha, self.beta)
+        self.param_names = ("alpha", "beta")
         self.dist = stats.beta
         self._update_rv_frozen()
-
-    def __repr__(self):
-        name = self.name
-        if self.is_frozen:
-            return f"{name.capitalize()}(alpha={self.alpha:.2f}, beta={self.beta:.2f})"
-        else:
-            return name
 
     def _get_frozen(self):
         return self.dist(self.alpha, self.beta)
@@ -97,15 +91,9 @@ class Exponential(Continuous):
         self.lam = lam
         self.name = "exponential"
         self.params = (self.lam, None)
+        self.param_names = ("lam",)
         self.dist = stats.expon
         self._update_rv_frozen()
-
-    def __repr__(self):
-        name = self.name
-        if self.is_frozen:
-            return f"{name.capitalize()}(mu={self.lam:.2f})"
-        else:
-            return name
 
     def _get_frozen(self):
         return self.dist(scale=1 / self.lam)
@@ -136,15 +124,9 @@ class Gamma(Continuous):
         self.beta = beta
         self.name = "gamma"
         self.params = (self.alpha, self.beta)
+        self.param_names = ("alpha", "beta")
         self.dist = stats.gamma
         self._update_rv_frozen()
-
-    def __repr__(self):
-        name = self.name
-        if self.is_frozen:
-            return f"{name.capitalize()}(alpha={self.alpha:.2f}, beta={self.beta:.2f})"
-        else:
-            return name
 
     def _get_frozen(self):
         return self.dist(a=self.alpha, scale=1 / self.beta)
@@ -177,15 +159,9 @@ class LogNormal(Continuous):
         self.sigma = sigma
         self.name = "lognormal"
         self.params = (self.mu, self.sigma)
+        self.param_names = ("mu", "sigma")
         self.dist = stats.lognorm
         self._update_rv_frozen()
-
-    def __repr__(self):
-        name = self.name
-        if self.is_frozen:
-            return f"{name.capitalize()}(mu={self.mu:.2f}, sigma={self.sigma:.2f})"
-        else:
-            return name
 
     def _get_frozen(self):
         return self.dist(self.sigma, scale=np.exp(self.mu))
@@ -207,11 +183,7 @@ class LogNormal(Continuous):
         self._update(mu, sigma)
 
     def fit_mle(self, sample, **kwargs):
-        (
-            sigma,
-            _,
-            mu,
-        ) = self.dist.fit(sample, **kwargs)
+        sigma, _, mu = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
 
 
@@ -222,15 +194,9 @@ class Normal(Continuous):
         self.sigma = sigma
         self.name = "normal"
         self.params = (self.mu, self.sigma)
+        self.param_names = ("mu", "sigma")
         self.dist = stats.norm
         self._update_rv_frozen()
-
-    def __repr__(self):
-        name = self.name
-        if self.is_frozen:
-            return f"{name.capitalize()}(mu={self.mu:.2f}, sigma={self.sigma:.2f})"
-        else:
-            return name
 
     def _get_frozen(self):
         return self.dist(self.mu, self.sigma)
@@ -262,17 +228,9 @@ class Student(Continuous):
         self.sigma = sigma
         self.name = "student"
         self.params = (self.nu, self.mu, self.sigma)
+        self.param_names = ("nu", "mu", "sigma")
         self.dist = stats.t
         self._update_rv_frozen()
-
-    def __repr__(self):
-        name = self.name
-        if self.is_frozen:
-            return (
-                f"{name.capitalize()}(nu={self.nu:.2f}, mu={self.mu:.2f}, sigma={self.sigma:.2f})"
-            )
-        else:
-            return name
 
     def _get_frozen(self):
         return self.dist(self.nu, self.mu, self.sigma)
