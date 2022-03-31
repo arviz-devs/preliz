@@ -3,7 +3,7 @@ Parent classes for all families.
 """
 # pylint: disable=no-member
 import numpy as np
-from ..utils.plot_utils import plot_dist
+from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
 
 
 class Distribution:
@@ -71,38 +71,80 @@ class Distribution:
             self.rv_frozen = self._get_frozen()
             self.rv_frozen.name = self.name
 
-    def _finite_endpoints(self):
+    def _finite_endpoints(self, support):
         """
         Return finite end-points even for unbounded distributions
         """
         lower_ep = self.rv_frozen.a
         upper_ep = self.rv_frozen.b
 
-        if not np.isfinite(lower_ep):
+        if not np.isfinite(lower_ep) or support == "restricted":
             lower_ep = self.rv_frozen.ppf(0.001)
-        if not np.isfinite(upper_ep):
+        if not np.isfinite(upper_ep) or support == "restricted":
             upper_ep = self.rv_frozen.ppf(0.999)
 
         return lower_ep, upper_ep
 
-    def plot(self, box=False, quantiles=None, figsize=None, ax=None):
+    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
         """
-        Plot the  pdf/pmf.
+        Plot the  pdf (continuous) or pmf (discrete).
 
         Parameters
         ----------
         box : bool
-            Whether to incluide a plot of the mean as a dot and two interquantile ranges as
+            Whether to include a plot of the mean as a dot and two inter-quantile ranges as
             lines. Defaults to False.
         quantiles : list
             Values of the four quantiles to use when ``box=True`` if None (default) the values
             will be used ``[0.05, 0.25, 0.75, 0.95]``.
+        support : str:
+            If ``full`` use the finite end-points to set the limits of the plot. For unbounded
+            end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_dist(self, box, quantiles, figsize, ax)
+            return plot_pdfpmf(self, box, quantiles, support, figsize, ax)
+        else:
+            raise ValueError(
+                "Undefined distribution, "
+                "you need to first define its parameters or use one of the fit methods"
+            )
+
+    def plot_cdf(self, support="full", figsize=None, ax=None):
+        """
+        Plot the cumulative distribution function.
+
+        Parameters
+        ----------
+        support : str:
+            If ``full`` use the finite end-points to set the limits of the plot. For unbounded
+            end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        figsize : tuple
+            Size of the figure
+        ax : matplotlib axes
+        """
+        if self.is_frozen:
+            return plot_cdf(self, support, figsize, ax)
+        else:
+            raise ValueError(
+                "Undefined distribution, "
+                "you need to first define its parameters or use one of the fit methods"
+            )
+
+    def plot_ppf(self, figsize=None, ax=None):
+        """
+        Plot the quantile function.
+
+        Parameters
+        ----------
+        figsize : tuple
+            Size of the figure
+        ax : matplotlib axes
+        """
+        if self.is_frozen:
+            return plot_ppf(self, figsize, ax)
         else:
             raise ValueError(
                 "Undefined distribution, "
@@ -117,11 +159,11 @@ class Continuous(Distribution):
         super().__init__()
         self.kind = "continuous"
 
-    def _xvals(self):
+    def _xvals(self, support):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
         """
-        lower_ep, upper_ep = self._finite_endpoints()
+        lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.linspace(lower_ep, upper_ep, 1000)
         return x_vals
 
@@ -133,10 +175,10 @@ class Discrete(Distribution):
         super().__init__()
         self.kind = "discrete"
 
-    def _xvals(self):
+    def _xvals(self, support):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
         """
-        lower_ep, upper_ep = self._finite_endpoints()
+        lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals
