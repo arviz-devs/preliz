@@ -24,7 +24,7 @@ class Poisson(Discrete):
         from preliz import Poisson
         az.style.use('arviz-white')
         for mu in [0.5, 3, 8]:
-            Poisson(mu).plot()
+            Poisson(mu).plot_pdf()
 
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`
