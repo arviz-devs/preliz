@@ -69,7 +69,7 @@ def maxent(
     if plot:
         ax = get_ax(ax, figsize)
         r_error = relative_error(distribution.rv_frozen, upper, lower, mass)
-        x = distribution._xvals()
+        x = distribution._xvals(support="full")
         color = next(ax._get_lines.prop_cycler)["color"]  # pylint: disable=protected-access
         ax.plot([lower, upper], [0, 0], "o", color=color, alpha=0.5)
         title = repr_to_matplotlib(distribution)

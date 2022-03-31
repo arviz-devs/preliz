@@ -1,6 +1,7 @@
 """
 Continuous probability distributions.
 """
+# pylint: disable=useless-super-delegation
 import numpy as np
 from scipy import stats
 
@@ -28,7 +29,7 @@ class Beta(Continuous):
         alphas = [.5, 5., 2.]
         betas = [.5, 5., 5.]
         for alpha, beta in zip(alphas, betas):
-            Beta(alpha, beta).plot()
+            Beta(alpha, beta).plot_pdf()
 
     ========  ==============================================================
     Support   :math:`x \in (0, 1)`
@@ -39,9 +40,9 @@ class Beta(Continuous):
     Parameters
     ----------
     alpha : float
-        alpha param > 0
+        alpha  > 0
     beta : float
-        beta param > 0
+        beta  > 0
     """
 
     def __init__(self, alpha=None, beta=None):
@@ -84,8 +85,48 @@ class Beta(Continuous):
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 
+    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
+        return super().plot_pdf(box, quantiles, support, figsize, ax)
+
+    def plot_cdf(self, support="full", figsize=None, ax=None):
+        return super().plot_cdf(support, figsize, ax)
+
+    def plot_ppf(self, figsize=None, ax=None):
+        return super().plot_ppf(figsize, ax)
+
 
 class Exponential(Continuous):
+    r"""
+    Exponential Distribution
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \lambda) = \lambda \exp\left\{ -\lambda x \right\}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Exponential
+        az.style.use('arviz-white')
+        for lam in [0.5,  2.]:
+            Exponential(lam).plot_pdf()
+
+
+    ========  ============================
+    Support   :math:`x \in [0, \infty)`
+    Mean      :math:`\dfrac{1}{\lambda}`
+    Variance  :math:`\dfrac{1}{\lambda^2}`
+    ========  ============================
+
+    Parameters
+    ----------
+    lam : float
+        Rate or inverse scale (lam > 0).
+    """
+
     def __init__(self, lam=None):
         super().__init__()
         self.lam = lam
@@ -116,8 +157,55 @@ class Exponential(Continuous):
         lam, _ = self.dist.fit(sample, **kwargs)
         self._update(lam)
 
+    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
+        return super().plot_pdf(box, quantiles, support, figsize, ax)
+
+    def plot_cdf(self, support="full", figsize=None, ax=None):
+        return super().plot_cdf(support, figsize, ax)
+
+    def plot_ppf(self, figsize=None, ax=None):
+        return super().plot_ppf(figsize, ax)
+
 
 class Gamma(Continuous):
+    r"""
+    Gamma distribution.
+
+    Represents the sum of alpha exponentially distributed random variables,
+    each of which has rate beta.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \alpha, \beta) =
+           \frac{\beta^{\alpha}x^{\alpha-1}e^{-\beta x}}{\Gamma(\alpha)}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Gamma
+        az.style.use('arviz-white')
+        alphas = [1., 3., 7.5]
+        betas = [.5, 1., 1.]
+        for alpha, beta in zip(alphas, betas):
+            Gamma(alpha, beta).plot_pdf()
+
+    ========  ===============================
+    Support   :math:`x \in (0, \infty)`
+    Mean      :math:`\dfrac{\alpha}{\beta}`
+    Variance  :math:`\dfrac{\alpha}{\beta^2}`
+    ========  ===============================
+
+    Parameters
+    ----------
+    alpha : float
+        Shape parameter (alpha > 0).
+    beta : float
+        Rate parameter (beta > 0).
+    """
+
     def __init__(self, alpha=None, beta=None):
         super().__init__()
         self.alpha = alpha
@@ -151,8 +239,58 @@ class Gamma(Continuous):
         alpha, _, beta = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 
+    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
+        return super().plot_pdf(box, quantiles, support, figsize, ax)
+
+    def plot_cdf(self, support="full", figsize=None, ax=None):
+        return super().plot_cdf(support, figsize, ax)
+
+    def plot_ppf(self, figsize=None, ax=None):
+        return super().plot_ppf(figsize, ax)
+
 
 class LogNormal(Continuous):
+    r"""
+    Log-normal distribution.
+
+    Distribution of any random variable whose logarithm is normally
+    distributed. A variable might be modeled as log-normal if it can
+    be thought of as the multiplicative product of many small
+    independent factors.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \mu, \sigma) =
+          \frac{1}{x \sigma \sqrt{2\pi}}
+           \exp\left\{ -\frac{(\ln(x)-\mu)^2}{2\sigma^2} \right\}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import LogNormal
+        az.style.use('arviz-white')
+        mus = [ 0., 0.]
+        sigmas = [.5, 1.]
+        for mu, sigma in zip(mus, sigmas):
+            LogNormal(mu, sigma).plot_pdf()
+
+    ========  =========================================================================
+    Support   :math:`x \in [0, \infty)`
+    Mean      :math:`\exp\left(\mu+\frac{\sigma^2}{2}\right)`
+    Variance  :math:`[\exp(\sigma^2)-1] \exp(2\mu+\sigma^2)`
+    ========  =========================================================================
+
+    Parameters
+    ----------
+    mu : float
+        Location parameter.
+    sigma : float
+        Standard deviation. (sigma > 0)).
+    """
+
     def __init__(self, mu=None, sigma=None):
         super().__init__()
         self.mu = mu
@@ -186,8 +324,53 @@ class LogNormal(Continuous):
         sigma, _, mu = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
 
+    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
+        return super().plot_pdf(box, quantiles, support, figsize, ax)
+
+    def plot_cdf(self, support="full", figsize=None, ax=None):
+        return super().plot_cdf(support, figsize, ax)
+
+    def plot_ppf(self, figsize=None, ax=None):
+        return super().plot_ppf(figsize, ax)
+
 
 class Normal(Continuous):
+    r"""
+    Normal distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \mu, \sigma) =
+           \frac{1}{\sigma \sqrt{2\pi}}
+           \exp\left\{ -\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2 \right\}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Normal
+        az.style.use('arviz-white')
+        mus = [0., 0., -2.]
+        sigmas = [1, 0.5, 1]
+        for mu, sigma in zip(mus, sigmas):
+            Normal(mu, sigma).plot_pdf()
+
+    ========  ==========================================
+    Support   :math:`x \in \mathbb{R}`
+    Mean      :math:`\mu`
+    Variance  :math:`\sigma^2`
+    ========  ==========================================
+
+    Parameters
+    ----------
+    mu : float
+        Mean.
+    sigma : float
+        Standard deviation (sigma > 0).
+    """
+
     def __init__(self, mu=None, sigma=None):
         super().__init__()
         self.mu = mu
@@ -219,8 +402,60 @@ class Normal(Continuous):
         mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
 
+    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
+        return super().plot_pdf(box, quantiles, support, figsize, ax)
+
+    def plot_cdf(self, support="full", figsize=None, ax=None):
+        return super().plot_cdf(support, figsize, ax)
+
+    def plot_ppf(self, figsize=None, ax=None):
+        return super().plot_ppf(figsize, ax)
+
 
 class Student(Continuous):
+    r"""
+    Student's T log-likelihood.
+
+    Describes a normal variable whose precision is gamma distributed.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \nu, \mu, \sigma) =
+           \frac{\Gamma \left(\frac{\nu+1}{2} \right)} {\sqrt{\nu\pi}\
+           \Gamma \left(\frac{\nu}{2} \right)} \left(1+\frac{x^2}{\nu} \right)^{-\frac{\nu+1}{2}}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Student
+        az.style.use('arviz-white')
+        nus = [2., 5., 5.]
+        mus = [0., 0.,  -4.]
+        sigmas = [1., 1., 2.]
+        for nu, mu, sigma in zip(nus, mus, sigmas):
+            Student(nu, mu, sigma).plot_pdf()
+
+    ========  ========================
+    Support   :math:`x \in \mathbb{R}`
+    Mean      :math:`\mu` for :math:`\nu > 1`, otherwise undefined
+    Variance  :math:`\frac{\nu}{\nu-2}` for :math:`\nu > 2`,
+              :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
+    ========  ========================
+
+    Parameters
+    ----------
+    nu : float
+        Degrees of freedom, also known as normality parameter (nu > 0).
+    mu : float
+        Location parameter.
+    sigma : float
+        Scale parameter (sigma > 0). Converges to the standard deviation as nu
+        increases.
+    """
+
     def __init__(self, nu=None, mu=None, sigma=None):
         super().__init__()
         self.nu = nu
@@ -255,3 +490,12 @@ class Student(Continuous):
     def fit_mle(self, sample, **kwargs):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, nu)
+
+    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
+        return super().plot_pdf(box, quantiles, support, figsize, ax)
+
+    def plot_cdf(self, support="full", figsize=None, ax=None):
+        return super().plot_cdf(support, figsize, ax)
+
+    def plot_ppf(self, figsize=None, ax=None):
+        return super().plot_ppf(figsize, ax)
