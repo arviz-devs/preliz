@@ -1,6 +1,9 @@
+import logging
+
 from .distributions import Normal
 from .utils.maxent_utils import relative_error
-from .utils.plot_utils import get_ax, side_legend, repr_to_matplotlib
+
+_log = logging.getLogger("preliz")
 
 
 def maxent(
@@ -9,7 +12,7 @@ def maxent(
     upper=1,
     mass=0.90,
     plot=True,
-    figsize=(10, 4),
+    figsize=None,
     ax=None,
 ):
     """
@@ -66,16 +69,14 @@ def maxent(
 
     distribution._optimize(lower, upper, mass)
 
-    if plot:
-        ax = get_ax(ax, figsize)
-        r_error = relative_error(distribution.rv_frozen, upper, lower, mass)
-        x = distribution._xvals(support="full")
-        color = next(ax._get_lines.prop_cycler)["color"]  # pylint: disable=protected-access
-        ax.plot([lower, upper], [0, 0], "o", color=color, alpha=0.5)
-        title = repr_to_matplotlib(distribution)
-        subtitle = f"relative error = {r_error:.2f}"
-        ax.plot(x, distribution.rv_frozen.pdf(x), label=title + "\n" + subtitle, color=color)
-        ax.set_yticks([])
-        side_legend(ax)
+    r_error = relative_error(distribution.rv_frozen, upper, lower, mass)
+    if r_error:#SS > 0.01:
+        _log.info(
+            " The relative error between the requested and computed interval is %.2f",
+            r_error,
+        )
 
+    if plot:
+        ax = distribution.plot_pdf(figsize=figsize)
+        ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[-1].get_c(), alpha=0.5)
     return ax
