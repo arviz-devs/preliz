@@ -35,16 +35,16 @@ def plot_boxlike2(sample, ax):
 def plot_pdfpmf(dist, box, quantiles, support, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    title = repr_to_matplotlib(dist)
+    label = repr_to_matplotlib(dist)
 
     x = dist._xvals(support)
     if dist.kind == "continuous":
         density = dist.rv_frozen.pdf(x)
-        ax.plot(x, density, label=title, color=color)
+        ax.plot(x, density, label=label, color=color)
         ax.set_yticks([])
     else:
         density = dist.rv_frozen.pmf(x)
-        ax.plot(x, density, "-o", label=title, color=color)
+        ax.plot(x, density, "-o", label=label, color=color)
     if box:
         if quantiles is None:
             quantiles = default_quantiles
@@ -57,12 +57,12 @@ def plot_pdfpmf(dist, box, quantiles, support, figsize, ax):
 def plot_cdf(dist, support, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    title = repr_to_matplotlib(dist)
+    label = repr_to_matplotlib(dist)
 
     eps = dist._finite_endpoints(support)
     x = np.linspace(*eps, 1000)
     cdf = dist.rv_frozen.cdf(x)
-    ax.plot(x, cdf, label=title, color=color)
+    ax.plot(x, cdf, label=label, color=color)
 
     side_legend(ax)
     return ax
@@ -71,10 +71,10 @@ def plot_cdf(dist, support, figsize, ax):
 def plot_ppf(dist, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    title = repr_to_matplotlib(dist)
+    label = repr_to_matplotlib(dist)
 
     x = np.linspace(0, 1, 1000)
-    plt.plot(x, dist.rv_frozen.ppf(x), label=title, color=color)
+    plt.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
 
     side_legend(ax)
     return ax

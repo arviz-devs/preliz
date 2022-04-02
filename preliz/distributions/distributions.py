@@ -85,7 +85,14 @@ class Distribution:
 
         return lower_ep, upper_ep
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
+    def plot_pdf(
+        self,
+        box=False,
+        quantiles=None,
+        support="full",
+        figsize=None,
+        ax=None,
+    ):
         """
         Plot the  pdf (continuous) or pmf (discrete).
 
