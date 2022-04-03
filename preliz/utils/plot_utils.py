@@ -74,7 +74,7 @@ def plot_ppf(dist, figsize, ax):
     label = repr_to_matplotlib(dist)
 
     x = np.linspace(0, 1, 1000)
-    plt.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
+    ax.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
 
     side_legend(ax)
     return ax
