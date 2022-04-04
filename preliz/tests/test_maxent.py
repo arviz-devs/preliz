@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 
 from preliz import maxent
-from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, Student
+from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, Student, Poisson
 
 
 @pytest.mark.parametrize(
@@ -17,6 +17,7 @@ from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, St
         (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
         (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
+        (Poisson, "poisson", 0, 3, 0.7, None, (0, np.inf), (2.763)),
     ],
 )
 def test_maxent(distribution, name, lower, upper, mass, nu, support, result):

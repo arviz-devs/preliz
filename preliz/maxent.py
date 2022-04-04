@@ -1,7 +1,7 @@
 import logging
 
 from .distributions import Normal
-from .utils.maxent_utils import relative_error
+from .utils.maxent_utils import relative_error, end_points_ints
 
 _log = logging.getLogger("preliz")
 
@@ -57,10 +57,16 @@ def maxent(
 
     distribution._check_boundaries(lower, upper)
 
-    # Use least squares assuming a Gaussian
+    if distribution.kind == "discrete":
+        if not end_points_ints(lower, upper):
+            _log.info(
+                "%s distribution is discrete, but the provided bounds are not integers",
+                distribution.name.capitalize(),
+            )
+
+    # Heuristic to approximate mean and standard deviation from intervals and mass
     mu_init = (lower + upper) / 2
     sigma_init = ((upper - lower) / 4) / mass
-
     normal_dist = Normal(mu_init, sigma_init)
     normal_dist._optimize(lower, upper, mass)
 
@@ -69,7 +75,8 @@ def maxent(
 
     distribution._optimize(lower, upper, mass)
 
-    r_error = relative_error(distribution.rv_frozen, upper, lower, mass)
+    r_error = relative_error(distribution, upper, lower, mass)
+
     if r_error > 0.01:
         _log.info(
             " The relative error between the requested and computed interval is %.2f",
