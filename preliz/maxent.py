@@ -70,7 +70,7 @@ def maxent(
     distribution._optimize(lower, upper, mass)
 
     r_error = relative_error(distribution.rv_frozen, upper, lower, mass)
-    if r_error:  # SS > 0.01:
+    if r_error > 0.01:
         _log.info(
             " The relative error between the requested and computed interval is %.2f",
             r_error,
