@@ -18,6 +18,8 @@ PreliZ
 
 The place for all your prior elicitation needs
 
+**This package is very new and all of its features are experimental, not yet well tested, and subject to change without notice.**
+
 
 Dependencies
 ============
