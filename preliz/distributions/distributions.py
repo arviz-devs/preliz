@@ -96,6 +96,9 @@ class Distribution:
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"legend"`` a
+            ``"title"`` or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
