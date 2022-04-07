@@ -11,6 +11,8 @@ def plot_boxlike(fitted_dist, x_vals, ref_pdf, quantiles, ax, color=None):
     """
     Plot the mean as a dot and two inter-quantile ranges as lines
     """
+    if quantiles is None:
+        quantiles = default_quantiles
     q_s = fitted_dist.ppf(quantiles)
     mean = fitted_dist.moment(1)
 
@@ -32,7 +34,7 @@ def plot_boxlike2(sample, ax):
     ax.plot(mean, 0, "w.")
 
 
-def plot_pdfpmf(dist, box, quantiles, support, figsize, ax):
+def plot_pdfpmf(dist, box, quantiles, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
@@ -50,7 +52,10 @@ def plot_pdfpmf(dist, box, quantiles, support, figsize, ax):
             quantiles = default_quantiles
         plot_boxlike(dist.rv_frozen, x, density, quantiles, ax, color)
 
-    side_legend(ax)
+    if legend == "title":
+        ax.set_title(label)
+    elif legend == "legend":
+        side_legend(ax)
     return ax
 
 
