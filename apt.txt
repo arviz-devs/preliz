@@ -1,2 +1,0 @@
-xvfb
-x11-utils
