@@ -1,7 +1,9 @@
+from re import S
 from .continuous import *
 from .discrete import *
 
-continuous = ["Beta", "Exponential", "Gamma", "LogNormal", "Normal", "Student"]
-discrete = ["Poisson"]
+all_continuous = [Beta, Exponential, Gamma, LogNormal, Normal, Student]
+all_discrete = [Poisson]
 
-__all__ = continuous + discrete
+
+__all__ = [s.__name__ for s in all_continuous] + [s.__name__ for s in all_discrete]

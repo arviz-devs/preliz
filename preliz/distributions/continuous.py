@@ -85,8 +85,10 @@ class Beta(Continuous):
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
-        return super().plot_pdf(box, quantiles, support, figsize, ax)
+    def plot_pdf(
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
+    ):
+        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
     def plot_cdf(self, support="full", figsize=None, ax=None):
         return super().plot_cdf(support, figsize, ax)
@@ -154,11 +156,13 @@ class Exponential(Continuous):
         self._update(lam)
 
     def fit_mle(self, sample, **kwargs):
-        lam, _ = self.dist.fit(sample, **kwargs)
-        self._update(lam)
+        _, lam = self.dist.fit(sample, **kwargs)
+        self._update(1 / lam)
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
-        return super().plot_pdf(box, quantiles, support, figsize, ax)
+    def plot_pdf(
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
+    ):
+        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
     def plot_cdf(self, support="full", figsize=None, ax=None):
         return super().plot_cdf(support, figsize, ax)
@@ -237,10 +241,12 @@ class Gamma(Continuous):
 
     def fit_mle(self, sample, **kwargs):
         alpha, _, beta = self.dist.fit(sample, **kwargs)
-        self._update(alpha, beta)
+        self._update(alpha, 1 / beta)
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
-        return super().plot_pdf(box, quantiles, support, figsize, ax)
+    def plot_pdf(
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
+    ):
+        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
     def plot_cdf(self, support="full", figsize=None, ax=None):
         return super().plot_cdf(support, figsize, ax)
@@ -322,10 +328,12 @@ class LogNormal(Continuous):
 
     def fit_mle(self, sample, **kwargs):
         sigma, _, mu = self.dist.fit(sample, **kwargs)
-        self._update(mu, sigma)
+        self._update(np.log(mu), sigma)
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
-        return super().plot_pdf(box, quantiles, support, figsize, ax)
+    def plot_pdf(
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
+    ):
+        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
     def plot_cdf(self, support="full", figsize=None, ax=None):
         return super().plot_cdf(support, figsize, ax)
@@ -402,8 +410,10 @@ class Normal(Continuous):
         mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
-        return super().plot_pdf(box, quantiles, support, figsize, ax)
+    def plot_pdf(
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
+    ):
+        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
     def plot_cdf(self, support="full", figsize=None, ax=None):
         return super().plot_cdf(support, figsize, ax)
@@ -491,8 +501,10 @@ class Student(Continuous):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, nu)
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
-        return super().plot_pdf(box, quantiles, support, figsize, ax)
+    def plot_pdf(
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
+    ):
+        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
     def plot_cdf(self, support="full", figsize=None, ax=None):
         return super().plot_cdf(support, figsize, ax)

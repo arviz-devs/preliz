@@ -10,8 +10,7 @@ from matplotlib import patches
 import numpy as np
 
 
-from .utils.roulette_utils import weights_to_sample, get_scipy_distributions, fit_to_sample
-from .utils.plot_utils import plot_boxlike
+from .utils.roulette_utils import weights_to_sample, get_distributions, fit_to_sample
 
 # pylint: disable=unused-argument
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figsize=None):
@@ -38,10 +37,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
 
     Returns
     -------
-    scipy.stats.distributions.rv_frozen
-        Notice that the returned rv_frozen object always use the scipy parametrization,
-        irrespective of the value of `parametrization` argument.
-        Unlike standard rv_frozen objects this one has a name attribute
+    PreliZ distribution
 
     References
     ----------
@@ -67,13 +63,11 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
         x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit, frame_grid_controls, canvas, bg_color
     )
 
-    quantiles = [0.05, 0.25, 0.75, 0.95]
-
-    rv_frozen = {"rv": None}
+    dist_return = {"rv": None}
     fig.canvas.mpl_connect(
         "figure_leave_event",
         lambda event: on_leave_fig(
-            event, grid, cvars, quantiles, x_min_entry, x_max_entry, x_bins_entry, ax_fit, rv_frozen
+            event, grid, cvars, x_min_entry, x_max_entry, x_bins_entry, ax_fit, dist_return
         ),
     )
 
@@ -81,7 +75,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
 
     tk.mainloop()
 
-    return rv_frozen["rv"]
+    return dist_return["rv"]
 
 
 def create_grid(x_min=0, x_max=1, nrows=10, ncols=10, ax=None):
@@ -147,7 +141,7 @@ class Rectangles:
                 self.fig.canvas.draw()
 
 
-def on_leave_fig(event, grid, cvars, quantiles, x_min, x_max, x_bins_entry, ax, rv_frozen):
+def on_leave_fig(event, grid, cvars, x_min, x_max, x_bins_entry, ax, dist_return):
     x_min = float(x_min.get())
     x_max = float(x_max.get())
     ncols = float(x_bins_entry.get())
@@ -156,24 +150,22 @@ def on_leave_fig(event, grid, cvars, quantiles, x_min, x_max, x_bins_entry, ax, 
     sample, filled_columns = weights_to_sample(grid.weights, x_min, x_range, ncols)
 
     if filled_columns > 1:
-        selected_distributions = get_scipy_distributions(cvars)
+        selected_distributions = get_distributions(cvars)
 
         if selected_distributions:
             reset_dist_panel(x_min, x_max, ax)
-            fitted_dist, params, x_vals, ref_pdf = fit_to_sample(
-                selected_distributions, sample, x_min, x_max, x_range
-            )
+            # fitted_dist, params, x_vals, ref_pdf = fit_to_sample(
+            #     selected_distributions, sample, x_min, x_max, x_range
+            # )
+            fitted_dist = fit_to_sample(selected_distributions, sample, x_min, x_max, x_range)
 
-            rv_frozen["rv"] = fitted_dist
+            dist_return["rv"] = fitted_dist
 
             if fitted_dist is None:
                 ax.set_title("domain error")
             else:
-                title = f"{fitted_dist.name}({params[0]:.1f}, {params[1]:.1f})"
-                ax.set_title(title)
-                plot_boxlike(fitted_dist, x_vals, ref_pdf, quantiles, ax)
-
-                for bound in fitted_dist.support():
+                fitted_dist.plot_pdf(box=True, legend="tittle", ax=ax)
+                for bound in fitted_dist.rv_frozen.support():
                     if np.isfinite(bound):
                         ax.plot(bound, 0, "ko")
     else:
@@ -234,16 +226,15 @@ def create_cbuttons(frame_cbuttons, bg_color, bu_color):
     Create check buttons to select distributions
     """
     dist_labels = ["Normal", "Beta", "Gamma", "LogNormal"]
-    dist_scipy = ["norm", "beta", "gamma", "lognorm"]
     cbuttons = []
     cvars = []
-    for text, value in zip(dist_labels, dist_scipy):
+    for text in dist_labels:
         var = tk.StringVar()
         cbutton = tk.Checkbutton(
             frame_cbuttons,
             text=text,
             variable=var,
-            onvalue=value,
+            onvalue=text,
             offvalue="",
             bg=bg_color,
             highlightthickness=0,

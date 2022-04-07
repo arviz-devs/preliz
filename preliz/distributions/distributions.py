@@ -78,6 +78,7 @@ class Distribution:
         box=False,
         quantiles=None,
         support="full",
+        legend="legend",
         figsize=None,
         ax=None,
     ):
@@ -100,7 +101,7 @@ class Distribution:
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_pdfpmf(self, box, quantiles, support, figsize, ax)
+            return plot_pdfpmf(self, box, quantiles, support, legend, figsize, ax)
         else:
             raise ValueError(
                 "Undefined distribution, "
