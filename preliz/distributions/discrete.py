@@ -74,8 +74,8 @@ class Poisson(Discrete):
         # This is not available from scipy. We will use our own implementation
         raise NotImplementedError
 
-    def plot_pdf(self, box=False, quantiles=None, support="full", figsize=None, ax=None):
-        return super().plot_pdf(box, quantiles, support, figsize, ax)
+    def plot_pdf(self, box=False, quantiles=None, support="full", label="label", figsize=None, ax=None):
+        return super().plot_pdf(box, quantiles, support, label, figsize, ax)
 
     def plot_cdf(self, support="full", figsize=None, ax=None):
         return super().plot_cdf(support, figsize, ax)
