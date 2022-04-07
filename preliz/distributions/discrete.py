@@ -75,7 +75,7 @@ class Poisson(Discrete):
         raise NotImplementedError
 
     def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="label", figsize=None, ax=None
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 

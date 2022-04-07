@@ -164,7 +164,7 @@ def on_leave_fig(event, grid, cvars, x_min, x_max, x_bins_entry, ax, dist_return
             if fitted_dist is None:
                 ax.set_title("domain error")
             else:
-                fitted_dist.plot_pdf(box=True, legend="tittle", ax=ax)
+                fitted_dist.plot_pdf(box=True, legend="title", ax=ax)
                 for bound in fitted_dist.rv_frozen.support():
                     if np.isfinite(bound):
                         ax.plot(bound, 0, "ko")

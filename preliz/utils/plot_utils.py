@@ -52,7 +52,7 @@ def plot_pdfpmf(dist, box, quantiles, support, legend, figsize, ax):
             quantiles = default_quantiles
         plot_boxlike(dist.rv_frozen, x, density, quantiles, ax, color)
 
-    if legend == "tittle":
+    if legend == "title":
         ax.set_title(label)
     elif legend == "legend":
         side_legend(ax)
