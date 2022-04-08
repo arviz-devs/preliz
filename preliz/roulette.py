@@ -10,7 +10,7 @@ from matplotlib import patches
 import numpy as np
 
 
-from .utils.roulette_utils import weights_to_sample, get_distributions, fit_to_sample
+from .utils.roulette_utils import weights_to_ecdf, get_distributions, fit_to_ecdf
 
 # pylint: disable=unused-argument
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figsize=None):
@@ -147,17 +147,22 @@ def on_leave_fig(event, grid, cvars, x_min, x_max, x_bins_entry, ax, dist_return
     ncols = float(x_bins_entry.get())
     x_range = x_max - x_min
 
-    sample, filled_columns = weights_to_sample(grid.weights, x_min, x_range, ncols)
+    x_vals, pcdf, mean, std, filled_columns = weights_to_ecdf(grid.weights, x_min, x_range, ncols)
 
     if filled_columns > 1:
         selected_distributions = get_distributions(cvars)
 
         if selected_distributions:
             reset_dist_panel(x_min, x_max, ax)
-            # fitted_dist, params, x_vals, ref_pdf = fit_to_sample(
-            #     selected_distributions, sample, x_min, x_max, x_range
-            # )
-            fitted_dist = fit_to_sample(selected_distributions, sample, x_min, x_max, x_range)
+            fitted_dist = fit_to_ecdf(
+                selected_distributions,
+                x_vals,
+                pcdf,
+                mean,
+                std,
+                x_min,
+                x_max,
+            )
 
             dist_return["rv"] = fitted_dist
 

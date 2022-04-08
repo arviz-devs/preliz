@@ -1,29 +1,39 @@
 import numpy as np
+from scipy.optimize import least_squares
+
 
 from ..distributions import all_continuous
 
 
-def weights_to_sample(weights, x_min, x_range, ncols):
+def weights_to_ecdf(weights, x_min, x_range, ncols):
     """
-    Turn the weights (chips) into a sample over a grid.
+    Turn the weights (chips) into the empirical cdf
     """
-
-    sample = []
     filled_columns = 0
+    x_vals = []
+    pcdf = []
+    cum_sum = 0
 
+    regularization = 0.001  # Not sure this is needed
+    values = list(weights.values())
+    mean = np.mean(values)
+    std = np.std(values)
+    total = sum(values) + ncols * regularization
     if any(weights.values()):
         for k, v in weights.items():
             if v != 0:
                 filled_columns += 1
-            la = np.repeat((k / ncols * x_range) + x_min + ((x_range / ncols) / 2), v * 500 + 1)
-            sample.extend(la)
+            x_val = (k / ncols * x_range) + x_min + ((x_range / ncols))
+            x_vals.append(x_val)
+            cum_sum += (v + regularization) / total
+            pcdf.append(cum_sum)
 
-    return sample, filled_columns
+    return x_vals, pcdf, mean, std, filled_columns
 
 
 def get_distributions(cvars):
     """
-    Generate a subset of scipy.stats distributions which names agrees with those in cvars
+    Generate a subset of distributions which names agrees with those in cvars
     """
     selection = [cvar.get() for cvar in cvars]
     dists = []
@@ -34,27 +44,30 @@ def get_distributions(cvars):
     return dists
 
 
-# pylint: disable=unused-argument
-def fit_to_sample(selected_distributions, sample, x_min, x_max, x_range):
+def fit_to_ecdf(selected_distributions, x_vals, pcdf, mean, std, x_min, x_max):
     """
     Use a MLE approximated over a grid of values defined by x_min and x_max
     """
-    x_vals = np.linspace(x_min, x_max, 500)
-    sum_pdf_old = -np.inf
+    loss_old = np.inf
     fitted_dist = None
     for dist in selected_distributions:
         if x_min >= dist.dist.a and x_max <= dist.dist.b:
-            dist.fit_mle(sample)
-            # if dist.name == "beta_":
-            #    dist.fit_mle(sample, floc=x_min, fscale=x_range)
-            #    if (x_min < 0 or x_max > 1):
-            #        dist.name = "scaled beta"
-            # else:
+            dist.fit_moments(mean, std)
+            init_vals = dist.params
+            opt = least_squares(
+                func, x0=init_vals, args=(dist, x_vals, pcdf)
+            )  # pylint: disable=protected-access
+            dist._update(*opt["x"])
+            loss = opt["cost"]
 
-            logpdf = dist.rv_frozen.logpdf(x_vals)
-            sum_pdf = np.sum(logpdf[np.isfinite(logpdf)])
-            if sum_pdf > sum_pdf_old:
-                sum_pdf_old = sum_pdf
+            if loss < loss_old:
+                loss_old = loss
                 fitted_dist = dist
 
     return fitted_dist
+
+
+def func(params, dist, x_vals, pcdf):
+    dist._update(*params)  # pylint: disable=protected-access
+    loss = dist.rv_frozen.cdf(x_vals) - pcdf
+    return loss
