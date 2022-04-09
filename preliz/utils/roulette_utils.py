@@ -14,18 +14,17 @@ def weights_to_ecdf(weights, x_min, x_range, ncols):
     pcdf = []
     cum_sum = 0
 
-    regularization = 0.001  # Not sure this is needed
     values = list(weights.values())
     mean = np.mean(values)
     std = np.std(values)
-    total = sum(values) + ncols * regularization
+    total = sum(values) + ncols
     if any(weights.values()):
         for k, v in weights.items():
             if v != 0:
                 filled_columns += 1
             x_val = (k / ncols * x_range) + x_min + ((x_range / ncols))
             x_vals.append(x_val)
-            cum_sum += (v + regularization) / total
+            cum_sum += v / total
             pcdf.append(cum_sum)
 
     return x_vals, pcdf, mean, std, filled_columns

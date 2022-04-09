@@ -67,9 +67,9 @@ class Distribution:
         upper_ep = self.rv_frozen.b
 
         if not np.isfinite(lower_ep) or support == "restricted":
-            lower_ep = self.rv_frozen.ppf(0.001)
+            lower_ep = self.rv_frozen.ppf(0.0001)
         if not np.isfinite(upper_ep) or support == "restricted":
-            upper_ep = self.rv_frozen.ppf(0.999)
+            upper_ep = self.rv_frozen.ppf(0.9999)
 
         return lower_ep, upper_ep
 
@@ -111,7 +111,7 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
         """
         Plot the cumulative distribution function.
 
@@ -120,30 +120,36 @@ class Distribution:
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"legend"`` a
+            ``"title"`` or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_cdf(self, support, figsize, ax)
+            return plot_cdf(self, support, legend, figsize, ax)
         else:
             raise ValueError(
                 "Undefined distribution, "
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def plot_ppf(self, figsize=None, ax=None):
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
         """
         Plot the quantile function.
 
         Parameters
         ----------
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"legend"`` a
+            ``"title"`` or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_ppf(self, figsize, ax)
+            return plot_ppf(self, legend, figsize, ax)
         else:
             raise ValueError(
                 "Undefined distribution, "
