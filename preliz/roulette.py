@@ -2,18 +2,14 @@
 
 import tkinter as tk
 from math import ceil, floor
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib import patches
-
 import numpy as np
-
-
 from .utils.roulette_utils import weights_to_ecdf, get_distributions, fit_to_ecdf
 
-# pylint: disable=unused-argument
-def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figsize=None):
+
+def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
     """
     Prior elicitation for 1D distribution using the roulette method.
 
@@ -29,9 +25,6 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
         Number of rows for the grid. Defaults to 10.
     ncols: Optional[int]
         Number of columns for the grid. Defaults to 10.
-    parametrization: Optional[str]
-        Parametrization used to report the result of the fit.
-        Currently only "PyMC" parametrization is supported.
     figsize: Optional[Tuple[int, int]]
         Figure size. If None it will be defined automatically.
 
@@ -52,7 +45,9 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
         figsize = (8, 6)
 
     root = create_main(bg_color)  # pylint: disable=assignment-from-no-return
-    frame_grid_controls, frame_matplotib, frame_cbuttons = create_frames(root, bg_color)
+    frame_grid_controls, frame_matplotib, frame_cbuttons, frame_rbuttons = create_frames(
+        root, bg_color
+    )
     canvas, fig, ax_grid, ax_fit = create_figure(frame_matplotib, figsize)
 
     coll = create_grid(x_min, x_max, nrows, ncols, ax=ax_grid)
@@ -62,12 +57,17 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, parametrization="PyMC", figs
     x_min_entry, x_max_entry, x_bins_entry = create_entries_xrange_grid(
         x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit, frame_grid_controls, canvas, bg_color
     )
+    reset_dist_panel(x_min, x_max, ax_fit, yticks=True)
 
     dist_return = {"rv": None}
+    rvar = create_rbuttons(
+        canvas, grid, frame_rbuttons, bg_color, dist_return, x_min, x_max, ax_fit
+    )
+
     fig.canvas.mpl_connect(
         "figure_leave_event",
         lambda event: on_leave_fig(
-            event, grid, cvars, x_min_entry, x_max_entry, x_bins_entry, ax_fit, dist_return
+            event, grid, cvars, rvar, x_min_entry, x_max_entry, x_bins_entry, ax_fit, dist_return
         ),
     )
 
@@ -82,8 +82,8 @@ def create_grid(x_min=0, x_max=1, nrows=10, ncols=10, ax=None):
     """
     Create a grid of rectangles
     """
-    xx = np.arange(0, ncols)
-    yy = np.arange(0, nrows)
+    xx = np.arange(ncols)
+    yy = np.arange(nrows)
 
     if ncols < 10:
         num = ncols
@@ -141,10 +141,11 @@ class Rectangles:
                 self.fig.canvas.draw()
 
 
-def on_leave_fig(event, grid, cvars, x_min, x_max, x_bins_entry, ax, dist_return):
+def on_leave_fig(event, grid, cvars, rvar, x_min, x_max, x_bins_entry, ax, dist_return):
     x_min = float(x_min.get())
     x_max = float(x_max.get())
     ncols = float(x_bins_entry.get())
+    kind_plot = int(rvar.get())
     x_range = x_max - x_min
 
     x_vals, pcdf, mean, std, filled_columns = weights_to_ecdf(grid.weights, x_min, x_range, ncols)
@@ -153,7 +154,7 @@ def on_leave_fig(event, grid, cvars, x_min, x_max, x_bins_entry, ax, dist_return
         selected_distributions = get_distributions(cvars)
 
         if selected_distributions:
-            reset_dist_panel(x_min, x_max, ax)
+            reset_dist_panel(x_min, x_max, ax, yticks=False)
             fitted_dist = fit_to_ecdf(
                 selected_distributions,
                 x_vals,
@@ -169,12 +170,9 @@ def on_leave_fig(event, grid, cvars, x_min, x_max, x_bins_entry, ax, dist_return
             if fitted_dist is None:
                 ax.set_title("domain error")
             else:
-                fitted_dist.plot_pdf(box=True, legend="title", ax=ax)
-                for bound in fitted_dist.rv_frozen.support():
-                    if np.isfinite(bound):
-                        ax.plot(bound, 0, "ko")
+                representations(fitted_dist, kind_plot, ax)
     else:
-        reset_dist_panel(x_min, x_max, ax)
+        reset_dist_panel(x_min, x_max, ax, yticks=True)
     event.canvas.draw()
 
 
@@ -192,22 +190,47 @@ def update_grid(canvas, x_min, x_max, x_bins_entry, y_bins_entry, grid, ax_grid,
     grid.ncols = ncols
     grid.nrows = nrows
     grid.weights = {k: 0 for k in range(0, ncols)}
-    reset_dist_panel(x_min, x_max, ax_fit)
+    reset_dist_panel(x_min, x_max, ax_fit, yticks=True)
     ax_grid.set_yticks([])
     ax_grid.relim()
     ax_grid.autoscale_view()
     canvas.draw()
 
 
-def reset_dist_panel(x_min, x_max, ax):
+def reset_dist_panel(x_min, x_max, ax, yticks):
     """
     Clean the distribution subplot
     """
     ax.cla()
-    ax.set_yticks([])
+    if yticks:
+        ax.set_yticks([])
     ax.set_xlim(x_min, x_max)
     ax.relim()
     ax.autoscale_view()
+
+
+def replot(canvas, grid, fitted_dist, rvar, x_min, x_max, ax):
+    if any(grid.weights.values()):
+        reset_dist_panel(x_min, x_max, ax, yticks=False)
+        kind_plot = int(rvar.get())
+        representations(fitted_dist, kind_plot, ax)
+        canvas.draw()
+
+
+def representations(fitted_dist, kind_plot, ax):
+    if kind_plot == 0:
+        fitted_dist.plot_pdf(box=True, legend="title", ax=ax)
+        ax.set_yticks([])
+
+        for bound in fitted_dist.rv_frozen.support():
+            if np.isfinite(bound):
+                ax.plot(bound, 0, "ko")
+
+    elif kind_plot == 1:
+        fitted_dist.plot_cdf(legend="title", ax=ax)
+    elif kind_plot == 2:
+        fitted_dist.plot_ppf(legend="title", ax=ax)
+        ax.set_xlim(0, 1)
 
 
 def select_all(cbuttons):
@@ -257,6 +280,30 @@ def create_cbuttons(frame_cbuttons, bg_color, bu_color):
     ).pack(side=tk.LEFT)
 
     return cvars
+
+
+def create_rbuttons(canvas, grid, frame_rbuttons, bg_color, dist_return, x_min, x_max, ax_fit):
+    """
+    Create check buttons to select distributions
+    """
+    dist_labels = ["pdf", "cdf", "ppf"]
+    rbuttons = []
+    rvar = tk.StringVar()
+    for idx, text in enumerate(dist_labels):
+        rbutton = tk.Radiobutton(
+            frame_rbuttons,
+            text=text,
+            variable=rvar,
+            value=idx,
+            bg=bg_color,
+            command=lambda: replot(canvas, grid, dist_return["rv"], rvar, x_min, x_max, ax_fit),
+            highlightthickness=0,
+        )
+        rbutton.pack(anchor=tk.W)
+        rbuttons.append(rbutton)
+    rbuttons[0].select()
+
+    return rvar
 
 
 def create_entries_xrange_grid(
@@ -345,11 +392,13 @@ def create_frames(root, bg_color):
     frame_grid_controls = tk.Frame(root, bg=bg_color)
     frame_matplotib = tk.Frame(root)
     frame_cbuttons = tk.Frame(root, bg=bg_color)
+    frame_rbuttons = tk.Frame(root, bg=bg_color)
     frame_grid_controls.grid(row=0, column=1, padx=15, pady=15)
     frame_matplotib.grid(row=0, rowspan=2, column=0, sticky="we", padx=25, pady=15)
     frame_cbuttons.grid(row=3, sticky="w", padx=25, pady=15)
+    frame_rbuttons.grid(row=1, column=1, padx=15, pady=15)
 
-    return frame_grid_controls, frame_matplotib, frame_cbuttons
+    return frame_grid_controls, frame_matplotib, frame_cbuttons, frame_rbuttons
 
 
 def create_figure(frame_matplotib, figsize):

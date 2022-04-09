@@ -79,8 +79,8 @@ class Poisson(Discrete):
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
-        return super().plot_cdf(support, figsize, ax)
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
 
-    def plot_ppf(self, figsize=None, ax=None):
-        return super().plot_ppf(figsize, ax)
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)

@@ -90,11 +90,11 @@ class Beta(Continuous):
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
-        return super().plot_cdf(support, figsize, ax)
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
 
-    def plot_ppf(self, figsize=None, ax=None):
-        return super().plot_ppf(figsize, ax)
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)
 
 
 class Exponential(Continuous):
@@ -164,11 +164,11 @@ class Exponential(Continuous):
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
-        return super().plot_cdf(support, figsize, ax)
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
 
-    def plot_ppf(self, figsize=None, ax=None):
-        return super().plot_ppf(figsize, ax)
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)
 
 
 class Gamma(Continuous):
@@ -248,11 +248,11 @@ class Gamma(Continuous):
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
-        return super().plot_cdf(support, figsize, ax)
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
 
-    def plot_ppf(self, figsize=None, ax=None):
-        return super().plot_ppf(figsize, ax)
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)
 
 
 class LogNormal(Continuous):
@@ -335,11 +335,11 @@ class LogNormal(Continuous):
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
-        return super().plot_cdf(support, figsize, ax)
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
 
-    def plot_ppf(self, figsize=None, ax=None):
-        return super().plot_ppf(figsize, ax)
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)
 
 
 class Normal(Continuous):
@@ -415,11 +415,11 @@ class Normal(Continuous):
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
-        return super().plot_cdf(support, figsize, ax)
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
 
-    def plot_ppf(self, figsize=None, ax=None):
-        return super().plot_ppf(figsize, ax)
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)
 
 
 class Student(Continuous):
@@ -506,8 +506,8 @@ class Student(Continuous):
     ):
         return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
 
-    def plot_cdf(self, support="full", figsize=None, ax=None):
-        return super().plot_cdf(support, figsize, ax)
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
 
-    def plot_ppf(self, figsize=None, ax=None):
-        return super().plot_ppf(figsize, ax)
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)

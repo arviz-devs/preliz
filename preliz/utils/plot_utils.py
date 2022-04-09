@@ -59,7 +59,7 @@ def plot_pdfpmf(dist, box, quantiles, support, legend, figsize, ax):
     return ax
 
 
-def plot_cdf(dist, support, figsize, ax):
+def plot_cdf(dist, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
@@ -69,11 +69,14 @@ def plot_cdf(dist, support, figsize, ax):
     cdf = dist.rv_frozen.cdf(x)
     ax.plot(x, cdf, label=label, color=color)
 
-    side_legend(ax)
+    if legend == "title":
+        ax.set_title(label)
+    elif legend == "legend":
+        side_legend(ax)
     return ax
 
 
-def plot_ppf(dist, figsize, ax):
+def plot_ppf(dist, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
@@ -81,7 +84,10 @@ def plot_ppf(dist, figsize, ax):
     x = np.linspace(0, 1, 1000)
     ax.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
 
-    side_legend(ax)
+    if legend == "title":
+        ax.set_title(label)
+    elif legend == "legend":
+        side_legend(ax)
     return ax
 
 

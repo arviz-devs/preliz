@@ -59,7 +59,7 @@ thebe_config = {
     "always_load": True,
     "repository_url": "https://github.com/arviz-devs/arviz_sandbox",
     "repository_branch": "main",
-    "selector": "div.highlight-ipython3"
+    "selector": "div.highlight-ipython3",
 }
 
 # Add any paths that contain templates here, relative to this directory.
