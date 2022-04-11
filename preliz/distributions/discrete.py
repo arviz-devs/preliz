@@ -48,7 +48,7 @@ class Poisson(Discrete):
         super().__init__()
         self.mu = mu
         self.name = "poisson"
-        self.params = (self.mu, None)
+        self.params = (self.mu,)
         self.param_names = ("mu",)
         self.dist = stats.poisson
         self._update_rv_frozen()
@@ -58,7 +58,7 @@ class Poisson(Discrete):
 
     def _update(self, mu):
         self.mu = mu
-        self.params = (self.mu, None)
+        self.params = (self.mu,)
         self._update_rv_frozen()
 
     def fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument

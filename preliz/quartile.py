@@ -61,7 +61,7 @@ def quartile(
     # I am doing one extra step for the normal!!!
     distribution.fit_moments(mean=normal_dist.mu, sigma=normal_dist.sigma)
 
-    optimize_quartile(distribution, (q1, q2, q3))
+    opt = optimize_quartile(distribution, (q1, q2, q3))
 
     r_error = relative_error(distribution, q1, q3, 0.5)
 
@@ -78,4 +78,4 @@ def quartile(
         else:
             cid = -1
         ax.plot([q1, q2, q3], [0, 0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
-    return ax
+    return ax, opt

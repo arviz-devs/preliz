@@ -127,7 +127,7 @@ class Exponential(Continuous):
         super().__init__()
         self.lam = lam
         self.name = "exponential"
-        self.params = (self.lam, None)
+        self.params = (self.lam,)
         self.param_names = ("lam",)
         self.dist = stats.expon
         self._update_rv_frozen()
@@ -137,7 +137,7 @@ class Exponential(Continuous):
 
     def _update(self, lam):
         self.lam = lam
-        self.params = (self.lam, None)
+        self.params = (self.lam,)
         self._update_rv_frozen()
 
     def fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument

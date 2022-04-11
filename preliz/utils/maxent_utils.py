@@ -19,10 +19,11 @@ def optimize_max_ent(dist, lower, upper, mass):
         "args": (dist, lower, upper, mass),
     }
     init_vals = dist.params
-    idx = 2 - init_vals.count(None)
+    if dist.name == "student":
+        init_vals = init_vals[1:]
 
-    opt = minimize(dist._entropy_loss, x0=init_vals[:idx], constraints=cons)
-    dist._update = opt["x"][:idx]
+    opt = minimize(dist._entropy_loss, x0=init_vals, constraints=cons)
+    dist._update = opt["x"]
 
     return opt
 
@@ -34,10 +35,11 @@ def optimize_quartile(dist, x_vals):
         return loss
 
     init_vals = dist.params
-    idx = 2 - init_vals.count(None)
+    if dist.name == "student":
+        init_vals = init_vals[1:]
 
-    opt = least_squares(func, x0=init_vals[:idx], args=(dist, x_vals))
-    dist._update = opt["x"][:idx]
+    opt = least_squares(func, x0=init_vals, args=(dist, x_vals))
+    dist._update = opt["x"]
 
     return opt
 

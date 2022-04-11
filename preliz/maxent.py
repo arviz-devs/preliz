@@ -70,7 +70,7 @@ def maxent(
     # I am doing one extra step for the normal!!!
     distribution.fit_moments(mean=normal_dist.mu, sigma=normal_dist.sigma)
 
-    optimize_max_ent(distribution, lower, upper, mass)
+    opt = optimize_max_ent(distribution, lower, upper, mass)
 
     r_error = relative_error(distribution, lower, upper, mass)
 
@@ -87,4 +87,4 @@ def maxent(
         else:
             cid = -1
         ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
-    return ax
+    return ax, opt
