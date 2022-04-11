@@ -17,7 +17,7 @@ def weights_to_ecdf(weights, x_min, x_range, ncols):
     values = list(weights.values())
     mean = np.mean(values)
     std = np.std(values)
-    total = sum(values) + ncols
+    total = sum(values)
     if any(weights.values()):
         for k, v in weights.items():
             if v != 0:
