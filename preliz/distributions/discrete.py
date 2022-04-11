@@ -5,7 +5,6 @@ Discrete probability distributions.
 from scipy import stats
 
 from .distributions import Discrete
-from ..utils.maxent_utils import optimize
 
 
 class Poisson(Discrete):
@@ -56,11 +55,6 @@ class Poisson(Discrete):
 
     def _get_frozen(self):
         return self.dist(self.mu)
-
-    def _optimize(self, lower, upper, mass):
-        self.opt = optimize(self, self.params[0], lower, upper, mass)
-        mu = self.opt["x"][0]
-        self._update(mu)
 
     def _update(self, mu):
         self.mu = mu

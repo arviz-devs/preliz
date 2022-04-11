@@ -6,7 +6,6 @@ import numpy as np
 from scipy import stats
 
 from .distributions import Continuous
-from ..utils.maxent_utils import optimize
 
 
 class Beta(Continuous):
@@ -57,11 +56,6 @@ class Beta(Continuous):
 
     def _get_frozen(self):
         return self.dist(self.alpha, self.beta)
-
-    def _optimize(self, lower, upper, mass):
-        self.opt = optimize(self, self.params, lower, upper, mass)
-        alpha, beta = self.opt["x"]
-        self._update(alpha, beta)
 
     def _update(self, alpha, beta):
         self.alpha = alpha
@@ -141,11 +135,6 @@ class Exponential(Continuous):
     def _get_frozen(self):
         return self.dist(scale=1 / self.lam)
 
-    def _optimize(self, lower, upper, mass):
-        self.opt = optimize(self, self.params[0], lower, upper, mass)
-        lam = self.opt["x"][0]
-        self._update(lam)
-
     def _update(self, lam):
         self.lam = lam
         self.params = (self.lam, None)
@@ -222,11 +211,6 @@ class Gamma(Continuous):
 
     def _get_frozen(self):
         return self.dist(a=self.alpha, scale=1 / self.beta)
-
-    def _optimize(self, lower, upper, mass):
-        self.opt = optimize(self, self.params, lower, upper, mass)
-        alpha, beta = self.opt["x"]
-        self._update(alpha, beta)
 
     def _update(self, alpha, beta):
         self.alpha = alpha
@@ -310,11 +294,6 @@ class LogNormal(Continuous):
     def _get_frozen(self):
         return self.dist(self.sigma, scale=np.exp(self.mu))
 
-    def _optimize(self, lower, upper, mass):
-        self.opt = optimize(self, self.params, lower, upper, mass)
-        mu, sigma = self.opt["x"]
-        self._update(mu, sigma)
-
     def _update(self, mu, sigma):
         self.mu = mu
         self.sigma = sigma
@@ -397,11 +376,6 @@ class Normal(Continuous):
         self.sigma = sigma
         self.params = (self.mu, self.sigma)
         self._update_rv_frozen()
-
-    def _optimize(self, lower, upper, mass):
-        self.opt = optimize(self, self.params, lower, upper, mass)
-        mu, sigma = self.opt["x"]
-        self._update(mu, sigma)
 
     def fit_moments(self, mean, sigma):
         self._update(mean, sigma)
@@ -487,11 +461,6 @@ class Student(Continuous):
         self.sigma = sigma
         self.params = (self.nu, self.mu, self.sigma)
         self._update_rv_frozen()
-
-    def _optimize(self, lower, upper, mass):
-        self.opt = optimize(self, self.params[1:], lower, upper, mass)
-        mu, sigma = self.opt["x"]
-        self._update(mu, sigma)
 
     def fit_moments(self, mean, sigma):
         # This is a placeholder!!!

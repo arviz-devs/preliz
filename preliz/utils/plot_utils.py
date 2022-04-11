@@ -7,19 +7,16 @@ from matplotlib import _pylab_helpers
 default_quantiles = [0.05, 0.25, 0.75, 0.95]
 
 
-def plot_boxlike(fitted_dist, x_vals, ref_pdf, quantiles, ax, color=None):
+def plot_boxlike(fitted_dist, quantiles, ax):
     """
-    Plot the mean as a dot and two inter-quantile ranges as lines
+    Plot the median as a dot and two inter-quantile ranges as lines
     """
-    if quantiles is None:
-        quantiles = default_quantiles
     q_s = fitted_dist.ppf(quantiles)
-    mean = fitted_dist.moment(1)
+    median = fitted_dist.ppf(0.5)
 
-    ax.plot(x_vals, ref_pdf, color=color)
     ax.plot([q_s[1], q_s[2]], [0, 0], "k", lw=4)
     ax.plot([q_s[0], q_s[3]], [0, 0], "k", lw=2)
-    ax.plot(mean, 0, "w.")
+    ax.plot(median, 0, "w.")
 
 
 def plot_boxlike2(sample, ax):
@@ -50,7 +47,7 @@ def plot_pdfpmf(dist, box, quantiles, support, legend, figsize, ax):
     if box:
         if quantiles is None:
             quantiles = default_quantiles
-        plot_boxlike(dist.rv_frozen, x, density, quantiles, ax, color)
+        plot_boxlike(dist.rv_frozen, quantiles, ax)
 
     if legend == "title":
         ax.set_title(label)
