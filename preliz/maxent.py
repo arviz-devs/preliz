@@ -1,7 +1,7 @@
 import logging
 
 from .distributions import Normal
-from .utils.maxent_utils import relative_error, end_points_ints
+from .utils.maxent_utils import relative_error, end_points_ints, optimize_max_ent
 
 _log = logging.getLogger("preliz")
 
@@ -12,7 +12,7 @@ def maxent(
     upper=1,
     mass=0.90,
     plot=True,
-    figsize=None,
+    plot_kwargs=None,
     ax=None,
 ):
     """
@@ -30,27 +30,24 @@ def maxent(
     mass: float
         Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.9
     plot : bool
-        Whether to plot the distribution, and lower and upper bounds. Defautls to True.
-    figsize : tuple
-        size of the figure when ``plot=True``
+        Whether to plot the distribution, and lower and upper bounds. Defaults to True.
+    plot_kwargs : dict
+        Dictionary passed to the method ``plot_pdf()`` of ``distribution``.
     ax : matplotlib axes
 
     Returns
     -------
 
     axes: matplotlib axes
-    rv_frozen : scipy.stats.distributions.rv_frozen
-        Notice that the returned rv_frozen object always use the scipy parametrization,
-        irrespective of the value of `parametrization` argument.
-        Unlike standard rv_frozen objects this one has a name attribute
-    opt : scipy.optimize.OptimizeResult
-        Represents the optimization result.
     """
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")
 
     if upper <= lower:
         raise ValueError("upper should be larger than lower")
+
+    if plot_kwargs is None:
+        plot_kwargs = {}
 
     if distribution is None:
         distribution = Normal()
@@ -68,14 +65,14 @@ def maxent(
     mu_init = (lower + upper) / 2
     sigma_init = ((upper - lower) / 4) / mass
     normal_dist = Normal(mu_init, sigma_init)
-    normal_dist._optimize(lower, upper, mass)
+    optimize_max_ent(normal_dist, lower, upper, mass)
 
     # I am doing one extra step for the normal!!!
     distribution.fit_moments(mean=normal_dist.mu, sigma=normal_dist.sigma)
 
-    distribution._optimize(lower, upper, mass)
+    opt = optimize_max_ent(distribution, lower, upper, mass)
 
-    r_error = relative_error(distribution, upper, lower, mass)
+    r_error = relative_error(distribution, lower, upper, mass)
 
     if r_error > 0.01:
         _log.info(
@@ -84,6 +81,10 @@ def maxent(
         )
 
     if plot:
-        ax = distribution.plot_pdf(figsize=figsize)
-        ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[-1].get_c(), alpha=0.5)
-    return ax
+        ax = distribution.plot_pdf(plot_kwargs)
+        if plot_kwargs.get("box"):
+            cid = -4
+        else:
+            cid = -1
+        ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
+    return ax, opt

@@ -10,9 +10,10 @@ from matplotlib import rcParams
 from .maxent import maxent
 from .ppa import ppa
 from .roulette import roulette
+from .quartile import quartile
 from .distributions import *
 
-__all__ = ["maxent", "ppa", "roulette"]
+__all__ = ["maxent", "ppa", "roulette", "quartile"]
 
 __version__ = "0.0.1.dev0"
 
