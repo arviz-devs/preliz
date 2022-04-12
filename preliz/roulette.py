@@ -6,7 +6,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib import patches
 import numpy as np
-from .utils.roulette_utils import weights_to_ecdf, get_distributions, fit_to_ecdf
+
+from preliz.utils.optimization import optimize_roulette
+from .distributions import all_continuous
 
 
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
@@ -413,3 +415,59 @@ def create_figure(frame_matplotib, figsize):
     canvas = FigureCanvasTkAgg(fig, master=frame_matplotib)
     canvas.draw()
     return canvas, fig, ax_grid, ax_fit
+
+
+def weights_to_ecdf(weights, x_min, x_range, ncols):
+    """
+    Turn the weights (chips) into the empirical cdf
+    """
+    filled_columns = 0
+    x_vals = []
+    pcdf = []
+    cum_sum = 0
+
+    values = list(weights.values())
+    mean = np.mean(values)
+    std = np.std(values)
+    total = sum(values)
+    if any(weights.values()):
+        for k, v in weights.items():
+            if v != 0:
+                filled_columns += 1
+            x_val = (k / ncols * x_range) + x_min + ((x_range / ncols))
+            x_vals.append(x_val)
+            cum_sum += v / total
+            pcdf.append(cum_sum)
+
+    return x_vals, pcdf, mean, std, filled_columns
+
+
+def get_distributions(cvars):
+    """
+    Generate a subset of distributions which names agrees with those in cvars
+    """
+    selection = [cvar.get() for cvar in cvars]
+    dists = []
+    for dist in all_continuous:
+        if dist.__name__ in selection:
+            dists.append(dist())
+
+    return dists
+
+
+def fit_to_ecdf(selected_distributions, x_vals, pcdf, mean, std, x_min, x_max):
+    """
+    Use a MLE approximated over a grid of values defined by x_min and x_max
+    """
+    loss_old = np.inf
+    fitted_dist = None
+    for dist in selected_distributions:
+        if x_min >= dist.dist.a and x_max <= dist.dist.b:
+            dist.fit_moments(mean, std)
+            loss = optimize_roulette(dist, x_vals, pcdf)
+
+            if loss < loss_old:
+                loss_old = loss
+                fitted_dist = dist
+
+    return fitted_dist
