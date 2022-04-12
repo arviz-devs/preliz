@@ -1,7 +1,7 @@
 import logging
 
 from .distributions import Normal
-from .utils.maxent_utils import relative_error, end_points_ints, optimize_max_ent
+from .utils.optimization import relative_error, optimize_max_ent
 
 _log = logging.getLogger("preliz")
 
@@ -88,3 +88,15 @@ def maxent(
             cid = -1
         ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
     return ax, opt
+
+
+def end_points_ints(lower, upper):
+    return is_integer_num(lower) and is_integer_num(upper)
+
+
+def is_integer_num(obj):
+    if isinstance(obj, int):
+        return True
+    if isinstance(obj, float):
+        return obj.is_integer()
+    return False

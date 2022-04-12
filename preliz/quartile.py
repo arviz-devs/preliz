@@ -1,7 +1,7 @@
 import logging
 
 from .distributions import Normal
-from .utils.maxent_utils import relative_error, optimize_quartile
+from .utils.optimization import relative_error, optimize_quartile
 
 _log = logging.getLogger("preliz")
 

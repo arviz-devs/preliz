@@ -28,11 +28,6 @@ class Distribution:
         else:
             return self.name
 
-    def _entropy_loss(self, params):
-        self._update(*params)
-        rv_frozen = self.rv_frozen
-        return -rv_frozen.entropy()
-
     def _check_boundaries(self, lower, upper):
         """Evaluate if the lower and upper values are in the support of the distribution"""
         domain_error = (
