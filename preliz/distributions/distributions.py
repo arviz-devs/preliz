@@ -151,6 +151,19 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
+    def fit_moments(self, mean, sigma):
+        """
+        Estimate the parameters of the distribution from the mean and standard deviation.
+
+        Parameters
+        ----------
+        mean : float
+            mean value
+        sigma : float
+            standard deviation
+        """
+        raise NotImplementedError
+
 
 class Continuous(Distribution):
     """Base class for continuous distributions."""
@@ -167,6 +180,19 @@ class Continuous(Distribution):
         x_vals = np.linspace(lower_ep, upper_ep, 1000)
         return x_vals
 
+    def fit_mle(self, sample, **kwargs):
+        """
+        Estimate the parameters of the distribution from a sample by maximizing the likelihood.
+
+        Parameters
+        ----------
+        sample : array-like
+            a sample
+        kwargs : dict
+            keywords arguments passed to scipy.stats.rv_continuous.fit
+        """
+        raise NotImplementedError
+
 
 class Discrete(Distribution):
     """Base class for discrete distributions."""
@@ -182,3 +208,12 @@ class Discrete(Distribution):
         lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals
+
+    def fit_mle(self, sample):
+        """
+        Estimate the parameters of the distribution from a sample by maximizing the likelihood.
+
+        sample : array-like
+            a sample
+        """
+        raise NotImplementedError

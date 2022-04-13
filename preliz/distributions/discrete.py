@@ -81,17 +81,6 @@ class Binomial(Discrete):
         p = x_bar / n
         self._update(n, p)
 
-    def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
-    ):
-        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
-
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
-        return super().plot_cdf(support, legend, figsize, ax)
-
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
-        return super().plot_ppf(legend, figsize, ax)
-
 
 class NegativeBinomial(Discrete):
     R"""

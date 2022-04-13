@@ -64,18 +64,12 @@ class Beta(Continuous):
         self._update_rv_frozen()
 
     def fit_moments(self, mean, sigma):
-        """
-        Estimate the parameters of the distribution from the mean and standard deviation.
-        """
         kappa = (mean * (1 - mean) / (sigma) ** 2) - 1
         alpha = max(0.5, mean * kappa)
         beta = max(0.5, (1 - mean) * kappa)
         self._update(alpha, beta)
 
     def fit_mle(self, sample, **kwargs):
-        """
-        Estimate the parameters of the distribution from a sample by maximizing the likelihood.
-        """
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 
