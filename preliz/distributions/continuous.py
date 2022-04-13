@@ -1,7 +1,6 @@
 """
 Continuous probability distributions.
 """
-# pylint: disable=useless-super-delegation
 import numpy as np
 from scipy import stats
 
@@ -73,26 +72,6 @@ class Beta(Continuous):
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 
-    def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
-    ):
-        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
-
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
-        return super().plot_cdf(support, legend, figsize, ax)
-
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
-        return super().plot_ppf(legend, figsize, ax)
-
-    def xvals(self, support="full"):
-        return super().xvals(support)
-
-    def finite_endpoints(self, support="full"):
-        return super().finite_endpoints(support)
-
-    def check_endpoints(self, lower, upper):
-        return super().check_endpoints(lower, upper)
-
 
 class Exponential(Continuous):
     r"""
@@ -150,26 +129,6 @@ class Exponential(Continuous):
     def fit_mle(self, sample, **kwargs):
         _, lam = self.dist.fit(sample, **kwargs)
         self._update(1 / lam)
-
-    def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
-    ):
-        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
-
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
-        return super().plot_cdf(support, legend, figsize, ax)
-
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
-        return super().plot_ppf(legend, figsize, ax)
-
-    def xvals(self, support="full"):
-        return super().xvals(support)
-
-    def finite_endpoints(self, support="full"):
-        return super().finite_endpoints(support)
-
-    def check_endpoints(self, lower, upper):
-        return super().check_endpoints(lower, upper)
 
 
 class Gamma(Continuous):
@@ -238,26 +197,6 @@ class Gamma(Continuous):
     def fit_mle(self, sample, **kwargs):
         alpha, _, beta = self.dist.fit(sample, **kwargs)
         self._update(alpha, 1 / beta)
-
-    def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
-    ):
-        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
-
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
-        return super().plot_cdf(support, legend, figsize, ax)
-
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
-        return super().plot_ppf(legend, figsize, ax)
-
-    def xvals(self, support="full"):
-        return super().xvals(support)
-
-    def finite_endpoints(self, support="full"):
-        return super().finite_endpoints(support)
-
-    def check_endpoints(self, lower, upper):
-        return super().check_endpoints(lower, upper)
 
 
 class LogNormal(Continuous):
@@ -330,26 +269,6 @@ class LogNormal(Continuous):
         sigma, _, mu = self.dist.fit(sample, **kwargs)
         self._update(np.log(mu), sigma)
 
-    def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
-    ):
-        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
-
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
-        return super().plot_cdf(support, legend, figsize, ax)
-
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
-        return super().plot_ppf(legend, figsize, ax)
-
-    def xvals(self, support="full"):
-        return super().xvals(support)
-
-    def finite_endpoints(self, support="full"):
-        return super().finite_endpoints(support)
-
-    def check_endpoints(self, lower, upper):
-        return super().check_endpoints(lower, upper)
-
 
 class Normal(Continuous):
     r"""
@@ -413,26 +332,6 @@ class Normal(Continuous):
     def fit_mle(self, sample, **kwargs):
         mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
-
-    def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
-    ):
-        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
-
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
-        return super().plot_cdf(support, legend, figsize, ax)
-
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
-        return super().plot_ppf(legend, figsize, ax)
-
-    def xvals(self, support="full"):
-        return super().xvals(support)
-
-    def finite_endpoints(self, support="full"):
-        return super().finite_endpoints(support)
-
-    def check_endpoints(self, lower, upper):
-        return super().check_endpoints(lower, upper)
 
 
 class Student(Continuous):
@@ -508,23 +407,3 @@ class Student(Continuous):
     def fit_mle(self, sample, **kwargs):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, nu)
-
-    def plot_pdf(
-        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
-    ):
-        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
-
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
-        return super().plot_cdf(support, legend, figsize, ax)
-
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
-        return super().plot_ppf(legend, figsize, ax)
-
-    def xvals(self, support="full"):
-        return super().xvals(support)
-
-    def finite_endpoints(self, support="full"):
-        return super().finite_endpoints(support)
-
-    def check_endpoints(self, lower, upper):
-        return super().check_endpoints(lower, upper)

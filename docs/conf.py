@@ -62,6 +62,10 @@ thebe_config = {
     "selector": "div.highlight-ipython3",
 }
 
+autodoc_default_options = {
+    'inherited-members': True,
+}
+
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ["_templates"]
 
