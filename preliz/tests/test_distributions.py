@@ -76,4 +76,4 @@ def test_mle(distribution, params):
         assert_almost_equal(params, dist_.params, 0)
 
 
-# def test_check_boundaries()
+# def test check_endpoints()

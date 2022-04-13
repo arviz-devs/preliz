@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers
 
-# pylint: disable=protected-access
-
 default_quantiles = [0.05, 0.25, 0.75, 0.95]
 
 
@@ -36,7 +34,7 @@ def plot_pdfpmf(dist, box, quantiles, support, legend, figsize, ax):
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
 
-    x = dist._xvals(support)
+    x = dist.xvals(support)
     if dist.kind == "continuous":
         density = dist.rv_frozen.pdf(x)
         ax.plot(x, density, label=label, color=color)
@@ -61,7 +59,7 @@ def plot_cdf(dist, support, legend, figsize, ax):
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
 
-    eps = dist._finite_endpoints(support)
+    eps = dist.finite_endpoints(support)
     x = np.linspace(*eps, 1000)
     cdf = dist.rv_frozen.cdf(x)
     ax.plot(x, cdf, label=label, color=color)

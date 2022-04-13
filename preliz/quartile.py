@@ -50,7 +50,7 @@ def quartile(
     if distribution is None:
         distribution = Normal()
 
-    distribution._check_boundaries(q1, q3)
+    distribution.check_boundaries(q1, q3)
 
     # Heuristic to approximate mean and standard deviation from quartiles
     mu_init = q2

@@ -28,10 +28,28 @@ class Distribution:
         else:
             return self.name
 
-    def _check_boundaries(self, lower, upper):
-        """Evaluate if the lower and upper values are in the support of the distribution"""
+    def _update_rv_frozen(self):
+        """Update the rv_frozen object when the parameters are not None"""
+        self.is_frozen = any(self.params)
+        if self.is_frozen:
+            self.rv_frozen = self._get_frozen()
+            self.rv_frozen.name = self.name
+
+    def check_endpoints(self, lower, upper):
+        """
+        Evaluate if the lower and upper values are in the support of the distribution
+
+        Parameters
+        ----------
+        support : str
+            Available options are "full" or "restricted".
+        lower : int or float
+            lower endpoint
+        upper : int or float
+            upper endpoint
+        """
         domain_error = (
-            f"The provided boundaries are outside the domain of the {self.name} distribution"
+            f"The provided endpoints are outside the domain of the {self.name} distribution"
         )
         if np.isfinite(self.dist.a):
             if lower < self.dist.a:
@@ -43,20 +61,18 @@ class Distribution:
         if np.isfinite(self.dist.a) and np.isfinite(self.dist.b):
             if lower == self.dist.a and upper == self.dist.b:
                 raise ValueError(
-                    "Given the provided boundaries, mass will be always 1. "
+                    "Given the provided endpoints, mass will be always 1. "
                     "Please provide other values"
                 )
 
-    def _update_rv_frozen(self):
-        """Update the rv_frozen object when the parameters are not None"""
-        self.is_frozen = any(self.params)
-        if self.is_frozen:
-            self.rv_frozen = self._get_frozen()
-            self.rv_frozen.name = self.name
-
-    def _finite_endpoints(self, support):
+    def finite_endpoints(self, support):
         """
-        Return finite end-points even for unbounded distributions
+        Return finite endpoints even for unbounded distributions
+
+        Parameters
+        ----------
+        support : str
+            Available options are "full" or "restricted".
         """
         lower_ep = self.rv_frozen.a
         upper_ep = self.rv_frozen.b
@@ -172,11 +188,16 @@ class Continuous(Distribution):
         super().__init__()
         self.kind = "continuous"
 
-    def _xvals(self, support):
+    def xvals(self, support):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
+
+        Parameters
+        ----------
+        support : str
+            Available options are "full" or "restricted".
         """
-        lower_ep, upper_ep = self._finite_endpoints(support)
+        lower_ep, upper_ep = self.finite_endpoints(support)
         x_vals = np.linspace(lower_ep, upper_ep, 1000)
         return x_vals
 
@@ -201,11 +222,11 @@ class Discrete(Distribution):
         super().__init__()
         self.kind = "discrete"
 
-    def _xvals(self, support):
+    def xvals(self, support):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
         """
-        lower_ep, upper_ep = self._finite_endpoints(support)
+        lower_ep, upper_ep = self.finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals
 

@@ -84,6 +84,15 @@ class Beta(Continuous):
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
 
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
+
 
 class Exponential(Continuous):
     r"""
@@ -152,6 +161,15 @@ class Exponential(Continuous):
 
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
+
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
 
 
 class Gamma(Continuous):
@@ -231,6 +249,15 @@ class Gamma(Continuous):
 
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
+
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
 
 
 class LogNormal(Continuous):
@@ -314,6 +341,15 @@ class LogNormal(Continuous):
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
 
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
+
 
 class Normal(Continuous):
     r"""
@@ -388,6 +424,15 @@ class Normal(Continuous):
 
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
+
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
 
 
 class Student(Continuous):
@@ -474,3 +519,12 @@ class Student(Continuous):
 
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
+
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)

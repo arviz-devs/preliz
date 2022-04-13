@@ -1,7 +1,6 @@
 """
 Optimization routines and utilities
 """
-# pylint: disable=protected-access
 from scipy.optimize import minimize, least_squares
 
 

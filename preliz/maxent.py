@@ -52,7 +52,7 @@ def maxent(
     if distribution is None:
         distribution = Normal()
 
-    distribution._check_boundaries(lower, upper)
+    distribution.check_endpoints(lower, upper)
 
     if distribution.kind == "discrete":
         if not end_points_ints(lower, upper):
