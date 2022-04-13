@@ -81,6 +81,26 @@ class Binomial(Discrete):
         p = x_bar / n
         self._update(n, p)
 
+    def plot_pdf(
+        self, box=False, quantiles=None, support="full", legend="legend", figsize=None, ax=None
+    ):
+        return super().plot_pdf(box, quantiles, support, legend, figsize, ax)
+
+    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+        return super().plot_cdf(support, legend, figsize, ax)
+
+    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+        return super().plot_ppf(legend, figsize, ax)
+
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
+
 
 class NegativeBinomial(Discrete):
     R"""
@@ -159,6 +179,15 @@ class NegativeBinomial(Discrete):
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
 
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
+
 
 class Poisson(Discrete):
     R"""
@@ -231,3 +260,12 @@ class Poisson(Discrete):
 
     def plot_ppf(self, legend="legend", figsize=None, ax=None):
         return super().plot_ppf(legend, figsize, ax)
+
+    def xvals(self, support="full"):
+        return super().xvals(support)
+
+    def finite_endpoints(self, support="full"):
+        return super().finite_endpoints(support)
+
+    def check_endpoints(self, lower, upper):
+        return super().check_endpoints(lower, upper)
