@@ -6,6 +6,8 @@ from scipy import stats
 
 from .distributions import Continuous
 
+eps = np.finfo(float).eps
+
 
 class Beta(Continuous):
     r"""
@@ -50,6 +52,7 @@ class Beta(Continuous):
         self.name = "beta"
         self.params = (self.alpha, self.beta)
         self.param_names = ("alpha", "beta")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
         self.dist = stats.beta
         self._update_rv_frozen()
 
@@ -111,6 +114,7 @@ class Exponential(Continuous):
         self.name = "exponential"
         self.params = (self.lam,)
         self.param_names = ("lam",)
+        self.params_support = ((eps, np.inf),)
         self.dist = stats.expon
         self._update_rv_frozen()
 
@@ -177,6 +181,7 @@ class Gamma(Continuous):
         self.name = "gamma"
         self.params = (self.alpha, self.beta)
         self.param_names = ("alpha", "beta")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
         self.dist = stats.gamma
         self._update_rv_frozen()
 
@@ -248,6 +253,7 @@ class LogNormal(Continuous):
         self.name = "lognormal"
         self.params = (self.mu, self.sigma)
         self.param_names = ("mu", "sigma")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.lognorm
         self._update_rv_frozen()
 
@@ -314,6 +320,7 @@ class Normal(Continuous):
         self.name = "normal"
         self.params = (self.mu, self.sigma)
         self.param_names = ("mu", "sigma")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.norm
         self._update_rv_frozen()
 
@@ -386,6 +393,7 @@ class Student(Continuous):
         self.name = "student"
         self.params = (self.nu, self.mu, self.sigma)
         self.param_names = ("nu", "mu", "sigma")
+        self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.t
         self._update_rv_frozen()
 
