@@ -7,6 +7,8 @@ from scipy import stats
 
 from .distributions import Discrete
 
+eps = np.finfo(float).eps
+
 
 class Binomial(Discrete):
     R"""
@@ -52,6 +54,7 @@ class Binomial(Discrete):
         self.name = "binomial"
         self.params = (self.n, self.p)
         self.param_names = ("n", "p")
+        self.params_support = ((eps, np.inf), (eps, 1 - eps))
         self.dist = stats.binom
         self._update_rv_frozen()
 
@@ -61,14 +64,12 @@ class Binomial(Discrete):
     def _update(self, n, p):
         self.n = n
         self.p = p
-        self.params = (self.n, p)
+        self.params = (n, p)
         self._update_rv_frozen()
 
     def fit_moments(self, mean, sigma):
-        # check if this is a good
-        n_hat = mean**2 / (mean - sigma**2)
-        n = int(max(1, n_hat))
-        p = mean / n_hat
+        p = 1 - sigma**2 / mean
+        n = int(mean / p)
         self._update(n, p)
 
     def fit_mle(self, sample):
@@ -127,6 +128,7 @@ class NegativeBinomial(Discrete):
         self.name = "negativebinomial"
         self.params = (self.n, self.p)
         self.param_names = ("n", "p")
+        self.params_support = ((eps, np.inf), (eps, 1 - eps))
         self.dist = stats.nbinom
         self._update_rv_frozen()
 
@@ -191,6 +193,7 @@ class Poisson(Discrete):
         self.name = "poisson"
         self.params = (self.mu,)
         self.param_names = ("mu",)
+        self.params_support = ((eps, np.inf),)
         self.dist = stats.poisson
         self._update_rv_frozen()
 

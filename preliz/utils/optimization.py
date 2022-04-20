@@ -25,10 +25,12 @@ def optimize_max_ent(dist, lower, upper, mass):
         "args": (dist, lower, upper, mass),
     }
     init_vals = dist.params
+    bounds = dist.params_support
     if dist.name == "student":
         init_vals = init_vals[1:]
+        bounds = bounds[1:]
 
-    opt = minimize(entropy_loss, x0=init_vals, args=(dist), constraints=cons)
+    opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
     dist._update(*opt["x"])
 
     return opt
