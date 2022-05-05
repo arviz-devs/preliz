@@ -77,7 +77,7 @@ class Binomial(Discrete):
         x_bar = np.mean(sample)
         x_std = np.std(sample)
         x_max = np.max(sample)
-        n = x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5)
+        n = int(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
         p = x_bar / n
         self._update(n, p)
 
