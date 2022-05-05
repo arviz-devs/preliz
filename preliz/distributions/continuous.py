@@ -204,6 +204,38 @@ class Gamma(Continuous):
         self._update(alpha, 1 / beta)
 
 
+class HalfNormal(Continuous):
+    r"""
+    HalfNormal Distribution
+    """
+
+    def __init__(self, sigma=None):
+        super().__init__()
+        self.sigma = sigma
+        self.name = "halfnormal"
+        self.params = (self.sigma,)
+        self.param_names = ("sigma",)
+        self.params_support = ((eps, np.inf),)
+        self.dist = stats.halfnorm
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        return self.dist(scale=self.sigma)
+
+    def _update(self, sigma):
+        self.sigma = sigma
+        self.params = (self.sigma,)
+        self._update_rv_frozen()
+
+    def fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+        sigma = sigma * (1 - 2 / np.pi) ** 0.5
+        self._update(sigma)
+
+    def fit_mle(self, sample, **kwargs):
+        _, sigma = self.dist.fit(sample, **kwargs)
+        self._update(sigma)
+
+
 class LogNormal(Continuous):
     r"""
     Log-normal distribution.
