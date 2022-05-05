@@ -1,6 +1,8 @@
 """
 Discrete probability distributions.
 """
+from math import ceil
+
 import numpy as np
 from scipy import stats
 
@@ -77,7 +79,7 @@ class Binomial(Discrete):
         x_bar = np.mean(sample)
         x_std = np.std(sample)
         x_max = np.max(sample)
-        n = int(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
+        n = ceil(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
         p = x_bar / n
         self._update(n, p)
 
