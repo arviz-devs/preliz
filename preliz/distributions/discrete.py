@@ -8,9 +8,7 @@ from scipy import stats
 
 
 from .distributions import Discrete
-from .continuous import Normal
-from ..utils.optimization import optimize_matching_moments, optimize_cdf
-
+from ..utils.optimization import optimize_matching_moments
 eps = np.finfo(float).eps
 
 

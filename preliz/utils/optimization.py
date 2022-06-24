@@ -1,7 +1,7 @@
 """
 Optimization routines and utilities
 """
-from scipy.optimize import minimize, least_squares, differential_evolution
+from scipy.optimize import minimize, least_squares
 
 
 def optimize_max_ent(dist, lower, upper, mass):
