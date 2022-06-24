@@ -73,13 +73,15 @@ def maxent(
     distribution.fit_moments(mean=mu_init, sigma=sigma_init)
 
     opt = optimize_max_ent(distribution, lower, upper, mass)
+    opt = optimize_max_ent(distribution, lower, upper, mass)
 
-    r_error = relative_error(distribution, lower, upper, mass)
+    r_error, computed_mass = relative_error(distribution, lower, upper, mass)
 
     if r_error > 0.01:
         _log.info(
-            " The relative error between the requested and computed interval is %.2f",
-            r_error,
+            " The requested mass is %.2f, but the computed one is %.2f",
+            mass,
+            computed_mass,
         )
 
     if plot:

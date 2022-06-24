@@ -1,7 +1,7 @@
 """
 Optimization routines and utilities
 """
-from scipy.optimize import minimize, least_squares
+from scipy.optimize import minimize, least_squares, differential_evolution
 
 
 def optimize_max_ent(dist, lower, upper, mass):
@@ -52,7 +52,7 @@ def optimize_quartile(dist, x_vals):
     return opt
 
 
-def optimize_roulette(dist, x_vals, pcdf):
+def optimize_cdf(dist, x_vals, pcdf):
     def func(params, dist, x_vals, pcdf):
         dist._update(*params)
         loss = dist.rv_frozen.cdf(x_vals) - pcdf
@@ -65,8 +65,23 @@ def optimize_roulette(dist, x_vals, pcdf):
     return loss
 
 
+def optimize_matching_moments(dist, mean, sigma):
+    def func(params, dist, mean, sigma):
+        dist._update(*params)
+        loss = ((dist.rv_frozen.mean() - mean) / mean) ** 2 + (
+            (dist.rv_frozen.std() - sigma) / sigma
+        ) ** 2
+        return loss
+
+    init_vals = dist.params
+    opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
+    dist._update(*opt["x"])
+    loss = opt["cost"]
+    return loss
+
+
 def relative_error(dist, lower, upper, required_mass):
     if dist.kind == "discrete":
         lower -= 1
     computed_mass = dist.rv_frozen.cdf(upper) - dist.rv_frozen.cdf(lower)
-    return abs((computed_mass - required_mass) / required_mass * 100)
+    return abs((computed_mass - required_mass) / required_mass * 100), computed_mass

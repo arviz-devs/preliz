@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 from matplotlib import patches
 import numpy as np
 
-from preliz.utils.optimization import optimize_roulette
+from preliz.utils.optimization import optimize_cdf
 from .distributions import all_continuous
 
 
@@ -464,7 +464,7 @@ def fit_to_ecdf(selected_distributions, x_vals, pcdf, mean, std, x_min, x_max):
     for dist in selected_distributions:
         if x_min >= dist.dist.a and x_max <= dist.dist.b:
             dist.fit_moments(mean, std)
-            loss = optimize_roulette(dist, x_vals, pcdf)
+            loss = optimize_cdf(dist, x_vals, pcdf)
 
             if loss < loss_old:
                 loss_old = loss
