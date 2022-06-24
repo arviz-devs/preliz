@@ -37,8 +37,11 @@ def test_moments(distribution, params):
     dist_ = distribution()
     dist_.fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
-    assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean())
-    assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std())
+    tol = 7
+    if dist.name == "binomial":
+        tol = 0
+    assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
+    assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
     if dist.name == "student":
         assert_almost_equal(params[1:], dist_.params[1:], 0)
     else:

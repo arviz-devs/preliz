@@ -8,6 +8,7 @@ from scipy import stats
 
 
 from .distributions import Discrete
+from ..utils.optimization import optimize_matching_moments
 
 eps = np.finfo(float).eps
 
@@ -64,15 +65,17 @@ class Binomial(Discrete):
         return self.dist(self.n, self.p)
 
     def _update(self, n, p):
-        self.n = n
+        self.n = int(n)
         self.p = p
-        self.params = (n, p)
+        self.params = (self.n, self.p)
         self._update_rv_frozen()
 
     def fit_moments(self, mean, sigma):
-        p = 1 - sigma**2 / mean
-        n = int(mean / p)
+        # crude approximation for n and p
+        n = mean + sigma * 2
+        p = mean / n
         self._update(n, p)
+        optimize_matching_moments(self, mean, sigma)
 
     def fit_mle(self, sample):
         # see https://doi.org/10.1016/j.jspi.2004.02.019 for details
