@@ -9,6 +9,7 @@ from scipy import stats
 
 from .distributions import Discrete
 from ..utils.optimization import optimize_matching_moments
+
 eps = np.finfo(float).eps
 
 
