@@ -160,7 +160,7 @@ class NegativeBinomial(Discrete):
         fitted = stats.fit(self.dist, sample, bounds={"n": (1, max(sample) * 5)})
         if not fitted.success:
             _log.info("Optimization did not terminate successfully.")
-        self._update(fitted.params.n, fitted.params.p) # pylint: disable=no-member
+        self._update(fitted.params.n, fitted.params.p)  # pylint: disable=no-member
 
 
 class Poisson(Discrete):
