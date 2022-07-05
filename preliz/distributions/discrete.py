@@ -1,6 +1,7 @@
 """
 Discrete probability distributions.
 """
+import logging
 from math import ceil
 
 import numpy as np
@@ -9,6 +10,8 @@ from scipy import stats
 
 from .distributions import Discrete
 from ..utils.optimization import optimize_matching_moments
+
+_log = logging.getLogger("preliz")
 
 eps = np.finfo(float).eps
 
@@ -152,7 +155,12 @@ class NegativeBinomial(Discrete):
         self._update(n, p)
 
     def fit_mle(self, sample):
-        raise NotImplementedError
+        # the upper bound is based on a quick heuristic. The fit will underestimate
+        # the value of n when p is very close to 1.
+        fitted = stats.fit(self.dist, sample, bounds={"n": (1, max(sample) * 5)})
+        if not fitted.success:
+            _log.info("Optimization did not terminate successfully.")
+        self._update(fitted.params.n, fitted.params.p)  # pylint: disable=no-member
 
 
 class Poisson(Discrete):
