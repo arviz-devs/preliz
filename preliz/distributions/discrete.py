@@ -158,9 +158,9 @@ class NegativeBinomial(Discrete):
         # the upper bound is based on a quick heuristic. The fit will underestimate
         # the value of n when p is very close to 1.
         fitted = stats.fit(self.dist, sample, bounds={"n": (1, max(sample) * 5)})
-        if fitted.success:
+        if not fitted.success:
             _log.info("Optimization did not terminate successfully.")
-        self._update(fitted.params.n, fitted.params.p)
+        self._update(fitted.params.n, fitted.params.p) # pylint: disable=no-member
 
 
 class Poisson(Discrete):
