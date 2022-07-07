@@ -3,11 +3,13 @@ import numpy as np
 from numpy.testing import assert_almost_equal
 
 from preliz.distributions import (
-    Normal,
     Beta,
     Gamma,
-    LogNormal,
     Exponential,
+    Laplace,
+    LogNormal,
+    Normal,
+    SkewNormal,
     Student,
     Binomial,
     NegativeBinomial,
@@ -21,8 +23,10 @@ from preliz.distributions import (
         (Normal, (0, 1)),
         (Beta, (2, 5)),
         (Gamma, (1, 0.5)),
+        (Laplace, (0, 1)),
         (LogNormal, (0, 0.5)),
         (Exponential, (0.5,)),
+        (SkewNormal, (0, 1, 0)),
         # (Student, (4, 0, 1)),
         # (Student, (1000, 0, 1)),
         (Binomial, (2, 0.5)),
@@ -54,20 +58,23 @@ def test_moments(distribution, params):
         (Normal, (0, 1)),
         (Beta, (2, 5)),
         (Gamma, (1, 0.5)),
+        (Laplace, (0, 1)),
         (LogNormal, (0, 0.5)),
         (Exponential, (0.5,)),
+        (SkewNormal, (0, 1, 0)),
+        (SkewNormal, (0, 1, -1)),
         (Student, (4, 0, 1)),
         (Student, (1000, 0, 1)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
-        # (NegativeBinomial, (2, 0.9)),
-        # (NegativeBinomial, (2, 0.1)),
+        (NegativeBinomial, (2, 0.9)),
+        (NegativeBinomial, (2, 0.1)),
         (Poisson, (4.5,)),
     ],
 )
 def test_mle(distribution, params):
     dist = distribution(*params)
-    sample = dist.rv_frozen.rvs(10000)
+    sample = dist.rv_frozen.rvs(20000)
     dist_ = distribution()
     dist_.fit_mle(sample)
 

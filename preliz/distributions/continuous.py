@@ -236,6 +236,72 @@ class HalfNormal(Continuous):
         self._update(sigma)
 
 
+class Laplace(Continuous):
+    r"""
+    Laplace distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \mu, b) =
+           \frac{1}{2b} \exp \left\{ - \frac{|x - \mu|}{b} \right\}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Laplace
+        az.style.use('arviz-white')
+        mus = [0., 0., 0., -5.]
+        bs = [1., 2., 4., 4.]
+        for mu, b in zip(mus, bs):
+            Laplace(mu, b).plot_pdf()
+
+    ========  ========================
+    Support   :math:`x \in \mathbb{R}`
+    Mean      :math:`\mu`
+    Variance  :math:`2 b^2`
+    ========  ========================
+
+    Parameters
+    ----------
+    mu : float
+        Location parameter.
+    b : float
+        Scale parameter (b > 0).
+    """
+
+    def __init__(self, mu=None, b=None):
+        super().__init__()
+        self.mu = mu
+        self.b = b
+        self.name = "laplace"
+        self.params = (self.mu, self.b)
+        self.param_names = ("mu", "b")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.dist = stats.laplace
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        return self.dist(loc=self.mu, scale=self.b)
+
+    def _update(self, mu, b):
+        self.mu = mu
+        self.b = b
+        self.params = (self.mu, self.b)
+        self._update_rv_frozen()
+
+    def fit_moments(self, mean, sigma):
+        mu = mean
+        b = (sigma / 2) * (2**0.5)
+        self._update(mu, b)
+
+    def fit_mle(self, sample, **kwargs):
+        mu, b = self.dist.fit(sample, **kwargs)
+        self._update(mu, b)
+
+
 class LogNormal(Continuous):
     r"""
     Log-normal distribution.
@@ -371,6 +437,82 @@ class Normal(Continuous):
     def fit_mle(self, sample, **kwargs):
         mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
+
+
+class SkewNormal(Continuous):
+    r"""
+    SkewNormal distribution.
+
+    The pdf of this distribution is
+
+        .. math::
+
+        f(x \mid \mu, \tau, \alpha) =
+        2 \Phi((x-\mu)\sqrt{\tau}\alpha) \phi(x,\mu,\tau)
+
+        .. plot::
+            :context: close-figs
+
+            import arviz as az
+            from preliz import SkewNormal
+            az.style.use('arviz-white')
+            for alpha in [-6, 0, 6]:
+                SkewNormal(mu=0, sigma=0, alpha=alpha).plot_cdf()
+
+    ========  ==========================================
+    Support   :math:`x \in \mathbb{R}`
+    Mean      :math:`\mu + \sigma \sqrt{\frac{2}{\pi}} \frac {\alpha }{{\sqrt {1+\alpha ^{2}}}}`
+    Variance  :math:`\sigma^2 \left(  1-\frac{2\alpha^2}{(\alpha^2+1) \pi} \right)`
+    ========  ==========================================
+
+    Parameters
+    ----------
+    mu : float
+        Location parameter.
+    sigma : float
+        Scale parameter (sigma > 0).
+    alpha : float
+        Skewness parameter.
+
+    Notes
+    -----
+    When alpha=0 we recover the Normal distribution and mu becomes the mean,
+    and sigma the standard deviation. In the limit of alpha approaching
+    plus/minus infinite we get a half-normal distribution.
+    """
+
+    def __init__(self, mu=None, sigma=None, alpha=None):
+        super().__init__()
+        if alpha is None:
+            alpha = 0
+        self.mu = mu
+        self.sigma = sigma
+        self.alpha = alpha
+        self.name = "skewnormal"
+        self.params = (self.mu, self.sigma, self.alpha)
+        self.param_names = ("mu", "sigma", "alpha")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (-np.inf, np.inf))
+        self.dist = stats.skewnorm
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        return self.dist(self.alpha, self.mu, self.sigma)
+
+    def _update(self, mu, sigma, alpha=None):
+        if alpha is not None:
+            self.alpha = alpha
+        self.mu = mu
+        self.sigma = sigma
+        self.params = (self.mu, self.sigma, self.alpha)
+        self._update_rv_frozen()
+
+    def fit_moments(self, mean, sigma):
+        # Just assume this is a gaussian
+        self._update(mean, sigma)
+
+    def fit_mle(self, sample, **kwargs):
+        alpha, mu, sigma = self.dist.fit(sample, **kwargs)
+        self._update(mu, sigma, alpha)
 
 
 class Student(Continuous):
