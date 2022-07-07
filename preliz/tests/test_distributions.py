@@ -31,8 +31,8 @@ from preliz.distributions import (
         # (Student, (1000, 0, 1)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
-        (NegativeBinomial, (2, 0.9)),
-        (NegativeBinomial, (2, 0.1)),
+        (NegativeBinomial, (2, 0.7)),
+        (NegativeBinomial, (2, 0.3)),
         (Poisson, (4.5,)),
     ],
 )
@@ -67,8 +67,8 @@ def test_moments(distribution, params):
         (Student, (1000, 0, 1)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
-        (NegativeBinomial, (2, 0.9)),
-        (NegativeBinomial, (2, 0.1)),
+        (NegativeBinomial, (2, 0.7)),
+        (NegativeBinomial, (2, 0.3)),
         (Poisson, (4.5,)),
     ],
 )
