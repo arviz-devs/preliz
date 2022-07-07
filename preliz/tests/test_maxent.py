@@ -4,7 +4,16 @@ import numpy as np
 from numpy.testing import assert_allclose
 
 from preliz import maxent
-from preliz.distributions import Normal, Beta, Gamma, Laplace, LogNormal, Exponential, Student, Poisson
+from preliz.distributions import (
+    Normal,
+    Beta,
+    Gamma,
+    Laplace,
+    LogNormal,
+    Exponential,
+    Student,
+    Poisson,
+)
 
 
 @pytest.mark.parametrize(
