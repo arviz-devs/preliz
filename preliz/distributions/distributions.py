@@ -167,7 +167,7 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         """
         Estimate the parameters of the distribution from the mean and standard deviation.
 

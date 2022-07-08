@@ -14,7 +14,7 @@ def plot_boxlike(fitted_dist, quantiles, ax):
 
     ax.plot([q_s[1], q_s[2]], [0, 0], "k", lw=4)
     ax.plot([q_s[0], q_s[3]], [0, 0], "k", lw=2)
-    ax.plot(median, 0, "w.")
+    ax.plot(median, 0, "wo", mec="k")
 
 
 def plot_boxlike2(sample, ax):

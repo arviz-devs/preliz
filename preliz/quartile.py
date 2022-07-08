@@ -50,25 +50,24 @@ def quartile(
     if distribution is None:
         distribution = Normal()
 
-    distribution.check_boundaries(q1, q3)
+    distribution.check_endpoints(q1, q3)
 
-    # Heuristic to approximate mean and standard deviation from quartiles
-    mu_init = q2
-    sigma_init = (q3 - q1) * 1.5
-    normal_dist = Normal(mu_init, sigma_init)
-    optimize_quartile(normal_dist, (q1, q2, q3))
-
-    # I am doing one extra step for the normal!!!
-    distribution.fit_moments(mean=normal_dist.mu, sigma=normal_dist.sigma)
+    # Heuristic to provide an initial guess for the optimization step
+    # We obtain those guesses by first approximating the mean and standard deviation
+    # from the quartiles and then use those values for moment matching
+    distribution._fit_moments(mean=q2, sigma=(q3 - q1) * 1.5)  # pylint:disable=protected-access
 
     opt = optimize_quartile(distribution, (q1, q2, q3))
 
-    r_error = relative_error(distribution, q1, q3, 0.5)
+    r_error, computed_mass = relative_error(distribution, q1, q3, 0.5)
 
     if r_error > 0.01:
         _log.info(
-            " The relative error between the requested and computed interval is %.2f",
-            r_error,
+            "The requested mass in the interval (q1=%.2g - q3=%.2g) is 0.5, "
+            "but the computed one is %.2g",
+            q1,
+            q3,
+            computed_mass,
         )
 
     if plot:

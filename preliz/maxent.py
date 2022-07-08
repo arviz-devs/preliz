@@ -61,25 +61,20 @@ def maxent(
                 distribution.name.capitalize(),
             )
 
-    # Heuristic to approximate mean and standard deviation from intervals and mass
-    mu_init = (lower + upper) / 2
-    sigma_init = ((upper - lower) / 4) / mass
-    # This extra step does not seem to be needed/useful anymore
-    # But keeping here for future reference
-    # normal_dist = Normal(mu_init, sigma_init)
-    # optimize_max_ent(normal_dist, lower, upper, mass)
-    # distribution.fit_moments(mean=normal_dist.mu, sigma=normal_dist.sigma)
+    # Heuristic to provide an initial guess for the optimization step
+    # We obtain those guesses by first approximating the mean and standard deviation
+    # from intervals and mass and then use those values for moment matching
+    distribution._fit_moments(  # pylint:disable=protected-access
+        mean=(lower + upper) / 2, sigma=((upper - lower) / 4) / mass
+    )
 
-    distribution.fit_moments(mean=mu_init, sigma=sigma_init)
-
-    opt = optimize_max_ent(distribution, lower, upper, mass)
     opt = optimize_max_ent(distribution, lower, upper, mass)
 
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)
 
     if r_error > 0.01:
         _log.info(
-            " The requested mass is %.2f, but the computed one is %.2f",
+            " The requested mass is %.3g, but the computed one is %.3g",
             mass,
             computed_mass,
         )

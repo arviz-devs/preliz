@@ -65,7 +65,7 @@ class Beta(Continuous):
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         kappa = (mean * (1 - mean) / (sigma) ** 2) - 1
         alpha = max(0.5, mean * kappa)
         beta = max(0.5, (1 - mean) * kappa)
@@ -126,7 +126,7 @@ class Exponential(Continuous):
         self.params = (self.lam,)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
         lam = 1 / mean
         self._update(lam)
 
@@ -194,7 +194,7 @@ class Gamma(Continuous):
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         alpha = mean**2 / sigma**2
         beta = mean / sigma**2
         self._update(alpha, beta)
@@ -227,7 +227,7 @@ class HalfNormal(Continuous):
         self.params = (self.sigma,)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
         sigma = sigma * (1 - 2 / np.pi) ** 0.5
         self._update(sigma)
 
@@ -292,7 +292,7 @@ class Laplace(Continuous):
         self.params = (self.mu, self.b)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         mu = mean
         b = (sigma / 2) * (2**0.5)
         self._update(mu, b)
@@ -364,7 +364,7 @@ class LogNormal(Continuous):
         self.params = (self.mu, self.sigma)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         mu = np.log(mean**2 / (sigma**2 + mean**2) ** 0.5)
         sigma = np.log(sigma**2 / mean**2 + 1) ** 0.5
         self._update(mu, sigma)
@@ -431,7 +431,7 @@ class Normal(Continuous):
         self.params = (self.mu, self.sigma)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         self._update(mean, sigma)
 
     def fit_mle(self, sample, **kwargs):
@@ -506,7 +506,7 @@ class SkewNormal(Continuous):
         self.params = (self.mu, self.sigma, self.alpha)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         # Just assume this is a gaussian
         self._update(mean, sigma)
 
@@ -582,7 +582,7 @@ class Student(Continuous):
         self.params = (self.nu, self.mu, self.sigma)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         # This is a placeholder!!!
         self._update(mean, sigma)
 

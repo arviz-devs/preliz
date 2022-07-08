@@ -48,6 +48,8 @@ def optimize_quartile(dist, x_vals):
     init_vals = dist.params
     if dist.name == "student":
         init_vals = init_vals[1:]
+    if dist.name == "skewnormal":
+        init_vals = init_vals[:-1]
 
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals))
     dist._update(*opt["x"])
