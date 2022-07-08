@@ -1,7 +1,17 @@
 from .continuous import *
 from .discrete import *
 
-all_continuous = [Beta, Exponential, Gamma, HalfNormal, LogNormal, Normal, Student]
+all_continuous = [
+    Beta,
+    Exponential,
+    Gamma,
+    HalfNormal,
+    Laplace,
+    LogNormal,
+    Normal,
+    SkewNormal,
+    Student,
+]
 all_discrete = [Binomial, NegativeBinomial, Poisson]
 
 

@@ -1,9 +1,19 @@
+from preliz.distributions.continuous import Laplace
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 
 from preliz import maxent
-from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, Student, Poisson
+from preliz.distributions import (
+    Normal,
+    Beta,
+    Gamma,
+    Laplace,
+    LogNormal,
+    Exponential,
+    Student,
+    Poisson,
+)
 
 
 @pytest.mark.parametrize(
@@ -13,6 +23,7 @@ from preliz.distributions import Normal, Beta, Gamma, LogNormal, Exponential, St
         (Normal, "normal", 10, 12, 0.99, None, (-np.inf, np.inf), (11, 0.388)),
         (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.112, 9.101)),
         (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (0.868, 0.103)),
+        (Laplace, "laplace", -1, 1, 0.9, None, (-np.inf, np.inf), (0, 0.435)),
         (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (1.216, 0.859)),
         (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
