@@ -39,7 +39,7 @@ from preliz.distributions import (
 def test_moments(distribution, params):
     dist = distribution(*params)
     dist_ = distribution()
-    dist_.fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
+    dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 7
     if dist.name == "binomial":

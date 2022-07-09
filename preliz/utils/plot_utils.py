@@ -1,35 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers
+from scipy.stats._distn_infrastructure import rv_continuous_frozen, rv_discrete_frozen
 
-default_quantiles = [0.05, 0.25, 0.75, 0.95]
 
-
-def plot_boxlike(fitted_dist, quantiles, ax):
+def plot_pointinterval(distribution, quantiles, ax):
     """
     Plot the median as a dot and two inter-quantile ranges as lines
     """
-    q_s = fitted_dist.ppf(quantiles)
-    median = fitted_dist.ppf(0.5)
+    if quantiles is None:
+        quantiles = [0.05, 0.25, 0.75, 0.95]
+
+    if isinstance(distribution, (rv_continuous_frozen, rv_discrete_frozen)):
+        q_s = distribution.ppf(quantiles)
+        median = distribution.ppf(0.5)
+    else:
+        q_s = np.quantile(distribution, quantiles)
+        median = np.quantile(distribution, 0.5)
 
     ax.plot([q_s[1], q_s[2]], [0, 0], "k", lw=4)
     ax.plot([q_s[0], q_s[3]], [0, 0], "k", lw=2)
     ax.plot(median, 0, "w.")
 
 
-def plot_boxlike2(sample, ax):
-    """
-    Plot the mean as a dot and two inter-quantile ranges as lines
-    """
-    q_s = np.quantile(sample, default_quantiles)
-    mean = np.mean(sample)
-
-    ax.plot([q_s[1], q_s[2]], [0, 0], "k", lw=4)
-    ax.plot([q_s[0], q_s[3]], [0, 0], "k", lw=2)
-    ax.plot(mean, 0, "w.")
-
-
-def plot_pdfpmf(dist, box, quantiles, support, legend, figsize, ax):
+def plot_pdfpmf(dist, pointinterval, quantiles, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
@@ -42,10 +36,8 @@ def plot_pdfpmf(dist, box, quantiles, support, legend, figsize, ax):
     else:
         density = dist.rv_frozen.pmf(x)
         ax.plot(x, density, "-o", label=label, color=color)
-    if box:
-        if quantiles is None:
-            quantiles = default_quantiles
-        plot_boxlike(dist.rv_frozen, quantiles, ax)
+    if pointinterval:
+        plot_pointinterval(dist.rv_frozen, quantiles, ax)
 
     if legend == "title":
         ax.set_title(label)

@@ -73,7 +73,7 @@ class Binomial(Discrete):
         self.params = (self.n, self.p)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         # crude approximation for n and p
         n = mean + sigma * 2
         p = mean / n
@@ -149,7 +149,7 @@ class NegativeBinomial(Discrete):
         self.params = (self.n, p)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         n = mean**2 / (sigma**2 - mean)
         p = mean / sigma**2
         self._update(n, p)
@@ -218,7 +218,7 @@ class Poisson(Discrete):
         self.params = (self.mu,)
         self._update_rv_frozen()
 
-    def fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
         self._update(mean)
 
     def fit_mle(self, sample):

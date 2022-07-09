@@ -86,7 +86,7 @@ class Distribution:
 
     def plot_pdf(
         self,
-        box=False,
+        pointinterval=False,
         quantiles=None,
         support="full",
         legend="legend",
@@ -98,12 +98,12 @@ class Distribution:
 
         Parameters
         ----------
-        box : bool
+        pointinterval : bool
             Whether to include a plot of the mean as a dot and two inter-quantile ranges as
             lines. Defaults to False.
         quantiles : list
-            Values of the four quantiles to use when ``box=True`` if None (default) the values
-            will be used ``[0.05, 0.25, 0.75, 0.95]``.
+            Values of the four quantiles to use when ``pointinterval=True`` if None (default)
+            the values ``[0.05, 0.25, 0.75, 0.95]`` will be used.
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
@@ -115,7 +115,7 @@ class Distribution:
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_pdfpmf(self, box, quantiles, support, legend, figsize, ax)
+            return plot_pdfpmf(self, pointinterval, quantiles, support, legend, figsize, ax)
         else:
             raise ValueError(
                 "Undefined distribution, "
@@ -167,7 +167,7 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):
         """
         Estimate the parameters of the distribution from the mean and standard deviation.
 

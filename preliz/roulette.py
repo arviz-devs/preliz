@@ -463,7 +463,7 @@ def fit_to_ecdf(selected_distributions, x_vals, pcdf, mean, std, x_min, x_max):
     fitted_dist = None
     for dist in selected_distributions:
         if x_min >= dist.dist.a and x_max <= dist.dist.b:
-            dist.fit_moments(mean, std)
+            dist._fit_moments(mean, std)  # pylint:disable=protected-access
             loss = optimize_cdf(dist, x_vals, pcdf)
 
             if loss < loss_old:
