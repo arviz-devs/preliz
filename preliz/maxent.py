@@ -69,6 +69,7 @@ def maxent(
     )
 
     opt = optimize_max_ent(distribution, lower, upper, mass)
+    opt = optimize_max_ent(distribution, lower, upper, mass)
 
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)
 
@@ -81,7 +82,7 @@ def maxent(
 
     if plot:
         ax = distribution.plot_pdf(plot_kwargs)
-        if plot_kwargs.get("box"):
+        if plot_kwargs.get("pointinterval"):
             cid = -4
         else:
             cid = -1

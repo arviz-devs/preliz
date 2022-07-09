@@ -72,7 +72,7 @@ def quartile(
 
     if plot:
         ax = distribution.plot_pdf(**plot_kwargs)
-        if plot_kwargs.get("box"):
+        if plot_kwargs.get("pointinterval"):
             cid = -4
         else:
             cid = -1

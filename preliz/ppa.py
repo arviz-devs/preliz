@@ -10,7 +10,7 @@ import sklearn.cluster as clu
 from sklearn.preprocessing import StandardScaler
 
 from preliz import distributions
-from .utils.plot_utils import plot_boxlike2, repr_to_matplotlib
+from .utils.plot_utils import plot_pointinterval, repr_to_matplotlib
 
 _log = logging.getLogger("preliz")
 
@@ -142,7 +142,7 @@ def plot_clusters(prior_predictive_samples, clust):
         #    az.plot_kde(s, ax=ax)
         az.plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})
 
-        plot_boxlike2(sample, ax)
+        plot_pointinterval(sample, None, ax)
         ax.set_title(cluster)
         ax.set_yticks([])
 
