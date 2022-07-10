@@ -23,10 +23,12 @@ def plot_pointinterval(distribution, quantiles, ax):
     ax.plot(median, 0, "w.")
 
 
-def plot_pdfpmf(dist, pointinterval, quantiles, support, legend, figsize, ax):
+def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
+    if moments is not None:
+        label += get_moments(dist, moments)
 
     x = dist.xvals(support)
     if dist.kind == "continuous":
@@ -46,10 +48,12 @@ def plot_pdfpmf(dist, pointinterval, quantiles, support, legend, figsize, ax):
     return ax
 
 
-def plot_cdf(dist, support, legend, figsize, ax):
+def plot_cdf(dist, moments, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
+    if moments is not None:
+        label += get_moments(dist, moments)
 
     eps = dist.finite_endpoints(support)
     x = np.linspace(*eps, 1000)
@@ -63,10 +67,12 @@ def plot_cdf(dist, support, legend, figsize, ax):
     return ax
 
 
-def plot_ppf(dist, legend, figsize, ax):
+def plot_ppf(dist, moments, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
+    if moments is not None:
+        label += get_moments(dist, moments)
 
     x = np.linspace(0, 1, 1000)
     ax.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
@@ -99,3 +105,27 @@ def repr_to_matplotlib(distribution):
     string = string.replace("\x1b[1m", r"$\bf{")
     string = string.replace("\x1b[0m", "}$")
     return string
+
+
+def get_moments(dist, moments):
+    names = {
+        "m": "μ",
+        "d": "σ",
+        "s": "γ",
+        "v": "σ²",
+        "k": "κ",
+    }
+    str_m = []
+    seen = []
+    for moment in moments:
+        if moment not in seen:
+            if moment == "d":
+                value = dist.rv_frozen.stats("v") ** 0.5
+            else:
+                value = dist.rv_frozen.stats(moment)
+            if isinstance(value, (np.ndarray, int, float)):
+                str_m.append(f"{names[moment]}={value:.3g}")
+
+        seen.append(moment)
+
+    return "\n" + ", ".join(str_m)
