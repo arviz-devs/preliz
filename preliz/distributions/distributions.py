@@ -86,6 +86,7 @@ class Distribution:
 
     def plot_pdf(
         self,
+        moments=None,
         pointinterval=False,
         quantiles=None,
         support="full",
@@ -98,6 +99,10 @@ class Distribution:
 
         Parameters
         ----------
+        moments : str
+            Compute moments. Use any combination of the strings ``m``, ``d``, ``v``, ``s`` or ``k``
+            for the mean (μ), standard deviation (σ), variance (σ²), skew (γ) or kurtosis (κ)
+            respectively. Other strings will be ignored. Defaults to None.
         pointinterval : bool
             Whether to include a plot of the mean as a dot and two inter-quantile ranges as
             lines. Defaults to False.
@@ -115,19 +120,25 @@ class Distribution:
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_pdfpmf(self, pointinterval, quantiles, support, legend, figsize, ax)
+            return plot_pdfpmf(
+                self, moments, pointinterval, quantiles, support, legend, figsize, ax
+            )
         else:
             raise ValueError(
                 "Undefined distribution, "
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def plot_cdf(self, support="full", legend="legend", figsize=None, ax=None):
+    def plot_cdf(self, moments=None, support="full", legend="legend", figsize=None, ax=None):
         """
         Plot the cumulative distribution function.
 
         Parameters
         ----------
+        moments : str
+            Compute moments. Use any combination of the strings ``m``, ``d``, ``v``, ``s`` or ``k``
+            for the mean (μ), standard deviation (σ), variance (σ²), skew (γ) or kurtosis (κ)
+            respectively. Other strings will be ignored. Defaults to None.
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
@@ -139,19 +150,23 @@ class Distribution:
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_cdf(self, support, legend, figsize, ax)
+            return plot_cdf(self, moments, support, legend, figsize, ax)
         else:
             raise ValueError(
                 "Undefined distribution, "
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def plot_ppf(self, legend="legend", figsize=None, ax=None):
+    def plot_ppf(self, moments=None, legend="legend", figsize=None, ax=None):
         """
         Plot the quantile function.
 
         Parameters
         ----------
+        moments : str
+            Compute moments. Use any combination of the strings ``m``, ``d``, ``v``, ``s`` or ``k``
+            for the mean (μ), standard deviation (σ), variance (σ²), skew (γ) or kurtosis (κ)
+            respectively. Other strings will be ignored. Defaults to None.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
@@ -160,7 +175,7 @@ class Distribution:
         ax : matplotlib axes
         """
         if self.is_frozen:
-            return plot_ppf(self, legend, figsize, ax)
+            return plot_ppf(self, moments, legend, figsize, ax)
         else:
             raise ValueError(
                 "Undefined distribution, "
