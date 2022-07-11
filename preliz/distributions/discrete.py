@@ -112,7 +112,7 @@ class DiscreteUniform(Discrete):
     ========  ===============================================
     Support   :math:`x \in {lower, lower + 1, \ldots, upper}`
     Mean      :math:`\dfrac{lower + upper}{2}`
-    Variance  :math:`\dfrac{(upper - lower)^2}{12}`
+    Variance  :math:`\dfrac{(upper - lower + 1)^2 - 1}{12}`
     ========  ===============================================
 
     Parameters
@@ -146,8 +146,9 @@ class DiscreteUniform(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        lower = mean - 1.73205 * sigma
-        upper = mean + 1.73205 * sigma
+        spr = (12 * sigma**2 + 1) ** 0.5
+        lower = 0.5 * (2 * mean - spr + 1)
+        upper = 0.5 * (2 * mean + spr - 1)
         self._update(lower, upper)
 
     def fit_mle(self, sample):
