@@ -589,3 +589,69 @@ class Student(Continuous):
     def fit_mle(self, sample, **kwargs):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, nu)
+
+
+class Uniform(Continuous):
+    R"""
+    Uniform distribution.
+
+    The pdf of this distribution is
+
+    .. math:: f(x \mid lower, upper) = \frac{1}{upper-lower}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Uniform
+        az.style.use('arviz-white')
+        ls = [1, -2]
+        us = [6, 2]
+        for l, u in zip(ls, us):
+            Uniform(l, u).plot_pdf()
+
+    ========  =====================================
+    Support   :math:`x \in [lower, upper]`
+    Mean      :math:`\dfrac{lower + upper}{2}`
+    Variance  :math:`\dfrac{(upper - lower)^2}{12}`
+    ========  =====================================
+
+    Parameters
+    ----------
+    lower: int
+        Lower limit.
+    upper: int
+        Upper limit (upper > lower).
+    """
+
+    def __init__(self, lower=None, upper=None):
+        super().__init__()
+        self.lower = lower
+        self.upper = upper
+        self.name = "uniform"
+        self.params = (self.lower, self.upper)
+        self.param_names = ("lower", "upper")
+        self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
+        self.dist = stats.uniform
+        self.dist.a = -np.inf
+        self.dist.b = np.inf
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        return self.dist(self.lower, self.upper - self.lower)
+
+    def _update(self, lower, upper):
+        self.lower = lower
+        self.upper = upper
+        self.params = (self.lower, self.upper)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        lower = mean - 1.73205 * sigma
+        upper = mean + 1.73205 * sigma
+        self._update(lower, upper)
+
+    def fit_mle(self, sample, **kwargs):
+        lower = np.min(sample)
+        upper = np.max(sample)
+        self._update(lower, upper)

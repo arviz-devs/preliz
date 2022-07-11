@@ -51,6 +51,7 @@ class Distribution:
         domain_error = (
             f"The provided endpoints are outside the domain of the {self.name} distribution"
         )
+
         if np.isfinite(self.dist.a):
             if lower < self.dist.a:
                 raise ValueError(domain_error)

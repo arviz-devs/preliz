@@ -11,8 +11,9 @@ all_continuous = [
     Normal,
     SkewNormal,
     Student,
+    Uniform,
 ]
-all_discrete = [Binomial, NegativeBinomial, Poisson]
+all_discrete = [Binomial, DiscreteUniform, NegativeBinomial, Poisson]
 
 
 __all__ = [s.__name__ for s in all_continuous] + [s.__name__ for s in all_discrete]

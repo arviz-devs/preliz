@@ -11,7 +11,9 @@ from preliz.distributions import (
     Normal,
     SkewNormal,
     Student,
+    Uniform,
     Binomial,
+    DiscreteUniform,
     NegativeBinomial,
     Poisson,
 )
@@ -29,11 +31,13 @@ from preliz.distributions import (
         (SkewNormal, (0, 1, 0)),
         # (Student, (4, 0, 1)),
         # (Student, (1000, 0, 1)),
+        (Uniform, (0, 1)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
         (NegativeBinomial, (2, 0.7)),
         (NegativeBinomial, (2, 0.3)),
         (Poisson, (4.5,)),
+        (DiscreteUniform, (0, 1)),
     ],
 )
 def test_moments(distribution, params):
@@ -65,11 +69,13 @@ def test_moments(distribution, params):
         (SkewNormal, (0, 1, -1)),
         (Student, (4, 0, 1)),
         (Student, (1000, 0, 1)),
+        (Uniform, (0, 1)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
         (NegativeBinomial, (2, 0.7)),
         (NegativeBinomial, (2, 0.3)),
         (Poisson, (4.5,)),
+        (DiscreteUniform, (0, 1)),
     ],
 )
 def test_mle(distribution, params):
