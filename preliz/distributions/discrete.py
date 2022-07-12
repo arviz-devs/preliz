@@ -2,7 +2,7 @@
 Discrete probability distributions.
 """
 import logging
-from math import ceil
+from math import ceil, floor
 
 import numpy as np
 from scipy import stats
@@ -88,6 +88,73 @@ class Binomial(Discrete):
         n = ceil(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
         p = x_bar / n
         self._update(n, p)
+
+
+class DiscreteUniform(Discrete):
+    R"""
+    Discrete Uniform distribution.
+
+    The pmf of this distribution is
+
+    .. math:: f(x \mid lower, upper) = \frac{1}{upper-lower+1}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import DiscreteUniform
+        az.style.use('arviz-white')
+        ls = [1, -2]
+        us = [6, 2]
+        for l, u in zip(ls, us):
+            DiscreteUniform(l, u).plot_pdf()
+
+    ========  ===============================================
+    Support   :math:`x \in {lower, lower + 1, \ldots, upper}`
+    Mean      :math:`\dfrac{lower + upper}{2}`
+    Variance  :math:`\dfrac{(upper - lower + 1)^2 - 1}{12}`
+    ========  ===============================================
+
+    Parameters
+    ----------
+    lower: int
+        Lower limit.
+    upper: int
+        Upper limit (upper > lower).
+    """
+
+    def __init__(self, lower=None, upper=None):
+        super().__init__()
+        self.lower = lower
+        self.upper = upper
+        self.name = "discreteuniform"
+        self.params = (self.lower, self.upper)
+        self.param_names = ("lower", "upper")
+        self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
+        self.dist = stats.randint
+        self.dist.a = -np.inf
+        self.dist.b = np.inf
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        return self.dist(self.lower, self.upper + 1)
+
+    def _update(self, lower, upper):
+        self.lower = floor(lower)
+        self.upper = ceil(upper)
+        self.params = (self.lower, self.upper)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        spr = (12 * sigma**2 + 1) ** 0.5
+        lower = 0.5 * (2 * mean - spr + 1)
+        upper = 0.5 * (2 * mean + spr - 1)
+        self._update(lower, upper)
+
+    def fit_mle(self, sample):
+        lower = np.min(sample)
+        upper = np.max(sample)
+        self._update(lower, upper)
 
 
 class NegativeBinomial(Discrete):

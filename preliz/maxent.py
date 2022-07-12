@@ -69,7 +69,6 @@ def maxent(
     )
 
     opt = optimize_max_ent(distribution, lower, upper, mass)
-    opt = optimize_max_ent(distribution, lower, upper, mass)
 
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)
 
