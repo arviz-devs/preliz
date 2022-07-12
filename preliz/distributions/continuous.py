@@ -608,7 +608,8 @@ class Uniform(Continuous):
         ls = [1, -2]
         us = [6, 2]
         for l, u in zip(ls, us):
-            Uniform(l, u).plot_pdf()
+            ax = Uniform(l, u).plot_pdf()
+        ax.set_ylim(0, 0.3)
 
     ========  =====================================
     Support   :math:`x \in [lower, upper]`

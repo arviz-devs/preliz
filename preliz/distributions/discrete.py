@@ -107,7 +107,7 @@ class DiscreteUniform(Discrete):
         ls = [1, -2]
         us = [6, 2]
         for l, u in zip(ls, us):
-            DiscreteUniform(l, u).plot_pdf()
+            DiscreteUniform(l, u).plot_pdf(support=(-3, 7))
 
     ========  ===============================================
     Support   :math:`x \in {lower, lower + 1, \ldots, upper}`
