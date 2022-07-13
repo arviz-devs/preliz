@@ -72,16 +72,19 @@ class Distribution:
 
         Parameters
         ----------
-        support : str
-            Available options are "full" or "restricted".
+        support : str or tuple
+            Available string options are "full" or "restricted".
         """
-        lower_ep = self.rv_frozen.a
-        upper_ep = self.rv_frozen.b
+        if isinstance(support, tuple):
+            lower_ep, upper_ep = support
+        else:
+            lower_ep = self.rv_frozen.a
+            upper_ep = self.rv_frozen.b
 
-        if not np.isfinite(lower_ep) or support == "restricted":
-            lower_ep = self.rv_frozen.ppf(0.0001)
-        if not np.isfinite(upper_ep) or support == "restricted":
-            upper_ep = self.rv_frozen.ppf(0.9999)
+            if not np.isfinite(lower_ep) or support == "restricted":
+                lower_ep = self.rv_frozen.ppf(0.0001)
+            if not np.isfinite(upper_ep) or support == "restricted":
+                upper_ep = self.rv_frozen.ppf(0.9999)
 
         return lower_ep, upper_ep
 

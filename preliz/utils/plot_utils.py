@@ -36,8 +36,13 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
         ax.plot(x, density, label=label, color=color)
         ax.set_yticks([])
     else:
-        density = dist.rv_frozen.pmf(x)
-        ax.plot(x, density, "-o", label=label, color=color)
+        mass = dist.rv_frozen.pmf(x)
+        eps = dist.finite_endpoints(support)
+        x_c = np.linspace(*eps, 1000)
+        mass_c = np.clip(dist.rv_frozen.pmf(x_c), 0, np.max(mass))
+        ax.plot(x_c, mass_c, ls="dotted", color=color)
+        ax.plot(x, mass, "o", label=label, color=color)
+
     if pointinterval:
         plot_pointinterval(dist.rv_frozen, quantiles, ax)
 
