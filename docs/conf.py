@@ -1,3 +1,4 @@
+# pylint: disable-all
 # -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
@@ -63,7 +64,7 @@ thebe_config = {
 }
 
 autodoc_default_options = {
-    'inherited-members': True,
+    "inherited-members": True,
 }
 
 # Add any paths that contain templates here, relative to this directory.
