@@ -20,7 +20,8 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
 ]
-dynamic = ["version", "description"]
+dynamic = ["version"]
+description = "The place for all your prior elicitation needs."
 dependencies = [
   "numpy>=1.22",
   "scipy>=1.9.0rc1",
