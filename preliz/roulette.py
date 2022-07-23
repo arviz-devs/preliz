@@ -221,7 +221,7 @@ def replot(canvas, grid, fitted_dist, rvar, x_min, x_max, ax):
 
 def representations(fitted_dist, kind_plot, ax):
     if kind_plot == 0:
-        fitted_dist.plot_pdf(box=True, legend="title", ax=ax)
+        fitted_dist.plot_pdf(pointinterval=True, legend="title", ax=ax)
         ax.set_yticks([])
 
         for bound in fitted_dist.rv_frozen.support():
