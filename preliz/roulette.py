@@ -47,7 +47,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
         shell = get_ipython().__class__.__name__  # pylint:disable=undefined-variable
         if shell == "ZMQInteractiveShell" and "nbagg" not in get_backend():
             _log.info(
-                "To run roulette you need Jupyter notebook, or Jupyter ab."
+                "To run roulette you need Jupyter notebook, or Jupyter lab."
                 "You will also need to use the magic `%matplotlib widget`"
             )
     except NameError:
