@@ -27,6 +27,7 @@ dependencies = [
   "scipy>=1.9.0rc1",
   "matplotlib>=3.5",
   "arviz",
+  "ipywidgets",
   "scikit-learn",
 ]
 
