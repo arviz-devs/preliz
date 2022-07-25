@@ -457,7 +457,7 @@ class SkewNormal(Continuous):
             from preliz import SkewNormal
             az.style.use('arviz-white')
             for alpha in [-6, 0, 6]:
-                SkewNormal(mu=0, sigma=0, alpha=alpha).plot_cdf()
+                SkewNormal(mu=0, sigma=1, alpha=alpha).plot_pdf()
 
     ========  ==========================================
     Support   :math:`x \in \mathbb{R}`
