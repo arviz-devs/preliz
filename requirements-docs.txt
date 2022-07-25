@@ -3,4 +3,4 @@ myst-nb
 sphinx>=4
 sphinx_thebe
 sphinx-copybutton
-nbclient<0.6,>=0.2
+jupyter-cache==0.5.0
