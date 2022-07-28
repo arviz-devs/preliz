@@ -23,10 +23,10 @@ classifiers = [
 dynamic = ["version"]
 description = "The place for all your prior elicitation needs."
 dependencies = [
+  "arviz",
   "numpy>=1.22",
   "scipy>=1.9.0rc1",
   "matplotlib>=3.5",
-  "arviz",
   "nbclient<0.6,>=0.2",
   "ipywidgets",
   "scikit-learn",
