@@ -1,5 +1,4 @@
 import pytest
-import numpy as np
 from numpy.testing import assert_almost_equal
 
 from preliz.distributions import (
@@ -92,4 +91,11 @@ def test_mle(distribution, params):
         assert_almost_equal(params, dist_.params, 0)
 
 
-# def test check_endpoints()
+@pytest.mark.parametrize("fmt", (".2f", ".1g"))
+@pytest.mark.parametrize("mass", (0.5, 0.95))
+def test_summary(fmt, mass):
+    result = Normal(0, 1).summary(fmt, mass)
+    assert result.mean == 0  # pylint: disable=comparison-with-callable
+    assert result._fields == ("mean", "median", "std", "lower", "upper")
+    result = Poisson(2).summary()
+    assert result.mean == 2  # pylint: disable=comparison-with-callable

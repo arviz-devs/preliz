@@ -2,8 +2,11 @@
 Parent classes for all families.
 """
 # pylint: disable=no-member
+from collections import namedtuple
+
 import numpy as np
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
+from ..utils.utils import hdi_from_pdf
 
 
 class Distribution:
@@ -35,7 +38,64 @@ class Distribution:
             self.rv_frozen = self._get_frozen()
             self.rv_frozen.name = self.name
 
-    def check_endpoints(self, lower, upper):
+    def summary(self, fmt=".2f", mass=0.94):
+        """
+        Namedtuple with the mean, median and standard deviation, and lower and upper tails
+
+        Parameters
+        ----------
+        fmt : str
+            fmt used to represent results using f-string fmt for floats. Default to ".2f"
+            i.e. 2 digits after the decimal point.
+        mass: float
+            Probability mass for the equal tail interval. Defaults to 0.94
+        """
+        if self.is_frozen:
+            attr = namedtuple(self.name.capitalize(), ["mean", "median", "std", "lower", "upper"])
+            mean = float(f"{self.rv_frozen.mean():{fmt}}")
+            median = float(f"{self.rv_frozen.median():{fmt}}")
+            std = float(f"{self.rv_frozen.std():{fmt}}")
+            eti = self.rv_frozen.interval(mass)
+            lower_tail = float(f"{eti[0]:{fmt}}")
+            upper_tail = float(f"{eti[1]:{fmt}}")
+            attr(mean, median, std, lower_tail, upper_tail)
+        else:
+            attr = None
+        return attr
+
+    def rvs(self, size=1, random_state=None):
+        """Random sample
+
+        Parameters
+        ----------
+        size : int or tuple of ints, optional
+            Defining number of random variates. Defaults to 1.
+        random_state : {None, int, numpy.random.Generator, numpy.random.RandomState}
+            Defaults to None
+        """
+        return self.rv_frozen.rvs(size=size, random_state=random_state)
+
+    def eti(self, mass=0.94):
+        """Equally tail interval containing `mass`.
+
+        Parameters
+        ----------
+        mass: float
+            Probability mass in the interval. Defaults to 0.94
+        """
+        return self.rv_frozen.interval(mass)
+
+    def hdi(self, mass=0.94):
+        """Highest density interval containing `mass`.
+
+        Parameters
+        ----------
+        mass: float
+            Probability mass in the interval. Defaults to 0.94
+        """
+        return hdi_from_pdf(self, mass)
+
+    def _check_endpoints(self, lower, upper):
         """
         Evaluate if the lower and upper values are in the support of the distribution
 
@@ -66,7 +126,7 @@ class Distribution:
                     "Please provide other values"
                 )
 
-    def finite_endpoints(self, support):
+    def _finite_endpoints(self, support):
         """
         Return finite endpoints even for unbounded distributions
 
@@ -216,7 +276,7 @@ class Continuous(Distribution):
         support : str
             Available options are "full" or "restricted".
         """
-        lower_ep, upper_ep = self.finite_endpoints(support)
+        lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.linspace(lower_ep, upper_ep, 1000)
         return x_vals
 
@@ -245,7 +305,7 @@ class Discrete(Distribution):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
         """
-        lower_ep, upper_ep = self.finite_endpoints(support)
+        lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals
 

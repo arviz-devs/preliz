@@ -50,7 +50,7 @@ def quartile(
     if distribution is None:
         distribution = Normal()
 
-    distribution.check_endpoints(q1, q3)
+    distribution._check_endpoints(q1, q3)
 
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
