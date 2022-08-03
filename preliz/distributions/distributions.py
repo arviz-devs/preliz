@@ -58,10 +58,9 @@ class Distribution:
             eti = self.rv_frozen.interval(mass)
             lower_tail = float(f"{eti[0]:{fmt}}")
             upper_tail = float(f"{eti[1]:{fmt}}")
-            attr(mean, median, std, lower_tail, upper_tail)
+            return attr(mean, median, std, lower_tail, upper_tail)
         else:
-            attr = None
-        return attr
+            return None
 
     def rvs(self, size=1, random_state=None):
         """Random sample

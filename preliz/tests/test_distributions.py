@@ -95,7 +95,7 @@ def test_mle(distribution, params):
 @pytest.mark.parametrize("mass", (0.5, 0.95))
 def test_summary(fmt, mass):
     result = Normal(0, 1).summary(fmt, mass)
-    assert result.mean == 0  # pylint: disable=comparison-with-callable
+    assert result.mean == 0
     assert result._fields == ("mean", "median", "std", "lower", "upper")
     result = Poisson(2).summary()
-    assert result.mean == 2  # pylint: disable=comparison-with-callable
+    assert result.mean == 2
