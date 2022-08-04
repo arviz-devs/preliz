@@ -37,7 +37,7 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
         ax.set_yticks([])
     else:
         mass = dist.rv_frozen.pmf(x)
-        eps = dist.finite_endpoints(support)
+        eps = dist._finite_endpoints(support)
         x_c = np.linspace(*eps, 1000)
         mass_c = np.clip(dist.rv_frozen.pmf(x_c), 0, np.max(mass))
         ax.plot(x_c, mass_c, ls="dotted", color=color)
@@ -60,7 +60,7 @@ def plot_cdf(dist, moments, support, legend, figsize, ax):
     if moments is not None:
         label += get_moments(dist, moments)
 
-    eps = dist.finite_endpoints(support)
+    eps = dist._finite_endpoints(support)
     x = np.linspace(*eps, 1000)
     cdf = dist.rv_frozen.cdf(x)
     ax.plot(x, cdf, label=label, color=color)
