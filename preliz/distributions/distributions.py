@@ -40,7 +40,8 @@ class Distribution:
 
     def summary(self, fmt=".2f", mass=0.94):
         """
-        Namedtuple with the mean, median and standard deviation, and lower and upper tails
+        Namedtuple with the mean, median, standard deviation, and lower and upper bounds
+        of the equal-tailed interval.
 
         Parameters
         ----------
@@ -48,7 +49,7 @@ class Distribution:
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point.
         mass: float
-            Probability mass for the equal tail interval. Defaults to 0.94
+            Probability mass for the equal-tailed interval. Defaults to 0.94
         """
         if self.is_frozen:
             attr = namedtuple(self.name.capitalize(), ["mean", "median", "std", "lower", "upper"])
@@ -74,25 +75,37 @@ class Distribution:
         """
         return self.rv_frozen.rvs(size=size, random_state=random_state)
 
-    def eti(self, mass=0.94):
-        """Equally tail interval containing `mass`.
+    def eti(self, fmt=".2f", mass=0.94):
+        """Equal-tailed interval containing `mass`.
 
         Parameters
         ----------
+        fmt : str
+            fmt used to represent results using f-string fmt for floats. Default to ".2f"
+            i.e. 2 digits after the decimal point.
         mass: float
             Probability mass in the interval. Defaults to 0.94
         """
-        return self.rv_frozen.interval(mass)
+        eti = self.rv_frozen.interval(mass)
+        lower_tail = float(f"{eti[0]:{fmt}}")
+        upper_tail = float(f"{eti[1]:{fmt}}")
+        return (lower_tail, upper_tail)
 
-    def hdi(self, mass=0.94):
+    def hdi(self, fmt=".2f", mass=0.94):
         """Highest density interval containing `mass`.
 
         Parameters
         ----------
+        fmt : str
+            fmt used to represent results using f-string fmt for floats. Default to ".2f"
+            i.e. 2 digits after the decimal point.
         mass: float
             Probability mass in the interval. Defaults to 0.94
         """
-        return hdi_from_pdf(self, mass)
+        hdi = hdi_from_pdf(self, mass)
+        lower_tail = float(f"{hdi[0]:{fmt}}")
+        upper_tail = float(f"{hdi[1]:{fmt}}")
+        return (lower_tail, upper_tail)
 
     def _check_endpoints(self, lower, upper):
         """
