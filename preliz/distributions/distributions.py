@@ -5,6 +5,7 @@ Parent classes for all families.
 from collections import namedtuple
 
 import numpy as np
+
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
 from ..utils.utils import hdi_from_pdf
 
@@ -32,10 +33,12 @@ class Distribution:
             return self.name
 
     def _update_rv_frozen(self):
-        """Update the rv_frozen object when the parameters are not None"""
-        self.is_frozen = any(self.params)
-        if self.is_frozen:
-            self.rv_frozen = self._get_frozen()
+        """Update the rv_frozen object"""
+
+        frozen = self._get_frozen()
+        if frozen is not None:
+            self.is_frozen = True
+            self.rv_frozen = frozen
             self.rv_frozen.name = self.name
 
     def summary(self, fmt=".2f", mass=0.94):
@@ -123,16 +126,23 @@ class Distribution:
         domain_error = (
             f"The provided endpoints are outside the domain of the {self.name} distribution"
         )
+        # if not self.is_frozen:
+        #     raise ValueError(
+        #         "Undefined distribution, "
+        #         "you need to first define its parameters or use one of the fit methods"
+        #     )
 
-        if np.isfinite(self.dist.a):
-            if lower < self.dist.a:
+        s_l, s_u = self.support
+
+        if np.isfinite(s_l):
+            if lower < s_l:
                 raise ValueError(domain_error)
 
-        if np.isfinite(self.dist.b):
-            if upper > self.dist.b:
+        if np.isfinite(s_u):
+            if upper > s_u:
                 raise ValueError(domain_error)
-        if np.isfinite(self.dist.a) and np.isfinite(self.dist.b):
-            if lower == self.dist.a and upper == self.dist.b:
+        if np.isfinite(s_l) and np.isfinite(s_u):
+            if lower == s_l and upper == s_u:
                 raise ValueError(
                     "Given the provided endpoints, mass will be always 1. "
                     "Please provide other values"
@@ -150,8 +160,7 @@ class Distribution:
         if isinstance(support, tuple):
             lower_ep, upper_ep = support
         else:
-            lower_ep = self.rv_frozen.a
-            upper_ep = self.rv_frozen.b
+            lower_ep, upper_ep = self.support
 
             if not np.isfinite(lower_ep) or support == "restricted":
                 lower_ep = self.rv_frozen.ppf(0.0001)
