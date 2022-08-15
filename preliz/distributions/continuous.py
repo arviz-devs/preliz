@@ -99,10 +99,10 @@ class BetaScaled(Continuous):
         from preliz import BetaScaled
         az.style.use('arviz-white')
         alphas = [2, 2]
-        betas = [5, 5]
-        lowers = [0, 1]
-        uppers = [1, 2]
-        for alpha, beta, lower, upper in zip(alphas, betas, lower, upper):
+        betas = [2, 5]
+        lowers = [-0.5, -1]
+        uppers = [1.5, 2]
+        for alpha, beta, lower, upper in zip(alphas, betas, lowers, uppers):
             BetaScaled(alpha, beta, lower, upper).plot_pdf()
 
     ========  ==============================================================
