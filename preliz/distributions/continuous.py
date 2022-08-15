@@ -100,7 +100,7 @@ class BetaScaled(Continuous):
         az.style.use('arviz-white')
         alphas = [2, 2]
         betas = [5, 5]
-        lowers = [0, -1]
+        lowers = [0, 1]
         uppers = [1, 2]
         for alpha, beta, lower, upper in zip(alphas, betas, lower, upper):
             BetaScaled(alpha, beta, lower, upper).plot_pdf()
