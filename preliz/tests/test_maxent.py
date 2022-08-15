@@ -1,4 +1,3 @@
-from preliz.distributions.continuous import Laplace
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose
@@ -45,6 +44,6 @@ def test_maxent(distribution, name, lower, upper, mass, nu, support, result):
 
     assert rv_frozen.name == name
     assert rv_frozen.support() == support
-    if dist.name != "discreteuniform":  # optimization fails to converge, but results are reasonable
+    if dist.name != "discreteniform":  # optimization fails to converge, but results are reasonable
         assert opt.success
     assert_allclose(opt.x, result, atol=0.001)

@@ -54,10 +54,14 @@ class Beta(Continuous):
         self.param_names = ("alpha", "beta")
         self.params_support = ((eps, np.inf), (eps, np.inf))
         self.dist = stats.beta
+        self.support = (0, 1)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.alpha, self.beta)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.alpha, self.beta)
+        return frozen
 
     def _update(self, alpha, beta):
         self.alpha = alpha
@@ -66,14 +70,102 @@ class Beta(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        kappa = (mean * (1 - mean) / (sigma) ** 2) - 1
-        alpha = max(0.5, mean * kappa)
-        beta = max(0.5, (1 - mean) * kappa)
+        kappa = mean * (1 - mean) / sigma**2 - 1
+        alpha = max(0.5, kappa * mean)
+        beta = max(0.5, kappa * (1 - mean))
         self._update(alpha, beta)
 
     def fit_mle(self, sample, **kwargs):
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
+
+
+class BetaScaled(Continuous):
+    r"""
+    Scaled Beta distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \alpha, \beta) =
+           \frac{(x-\text{lower})^{\alpha - 1} (\text{upper} - x)^{\beta - 1}}
+           {(\text{upper}-\text{lower})^{\alpha+\beta-1} B(\alpha, \beta)}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import BetaScaled
+        az.style.use('arviz-white')
+        alphas = [2, 2]
+        betas = [5, 5]
+        lowers = [0, -1]
+        uppers = [1, 2]
+        for alpha, beta, lower, upper in zip(alphas, betas, lower, upper):
+            BetaScaled(alpha, beta, lower, upper).plot_pdf()
+
+    ========  ==============================================================
+    Support   :math:`x \in (lower, upper)`
+    Mean      :math:`\dfrac{\alpha}{\alpha + \beta} (upper-lower) + lower`
+    Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)} (upper-lower)`
+    ========  ==============================================================
+
+    Parameters
+    ----------
+    alpha : float
+        alpha  > 0
+    beta : float
+        beta  > 0
+    lower: float
+        Lower limit.
+    upper: float
+        Upper limit (upper > lower).
+    """
+
+    def __init__(self, alpha=None, beta=None, lower=0, upper=1):
+        super().__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.lower = lower
+        self.upper = upper
+        self.name = "betascaled"
+        self.params = (self.alpha, self.beta, self.lower, self.upper)
+        self.param_names = ("alpha", "beta", "lower", "upper")
+        self.params_support = ((eps, np.inf), (eps, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
+        self.dist = stats.beta
+        self.support = (lower, upper)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if self.alpha is not None or self.beta is not None:
+            frozen = self.dist(self.alpha, self.beta, loc=self.lower, scale=self.upper - self.lower)
+        return frozen
+
+    def _update(self, alpha, beta, lower=None, upper=None):
+        if lower is not None:
+            self.lower = lower
+        if upper is not None:
+            self.upper = upper
+
+        self.alpha = alpha
+        self.beta = beta
+        self.params = (self.alpha, self.beta, self.lower, self.upper)
+        self.support = self.lower, self.upper
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        mean = (mean - self.lower) / (self.upper - self.lower)
+        sigma = sigma / (self.upper - self.lower)
+        kappa = mean * (1 - mean) / sigma**2 - 1
+        alpha = max(0.5, kappa * mean)
+        beta = max(0.5, kappa * (1 - mean))
+        self._update(alpha, beta)
+
+    def fit_mle(self, sample, **kwargs):
+        alpha, beta, lower, scale = self.dist.fit(sample, **kwargs)
+        self._update(alpha, beta, lower, lower + scale)
 
 
 class Exponential(Continuous):
@@ -116,10 +208,14 @@ class Exponential(Continuous):
         self.param_names = ("lam",)
         self.params_support = ((eps, np.inf),)
         self.dist = stats.expon
+        self.support = (0, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(scale=1 / self.lam)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(scale=1 / self.lam)
+        return frozen
 
     def _update(self, lam):
         self.lam = lam
@@ -183,10 +279,14 @@ class Gamma(Continuous):
         self.param_names = ("alpha", "beta")
         self.params_support = ((eps, np.inf), (eps, np.inf))
         self.dist = stats.gamma
+        self.support = (0, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(a=self.alpha, scale=1 / self.beta)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(a=self.alpha, scale=1 / self.beta)
+        return frozen
 
     def _update(self, alpha, beta):
         self.alpha = alpha
@@ -217,10 +317,14 @@ class HalfNormal(Continuous):
         self.param_names = ("sigma",)
         self.params_support = ((eps, np.inf),)
         self.dist = stats.halfnorm
+        self.support = (0, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(scale=self.sigma)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(scale=self.sigma)
+        return frozen
 
     def _update(self, sigma):
         self.sigma = sigma
@@ -281,10 +385,14 @@ class Laplace(Continuous):
         self.param_names = ("mu", "b")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.laplace
+        self.support = (-np.inf, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(loc=self.mu, scale=self.b)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(loc=self.mu, scale=self.b)
+        return frozen
 
     def _update(self, mu, b):
         self.mu = mu
@@ -353,10 +461,14 @@ class LogNormal(Continuous):
         self.param_names = ("mu", "sigma")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.lognorm
+        self.support = (0, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.sigma, scale=np.exp(self.mu))
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.sigma, scale=np.exp(self.mu))
+        return frozen
 
     def _update(self, mu, sigma):
         self.mu = mu
@@ -420,10 +532,14 @@ class Normal(Continuous):
         self.param_names = ("mu", "sigma")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.norm
+        self.support = (-np.inf, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.mu, self.sigma)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.mu, self.sigma)
+        return frozen
 
     def _update(self, mu, sigma):
         self.mu = mu
@@ -493,10 +609,14 @@ class SkewNormal(Continuous):
         self.param_names = ("mu", "sigma", "alpha")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf), (-np.inf, np.inf))
         self.dist = stats.skewnorm
+        self.support = (-np.inf, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.alpha, self.mu, self.sigma)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.alpha, self.mu, self.sigma)
+        return frozen
 
     def _update(self, mu, sigma, alpha=None):
         if alpha is not None:
@@ -559,7 +679,7 @@ class Student(Continuous):
         increases.
     """
 
-    def __init__(self, nu=None, mu=None, sigma=None):
+    def __init__(self, nu=3, mu=None, sigma=None):
         super().__init__()
         self.nu = nu
         self.mu = mu
@@ -569,10 +689,14 @@ class Student(Continuous):
         self.param_names = ("nu", "mu", "sigma")
         self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.t
+        self.support = (-np.inf, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.nu, self.mu, self.sigma)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.nu, self.mu, self.sigma)
+        return frozen
 
     def _update(self, mu, sigma, nu=None):
         if nu is not None:
@@ -619,13 +743,13 @@ class Uniform(Continuous):
 
     Parameters
     ----------
-    lower: int
+    lower: float
         Lower limit.
-    upper: int
+    upper: float
         Upper limit (upper > lower).
     """
 
-    def __init__(self, lower=None, upper=None):
+    def __init__(self, lower=-np.inf, upper=np.inf):
         super().__init__()
         self.lower = lower
         self.upper = upper
@@ -634,17 +758,22 @@ class Uniform(Continuous):
         self.param_names = ("lower", "upper")
         self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
         self.dist = stats.uniform
+        self.support = (lower, upper)
         self.dist.a = -np.inf
         self.dist.b = np.inf
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.lower, self.upper - self.lower)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.lower, self.upper - self.lower)
+        return frozen
 
     def _update(self, lower, upper):
         self.lower = lower
         self.upper = upper
         self.params = (self.lower, self.upper)
+        self.support = (self.lower, self.upper)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
