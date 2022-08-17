@@ -62,15 +62,20 @@ class Binomial(Discrete):
         self.param_names = ("n", "p")
         self.params_support = ((eps, np.inf), (eps, 1 - eps))
         self.dist = stats.binom
+        self.support = (0, n)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.n, self.p)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.n, self.p)
+        return frozen
 
     def _update(self, n, p):
         self.n = int(n)
         self.p = p
         self.params = (self.n, self.p)
+        self.support = (0, self.n)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
@@ -123,7 +128,7 @@ class DiscreteUniform(Discrete):
         Upper limit (upper > lower).
     """
 
-    def __init__(self, lower=None, upper=None):
+    def __init__(self, lower=-np.inf, upper=np.inf):
         super().__init__()
         self.lower = lower
         self.upper = upper
@@ -132,17 +137,22 @@ class DiscreteUniform(Discrete):
         self.param_names = ("lower", "upper")
         self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
         self.dist = stats.randint
+        self.support = (lower, upper)
         self.dist.a = -np.inf
         self.dist.b = np.inf
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.lower, self.upper + 1)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.lower, self.upper + 1)
+        return frozen
 
     def _update(self, lower, upper):
         self.lower = floor(lower)
         self.upper = ceil(upper)
         self.params = (self.lower, self.upper)
+        self.support = (self.lower, self.upper)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
@@ -205,10 +215,14 @@ class NegativeBinomial(Discrete):
         self.param_names = ("n", "p")
         self.params_support = ((eps, np.inf), (eps, 1 - eps))
         self.dist = stats.nbinom
+        self.support = (0, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.n, self.p)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.n, self.p)
+        return frozen
 
     def _update(self, n, p):
         self.n = n
@@ -275,10 +289,14 @@ class Poisson(Discrete):
         self.param_names = ("mu",)
         self.params_support = ((eps, np.inf),)
         self.dist = stats.poisson
+        self.support = (0, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
-        return self.dist(self.mu)
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.mu)
+        return frozen
 
     def _update(self, mu):
         self.mu = mu

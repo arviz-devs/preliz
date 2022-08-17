@@ -1,4 +1,3 @@
-from preliz.distributions.continuous import Laplace
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose

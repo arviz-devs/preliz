@@ -32,6 +32,9 @@ def optimize_max_ent(dist, lower, upper, mass):
     if dist.name == "skewnormal":
         init_vals = init_vals[:-1]
         bounds = bounds[:-1]
+    if dist.name == "betascaled":
+        init_vals = init_vals[:-2]
+        bounds = bounds[:-2]
 
     opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
     dist._update(*opt["x"])
@@ -57,14 +60,14 @@ def optimize_quartile(dist, x_vals):
     return opt
 
 
-def optimize_cdf(dist, x_vals, pcdf):
-    def func(params, dist, x_vals, pcdf):
-        dist._update(*params)
-        loss = dist.rv_frozen.cdf(x_vals) - pcdf
+def optimize_cdf(dist, x_vals, ecdf, **kwargs):
+    def func(params, dist, x_vals, ecdf, **kwargs):
+        dist._update(*params, **kwargs)
+        loss = dist.rv_frozen.cdf(x_vals) - ecdf
         return loss
 
-    init_vals = dist.params
-    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, pcdf))
+    init_vals = dist.params[:2]
+    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf), kwargs=kwargs)
     dist._update(*opt["x"])
     loss = opt["cost"]
     return loss

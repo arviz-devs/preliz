@@ -215,7 +215,7 @@ def on_leave_fig(canvas, grid, dist_names, kind_plot, x_min, x_max, ncols, ax):
     ncols = float(ncols)
     x_range = x_max - x_min
 
-    x_vals, pcdf, mean, std, filled_columns = weights_to_ecdf(grid.weights, x_min, x_range, ncols)
+    x_vals, ecdf, mean, std, filled_columns = weights_to_ecdf(grid.weights, x_min, x_range, ncols)
 
     if filled_columns > 1:
         selected_distributions = get_distributions(dist_names)
@@ -225,7 +225,7 @@ def on_leave_fig(canvas, grid, dist_names, kind_plot, x_min, x_max, ncols, ax):
             fitted_dist = fit_to_ecdf(
                 selected_distributions,
                 x_vals,
-                pcdf,
+                ecdf,
                 mean,
                 std,
                 x_min,
@@ -247,7 +247,7 @@ def weights_to_ecdf(weights, x_min, x_range, ncols):
     """
     filled_columns = 0
     x_vals = []
-    pcdf = []
+    ecdf = []
     cum_sum = 0
 
     values = list(weights.values())
@@ -261,9 +261,9 @@ def weights_to_ecdf(weights, x_min, x_range, ncols):
             x_val = (k / ncols * x_range) + x_min + ((x_range / ncols))
             x_vals.append(x_val)
             cum_sum += v / total
-            pcdf.append(cum_sum)
+            ecdf.append(cum_sum)
 
-    return x_vals, pcdf, mean, std, filled_columns
+    return x_vals, ecdf, mean, std, filled_columns
 
 
 def get_distributions(dist_names):
@@ -278,16 +278,24 @@ def get_distributions(dist_names):
     return dists
 
 
-def fit_to_ecdf(selected_distributions, x_vals, pcdf, mean, std, x_min, x_max):
+def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
     """
-    Use a MLE approximated over a grid of values defined by x_min and x_max
+    Minimize the difference between the cdf and the ecdf over a grid of values
+    defined by x_min and x_max
     """
     loss_old = np.inf
     fitted_dist = None
     for dist in selected_distributions:
+        if dist.name == "betascaled":
+            dist.lower = dist.dist.a = x_min
+            dist.upper = dist.dist.b = x_max
+            kwargs = {"lower": x_min, "upper": x_max}
+        else:
+            kwargs = {}
+
         if x_min >= dist.dist.a and x_max <= dist.dist.b:
             dist._fit_moments(mean, std)  # pylint:disable=protected-access
-            loss = optimize_cdf(dist, x_vals, pcdf)
+            loss = optimize_cdf(dist, x_vals, ecdf, **kwargs)
 
             if loss < loss_old:
                 loss_old = loss
@@ -301,7 +309,7 @@ def representations(fitted_dist, kind_plot, ax):
         fitted_dist.plot_pdf(pointinterval=True, legend="title", ax=ax)
         ax.set_yticks([])
 
-        for bound in fitted_dist.rv_frozen.support():
+        for bound in fitted_dist.support:
             if np.isfinite(bound):
                 ax.plot(bound, 0, "ko")
 
@@ -388,7 +396,7 @@ def get_widgets(x_min, x_max, nrows, ncols):
         layout=width_entry_text,
     )
 
-    dist_names = ["Normal", "Beta", "Gamma", "LogNormal"]
+    dist_names = ["Normal", "BetaScaled", "Gamma", "LogNormal", "Student"]
 
     w_distributions = widgets.SelectMultiple(
         options=dist_names, value=dist_names, description="", disabled=False
