@@ -11,6 +11,7 @@ from preliz.distributions import (
     SkewNormal,
     Student,
     Uniform,
+    Weibull,
     Binomial,
     DiscreteUniform,
     NegativeBinomial,
@@ -31,6 +32,7 @@ from preliz.distributions import (
         # (Student, (4, 0, 1)),
         # (Student, (1000, 0, 1)),
         (Uniform, (0, 1)),
+        (Weibull, (2, 1)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
         (NegativeBinomial, (2, 0.7)),
@@ -44,7 +46,7 @@ def test_moments(distribution, params):
     dist_ = distribution()
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
-    tol = 7
+    tol = 5
     if dist.name == "binomial":
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
@@ -69,6 +71,7 @@ def test_moments(distribution, params):
         (Student, (4, 0, 1)),
         (Student, (1000, 0, 1)),
         (Uniform, (0, 1)),
+        (Weibull, (2, 1)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
         (NegativeBinomial, (2, 0.7)),

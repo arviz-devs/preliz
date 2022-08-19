@@ -12,6 +12,7 @@ from preliz.distributions import (
     Normal,
     Student,
     Uniform,
+    Weibull,
     DiscreteUniform,
     Poisson,
 )
@@ -30,6 +31,7 @@ from preliz.distributions import (
         (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
         (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
         (Uniform, "uniform", -2, 10, 0.9, None, (-np.inf, np.inf), (-2.666, 10.666)),
+        (Weibull, "weibull", 0, 10, 0.9, None, (0, np.inf), (1.411, 5.537)),
         (DiscreteUniform, "discreteuniform", -2, 10, 0.9, None, (-3, 11), (-2, 10)),
         (Poisson, "poisson", 0, 3, 0.7, None, (0, np.inf), (2.763)),
     ],
