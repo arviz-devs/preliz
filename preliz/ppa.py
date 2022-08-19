@@ -182,7 +182,7 @@ def new_priors_back_fitting(model, pps1, sample_size):
         is_fitable = any(param.name is None for param in params)
         if is_fitable:
             # pymc_name, sp_rv = pymc_to_scipy[distribution]
-            dist.fit_mle(pps1[name])
+            dist._fit_mle(pps1[name])
             string += f"{repr_to_matplotlib(dist)}\n"
             # string += f'{name} = pm.{pymc_name}("{name}", '
             # if distribution == "normal":
