@@ -84,7 +84,7 @@ def test_mle(distribution, params):
     dist = distribution(*params)
     sample = dist.rv_frozen.rvs(20000)
     dist_ = distribution()
-    dist_.fit_mle(sample)
+    dist_._fit_mle(sample)
 
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), 1)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), 1)

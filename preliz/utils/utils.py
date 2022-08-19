@@ -30,7 +30,7 @@ def hdi_from_pdf(dist, mass=0.95):
 
 def garcia_approximation(mean, sigma):
     """
-    Approximate methods of moment for Weibull distribution, provides good results for values of
+    Approximate method of moments for Weibull distribution, provides good results for values of
     alpha larger than 0.83.
 
     Oscar Garcia. Simplified method-of-moments estimation for the Weibull distribution. 1981.

@@ -76,7 +76,7 @@ class Beta(Continuous):
         beta = max(0.5, kappa * (1 - mean))
         self._update(alpha, beta)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 
@@ -164,7 +164,7 @@ class BetaScaled(Continuous):
         beta = max(0.5, kappa * (1 - mean))
         self._update(alpha, beta)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         alpha, beta, lower, scale = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta, lower, lower + scale)
 
@@ -227,7 +227,7 @@ class Exponential(Continuous):
         lam = 1 / mean
         self._update(lam)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         _, lam = self.dist.fit(sample, **kwargs)
         self._update(1 / lam)
 
@@ -300,7 +300,7 @@ class Gamma(Continuous):
         beta = mean / sigma**2
         self._update(alpha, beta)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         alpha, _, beta = self.dist.fit(sample, **kwargs)
         self._update(alpha, 1 / beta)
 
@@ -336,7 +336,7 @@ class HalfNormal(Continuous):
         sigma = sigma * (1 - 2 / np.pi) ** 0.5
         self._update(sigma)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         _, sigma = self.dist.fit(sample, **kwargs)
         self._update(sigma)
 
@@ -406,7 +406,7 @@ class Laplace(Continuous):
         b = (sigma / 2) * (2**0.5)
         self._update(mu, b)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         mu, b = self.dist.fit(sample, **kwargs)
         self._update(mu, b)
 
@@ -482,7 +482,7 @@ class LogNormal(Continuous):
         sigma = np.log(sigma**2 / mean**2 + 1) ** 0.5
         self._update(mu, sigma)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         sigma, _, mu = self.dist.fit(sample, **kwargs)
         self._update(np.log(mu), sigma)
 
@@ -551,7 +551,7 @@ class Normal(Continuous):
     def _fit_moments(self, mean, sigma):
         self._update(mean, sigma)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma)
 
@@ -631,7 +631,7 @@ class SkewNormal(Continuous):
         # Just assume this is a gaussian
         self._update(mean, sigma)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         alpha, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, alpha)
 
@@ -711,7 +711,7 @@ class Student(Continuous):
         # This is a placeholder!!!
         self._update(mean, sigma)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, nu)
 
@@ -782,7 +782,7 @@ class Uniform(Continuous):
         upper = mean + 1.73205 * sigma
         self._update(lower, upper)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         lower = np.min(sample)
         upper = np.max(sample)
         self._update(lower, upper)
@@ -853,6 +853,6 @@ class Weibull(Continuous):
         alpha, beta = garcia_approximation(mean, sigma)
         self._update(alpha, beta)
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         alpha, _, beta = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)

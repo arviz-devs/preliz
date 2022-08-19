@@ -126,12 +126,6 @@ class Distribution:
         domain_error = (
             f"The provided endpoints are outside the domain of the {self.name} distribution"
         )
-        # if not self.is_frozen:
-        #     raise ValueError(
-        #         "Undefined distribution, "
-        #         "you need to first define its parameters or use one of the fit methods"
-        #     )
-
         s_l, s_u = self.support
 
         if np.isfinite(s_l):
@@ -267,19 +261,6 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def _fit_moments(self, mean, sigma):
-        """
-        Estimate the parameters of the distribution from the mean and standard deviation.
-
-        Parameters
-        ----------
-        mean : float
-            mean value
-        sigma : float
-            standard deviation
-        """
-        raise NotImplementedError
-
 
 class Continuous(Distribution):
     """Base class for continuous distributions."""
@@ -301,7 +282,7 @@ class Continuous(Distribution):
         x_vals = np.linspace(lower_ep, upper_ep, 1000)
         return x_vals
 
-    def fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample, **kwargs):
         """
         Estimate the parameters of the distribution from a sample by maximizing the likelihood.
 
@@ -329,12 +310,3 @@ class Discrete(Distribution):
         lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals
-
-    def fit_mle(self, sample):
-        """
-        Estimate the parameters of the distribution from a sample by maximizing the likelihood.
-
-        sample : array-like
-            a sample
-        """
-        raise NotImplementedError

@@ -85,7 +85,7 @@ class Binomial(Discrete):
         self._update(n, p)
         optimize_matching_moments(self, mean, sigma)
 
-    def fit_mle(self, sample):
+    def _fit_mle(self, sample):
         # see https://doi.org/10.1016/j.jspi.2004.02.019 for details
         x_bar = np.mean(sample)
         x_std = np.std(sample)
@@ -161,7 +161,7 @@ class DiscreteUniform(Discrete):
         upper = 0.5 * (2 * mean + spr - 1)
         self._update(lower, upper)
 
-    def fit_mle(self, sample):
+    def _fit_mle(self, sample):
         lower = np.min(sample)
         upper = np.max(sample)
         self._update(lower, upper)
@@ -235,7 +235,7 @@ class NegativeBinomial(Discrete):
         p = mean / sigma**2
         self._update(n, p)
 
-    def fit_mle(self, sample):
+    def _fit_mle(self, sample):
         # the upper bound is based on a quick heuristic. The fit will underestimate
         # the value of n when p is very close to 1.
         fitted = stats.fit(self.dist, sample, bounds={"n": (1, max(sample) * 5)})
@@ -306,6 +306,6 @@ class Poisson(Discrete):
     def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
         self._update(mean)
 
-    def fit_mle(self, sample):
+    def _fit_mle(self, sample):
         mu = np.mean(sample)
         self._update(mu)
