@@ -13,6 +13,7 @@ all_continuous = [
     SkewNormal,
     Student,
     Uniform,
+    Weibull,
 ]
 all_discrete = [Binomial, DiscreteUniform, NegativeBinomial, Poisson]
 

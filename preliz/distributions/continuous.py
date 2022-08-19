@@ -5,6 +5,7 @@ import numpy as np
 from scipy import stats
 
 from .distributions import Continuous
+from ..utils.utils import garcia_approximation
 
 eps = np.finfo(float).eps
 
@@ -785,3 +786,73 @@ class Uniform(Continuous):
         lower = np.min(sample)
         upper = np.max(sample)
         self._update(lower, upper)
+
+
+class Weibull(Continuous):
+    r"""
+    Weibull distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \alpha, \beta) =
+           \frac{\alpha x^{\alpha - 1}
+           \exp(-(\frac{x}{\beta})^{\alpha})}{\beta^\alpha}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Weibull
+        plt.style.use('arviz-white')
+        alphas = [1., 2, 5.]
+        betas = [1., 1., 2.]
+        for a, b in zip(alphas, betas):
+            Weibull(a, b).plot_pdf()
+
+    ========  ====================================================
+    Support   :math:`x \in [0, \infty)`
+    Mean      :math:`\beta \Gamma(1 + \frac{1}{\alpha})`
+    Variance  :math:`\beta^2 \Gamma(1 + \frac{2}{\alpha} - \mu^2/\beta^2)`
+    ========  ====================================================
+
+    Parameters
+    ----------
+    alpha : float
+        Shape parameter (alpha > 0).
+    beta : float
+        Scale parameter (beta > 0).
+    """
+
+    def __init__(self, alpha=None, beta=None):
+        super().__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.name = "weibull"
+        self.params = (self.alpha, self.beta)
+        self.param_names = ("alpha", "beta")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.dist = stats.weibull_min
+        self.support = (0, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.alpha, scale=self.beta)
+        return frozen
+
+    def _update(self, alpha, beta):
+        self.alpha = alpha
+        self.beta = beta
+        self.params = (self.alpha, self.beta)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        alpha, beta = garcia_approximation(mean, sigma)
+        self._update(alpha, beta)
+
+    def fit_mle(self, sample, **kwargs):
+        alpha, _, beta = self.dist.fit(sample, **kwargs)
+        self._update(alpha, beta)
