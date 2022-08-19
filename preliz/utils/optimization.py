@@ -93,3 +93,7 @@ def relative_error(dist, lower, upper, required_mass):
         lower -= 1
     computed_mass = dist.rv_frozen.cdf(upper) - dist.rv_frozen.cdf(lower)
     return abs((computed_mass - required_mass) / required_mass * 100), computed_mass
+
+
+# clean namespace
+del minimize, least_squares

@@ -1,7 +1,7 @@
 """
 PreliZ.
 
-Tools to help you pick a prior
+Tools to help you define priors
 """
 import logging
 
@@ -22,9 +22,12 @@ _log = logging.getLogger("preliz")
 if not logging.root.handlers:
     _log.setLevel(logging.INFO)
     if len(_log.handlers) == 0:
-        handler = logging.StreamHandler()
-        _log.addHandler(handler)
+        _log.addHandler(logging.StreamHandler())
 
 # Allow legend outside plot in maxent to be included when saving a figure
 # We may want to make this more explicit by having preliz.rcParams
 rcParams["savefig.bbox"] = "tight"
+
+
+# clean namespace
+del logging, rcParams

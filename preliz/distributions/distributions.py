@@ -310,3 +310,7 @@ class Discrete(Distribution):
         lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals
+
+
+# clean namespace
+del np, namedtuple, plot_pdfpmf, plot_cdf, plot_ppf, hdi_from_pdf

@@ -309,3 +309,7 @@ class Poisson(Discrete):
     def _fit_mle(self, sample):
         mu = np.mean(sample)
         self._update(mu)
+
+
+# clean namespace
+del logging, ceil, floor, np, stats, eps, Discrete, optimize_matching_moments

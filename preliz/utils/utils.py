@@ -47,3 +47,7 @@ def garcia_approximation(mean, sigma):
     alpha = 1 / (z * (1 + (1 - z) ** 2 * poly))
     beta = 1 / (gamma(1 + 1 / alpha) / (mean))
     return alpha, beta
+
+
+# clean namespace
+del np, gamma

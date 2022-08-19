@@ -856,3 +856,7 @@ class Weibull(Continuous):
     def _fit_mle(self, sample, **kwargs):
         alpha, _, beta = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
+
+
+# clean namespace
+del np, stats, Continuous, garcia_approximation, eps

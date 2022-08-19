@@ -134,3 +134,7 @@ def get_moments(dist, moments):
         seen.append(moment)
 
     return "\n" + ", ".join(str_m)
+
+
+# clean namespace
+del np, plt, _pylab_helpers, rv_continuous_frozen, rv_discrete_frozen
