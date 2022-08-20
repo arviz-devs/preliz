@@ -188,7 +188,7 @@ class Distribution:
         quantiles : list
             Values of the five quantiles to use when ``pointinterval=True`` if None (default)
             the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
-            should be 5, 3, 2 or 0 (in this last case nothing will be plotted).
+            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
@@ -234,7 +234,7 @@ class Distribution:
         quantiles : list
             Values of the five quantiles to use when ``pointinterval=True`` if None (default)
             the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
-            should be 5, 3, 2 or 0 (in this last case nothing will be plotted).
+            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
@@ -277,7 +277,7 @@ class Distribution:
         quantiles : list
             Values of the five quantiles to use when ``pointinterval=True`` if None (default)
             the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
-            should be 5, 3, 2 or 0 (in this last case nothing will be plotted).
+            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
