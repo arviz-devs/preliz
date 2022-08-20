@@ -1,6 +1,8 @@
 """
 Continuous probability distributions.
 """
+from copy import copy
+
 import numpy as np
 from scipy import stats
 
@@ -134,7 +136,7 @@ class BetaScaled(Continuous):
         self.params = (self.alpha, self.beta, self.lower, self.upper)
         self.param_names = ("alpha", "beta", "lower", "upper")
         self.params_support = ((eps, np.inf), (eps, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
-        self.dist = stats.beta
+        self.dist = copy(stats.beta)
         self.support = (lower, upper)
         self._update_rv_frozen()
 

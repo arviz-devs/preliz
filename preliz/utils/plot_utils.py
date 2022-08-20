@@ -4,23 +4,47 @@ from matplotlib import _pylab_helpers
 from scipy.stats._distn_infrastructure import rv_continuous_frozen, rv_discrete_frozen
 
 
-def plot_pointinterval(distribution, quantiles, ax):
+def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
     """
-    Plot the median as a dot and two inter-quantile ranges as lines
+    By default plot the quantiles [0.05, 0.25, 0.5, 0.75, 0.95]
+    The median as dot and the two interquantiles ranges (0.05-0.95) and (0.25-0.75) as lines.
+
+    Parameters
+    ----------
+    distribution : preliz distribution or array
+    quantiles : list
+        The number of elements should be 5, 3, 2 or 0 (in this last case nothing will be plotted).
+        defaults to [0.05, 0.25, 0.5, 0.75, 0.95].
+    rotated : bool
+        Whether to do the plot along the x-axis (default) or on the y-axis
+    ax : matplotlib axis
     """
     if quantiles is None:
-        quantiles = [0.05, 0.25, 0.75, 0.95]
+        quantiles = [0.05, 0.25, 0.5, 0.75, 0.95]
 
     if isinstance(distribution, (rv_continuous_frozen, rv_discrete_frozen)):
-        q_s = distribution.ppf(quantiles)
-        median = distribution.ppf(0.5)
+        q_s = distribution.ppf(quantiles).tolist()
     else:
-        q_s = np.quantile(distribution, quantiles)
-        median = np.quantile(distribution, 0.5)
+        q_s = np.quantile(distribution, quantiles).tolist()
 
-    ax.plot([q_s[1], q_s[2]], [0, 0], "k", lw=4)
-    ax.plot([q_s[0], q_s[3]], [0, 0], "k", lw=2)
-    ax.plot(median, 0, "w.")
+    q_s_size = len(q_s)
+    if not q_s_size in (5, 3, 2, 0):
+        raise ValueError("quantiles should have 5, 3, 2 or 0 elements")
+
+    if rotated:
+        if q_s_size == 5:
+            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", lw=1.5)
+        if q_s_size > 2:
+            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", lw=4)
+        if q_s_size > 0:
+            ax.plot(0, q_s[0], "wo", mec="k")
+    else:
+        if q_s_size == 5:
+            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", lw=1.5)
+        if q_s_size > 2:
+            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", lw=4)
+        if q_s_size > 0:
+            ax.plot(q_s[0], 0, "wo", mec="k")
 
 
 def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsize, ax):
@@ -44,7 +68,7 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
         ax.plot(x, mass, "o", label=label, color=color)
 
     if pointinterval:
-        plot_pointinterval(dist.rv_frozen, quantiles, ax)
+        plot_pointinterval(dist.rv_frozen, quantiles=quantiles, ax=ax)
 
     if legend == "title":
         ax.set_title(label)
@@ -53,7 +77,7 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
     return ax
 
 
-def plot_cdf(dist, moments, support, legend, figsize, ax):
+def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
@@ -65,6 +89,9 @@ def plot_cdf(dist, moments, support, legend, figsize, ax):
     cdf = dist.rv_frozen.cdf(x)
     ax.plot(x, cdf, label=label, color=color)
 
+    if pointinterval:
+        plot_pointinterval(dist.rv_frozen, quantiles=quantiles, ax=ax)
+
     if legend == "title":
         ax.set_title(label)
     elif legend == "legend":
@@ -72,7 +99,7 @@ def plot_cdf(dist, moments, support, legend, figsize, ax):
     return ax
 
 
-def plot_ppf(dist, moments, legend, figsize, ax):
+def plot_ppf(dist, moments, pointinterval, quantiles, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
     label = repr_to_matplotlib(dist)
@@ -81,6 +108,9 @@ def plot_ppf(dist, moments, legend, figsize, ax):
 
     x = np.linspace(0, 1, 1000)
     ax.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
+
+    if pointinterval:
+        plot_pointinterval(dist.rv_frozen, quantiles=quantiles, rotated=True, ax=ax)
 
     if legend == "title":
         ax.set_title(label)

@@ -287,13 +287,14 @@ def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
     fitted_dist = None
     for dist in selected_distributions:
         if dist.name == "betascaled":
-            dist.lower = dist.dist.a = x_min
-            dist.upper = dist.dist.b = x_max
+            dist.lower = x_min
+            dist.upper = x_max
+            dist.support = (x_min, x_max)
             kwargs = {"lower": x_min, "upper": x_max}
         else:
             kwargs = {}
 
-        if x_min >= dist.dist.a and x_max <= dist.dist.b:
+        if x_min >= dist.support[0] and x_max <= dist.support[1]:
             dist._fit_moments(mean, std)  # pylint:disable=protected-access
             loss = optimize_cdf(dist, x_vals, ecdf, **kwargs)
 
@@ -314,11 +315,11 @@ def representations(fitted_dist, kind_plot, ax):
                 ax.plot(bound, 0, "ko")
 
     elif kind_plot == "cdf":
-        fitted_dist.plot_cdf(legend="title", ax=ax)
+        fitted_dist.plot_cdf(pointinterval=True, legend="title", ax=ax)
 
     elif kind_plot == "ppf":
-        fitted_dist.plot_ppf(legend="title", ax=ax)
-        ax.set_xlim(0, 1)
+        fitted_dist.plot_ppf(pointinterval=True, legend="title", ax=ax)
+        ax.set_xlim(-0.01, 1)
 
 
 def update_grid(canvas, x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit):
