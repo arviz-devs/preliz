@@ -13,7 +13,7 @@ def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
     ----------
     distribution : preliz distribution or array
     quantiles : list
-        The number of elements should be 5, 3, 2 or 0 (in this last case nothing will be plotted).
+        The number of elements should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         defaults to [0.05, 0.25, 0.5, 0.75, 0.95].
     rotated : bool
         Whether to do the plot along the x-axis (default) or on the y-axis
@@ -28,8 +28,8 @@ def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
         q_s = np.quantile(distribution, quantiles).tolist()
 
     q_s_size = len(q_s)
-    if not q_s_size in (5, 3, 2, 0):
-        raise ValueError("quantiles should have 5, 3, 2 or 0 elements")
+    if not q_s_size in (5, 3, 1, 0):
+        raise ValueError("quantiles should have 5, 3, 1 or 0 elements")
 
     if rotated:
         if q_s_size == 5:
