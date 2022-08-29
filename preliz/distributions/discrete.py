@@ -8,8 +8,8 @@ import numpy as np
 from scipy import stats
 
 
-from .distributions import Discrete
-from ..utils.optimization import optimize_matching_moments
+from preliz.distributions import Discrete
+from preliz.utils.optimization import optimize_matching_moments
 
 _log = logging.getLogger("preliz")
 
