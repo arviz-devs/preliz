@@ -12,6 +12,22 @@ from ..utils.utils import garcia_approximation
 eps = np.finfo(float).eps
 
 
+__all__ = [
+    "Beta",
+    "BetaScaled",
+    "Exponential",
+    "Gamma",
+    "HalfNormal",
+    "Laplace",
+    "LogNormal",
+    "Normal",
+    "SkewNormal",
+    "Student",
+    "Uniform",
+    "Weibull",
+]
+
+
 class Beta(Continuous):
     r"""
     Beta distribution.

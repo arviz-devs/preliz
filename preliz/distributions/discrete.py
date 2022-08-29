@@ -15,6 +15,8 @@ _log = logging.getLogger("preliz")
 
 eps = np.finfo(float).eps
 
+__all__ = ["Binomial", "DiscreteUniform", "NegativeBinomial", "Poisson"]
+
 
 class Binomial(Discrete):
     R"""
