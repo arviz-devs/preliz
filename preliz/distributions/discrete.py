@@ -8,14 +8,12 @@ import numpy as np
 from scipy import stats
 
 
-from preliz.distributions import Discrete
-from preliz.utils.optimization import optimize_matching_moments
+from .distributions import Discrete
+from ..utils.optimization import optimize_matching_moments
 
 _log = logging.getLogger("preliz")
 
 eps = np.finfo(float).eps
-
-__all__ = ["Binomial", "DiscreteUniform", "NegativeBinomial", "Poisson"]
 
 
 class Binomial(Discrete):

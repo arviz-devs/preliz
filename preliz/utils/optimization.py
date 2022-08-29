@@ -96,21 +96,21 @@ def relative_error(dist, lower, upper, required_mass):
     return abs((computed_mass - required_mass) / required_mass * 100), computed_mass
 
 
-def get_distributions(dist_names):
-    """
-    Generate a subset of distributions which names agree with those in dist_names
-    """
-    from preliz.distributions import (  # pylint: disable=import-outside-toplevel
-        all_continuous,
-        all_discrete,
-    )
+# def get_distributions(dist_names):
+#     """
+#     Generate a subset of distributions which names agree with those in dist_names
+#     """
+#     from preliz.distributions import (  # pylint: disable=import-outside-toplevel
+#         all_continuous,
+#         all_discrete,
+#     )
 
-    dists = []
-    for dist in all_continuous + all_discrete:
-        if dist.__name__ in dist_names:
-            dists.append(dist())
+#     dists = []
+#     for dist in all_continuous + all_discrete:
+#         if dist.__name__ in dist_names:
+#             dists.append(dist())
 
-    return dists
+#     return dists
 
 
 def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
