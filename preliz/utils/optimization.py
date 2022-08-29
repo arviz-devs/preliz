@@ -1,6 +1,7 @@
 """
 Optimization routines and utilities
 """
+import numpy as np
 from scipy.optimize import minimize, least_squares
 
 
@@ -93,3 +94,80 @@ def relative_error(dist, lower, upper, required_mass):
         lower -= 1
     computed_mass = dist.rv_frozen.cdf(upper) - dist.rv_frozen.cdf(lower)
     return abs((computed_mass - required_mass) / required_mass * 100), computed_mass
+
+
+def get_distributions(dist_names):
+    """
+    Generate a subset of distributions which names agree with those in dist_names
+    """
+    from preliz.distributions import (  # pylint: disable=import-outside-toplevel
+        all_continuous,
+        all_discrete,
+    )
+
+    dists = []
+    for dist in all_continuous + all_discrete:
+        if dist.__name__ in dist_names:
+            dists.append(dist())
+
+    return dists
+
+
+def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
+    """
+    Minimize the difference between the cdf and the ecdf over a grid of values
+    defined by x_min and x_max
+    """
+    fitted = Loss()
+    for dist in selected_distributions:
+        kwargs = {}
+        if dist.name == "betascaled":
+            update_bounds_beta_scaled(dist, x_min, x_max)
+            kwargs = {"lower": x_min, "upper": x_max}
+
+        if dist._check_endpoints(x_min, x_max, raise_error=False):
+            dist._fit_moments(mean, std)  # pylint:disable=protected-access
+            loss = optimize_cdf(dist, x_vals, ecdf, **kwargs)
+
+            fitted.update(loss, dist)
+
+    return fitted.dist
+
+
+def fit_to_sample(selected_distributions, sample, x_min, x_max):
+    """
+    Maximize the likelihood given a sample
+    """
+    fitted = Loss()
+    for dist in selected_distributions:
+        if dist.name == "betascaled":
+            update_bounds_beta_scaled(dist, x_min, x_max)
+
+        if dist._check_endpoints(x_min, x_max, raise_error=False):
+            dist._fit_mle(sample)  # pylint:disable=protected-access
+            if dist.kind == "continuous":
+                loss = -dist.rv_frozen.logpdf(sample).sum()
+            else:
+                loss = -dist.rv_frozen.logpmf(sample).sum()
+
+            fitted.update(loss, dist)
+
+    return fitted.dist
+
+
+def update_bounds_beta_scaled(dist, x_min, x_max):
+    dist.lower = x_min
+    dist.upper = x_max
+    dist.support = (x_min, x_max)
+    return dist
+
+
+class Loss:
+    def __init__(self):
+        self.old_loss = np.inf
+        self.dist = None
+
+    def update(self, loss, dist):
+        if loss < self.old_loss:
+            self.old_loss = loss
+            self.dist = dist

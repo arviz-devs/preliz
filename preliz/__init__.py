@@ -11,9 +11,10 @@ from .maxent import maxent
 from .ppa import ppa
 from .roulette import roulette
 from .quartile import quartile
+from .mle import mle
 from .distributions import *
 
-__all__ = ["maxent", "ppa", "roulette", "quartile"]
+__all__ = ["maxent", "mle", "ppa", "roulette", "quartile"]
 
 __version__ = "0.0.1.dev0"
 

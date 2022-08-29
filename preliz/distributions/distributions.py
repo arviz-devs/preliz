@@ -110,37 +110,44 @@ class Distribution:
         upper_tail = float(f"{hdi[1]:{fmt}}")
         return (lower_tail, upper_tail)
 
-    def _check_endpoints(self, lower, upper):
+    def _check_endpoints(self, lower, upper, raise_error=True):
         """
         Evaluate if the lower and upper values are in the support of the distribution
 
         Parameters
         ----------
-        support : str
-            Available options are "full" or "restricted".
         lower : int or float
             lower endpoint
         upper : int or float
             upper endpoint
+        raise_error : bool
+            If True (default) it will raise ValueErrors, otherwise it will return True
+            if the lower and upper endpoint are in the support of the distribution or
+            False otherwise.
         """
-        domain_error = (
-            f"The provided endpoints are outside the domain of the {self.name} distribution"
-        )
         s_l, s_u = self.support
 
-        if np.isfinite(s_l):
-            if lower < s_l:
-                raise ValueError(domain_error)
+        if raise_error:
+            domain_error = (
+                f"The provided endpoints are outside the domain of the {self.name} distribution"
+            )
 
-        if np.isfinite(s_u):
-            if upper > s_u:
-                raise ValueError(domain_error)
-        if np.isfinite(s_l) and np.isfinite(s_u):
-            if lower == s_l and upper == s_u:
-                raise ValueError(
-                    "Given the provided endpoints, mass will be always 1. "
-                    "Please provide other values"
-                )
+            if np.isfinite(s_l):
+                if lower < s_l:
+                    raise ValueError(domain_error)
+
+            if np.isfinite(s_u):
+                if upper > s_u:
+                    raise ValueError(domain_error)
+            if np.isfinite(s_l) and np.isfinite(s_u):
+                if lower == s_l and upper == s_u:
+                    raise ValueError(
+                        "Given the provided endpoints, mass will be always 1. "
+                        "Please provide other values"
+                    )
+            return None
+        else:
+            return lower >= s_l and upper <= s_u
 
     def _finite_endpoints(self, support):
         """

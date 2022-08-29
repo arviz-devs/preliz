@@ -8,8 +8,7 @@ from matplotlib import patches, get_backend
 
 
 import ipywidgets as widgets
-from preliz.distributions import all_continuous
-from preliz.utils.optimization import optimize_cdf
+from preliz.utils.optimization import fit_to_ecdf, get_distributions
 
 
 _log = logging.getLogger("preliz")
@@ -264,45 +263,6 @@ def weights_to_ecdf(weights, x_min, x_range, ncols):
             ecdf.append(cum_sum)
 
     return x_vals, ecdf, mean, std, filled_columns
-
-
-def get_distributions(dist_names):
-    """
-    Generate a subset of distributions which names agrees with those in dist_names
-    """
-    dists = []
-    for dist in all_continuous:
-        if dist.__name__ in dist_names:
-            dists.append(dist())
-
-    return dists
-
-
-def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
-    """
-    Minimize the difference between the cdf and the ecdf over a grid of values
-    defined by x_min and x_max
-    """
-    loss_old = np.inf
-    fitted_dist = None
-    for dist in selected_distributions:
-        if dist.name == "betascaled":
-            dist.lower = x_min
-            dist.upper = x_max
-            dist.support = (x_min, x_max)
-            kwargs = {"lower": x_min, "upper": x_max}
-        else:
-            kwargs = {}
-
-        if x_min >= dist.support[0] and x_max <= dist.support[1]:
-            dist._fit_moments(mean, std)  # pylint:disable=protected-access
-            loss = optimize_cdf(dist, x_vals, ecdf, **kwargs)
-
-            if loss < loss_old:
-                loss_old = loss
-                fitted_dist = dist
-
-    return fitted_dist
 
 
 def representations(fitted_dist, kind_plot, ax):
