@@ -62,7 +62,7 @@ class Binomial(Discrete):
         self.param_names = ("n", "p")
         self.params_support = ((eps, np.inf), (eps, 1 - eps))
         self.dist = stats.binom
-        self.support = (0, n)
+        self.support = (0, np.inf)
         self._update_rv_frozen()
 
     def _get_frozen(self):
