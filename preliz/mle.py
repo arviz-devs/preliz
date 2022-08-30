@@ -1,19 +1,27 @@
 import logging
 import numpy as np
 
-from .utils.optimization import get_distributions, fit_to_sample
+from .utils.optimization import fit_to_sample
 
 _log = logging.getLogger("preliz")
 
 
-def mle(sample, distributions=None):
+def mle(
+    distributions,
+    sample,
+    plot="first",
+    plot_kwargs=None,
+    ax=None,
+):
     """
-    Return the distribution with the maximum likelihood given sample and a list of distributions
+    Find the maximum likelihood distribution with given a list of distributions
+    and one sample.
 
     Parameters
     ----------
+    distributions : list of PreliZ distribution
+        Instance of a PreliZ distribution
     sample : list or 1D array-like
-    distributions : list of Preliz distributions or strings
 
     Returns
     -------
@@ -24,16 +32,13 @@ def mle(sample, distributions=None):
     x_min = sample.min()
     x_max = sample.max()
 
-    selected_distributions = get_distributions(
-        [dist().__class__.__name__ if not isinstance(dist, str) else dist for dist in distributions]
-    )
+    fitted = fit_to_sample(distributions, sample, x_min, x_max)
 
-    if len(distributions) != len(selected_distributions):
-        _log.info(
-            "One or more of the name you passed were not understood.\nUsing %s ",
-            selected_distributions,
-        )
-
-    dist = fit_to_sample(selected_distributions, sample, x_min, x_max)
-
-    return dist
+    if plot:
+        idx = np.argsort(fitted.losses)
+        if plot == "first":
+            idx = idx[:1]
+        for dist in fitted.distributions[idx]:
+            if dist is not None:
+                ax = dist.plot_pdf(plot_kwargs)
+    return ax

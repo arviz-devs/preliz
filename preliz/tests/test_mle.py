@@ -26,20 +26,22 @@ import preliz as pz
     ],
 )
 def test_auto_recover(distribution, params):
-    sample = distribution(*params).rvs(10000)
-    dist = pz.mle(sample, [distribution])
+    dist = distribution(*params)
+    sample = dist.rvs(10000)
+    pz.mle([dist], sample)
     assert_allclose(dist.params, params, atol=1)
 
 
 def test_recover_right():
+    dists = [pz.Normal(), pz.Gamma(), pz.Poisson()]
     sample = pz.Normal(0, 1).rvs(10000)
-    dist = pz.mle(sample, ["Normal", pz.Gamma, pz.Poisson])
-    assert dist.name == "normal"
+    pz.mle(dists, sample)
+    assert dists[0].name == "normal"
 
     sample = pz.Gamma(2, 10).rvs(10000)
-    dist = pz.mle(sample, ["Normal", pz.Gamma, pz.Poisson])
-    assert dist.name == "gamma"
+    pz.mle(dists, sample)
+    assert dists[1].name == "gamma"
 
     sample = pz.Poisson(10).rvs(10000)
-    dist = pz.mle(sample, ["Normal", pz.Gamma, pz.Poisson])
-    assert dist.name == "poisson"
+    pz.mle(dists, sample)
+    assert dists[2].name == "poisson"

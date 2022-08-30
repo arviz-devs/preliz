@@ -134,7 +134,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     """
     Maximize the likelihood given a sample
     """
-    fitted = Loss()
+    fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
         if dist.name == "betascaled":
             update_bounds_beta_scaled(dist, x_min, x_max)
@@ -148,7 +148,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
 
             fitted.update(loss, dist)
 
-    return fitted.dist
+    return fitted
 
 
 def update_bounds_beta_scaled(dist, x_min, x_max):
@@ -159,11 +159,17 @@ def update_bounds_beta_scaled(dist, x_min, x_max):
 
 
 class Loss:
-    def __init__(self):
+    def __init__(self, size=None):
         self.old_loss = np.inf
         self.dist = None
+        self.count = 0
+        self.distributions = np.empty(size, dtype=object)
+        self.losses = np.empty(size)
 
     def update(self, loss, dist):
+        self.distributions[self.count] = dist
+        self.losses[self.count] = loss
+        self.count += 1
         if loss < self.old_loss:
             self.old_loss = loss
             self.dist = dist
