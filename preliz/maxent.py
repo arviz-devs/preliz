@@ -22,7 +22,8 @@ def maxent(
     Parameters
     ----------
     name : PreliZ distribution
-        Instance of a PreliZ distribution
+        Instance of a PreliZ distribution. Notice that the distribution will be
+        updated inplace.
     lower : float
         Lower end-point
     upper: float
