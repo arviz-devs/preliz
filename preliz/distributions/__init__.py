@@ -7,6 +7,7 @@ all_continuous = [
     Exponential,
     Gamma,
     HalfNormal,
+    HalfStudent,
     Laplace,
     LogNormal,
     Normal,

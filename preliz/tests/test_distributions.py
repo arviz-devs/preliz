@@ -4,6 +4,8 @@ from numpy.testing import assert_almost_equal
 from preliz.distributions import (
     Beta,
     Gamma,
+    HalfNormal,
+    HalfStudent,
     Exponential,
     Laplace,
     LogNormal,
@@ -25,12 +27,15 @@ from preliz.distributions import (
         (Normal, (0, 1)),
         (Beta, (2, 5)),
         (Gamma, (1, 0.5)),
+        (HalfNormal, (1,)),
+        (HalfStudent, (3, 1)),
+        (HalfStudent, (1000000, 1)),
         (Laplace, (0, 1)),
         (LogNormal, (0, 0.5)),
         (Exponential, (0.5,)),
         (SkewNormal, (0, 1, 0)),
-        # (Student, (4, 0, 1)),
-        # (Student, (1000, 0, 1)),
+        (Student, (3, 0, 1)),
+        (Student, (1000000, 0, 1)),
         (Uniform, (0, 1)),
         (Weibull, (2, 1)),
         (Binomial, (2, 0.5)),
@@ -43,7 +48,11 @@ from preliz.distributions import (
 )
 def test_moments(distribution, params):
     dist = distribution(*params)
-    dist_ = distribution()
+    if "student" in dist.name:
+        dist_ = distribution(nu=params[0])
+    else:
+        dist_ = distribution()
+
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
@@ -51,10 +60,7 @@ def test_moments(distribution, params):
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
-    if dist.name == "student":
-        assert_almost_equal(params[1:], dist_.params[1:], 0)
-    else:
-        assert_almost_equal(params, dist_.params, 0)
+    assert_almost_equal(params, dist_.params, 0)
 
 
 @pytest.mark.parametrize(
@@ -63,6 +69,8 @@ def test_moments(distribution, params):
         (Normal, (0, 1)),
         (Beta, (2, 5)),
         (Gamma, (1, 0.5)),
+        (HalfNormal, (1,)),
+        (HalfStudent, (3, 1)),
         (Laplace, (0, 1)),
         (LogNormal, (0, 0.5)),
         (Exponential, (0.5,)),

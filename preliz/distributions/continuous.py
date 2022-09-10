@@ -5,9 +5,12 @@ from copy import copy
 
 import numpy as np
 from scipy import stats
+from scipy.special import gamma as gammaf
+
 
 from .distributions import Continuous
 from ..utils.utils import garcia_approximation
+from ..utils.optimization import optimize_ml
 
 eps = np.finfo(float).eps
 
@@ -335,12 +338,124 @@ class HalfNormal(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
-        sigma = sigma * (1 - 2 / np.pi) ** 0.5
+        sigma = sigma / (1 - 2 / np.pi) ** 0.5
         self._update(sigma)
 
     def _fit_mle(self, sample, **kwargs):
         _, sigma = self.dist.fit(sample, **kwargs)
         self._update(sigma)
+
+
+class HalfStudent(Continuous):
+    r"""
+    HalfStudent Distribution
+    """
+
+    def __init__(self, nu=3, sigma=None):
+        super().__init__()
+        self.nu = nu
+        self.sigma = sigma
+        self.name = "halfstudent"
+        self.params = (self.nu, self.sigma)
+        self.param_names = ("nu", "sigma")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.dist = _HalfStudent
+        self.support = (0, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(nu=self.nu, sigma=self.sigma)
+        return frozen
+
+    def _update(self, nu=None, sigma=None):
+        if nu is not None:
+            self.nu = nu
+        self.sigma = sigma
+        self.params = (self.nu, self.sigma)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+        # if nu is smaller than 2 the variance is not defined,
+        # so if that happens we use 2.1 as an approximation
+        nu = self.nu
+        if nu <= 2:
+            nu = 2.1
+
+        gamma0 = gammaf((nu + 1) / 2)
+        gamma1 = gammaf(nu / 2)
+        if np.isfinite(gamma0) and np.isfinite(gamma1):
+            sigma = (
+                sigma**2
+                / ((nu / (nu - 2)) - ((4 * nu) / (np.pi * (nu - 1) ** 2)) * (gamma0 / gamma1) ** 2)
+            ) ** 0.5
+        else:
+            # we assume a Gaussian for large nu
+            sigma = sigma / (1 - 2 / np.pi) ** 0.5
+        self._update(None, sigma)
+
+    def _fit_mle(self, sample, **kwargs):
+        optimize_ml(self, sample)
+
+
+class _HalfStudent(stats._distn_infrastructure.rv_continuous):
+    def __init__(self, nu=2, sigma=1):
+        super().__init__()
+        self.nu = nu
+        self.sigma = sigma
+        self.dist = stats.t(loc=0, df=self.nu, scale=self.sigma)
+
+    def support(self):
+        return (0, np.inf)
+
+    def cdf(self, value):
+        return np.maximum(0, self.dist.cdf(value) * 2 - 1)
+
+    def pdf(self, value):
+        return np.where(value < 0, -np.inf, self.dist.pdf(value) * 2)
+
+    def logpdf(self, value):
+        return np.where(value < 0, -np.inf, self.dist.logpdf(value) + np.log(2))
+
+    def ppf(self, value):
+        x_vals = np.linspace(0, self.rvs(10000).max(), 1000)
+        idx = np.searchsorted(self.cdf(x_vals[:-1]), value)
+        return x_vals[idx]
+
+    def _stats(self):
+        mean = np.nan
+        var = np.nan
+        skew = np.nan
+        kurtosis = np.nan
+
+        if self.nu > 1:
+            gamma0 = gammaf((self.nu + 1) / 2)
+            gamma1 = gammaf(self.nu / 2)
+            if np.isfinite(gamma0) and np.isfinite(gamma1):
+                mean = (
+                    2 * self.sigma * (self.nu / np.pi) ** 0.5 * (gamma0 / (gamma1 * (self.nu - 1)))
+                )
+            else:
+                # assume nu is large enough that the mean of the halfnormal is a good approximation
+                mean = self.sigma * (2 / np.pi) ** 0.5
+        if self.nu > 2:
+            if np.isfinite(gamma0) and np.isfinite(gamma1):
+                var = self.sigma**2 * (
+                    (self.nu / (self.nu - 2))
+                    - ((4 * self.nu) / (np.pi * (self.nu - 1) ** 2)) * (gamma0 / gamma1) ** 2
+                )
+            else:
+                # assume nu is large enough that the std of the halfnormal is a good approximation
+                var = self.sigma**2 * (1 - 2.0 / np.pi)
+
+        return (mean, var, skew, kurtosis)
+
+    def entropy(self):
+        return self.dist.entropy() - np.log(2)
+
+    def rvs(self, size=1, random_state=None):
+        return np.abs(self.dist.rvs(size=size, random_state=random_state))
 
 
 class Laplace(Continuous):
@@ -710,7 +825,12 @@ class Student(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        # This is a placeholder!!!
+        # if nu is smaller than 2 the variance is not defined,
+        # so if that happens we use 2.1 as an approximation
+        nu = self.nu
+        if nu <= 2:
+            nu = 2.1
+        sigma = sigma / (nu / (nu - 2)) ** 0.5
         self._update(mean, sigma)
 
     def _fit_mle(self, sample, **kwargs):

@@ -1,7 +1,9 @@
 import pytest
 import numpy as np
+
 from numpy.testing import assert_allclose
 
+from preliz.distributions.continuous import HalfNormal, HalfStudent
 from preliz import maxent
 from preliz.distributions import (
     Beta,
@@ -24,6 +26,9 @@ from preliz.distributions import (
         (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.112, 9.101)),
         (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (0.868, 0.103)),
+        (HalfNormal, "halfnormal", 0, 10, 0.7, None, (0, np.inf), (9.648)),
+        (HalfStudent, "halfstudent", 0, 10, 0.7, 3, (0, np.inf), (8.001)),
+        (HalfStudent, "halfstudent", 0, 10, 0.7, 10000, (0, np.inf), (9.648)),
         (Laplace, "laplace", -1, 1, 0.9, None, (-np.inf, np.inf), (0, 0.435)),
         (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (1.216, 0.859)),
         (Normal, "normal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
