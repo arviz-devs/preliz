@@ -395,20 +395,22 @@ class HalfStudent(Continuous):
         import arviz as az
         from preliz import HalfStudent
         az.style.use('arviz-white')
-        sigmas = [1., 1., 2.]
-        nus = [3., 10., 10.]
+        sigmas = [1., 2., 2.]
+        nus = [3, 3., 10.]
         for sigma, nu in zip(sigmas, nus):
             HalfStudent(nu, sigma).plot_pdf()
 
     ========  ==========================================
     Support   :math:`x \in [0, \infty)`
-    Mean      :math:`2\sigma\sqrt{\frac{\nu}{\pi}}\,`
-              :math:`\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\`
-              :math:`{\Gamma\left(\frac{\nu}{2}\right)(\nu-1)}` for :math:`\nu > 2`
-    Variance  :math:`\sigma^2\left(\frac{\nu}{\nu - 2}-\`
-              :math:`\frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\`
-              :math:`{\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right)` for :math:`\nu > 2`,
-              :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
+    Mean      .. math::
+                  2\sigma\sqrt{\frac{\nu}{\pi}}\
+                  \frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
+                  {\Gamma\left(\frac{\nu}{2}\right)(\nu-1)} for :math:`\nu > 2`
+    Variance  .. math:
+                  \sigma^2\left(\frac{\nu}{\nu - 2}-\
+                  \frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
+                  {\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right) \text{for} \nu > 2 \infty\
+                  \text{for} 1 < \nu \le 2 \text{otherwise undefined}
     ========  ==========================================
 
     Parameters
