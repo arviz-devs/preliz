@@ -403,10 +403,10 @@ class HalfStudent(Continuous):
     ========  ==========================================
     Support   :math:`x \in [0, \infty)`
     Mean      :math:`2\sigma\sqrt{\frac{\nu}{\pi}}\,`
-              :math:`\frac{\Gamma\left(\frac{\nu+1}{2}\right)}`
+              :math:`\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\`
               :math:`{\Gamma\left(\frac{\nu}{2}\right)(\nu-1)}` for :math:`\nu > 2`
-    Variance  :math:`\sigma^2\left(\frac{\nu}{\nu - 2}-`
-              :math:`\frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}`
+    Variance  :math:`\sigma^2\left(\frac{\nu}{\nu - 2}-\`
+              :math:`\frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\`
               :math:`{\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right)` for :math:`\nu > 2`,
               :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
     ========  ==========================================
