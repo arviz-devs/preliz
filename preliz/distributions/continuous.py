@@ -396,7 +396,7 @@ class HalfStudent(Continuous):
         from preliz import HalfStudent
         az.style.use('arviz-white')
         sigmas = [1., 1., 2.]
-        nus = [.3, 10., 10.]
+        nus = [3., 10., 10.]
         for sigma, nu in zip(sigmas, nus):
             HalfStudent(nu, sigma).plot_pdf()
 
