@@ -406,7 +406,7 @@ class HalfStudent(Continuous):
                   2\sigma\sqrt{\frac{\nu}{\pi}}\
                   \frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
                   {\Gamma\left(\frac{\nu}{2}\right)(\nu-1)} \text{for} \nu > 2
-    Variance  .. math:
+    Variance  .. math::
                   \sigma^2\left(\frac{\nu}{\nu - 2}-\
                   \frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
                   {\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right) \text{for} \nu > 2 \infty\
