@@ -405,7 +405,7 @@ class HalfStudent(Continuous):
     Mean      .. math::
                   2\sigma\sqrt{\frac{\nu}{\pi}}\
                   \frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
-                  {\Gamma\left(\frac{\nu}{2}\right)(\nu-1)} for :math:`\nu > 2`
+                  {\Gamma\left(\frac{\nu}{2}\right)(\nu-1)} \text{for} \nu > 2
     Variance  .. math:
                   \sigma^2\left(\frac{\nu}{\nu - 2}-\
                   \frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
