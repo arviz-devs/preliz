@@ -28,6 +28,9 @@ def optimize_max_ent(dist, lower, upper, mass):
     }
     init_vals = dist.params
     bounds = dist.params_support
+    if dist.name == "halfstudent":
+        init_vals = init_vals[1:]
+        bounds = bounds[1:]
     if dist.name == "student":
         init_vals = init_vals[1:]
         bounds = bounds[1:]
@@ -88,6 +91,21 @@ def optimize_matching_moments(dist, mean, sigma):
     dist._update(*opt["x"])
     loss = opt["cost"]
     return loss
+
+
+def optimize_ml(dist, sample):
+    def negll(params, dist, sample):
+        dist._update(*params)
+        return -dist.rv_frozen.logpdf(sample).sum()
+
+    dist._fit_moments(0, np.std(sample))
+    init_vals = dist.params[::-1]
+
+    opt = minimize(negll, x0=init_vals, bounds=dist.params_support, args=(dist, sample))
+
+    dist._update(*opt["x"])
+
+    return opt
 
 
 def relative_error(dist, lower, upper, required_mass):
