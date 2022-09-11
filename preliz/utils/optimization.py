@@ -99,7 +99,7 @@ def optimize_ml(dist, sample):
         return -dist.rv_frozen.logpdf(sample).sum()
 
     dist._fit_moments(0, np.std(sample))
-    init_vals = dist.params
+    init_vals = dist.params[::-1]
 
     opt = minimize(negll, x0=init_vals, bounds=dist.params_support, args=(dist, sample))
 

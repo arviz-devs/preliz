@@ -369,7 +369,7 @@ class HalfStudent(Continuous):
             frozen = self.dist(nu=self.nu, sigma=self.sigma)
         return frozen
 
-    def _update(self, nu=None, sigma=None):
+    def _update(self, sigma, nu=None):
         if nu is not None:
             self.nu = nu
         self.sigma = sigma
@@ -393,7 +393,7 @@ class HalfStudent(Continuous):
         else:
             # we assume a Gaussian for large nu
             sigma = sigma / (1 - 2 / np.pi) ** 0.5
-        self._update(None, sigma)
+        self._update(sigma)
 
     def _fit_mle(self, sample, **kwargs):
         optimize_ml(self, sample)
@@ -406,7 +406,7 @@ class _HalfStudent(stats._distn_infrastructure.rv_continuous):
         self.sigma = sigma
         self.dist = stats.t(loc=0, df=self.nu, scale=self.sigma)
 
-    def support(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def support(self):  # pylint: disable=unused-argument
         return (0, np.inf)
 
     def cdf(self, x, *args, **kwds):
