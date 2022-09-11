@@ -406,24 +406,24 @@ class _HalfStudent(stats._distn_infrastructure.rv_continuous):
         self.sigma = sigma
         self.dist = stats.t(loc=0, df=self.nu, scale=self.sigma)
 
-    def support(self):
+    def support(self, *args, **kwargs):  # pylint: disable=unused-argument
         return (0, np.inf)
 
-    def cdf(self, value):
-        return np.maximum(0, self.dist.cdf(value) * 2 - 1)
+    def cdf(self, x, *args, **kwds):
+        return np.maximum(0, self.dist.cdf(x, *args, **kwds) * 2 - 1)
 
-    def pdf(self, value):
-        return np.where(value < 0, -np.inf, self.dist.pdf(value) * 2)
+    def pdf(self, x, *args, **kwds):
+        return np.where(x < 0, -np.inf, self.dist.pdf(x, *args, **kwds) * 2)
 
-    def logpdf(self, value):
-        return np.where(value < 0, -np.inf, self.dist.logpdf(value) + np.log(2))
+    def logpdf(self, x, *args, **kwds):
+        return np.where(x < 0, -np.inf, self.dist.logpdf(x, *args, **kwds) + np.log(2))
 
-    def ppf(self, value):
+    def ppf(self, q, *args, **kwds):
         x_vals = np.linspace(0, self.rvs(10000).max(), 1000)
-        idx = np.searchsorted(self.cdf(x_vals[:-1]), value)
+        idx = np.searchsorted(self.cdf(x_vals[:-1], *args, **kwds), q)
         return x_vals[idx]
 
-    def _stats(self):
+    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
         mean = np.nan
         var = np.nan
         skew = np.nan
@@ -451,10 +451,10 @@ class _HalfStudent(stats._distn_infrastructure.rv_continuous):
 
         return (mean, var, skew, kurtosis)
 
-    def entropy(self):
+    def entropy(self):  # pylint: disable=arguments-differ
         return self.dist.entropy() - np.log(2)
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=1, random_state=None):  # pylint: disable=arguments-differ
         return np.abs(self.dist.rvs(size=size, random_state=random_state))
 
 
