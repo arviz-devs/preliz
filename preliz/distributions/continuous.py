@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 """
 Continuous probability distributions.
 """
@@ -313,6 +314,35 @@ class Gamma(Continuous):
 class HalfNormal(Continuous):
     r"""
     HalfNormal Distribution
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \sigma) =
+           \sqrt{\frac{2}{\pi\sigma^2}}
+           \exp\left(\frac{-x^2}{2\sigma^2}\right)
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import HalfNormal
+        az.style.use('arviz-white')
+        for sigma in [0.4,  2.]:
+            HalfNormal(sigma).plot_pdf()
+
+
+    ========  ==========================================
+    Support   :math:`x \in [0, \infty)`
+    Mean      :math:`\dfrac{\sigma \sqrt{2}}{\sqrt{\pi}}`
+    Variance  :math:`\sigma^2\left(1 - \dfrac{2}{\pi}\right)`
+    ========  ==========================================
+
+    Parameters
+    ----------
+    sigma : float
+        Scale parameter :math:`\sigma` (``sigma`` > 0)
     """
 
     def __init__(self, sigma=None):
@@ -349,6 +379,45 @@ class HalfNormal(Continuous):
 class HalfStudent(Continuous):
     r"""
     HalfStudent Distribution
+
+    The pdf of this distribution is
+
+    .. math::
+
+        f(x \mid \sigma,\nu) =
+            \frac{2\;\Gamma\left(\frac{\nu+1}{2}\right)}
+            {\Gamma\left(\frac{\nu}{2}\right)\sqrt{\nu\pi\sigma^2}}
+            \left(1+\frac{1}{\nu}\frac{x^2}{\sigma^2}\right)^{-\frac{\nu+1}{2}}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import HalfStudent
+        az.style.use('arviz-white')
+        sigmas = [1., 1., 2.]
+        nus = [.3, 10., 10.]
+        for sigma, nu in zip(sigmas, nus):
+            HalfStudent(nu, sigma).plot_pdf()
+
+    ========  ==========================================
+    Support   :math:`x \in [0, \infty)`
+    Mean      :math:`2\sigma\sqrt{\frac{\nu}{\pi}}\,`
+              :math:`\frac{\Gamma\left(\frac{\nu+1}{2}\right)}`
+              :math:`{\Gamma\left(\frac{\nu}{2}\right)(\nu-1)}` for :math:`\nu > 2`
+    Variance  :math:`\sigma^2\left(\frac{\nu}{\nu - 2}-`
+              :math:`\frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}`
+              :math:`{\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right)` for :math:`\nu > 2`,
+              :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
+    ========  ==========================================
+
+    Parameters
+    ----------
+    nu : float
+        Degrees of freedom, also known as normality parameter (nu > 0).
+    sigma : float
+        Scale parameter (sigma > 0). Converges to the standard deviation as nu
+        increases.
     """
 
     def __init__(self, nu=3, sigma=None):
