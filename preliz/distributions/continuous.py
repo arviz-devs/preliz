@@ -406,7 +406,7 @@ class _HalfStudent(stats._distn_infrastructure.rv_continuous):
         self.sigma = sigma
         self.dist = stats.t(loc=0, df=self.nu, scale=self.sigma)
 
-    def support(self):  # pylint: disable=unused-argument
+    def support(self, *args, **kwd):  # pylint: disable=unused-argument
         return (0, np.inf)
 
     def cdf(self, x, *args, **kwds):
