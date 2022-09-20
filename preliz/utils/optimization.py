@@ -132,7 +132,7 @@ def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
     Minimize the difference between the cdf and the ecdf over a grid of values
     defined by x_min and x_max
     """
-    fitted = Loss()
+    fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
         kwargs = {}
         if dist.name == "betascaled":
