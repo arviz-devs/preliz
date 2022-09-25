@@ -981,6 +981,78 @@ class Uniform(Continuous):
         self._update(lower, upper)
 
 
+class Wald(Continuous):
+    r"""
+    Wald distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \mu, \lambda) =
+           \left(\frac{\lambda}{2\pi}\right)^{1/2} x^{-3/2}
+           \exp\left\{
+               -\frac{\lambda}{2x}\left(\frac{x-\mu}{\mu}\right)^2
+           \right\}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Wald
+        plt.style.use('arviz-white')
+        mus = [1., 1.]
+        lams = [1., 3.]
+        for mu, lam in zip(mus, lams):
+            pz.Wald(mu, lam).plot_pdf()
+
+    ========  =============================
+    Support   :math:`x \in (0, \infty)`
+    Mean      :math:`\mu`
+    Variance  :math:`\dfrac{\mu^3}{\lambda}`
+    ========  =============================
+
+    Parameters
+    ----------
+    mu : float
+        Mean of the distribution (mu > 0).
+    lam : float
+        Relative precision (lam > 0).
+    """
+
+    def __init__(self, mu=None, lam=None):
+        super().__init__()
+        self.mu = mu
+        self.lam = lam
+        self.name = "wald"
+        self.params = (self.mu, self.lam)
+        self.param_names = ("mu", "lam")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.dist = stats.invgauss
+        self.support = (0, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.mu / self.lam, scale=self.lam)
+        return frozen
+
+    def _update(self, mu, lam):
+        self.mu = mu
+        self.lam = lam
+        self.params = (self.mu, self.lam)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        lam = mean**3 / sigma**2
+        self._update(mean, lam)
+
+    def _fit_mle(self, sample, **kwargs):
+        mu, _, lam = self.dist.fit(sample, **kwargs)
+        self._update(mu * lam, lam)
+
+
 class Weibull(Continuous):
     r"""
     Weibull distribution.
