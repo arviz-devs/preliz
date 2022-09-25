@@ -1004,7 +1004,7 @@ class Wald(Continuous):
         mus = [1., 1.]
         lams = [1., 3.]
         for mu, lam in zip(mus, lams):
-            pz.Wald(mu, lam).plot_pdf()
+            Wald(mu, lam).plot_pdf()
 
     ========  =============================
     Support   :math:`x \in (0, \infty)`
