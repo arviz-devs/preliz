@@ -14,6 +14,7 @@ all_continuous = [
     SkewNormal,
     Student,
     Uniform,
+    Wald,
     Weibull,
 ]
 all_discrete = [Binomial, DiscreteUniform, NegativeBinomial, Poisson]

@@ -21,6 +21,7 @@ import preliz as pz
         (pz.SkewNormal, (0, 1, 6)),
         (pz.Student, (4, 0, 1)),
         (pz.Uniform, (2, 5)),
+        (pz.Wald, (2, 1)),
         (pz.Weibull, (2, 1)),
         (pz.Binomial, (5, 0.5)),
         (pz.DiscreteUniform, (-2, 2)),
