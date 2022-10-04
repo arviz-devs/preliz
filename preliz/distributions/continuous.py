@@ -182,8 +182,40 @@ class Cauchy(Continuous):
     The pdf of this distribution is
 
     .. math::
+
+        f(x \mid \alpha, \beta) =
+            \frac{1}{\pi \beta [1 + (\frac{x-\alpha}{\beta})^2]}
     
-    placeholder
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Cauchy
+        az.style.use('arviz-white')
+        alphas = [0., 0., -2.]
+        betas = [.5, 5., 5.]
+        for alpha, beta in zip(alphas, betas):
+            Cauchy(alpha, beta).plot_pdf()
+
+    ========  ==============================================================
+    Support   :math:`x \in \mathbb{R}`
+    Mean      :math:`\alpha`
+    Variance  :math:`\beta`
+    ========  ==============================================================
+
+    Parameters
+    ----------
+    alpha : float
+        alpha  > 0
+    beta : float
+        beta  > 0
+    
+    Parameters
+    ----------
+    alpha : tensor_like of float
+        Location parameter.
+    beta : tensor_like of float
+        Scale parameter > 0.
     """
 
 
