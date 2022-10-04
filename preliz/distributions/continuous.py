@@ -217,7 +217,38 @@ class Cauchy(Continuous):
     beta : tensor_like of float
         Scale parameter > 0.
     """
+    def __init__(self, alpha=None, beta=None):
+            super().__init__()
+            self.alpha = alpha
+            self.beta = beta
+            self.name = "cauchy"
+            self.params = (self.alpha, self.beta)
+            self.param_names = ("alpha", "beta")
+            self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+            self.dist = stats.cauchy
+            self.support = (-np.inf, np.inf)
+            self._update_rv_frozen()
 
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.alpha, self.beta)
+        return frozen
+
+    def _update(self, alpha, beta):
+        self.alpha = alpha
+        self.beta = beta
+        self.params = (self.alpha, self.beta)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        alpha = mean
+        beta = sigma
+        self._update(alpha, beta)
+
+    def _fit_mle(self, sample, **kwargs):
+        alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
+        self._update(alpha, beta)
 
 class Exponential(Continuous):
     r"""
