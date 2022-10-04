@@ -175,6 +175,18 @@ class BetaScaled(Continuous):
         self._update(alpha, beta, lower, lower + scale)
 
 
+class Cauchy(Continuous):
+    r"""
+    Cauchy Distribution
+
+    The pdf of this distribution is
+
+    .. math::
+    
+    placeholder
+    """
+
+
 class Exponential(Continuous):
     r"""
     Exponential Distribution
