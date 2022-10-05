@@ -3,6 +3,7 @@ from numpy.testing import assert_almost_equal
 
 from preliz.distributions import (
     Beta,
+    Cauchy,
     Gamma,
     HalfNormal,
     HalfStudent,
@@ -70,6 +71,7 @@ def test_moments(distribution, params):
     [
         (Normal, (0, 1)),
         (Beta, (2, 5)),
+        (Cauchy, (0,1)),
         (Gamma, (1, 0.5)),
         (HalfNormal, (1,)),
         (HalfStudent, (3, 1)),

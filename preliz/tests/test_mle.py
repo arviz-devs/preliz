@@ -9,6 +9,7 @@ import preliz as pz
     [
         (pz.Beta, (2, 5)),
         (pz.BetaScaled, (2, 5, -1, 4)),
+        (pz.Cauchy, (0,1)),
         (pz.Exponential, (5,)),
         (pz.Gamma, (2, 5)),
         (pz.HalfNormal, (1,)),

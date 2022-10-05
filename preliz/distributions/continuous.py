@@ -199,22 +199,15 @@ class Cauchy(Continuous):
 
     ========  ==============================================================
     Support   :math:`x \in \mathbb{R}`
-    Mean      :math:`\alpha`
-    Variance  :math:`\beta`
+    Mean      undefined
+    Variance  undefined
     ========  ==============================================================
-
-    Parameters
-    ----------
-    alpha : float
-        alpha  > 0
-    beta : float
-        beta  > 0
     
     Parameters
     ----------
-    alpha : tensor_like of float
+    alpha : float
         Location parameter.
-    beta : tensor_like of float
+    beta : float
         Scale parameter > 0.
     """
     def __init__(self, alpha=None, beta=None):
@@ -247,7 +240,7 @@ class Cauchy(Continuous):
         self._update(alpha, beta)
 
     def _fit_mle(self, sample, **kwargs):
-        alpha, beta, _, _ = self.dist.fit(sample, **kwargs)
+        alpha, beta = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
 
 class Exponential(Continuous):
