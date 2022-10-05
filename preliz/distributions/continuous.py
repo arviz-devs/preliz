@@ -185,7 +185,7 @@ class Cauchy(Continuous):
 
         f(x \mid \alpha, \beta) =
             \frac{1}{\pi \beta [1 + (\frac{x-\alpha}{\beta})^2]}
-    
+
     .. plot::
         :context: close-figs
 
@@ -193,16 +193,16 @@ class Cauchy(Continuous):
         from preliz import Cauchy
         az.style.use('arviz-white')
         alphas = [0., 0., -2.]
-        betas = [.5, 5., 5.]
+        betas = [.5, 1., 1.]
         for alpha, beta in zip(alphas, betas):
-            Cauchy(alpha, beta).plot_pdf()
+            Cauchy(alpha, beta).plot_pdf(support=(-5,5))
 
     ========  ==============================================================
     Support   :math:`x \in \mathbb{R}`
     Mean      undefined
     Variance  undefined
     ========  ==============================================================
-    
+
     Parameters
     ----------
     alpha : float
@@ -210,17 +210,18 @@ class Cauchy(Continuous):
     beta : float
         Scale parameter > 0.
     """
+
     def __init__(self, alpha=None, beta=None):
-            super().__init__()
-            self.alpha = alpha
-            self.beta = beta
-            self.name = "cauchy"
-            self.params = (self.alpha, self.beta)
-            self.param_names = ("alpha", "beta")
-            self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-            self.dist = stats.cauchy
-            self.support = (-np.inf, np.inf)
-            self._update_rv_frozen()
+        super().__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.name = "cauchy"
+        self.params = (self.alpha, self.beta)
+        self.param_names = ("alpha", "beta")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.dist = stats.cauchy
+        self.support = (-np.inf, np.inf)
+        self._update_rv_frozen()
 
     def _get_frozen(self):
         frozen = None
@@ -242,6 +243,7 @@ class Cauchy(Continuous):
     def _fit_mle(self, sample, **kwargs):
         alpha, beta = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta)
+
 
 class Exponential(Continuous):
     r"""
