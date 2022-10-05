@@ -4,6 +4,7 @@ from .discrete import *
 all_continuous = [
     Beta,
     BetaScaled,
+    Cauchy,
     Exponential,
     Gamma,
     HalfNormal,
