@@ -3,7 +3,7 @@ import numpy as np
 
 from numpy.testing import assert_allclose
 
-from preliz.distributions.continuous import HalfNormal, HalfStudent
+from preliz.distributions.continuous import HalfCauchy, HalfNormal, HalfStudent
 from preliz import maxent
 from preliz.distributions import (
     Beta,
@@ -29,6 +29,7 @@ from preliz.distributions import (
         (Cauchy, "cauchy", -1, 1, 0.6, None, (-np.inf, np.inf), (0, 0.726)),
         (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (0.868, 0.103)),
+        (HalfCauchy, "halfcauchy", 0, 10, 0.7, None, (0, np.inf), (5.095)),
         (HalfNormal, "halfnormal", 0, 10, 0.7, None, (0, np.inf), (9.648)),
         (HalfStudent, "halfstudent", 0, 10, 0.7, 3, (0, np.inf), (8.001)),
         (HalfStudent, "halfstudent", 0, 10, 0.7, 10000, (0, np.inf), (9.648)),
