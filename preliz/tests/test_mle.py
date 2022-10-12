@@ -12,6 +12,7 @@ import preliz as pz
         (pz.Cauchy, (0, 1)),
         (pz.Exponential, (5,)),
         (pz.Gamma, (2, 5)),
+        (pz.HalfCauchy, (1,)),
         (pz.HalfNormal, (1,)),
         (pz.HalfStudent, (3, 1)),
         (pz.HalfStudent, (1000000, 1)),
