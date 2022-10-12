@@ -396,7 +396,7 @@ class HalfCauchy(Continuous):
         :context: close-figs
 
         import arviz as az
-        from preliz import HalfNormal
+        from preliz import HalfCauchy
         az.style.use('arviz-white')
         for beta in [.5, 1., 2.]:
             HalfCauchy(beta).plot_pdf()
