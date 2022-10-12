@@ -436,11 +436,11 @@ class HalfCauchy(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        beta = sigma / 2
+        beta = sigma
         self._update(beta)
 
     def _fit_mle(self, sample, **kwargs):
-        beta = self.dist.fit(sample, **kwargs)
+        _, beta = self.dist.fit(sample, **kwargs)
         self._update(beta)
 
 
