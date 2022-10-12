@@ -399,7 +399,7 @@ class HalfCauchy(Continuous):
         from preliz import HalfCauchy
         az.style.use('arviz-white')
         for beta in [.5, 1., 2.]:
-            HalfCauchy(beta).plot_pdf()
+            HalfCauchy(beta).plot_pdf(support=(0,5))
 
     ========  ==========================================
     Support   :math:`x \in [0, \infty)`
