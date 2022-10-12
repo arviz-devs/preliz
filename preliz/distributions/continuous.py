@@ -435,7 +435,7 @@ class HalfCauchy(Continuous):
         self.params = (self.beta,)
         self._update_rv_frozen()
 
-    def _fit_moments(self, mean, sigma):
+    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
         beta = sigma
         self._update(beta)
 
