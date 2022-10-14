@@ -2,12 +2,10 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-
 import arviz as az
+import matplotlib.pyplot as plt
 import numpy as np
-import sklearn.cluster as clu
-from sklearn.preprocessing import StandardScaler
+from scipy.spatial import KDTree
 
 from preliz import distributions
 from .utils.plot_utils import plot_pointinterval, repr_to_matplotlib
@@ -20,7 +18,7 @@ pymc_to_preliz = {
 }
 
 
-def ppa(idata, model, prepros="octiles", method="affinity", random_seed=None, backfitting=True):
+def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
     """
     Prior predictive check assistant.
 
@@ -50,8 +48,9 @@ def ppa(idata, model, prepros="octiles", method="affinity", random_seed=None, ba
     pp_samples = idata.prior_predictive[obs_rv].squeeze().values
     prior_samples = idata.prior.squeeze()
     sample_size = pp_samples.shape[0]
-    db0 = clusterize(pp_samples, prepros, method, random_seed)
-    fig, _ = plot_clusters(pp_samples, db0)
+    pp_summary, kdt = pre_processing(pp_samples, prepros)
+    pp_samples_idxs, shown = initialize_subsamples(pp_summary, kdt)
+    fig, _ = plot_clusters(pp_samples, pp_samples_idxs)
 
     clicked = []
 
@@ -68,7 +67,8 @@ def ppa(idata, model, prepros="octiles", method="affinity", random_seed=None, ba
     def on_leave_fig(event):  # pylint: disable=unused-argument
         if clicked:
             choices = [int(ax.get_title()) for ax in clicked]
-            pps1 = resample(choices, prior_samples, model, db0)
+            _ = keep_subsampling(choices, shown, kdt)
+            # pps1 = resample(choices, prior_samples, model, db0)
             if backfitting:
                 string = new_priors_back_fitting(model, pps1, sample_size)
             # else:
@@ -83,17 +83,17 @@ def ppa(idata, model, prepros="octiles", method="affinity", random_seed=None, ba
     fig.canvas.mpl_connect("figure_leave_event", on_leave_fig)
 
 
-def clusterize(prior_predictive_samples, prepros="octiles", method="kmeans", random_seed=None):
+def pre_processing(pp_samples, prepros):
     if prepros is None:
-        pp_samples = prior_predictive_samples
+        pp_summary = pp_samples
     else:
         if prepros == "octiles":
-            pp_samples = np.quantile(
-                prior_predictive_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
+            pp_summary = np.quantile(
+                pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
             ).T
         elif prepros == "quartiles":
-            pp_samples = np.quantile(
-                prior_predictive_samples,
+            pp_summary = np.quantile(
+                pp_samples,
                 [
                     0.25,
                     0.5,
@@ -103,30 +103,62 @@ def clusterize(prior_predictive_samples, prepros="octiles", method="kmeans", ran
             ).T
 
         elif prepros == "hexiles":
-            pp_samples = np.quantile(
-                prior_predictive_samples, [0.25, 0.375, 0.5, 0.625, 0.75], axis=1
-            ).T
+            pp_summary = np.quantile(pp_samples, [0.25, 0.375, 0.5, 0.625, 0.75], axis=1).T
         elif prepros == "sort":
-            pp_samples = np.sort(prior_predictive_samples)
+            pp_summary = np.sort(pp_samples)
+        elif prepros == "octi_sum":
+            suma = np.quantile(smp, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1).T
+            sa = suma[:, 3]
+            sb = suma[:, 5] - suma[:, 1]
+            sg = (suma[:, 5] + suma[:, 1] - 2 * suma[:, 3]) / sb
+            sk = (suma[:, 6] - suma[:, 4] + suma[:, 2] - suma[:, 0]) / sb
+            pp_summary = np.stack([sa, sb, sg, sk]).T
 
-    if method == "kmeans":
-        clust = clu.KMeans(n_clusters=9, random_state=random_seed).fit(pp_samples)
-    elif method == "spectral":
-        pp_samples = StandardScaler().fit_transform(pp_samples)
-        clust = clu.SpectralClustering(n_clusters=9, random_state=random_seed).fit(pp_samples)
-    elif method == "affinity":
-        pp_samples = StandardScaler().fit_transform(pp_samples)
-        clust = clu.AffinityPropagation(random_state=random_seed).fit(pp_samples)
-    else:
-        raise NotImplementedError(f"The method {method} is not implemented")
-
-    return clust
+    kdt = KDTree(pp_summary)
+    return pp_summary, kdt
 
 
-def plot_clusters(prior_predictive_samples, clust):
-    clusters = np.unique(clust.labels_)
-    clusters = clusters[clusters != -1]
-    row_colum = int(np.ceil(len(clusters) ** 0.5))
+def initialize_subsamples(pp_summary, kdt):
+    shown = []
+    new = 0  # np.random.choice(list(set(range(0, len(smp))) - set(shown)))
+    samples = [new]
+
+    for _ in range(8):
+        length = pp_summary.shape[0]
+        while new in samples:
+            _, new = kdt.query(pp_summary[samples[-1]], [length])
+            new = new.item()
+            length -= 1
+        samples.append(new)
+
+    shown.extend(samples)
+
+    return samples, shown
+
+
+def keep_subsampling(choices, shown, kdt):
+    # Select distributions that are similar
+    # TODO Generalize to work with more than one choice
+    new = choices[0]
+    samples = [new]
+
+    for i in range(8):
+        nn = 2
+        while new in samples or new in shown:
+            _, new = kdt.query(pp_summary[samples[-1]], [nn])
+            new = new.item()
+            nn += 1
+        samples.append(new)
+
+    shown.extend(samples)
+
+    for i in smp[samples]:
+        az.plot_kde(i)
+    shown
+
+
+def plot_clusters(pp_samples, pp_samples_idxs):
+    row_colum = int(np.ceil(len(pp_samples_idxs) ** 0.5))
 
     fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6), sharex=True)
     try:
@@ -134,36 +166,36 @@ def plot_clusters(prior_predictive_samples, clust):
     except AttributeError:
         axes = [axes]
 
-    for ax, cluster in zip(axes, clusters):
+    for ax, idx in zip(axes, pp_samples_idxs):
         ax.axvline(0, ls="--", color="0.5")
 
-        sample = prior_predictive_samples[clust.labels_ == cluster]
+        sample = pp_samples[idx]
         # for s in sample:
         #    az.plot_kde(s, ax=ax)
         az.plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})
 
-        plot_pointinterval(sample, None, ax)
-        ax.set_title(cluster)
+        plot_pointinterval(sample, ax=ax)
+        ax.set_title(idx)
         ax.set_yticks([])
 
-    for idx in range(len(clusters), len(axes)):
+    for idx in range(len(pp_samples_idxs), len(axes)):
         axes[idx].remove()
     return fig, axes
 
 
-def resample(choices, prior_samples, model, clust):
-    rvs = model.unobserved_RVs  # we should exclude deterministics
-    rvs_names = [rv.name for rv in rvs]
-    dado = {}
-    for rvn in rvs_names:
-        lista = []
-        for choice in choices:
-            lista.extend(prior_samples[rvn].values[clust.labels_ == choice])
-        dado[rvn] = np.array(lista)
+# def resample(choices, prior_samples, model, clust):
+#     rvs = model.unobserved_RVs  # we should exclude deterministics
+#     rvs_names = [rv.name for rv in rvs]
+#     dado = {}
+#     for rvn in rvs_names:
+#         lista = []
+#         for choice in choices:
+#             lista.extend(prior_samples[rvn].values[clust.labels_ == choice])
+#         dado[rvn] = np.array(lista)
 
-    # posti = pm.sample_posterior_predictive(az.from_dict(dado), model=model)
-    # dado.update(posti)
-    return dado
+#     # posti = pm.sample_posterior_predictive(az.from_dict(dado), model=model)
+#     # dado.update(posti)
+#     return dado
 
 
 def new_priors_back_fitting(model, pps1, sample_size):
