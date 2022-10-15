@@ -6,6 +6,8 @@ import arviz as az
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import KDTree
+import ipywidgets as widgets
+
 
 from preliz import distributions
 from .utils.plot_utils import plot_pointinterval, repr_to_matplotlib
@@ -44,33 +46,61 @@ def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
         """Enter at your own risk."""
         """This is highly experimental code and not recommended for regular use."""
     )
+
+    try:
+        shell = get_ipython().__class__.__name__  # pylint:disable=undefined-variable
+        if shell == "ZMQInteractiveShell" and "nbagg" not in get_backend():
+            _log.info(
+                "To run roulette you need Jupyter notebook, or Jupyter lab."
+                "You will also need to use the magic `%matplotlib widget`"
+            )
+    except NameError:
+        pass
+
     obs_rv = model.observed_RVs[0].name  # only one observed variable for the moment
     pp_samples = idata.prior_predictive[obs_rv].squeeze().values
     prior_samples = idata.prior.squeeze()
     sample_size = pp_samples.shape[0]
     pp_summary, kdt = pre_processing(pp_samples, prepros)
     pp_samples_idxs, shown = initialize_subsamples(pp_summary, kdt)
-    fig, _ = plot_clusters(pp_samples, pp_samples_idxs)
+    fig, axes = plot_samples(pp_samples, pp_samples_idxs)
 
     clicked = []
+    selected = []
+    subsample = []
 
-    def onclick(event):
-        if event.inaxes not in clicked:
-            clicked.append(event.inaxes)
-        else:
-            clicked.remove(event.inaxes)
-            plt.setp(event.inaxes.spines.values(), color="k", lw=1)
+    output = widgets.Output()
 
-        for ax in clicked:
-            plt.setp(ax.spines.values(), color="C1", lw=3)
+    with output:
+        button_keep = widgets.Button(description="continue")
+        button_ready = widgets.Button(description="give me da prior")
 
-    def on_leave_fig(event):  # pylint: disable=unused-argument
-        if clicked:
-            choices = [int(ax.get_title()) for ax in clicked]
-            _ = keep_subsampling(choices, shown, kdt)
-            # pps1 = resample(choices, prior_samples, model, db0)
-            if backfitting:
-                string = new_priors_back_fitting(model, pps1, sample_size)
+        def more_(_):
+            more(fig, axes, clicked, pp_samples, pp_summary, selected, shown, kdt)
+
+        button_keep.on_click(more_)
+
+        def on_leave_fig_(_):
+            on_leave_fig(fig, model, sample_size, subsample)
+
+        button_ready.on_click(on_leave_fig_)
+
+        def pick(event):
+            if event.inaxes not in clicked:
+                clicked.append(event.inaxes)
+            else:
+                clicked.remove(event.inaxes)
+                plt.setp(event.inaxes.spines.values(), color="k", lw=1)
+
+            for ax in clicked:
+                plt.setp(ax.spines.values(), color="C1", lw=3)
+            fig.canvas.draw()
+
+        def on_leave_fig(fig, model, sample_size, subsample):
+            subsample = resample(shown, prior_samples, model)
+            string = new_priors_back_fitting(model, subsample, sample_size)
+            # if backfitting:
+            #    string = new_priors_back_fitting(model, subsample, sample_size)
             # else:
             #     string = new_priors_posterior(model, pps1, sample_size)
 
@@ -78,9 +108,27 @@ def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
             plt.text(0.2, 0.5, string, fontsize=14)
             plt.yticks([])
             plt.xticks([])
+            fig.canvas.draw()
 
-    fig.canvas.mpl_connect("button_press_event", onclick)
-    fig.canvas.mpl_connect("figure_leave_event", on_leave_fig)
+        fig.canvas.mpl_connect("button_press_event", pick)
+        # fig.canvas.mpl_connect("figure_leave_event", lambda event: on_leave_fig(fig, model, sample_size, subsample))
+
+    controls = widgets.VBox([button_keep, button_ready])
+
+    display(widgets.HBox([controls]))  # pylint:disable=undefined-variable
+
+
+def more(fig, axes, clicked, pp_samples, pp_summary, selected, shown, kdt):
+    choices = [int(ax.get_title()) for ax in clicked]
+    selected.extend(choices)
+    pp_samples_idxs, shown = keepsampling(pp_summary, choices, shown, kdt)
+    for ax in clicked:
+        plt.setp(ax.spines.values(), color="k", lw=1)
+    ## TODO reset clicked
+    for ax in axes:
+        ax.cla()
+    fig, _ = plot_samples(pp_samples, pp_samples_idxs, fig)
+    fig.canvas.draw()
 
 
 def pre_processing(pp_samples, prepros):
@@ -124,11 +172,11 @@ def initialize_subsamples(pp_summary, kdt):
     samples = [new]
 
     for _ in range(8):
-        length = pp_summary.shape[0]
+        farthest_neighbor = pp_summary.shape[0]
         while new in samples:
-            _, new = kdt.query(pp_summary[samples[-1]], [length])
+            _, new = kdt.query(pp_summary[samples[-1]], [farthest_neighbor])
             new = new.item()
-            length -= 1
+            farthest_neighbor -= 1
         samples.append(new)
 
     shown.extend(samples)
@@ -136,31 +184,33 @@ def initialize_subsamples(pp_summary, kdt):
     return samples, shown
 
 
-def keep_subsampling(choices, shown, kdt):
+def keepsampling(pp_summary, choices, shown, kdt):
     # Select distributions that are similar
     # TODO Generalize to work with more than one choice
     new = choices[0]
     samples = [new]
 
-    for i in range(8):
-        nn = 2
+    for _ in range(9):
+        nearest_neighbor = 2
         while new in samples or new in shown:
-            _, new = kdt.query(pp_summary[samples[-1]], [nn])
+            _, new = kdt.query(pp_summary[samples[-1]], [nearest_neighbor])
             new = new.item()
-            nn += 1
+            nearest_neighbor += 1
         samples.append(new)
 
-    shown.extend(samples)
+    shown.extend(samples[1:])
 
-    for i in smp[samples]:
-        az.plot_kde(i)
-    shown
+    return samples[1:], shown
 
 
-def plot_clusters(pp_samples, pp_samples_idxs):
+def plot_samples(pp_samples, pp_samples_idxs, fig=None):
     row_colum = int(np.ceil(len(pp_samples_idxs) ** 0.5))
 
-    fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6), sharex=True)
+    if fig is None:
+        fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6), sharex=True)
+    else:
+        axes = np.array(fig.axes)
+
     try:
         axes = axes.ravel()
     except AttributeError:
@@ -183,19 +233,15 @@ def plot_clusters(pp_samples, pp_samples_idxs):
     return fig, axes
 
 
-# def resample(choices, prior_samples, model, clust):
-#     rvs = model.unobserved_RVs  # we should exclude deterministics
-#     rvs_names = [rv.name for rv in rvs]
-#     dado = {}
-#     for rvn in rvs_names:
-#         lista = []
-#         for choice in choices:
-#             lista.extend(prior_samples[rvn].values[clust.labels_ == choice])
-#         dado[rvn] = np.array(lista)
+def resample(shown, prior_samples, model):
+    ## Change name of the function
+    rvs = model.unobserved_RVs  # we should exclude deterministics
+    rv_names = [rv.name for rv in rvs]
+    subsample = {rv: prior_samples[rv].sel(draw=shown).values.squeeze() for rv in rv_names}
 
-#     # posti = pm.sample_posterior_predictive(az.from_dict(dado), model=model)
-#     # dado.update(posti)
-#     return dado
+    # # posti = pm.sample_posterior_predictive(az.from_dict(dado), model=model)
+    # # dado.update(posti)
+    return subsample
 
 
 def new_priors_back_fitting(model, pps1, sample_size):
