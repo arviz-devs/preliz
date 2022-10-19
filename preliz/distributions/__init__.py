@@ -15,6 +15,7 @@ all_continuous = [
     Normal,
     SkewNormal,
     Student,
+    TruncatedNormal,
     Uniform,
     Wald,
     Weibull,

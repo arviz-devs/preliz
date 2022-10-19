@@ -1042,6 +1042,92 @@ class Student(Continuous):
         self._update(mu, sigma, nu)
 
 
+class TruncatedNormal(Continuous):
+    r"""
+    TruncatedNormal distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x;\mu ,\sigma ,a,b)={\frac {\phi ({\frac {x-\mu }{\sigma }})}{
+            \sigma \left(\Phi ({\frac {b-\mu }{\sigma }})-\Phi ({\frac {a-\mu }{\sigma }})\right)}}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import TruncatedNormal
+        az.style.use('arviz-white')
+        mus = [0.,  0., 0.]
+        sigmas = [3.,5.,7.]
+        lowers = [-3, -5, -5]
+        uppers = [7, 5, 4]
+        for mu, sigma, lower, upper in zip(mus, sigmas,lowers,uppers):
+            TruncatedNormal(mu, sigma, lower, upper).plot_pdf(support=(-10,10))
+
+    ========  ==========================================
+    Support   :math:`x \in [a, b]`
+    Mean      :math:`\mu +{\frac {\phi (\alpha )-\phi (\beta )}{Z}}\sigma`
+    Variance  :math:`\sigma ^{2}\left[1+{\frac {\alpha \phi (\alpha )-\beta \phi (\beta )}{Z}}-\left({\frac {\phi (\alpha )-\phi (\beta )}{Z}}\right)^{2}\right]`
+    ========  ==========================================
+
+    Parameters
+    ----------
+    mu : float
+        Mean.
+    sigma : float
+        Standard deviation (sigma > 0) 
+    lower: float
+        Lower limit.
+    upper: float
+        Upper limit (upper > lower).
+    """
+
+    def __init__(self, mu=None, sigma=None, lower=-np.inf, upper=np.inf):
+        super().__init__()
+        self.mu = mu
+        self.sigma = sigma
+        self.lower = lower
+        self.upper = upper
+        self.name = "truncatednormal"
+        self.params = (self.mu, self.sigma, self.lower, self.upper)
+        self.param_names = ("mu", "sigma", "lower", "upper")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (-np.inf, np.inf), (-np.inf, np.inf) )
+        self.dist = stats.truncnorm
+        self.support = (self.lower, self.upper)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if self.mu is not None or self.sigma is not None:
+            an, bn = (self.lower - self.mu) / self.sigma, (self.upper - self.mu) / self.sigma 
+            frozen = self.dist(an, bn, self.mu, self.sigma)
+        return frozen
+
+    def _update(self, mu, sigma, lower=None, upper=None):
+        if lower is not None:
+            self.lower = lower
+        if upper is not None:
+            self.upper = upper
+
+        self.mu = mu
+        self.sigma = sigma
+        self.params = (self.mu, self.sigma, self.lower, self.upper)
+        self.support = (self.lower, self.upper)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma): # pylint: disable=unused-argument
+        lower = self.lower
+        upper = self.upper
+        self._update(lower, upper)
+
+    def _fit_mle(self, sample, **kwargs):
+        a, b, mu, sigma = self.dist.fit(sample, **kwargs)
+        lower, upper = a*sigma + mu, b*sigma + mu
+        self._update(mu, sigma, lower, upper)
+
+
 class Uniform(Continuous):
     R"""
     Uniform distribution.
