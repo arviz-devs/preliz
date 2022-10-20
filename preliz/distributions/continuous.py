@@ -1117,10 +1117,9 @@ class TruncatedNormal(Continuous):
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
 
-    def _fit_moments(self, mean, sigma): # pylint: disable=unused-argument
-        lower = self.lower
-        upper = self.upper
-        self._update(lower, upper)
+    def _fit_moments(self, mean, sigma): 
+        #aproximated version
+        self._update(mean, sigma)
 
     def _fit_mle(self, sample, **kwargs):
         a, b, mu, sigma = self.dist.fit(sample, **kwargs)

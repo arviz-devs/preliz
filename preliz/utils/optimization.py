@@ -28,16 +28,13 @@ def optimize_max_ent(dist, lower, upper, mass):
     }
     init_vals = dist.params
     bounds = dist.params_support
-    if dist.name == "halfstudent":
-        init_vals = init_vals[1:]
-        bounds = bounds[1:]
-    if dist.name == "student":
+    if dist.name in ["halfstudent", "student"]:
         init_vals = init_vals[1:]
         bounds = bounds[1:]
     if dist.name == "skewnormal":
         init_vals = init_vals[:-1]
         bounds = bounds[:-1]
-    if dist.name == "betascaled":
+    if dist.name in ["betascaled", "truncatednormal"]:
         init_vals = init_vals[:-2]
         bounds = bounds[:-2]
 
@@ -154,7 +151,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     """
     fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
-        if dist.name == "betascaled":
+        if dist.name in ["betascaled","truncatednormal"]:
             update_bounds_beta_scaled(dist, x_min, x_max)
 
         if dist._check_endpoints(x_min, x_max, raise_error=False):
