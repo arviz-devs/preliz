@@ -1069,7 +1069,8 @@ class TruncatedNormal(Continuous):
     ========  ==========================================
     Support   :math:`x \in [a, b]`
     Mean      :math:`\mu +{\frac {\phi (\alpha )-\phi (\beta )}{Z}}\sigma`
-    Variance  :math:`\sigma ^{2}\left[1+{\frac {\alpha \phi (\alpha )-\beta \phi (\beta )}{Z}}-\left({\frac {\phi (\alpha )-\phi (\beta )}{Z}}\right)^{2}\right]`
+    Variance  :math:`\sigma ^{2}\left[1+{\frac {\alpha \phi (\alpha )-\beta \phi (\beta )}{Z}}-
+                        \left({\frac {\phi (\alpha )-\phi (\beta )}{Z}}\right)^{2}\right]`
     ========  ==========================================
 
     Parameters
@@ -1077,7 +1078,7 @@ class TruncatedNormal(Continuous):
     mu : float
         Mean.
     sigma : float
-        Standard deviation (sigma > 0) 
+        Standard deviation (sigma > 0)
     lower: float
         Lower limit.
     upper: float
@@ -1093,7 +1094,12 @@ class TruncatedNormal(Continuous):
         self.name = "truncatednormal"
         self.params = (self.mu, self.sigma, self.lower, self.upper)
         self.param_names = ("mu", "sigma", "lower", "upper")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (-np.inf, np.inf), (-np.inf, np.inf) )
+        self.params_support = (
+            (-np.inf, np.inf),
+            (eps, np.inf),
+            (-np.inf, np.inf),
+            (-np.inf, np.inf),
+        )
         self.dist = stats.truncnorm
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
@@ -1101,8 +1107,8 @@ class TruncatedNormal(Continuous):
     def _get_frozen(self):
         frozen = None
         if self.mu is not None or self.sigma is not None:
-            an, bn = (self.lower - self.mu) / self.sigma, (self.upper - self.mu) / self.sigma 
-            frozen = self.dist(an, bn, self.mu, self.sigma)
+            a, b = (self.lower - self.mu) / self.sigma, (self.upper - self.mu) / self.sigma
+            frozen = self.dist(a, b, self.mu, self.sigma)
         return frozen
 
     def _update(self, mu, sigma, lower=None, upper=None):
@@ -1117,13 +1123,13 @@ class TruncatedNormal(Continuous):
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
 
-    def _fit_moments(self, mean, sigma): 
-        #aproximated version
+    def _fit_moments(self, mean, sigma):
+        # aproximated version
         self._update(mean, sigma)
 
     def _fit_mle(self, sample, **kwargs):
         a, b, mu, sigma = self.dist.fit(sample, **kwargs)
-        lower, upper = a*sigma + mu, b*sigma + mu
+        lower, upper = a * sigma + mu, b * sigma + mu
         self._update(mu, sigma, lower, upper)
 
 

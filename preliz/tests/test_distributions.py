@@ -1,5 +1,6 @@
 import pytest
 from numpy.testing import assert_almost_equal
+import numpy as np
 
 from preliz.distributions import (
     Beta,
@@ -40,7 +41,7 @@ from preliz.distributions import (
         (SkewNormal, (0, 1, 0)),
         (Student, (3, 0, 1)),
         (Student, (1000000, 0, 1)),
-        (TruncatedNormal, (0.,3.,-3,7)),
+        (TruncatedNormal, (0, 1, -np.inf, np.inf)),
         (Uniform, (0, 1)),
         (Wald, (1, 1)),
         (Weibull, (2, 1)),
@@ -86,7 +87,7 @@ def test_moments(distribution, params):
         (SkewNormal, (0, 1, -1)),
         (Student, (4, 0, 1)),
         (Student, (1000, 0, 1)),
-        (TruncatedNormal, (0.,3.,-3,7)),
+        (TruncatedNormal, (0, 1, -1, 1)),
         (Uniform, (0, 1)),
         (Wald, (1, 1)),
         (Weibull, (2, 1)),

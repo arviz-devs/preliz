@@ -39,7 +39,7 @@ from preliz.distributions import (
         (Normal, "normal", 10, 12, 0.99, None, (-np.inf, np.inf), (11, 0.388)),
         (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
         (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
-        (TruncatedNormal, "truncatednormal", -1, 1,  0.683, None, (-np.inf, np.inf), (0,1)),
+        (TruncatedNormal, "truncatednormal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
         (Uniform, "uniform", -2, 10, 0.9, None, (-np.inf, np.inf), (-2.666, 10.666)),
         (Wald, "wald", 0, 10, 0.9, None, (0, np.inf), (5.061, 7.937)),
         (Weibull, "weibull", 0, 10, 0.9, None, (0, np.inf), (1.411, 5.537)),
