@@ -1064,7 +1064,7 @@ class TruncatedNormal(Continuous):
         lowers = [-3, -5, -5]
         uppers = [7, 5, 4]
         for mu, sigma, lower, upper in zip(mus, sigmas,lowers,uppers):
-            TruncatedNormal(mu, sigma, lower, upper).plot_pdf(support=(-10,10))
+            TruncatedNormal(mu, sigma, lower, upper).plot_pdf()
 
     ========  ==========================================
     Support   :math:`x \in [a, b]`
