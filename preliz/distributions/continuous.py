@@ -1129,7 +1129,7 @@ class TruncatedNormal(Continuous):
 
 
 class Uniform(Continuous):
-    R"""
+    r"""
     Uniform distribution.
 
     The pdf of this distribution is
