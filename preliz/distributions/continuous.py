@@ -683,7 +683,7 @@ class InverseGamma(Continuous):
         alphas = [1., 2., 3.]
         betas = [1., 1., .5]
         for alpha, beta in zip(alphas, betas):
-            InverseGamma(alpha, beta).plot_pdf()
+            InverseGamma(alpha, beta).plot_pdf(support=(0, 3))
 
     ========  ===============================
     Support   :math:`x \in (0, \infty)`
