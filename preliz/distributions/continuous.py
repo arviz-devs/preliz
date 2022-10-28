@@ -673,7 +673,7 @@ class InverseGamma(Continuous):
        f(x \mid \alpha, \beta) =
            \frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{-\alpha - 1}
            \exp\left(\frac{-\beta}{x}\right)
-    
+
     .. plot::
         :context: close-figs
 
@@ -688,8 +688,7 @@ class InverseGamma(Continuous):
     ========  ===============================
     Support   :math:`x \in (0, \infty)`
     Mean      :math:`\dfrac{\beta}{\alpha-1}` for :math:`\alpha > 1`
-    Variance  :math:`\dfrac{\beta^2}{(\alpha-1)^2(\alpha - 2)}`
-              for :math:`\alpha > 2`
+    Variance  :math:`\dfrac{\beta^2}{(\alpha-1)^2(\alpha - 2)}` for :math:`\alpha > 2`
     ========  ===============================
 
     Parameters
