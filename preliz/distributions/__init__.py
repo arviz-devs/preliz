@@ -10,6 +10,7 @@ all_continuous = [
     HalfCauchy,
     HalfNormal,
     HalfStudent,
+    InverseGamma,
     Laplace,
     LogNormal,
     Normal,
