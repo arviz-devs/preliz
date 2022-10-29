@@ -662,6 +662,77 @@ class _HalfStudent(stats._distn_infrastructure.rv_continuous):
         return np.abs(self.dist.rvs(size=size, random_state=random_state))
 
 
+class InverseGamma(Continuous):
+    r"""
+    Inverse gamma log-likelihood, the reciprocal of the gamma distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \alpha, \beta) =
+           \frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{-\alpha - 1}
+           \exp\left(\frac{-\beta}{x}\right)
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import InverseGamma
+        az.style.use('arviz-white')
+        alphas = [1., 2., 3.]
+        betas = [1., 1., .5]
+        for alpha, beta in zip(alphas, betas):
+            InverseGamma(alpha, beta).plot_pdf(support=(0, 3))
+
+    ========  ===============================
+    Support   :math:`x \in (0, \infty)`
+    Mean      :math:`\dfrac{\beta}{\alpha-1}` for :math:`\alpha > 1`
+    Variance  :math:`\dfrac{\beta^2}{(\alpha-1)^2(\alpha - 2)}` for :math:`\alpha > 2`
+    ========  ===============================
+
+    Parameters
+    ----------
+    alpha : float
+        Shape parameter (alpha > 0).
+    beta : float
+        Scale parameter (beta > 0).
+    """
+
+    def __init__(self, alpha=None, beta=None):
+        super().__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.name = "inversegamma"
+        self.params = (self.alpha, self.beta)
+        self.param_names = ("alpha", "beta")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.dist = stats.invgamma
+        self.support = (0, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(a=self.alpha, scale=self.beta)
+        return frozen
+
+    def _update(self, alpha, beta):
+        self.alpha = alpha
+        self.beta = beta
+        self.params = (self.alpha, self.beta)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        alpha = (mean**2 / sigma**2) + 2
+        beta = (mean**3 / sigma**2) + mean
+        self._update(alpha, beta)
+
+    def _fit_mle(self, sample, **kwargs):
+        alpha, _, beta = self.dist.fit(sample, **kwargs)
+        self._update(alpha, beta)
+
+
 class Laplace(Continuous):
     r"""
     Laplace distribution.

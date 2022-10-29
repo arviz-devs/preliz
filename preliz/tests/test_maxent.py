@@ -3,7 +3,13 @@ import numpy as np
 
 from numpy.testing import assert_allclose
 
-from preliz.distributions.continuous import HalfCauchy, HalfNormal, HalfStudent, TruncatedNormal
+from preliz.distributions.continuous import (
+    HalfCauchy,
+    HalfNormal,
+    HalfStudent,
+    TruncatedNormal,
+    InverseGamma,
+)
 from preliz import maxent
 from preliz.distributions import (
     Beta,
@@ -33,6 +39,7 @@ from preliz.distributions import (
         (HalfNormal, "halfnormal", 0, 10, 0.7, None, (0, np.inf), (9.648)),
         (HalfStudent, "halfstudent", 0, 10, 0.7, 3, (0, np.inf), (8.001)),
         (HalfStudent, "halfstudent", 0, 10, 0.7, 10000, (0, np.inf), (9.648)),
+        (InverseGamma, "inversegamma", 0, 1, 0.99, None, (0, np.inf), (8.889, 3.439)),
         (Laplace, "laplace", -1, 1, 0.9, None, (-np.inf, np.inf), (0, 0.435)),
         (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (1.216, 0.859)),
         (Normal, "normal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
