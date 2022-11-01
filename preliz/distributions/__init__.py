@@ -14,6 +14,7 @@ all_continuous = [
     Laplace,
     LogNormal,
     Normal,
+    Pareto,
     SkewNormal,
     Student,
     TruncatedNormal,

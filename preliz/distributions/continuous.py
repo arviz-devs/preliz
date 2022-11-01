@@ -948,6 +948,74 @@ class Normal(Continuous):
         self._update(mu, sigma)
 
 
+class Pareto(Continuous):
+    r"""
+    Pareto log-likelihood.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \alpha, m) = \frac{\alpha m^{\alpha}}{x^{\alpha+1}}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Pareto
+        az.style.use('arviz-white')
+        alphas = [1., 5., 5.]
+        ms = [1., 1., 2.]
+        for alpha, m in zip(alphas, ms):
+            Pareto(alpha, m).plot_pdf(support=(0,4))
+   
+    ========  =============================================================
+    Support   :math:`x \in [m, \infty)`
+    Mean      :math:`\dfrac{\alpha m}{\alpha - 1}` for :math:`\alpha \ge 1`
+    Variance  :math:`\dfrac{m \alpha}{(\alpha - 1)^2 (\alpha - 2)}` for :math:`\alpha > 2`
+    ========  =============================================================
+
+    Parameters
+    ----------
+    alpha : float
+        Shape parameter (alpha > 0).
+    m : float
+        Scale parameter (m > 0).
+    """
+
+    def __init__(self, alpha=None, m=None):
+        super().__init__()
+        self.alpha = alpha
+        self.m = m
+        self.name = "pareto"
+        self.params = (self.alpha, self.m)
+        self.param_names = ("alpha", "m")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.dist = stats.pareto
+        self.support = (0, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(self.alpha, scale=self.m)
+        return frozen
+
+    def _update(self, alpha, m):
+        self.alpha = alpha
+        self.m = m
+        self.params = (self.alpha, self.m)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        alpha = 1 + (1 + (mean**2 / sigma))**(1/2)
+        m = (alpha - 1)*mean / alpha
+        self._update(alpha, m)
+
+    def _fit_mle(self, sample, **kwargs):
+        alpha, _, m = self.dist.fit(sample, **kwargs)
+        self._update(alpha, m)
+
 class SkewNormal(Continuous):
     r"""
     SkewNormal distribution.
