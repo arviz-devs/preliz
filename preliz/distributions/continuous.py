@@ -968,7 +968,7 @@ class Pareto(Continuous):
         ms = [1., 1., 2.]
         for alpha, m in zip(alphas, ms):
             Pareto(alpha, m).plot_pdf(support=(0,4))
-   
+
     ========  =============================================================
     Support   :math:`x \in [m, \infty)`
     Mean      :math:`\dfrac{\alpha m}{\alpha - 1}` for :math:`\alpha \ge 1`
@@ -986,7 +986,7 @@ class Pareto(Continuous):
     def __init__(self, alpha=None, m=None):
         super().__init__()
         self.alpha = alpha
-        self.m = m
+        self.m = m # pylint: disable=invalid-name
         self.name = "pareto"
         self.params = (self.alpha, self.m)
         self.param_names = ("alpha", "m")
@@ -1001,20 +1001,21 @@ class Pareto(Continuous):
             frozen = self.dist(self.alpha, scale=self.m)
         return frozen
 
-    def _update(self, alpha, m):
+    def _update(self, alpha, m): # pylint: disable=invalid-name
         self.alpha = alpha
         self.m = m
         self.params = (self.alpha, self.m)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        alpha = 1 + (1 + (mean**2 / sigma))**(1/2)
-        m = (alpha - 1)*mean / alpha
+        alpha = 1 + (1 + (mean / sigma) ** 2) ** (1 / 2)
+        m = (alpha - 1) * mean / alpha # pylint: disable=invalid-name
         self._update(alpha, m)
 
     def _fit_mle(self, sample, **kwargs):
-        alpha, _, m = self.dist.fit(sample, **kwargs)
+        alpha, _, m = self.dist.fit(sample, **kwargs) # pylint: disable=invalid-name
         self._update(alpha, m)
+
 
 class SkewNormal(Continuous):
     r"""
