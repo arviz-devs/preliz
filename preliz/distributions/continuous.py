@@ -986,7 +986,7 @@ class Pareto(Continuous):
     def __init__(self, alpha=None, m=None):
         super().__init__()
         self.alpha = alpha
-        self.m = m # pylint: disable=invalid-name
+        self.m = m  # pylint: disable=invalid-name
         self.name = "pareto"
         self.params = (self.alpha, self.m)
         self.param_names = ("alpha", "m")
@@ -1001,7 +1001,7 @@ class Pareto(Continuous):
             frozen = self.dist(self.alpha, scale=self.m)
         return frozen
 
-    def _update(self, alpha, m): # pylint: disable=invalid-name
+    def _update(self, alpha, m):  # pylint: disable=invalid-name
         self.alpha = alpha
         self.m = m
         self.params = (self.alpha, self.m)
@@ -1009,11 +1009,11 @@ class Pareto(Continuous):
 
     def _fit_moments(self, mean, sigma):
         alpha = 1 + (1 + (mean / sigma) ** 2) ** (1 / 2)
-        m = (alpha - 1) * mean / alpha # pylint: disable=invalid-name
+        m = (alpha - 1) * mean / alpha  # pylint: disable=invalid-name
         self._update(alpha, m)
 
     def _fit_mle(self, sample, **kwargs):
-        alpha, _, m = self.dist.fit(sample, **kwargs) # pylint: disable=invalid-name
+        alpha, _, m = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
         self._update(alpha, m)
 
 
