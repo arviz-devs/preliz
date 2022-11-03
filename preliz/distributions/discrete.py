@@ -112,7 +112,8 @@ class DiscreteUniform(Discrete):
         ls = [1, -2]
         us = [6, 2]
         for l, u in zip(ls, us):
-            DiscreteUniform(l, u).plot_pdf(support=(-3, 7))
+            ax = DiscreteUniform(l, u).plot_pdf()
+            ax.set_ylim(0, 0.25)
 
     ========  ===============================================
     Support   :math:`x \in {lower, lower + 1, \ldots, upper}`
