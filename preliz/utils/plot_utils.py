@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers
 from scipy.stats._distn_infrastructure import rv_continuous_frozen, rv_discrete_frozen
+from scipy.interpolate import interp1d, PchipInterpolator
 
 
 def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
@@ -61,9 +62,16 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
         ax.set_yticks([])
     else:
         mass = dist.rv_frozen.pmf(x)
-        eps = dist._finite_endpoints(support)
+        eps = np.clip(dist._finite_endpoints(support), *dist.support)
         x_c = np.linspace(*eps, 1000)
-        mass_c = np.clip(dist.rv_frozen.pmf(x_c), 0, np.max(mass))
+
+        if len(x) > 2:
+            interp = PchipInterpolator(x, mass)
+        else:
+            interp = interp1d(x, mass)
+
+        mass_c = np.clip(interp(x_c), np.min(mass), np.max(mass))
+
         ax.plot(x_c, mass_c, ls="dotted", color=color)
         ax.plot(x, mass, "o", label=label, color=color)
 
