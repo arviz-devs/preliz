@@ -21,6 +21,7 @@ import preliz as pz
         (pz.Laplace, (0, 2)),
         (pz.LogNormal, (0, 1)),
         (pz.Normal, (0, 1)),
+        (pz.Pareto, (5, 1)),
         (pz.SkewNormal, (0, 1, 6)),
         (pz.Student, (4, 0, 1)),
         (pz.TruncatedNormal, (0, 1, -1, 1)),
