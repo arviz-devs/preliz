@@ -45,7 +45,7 @@ from preliz.distributions import (
         (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (1.216, 0.859)),
         (Normal, "normal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
         (Normal, "normal", 10, 12, 0.99, None, (-np.inf, np.inf), (11, 0.388)),
-        (Pareto, "pareto", 1, 4, 0.99, None, (1.1150603771284606, np.inf), (3.605152, 1.11506)),
+        (Pareto, "pareto", 1, 4, 0.9, None, (1, np.inf), (1.660, 1)),
         (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
         (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
         (TruncatedNormal, "truncatednormal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
@@ -65,7 +65,12 @@ def test_maxent(distribution, name, lower, upper, mass, nu, support, result):
     rv_frozen = dist.rv_frozen
 
     assert rv_frozen.name == name
-    assert rv_frozen.support() == support
+
+    if dist.name == "pareto":
+        assert pytest.approx(rv_frozen.support(), 0.3) == support
+    else:
+        assert rv_frozen.support() == support
+
     if dist.name != "discreteuniform":  # optimization fails to converge, but results are reasonable
         assert opt.success
     assert_allclose(opt.x, result, atol=0.001)
