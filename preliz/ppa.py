@@ -20,7 +20,7 @@ pymc_to_preliz = {
 }
 
 
-def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
+def ppa(idata, model, summary="octiles"):
     """
     Prior predictive check assistant.
 
@@ -33,14 +33,10 @@ def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
         With samples from the prior and prior predictive distributions
     model : PyMC model
         Model associated to ``ìdata``.
-    summary : str
-        summary statistic using for clustering
-    method : str
-        clustering method
-    random_seed : int
-        random seed passed to the clustering method
-    backfitting : bool
-        This is not doing anything at this point
+    summary : str:
+        Summary statistics applied to prior samples in order to define (dis)similarity
+        of distributions. Current options are `octiles`, `hexiles`, `quantiles`,
+        `sort` (sort data) `octi_sum` (robust estimation of first 4 moments from octiles).
     """
     _log.info(
         """Enter at your own risk."""
@@ -57,33 +53,35 @@ def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
     except NameError:
         pass
 
+    shown = []
     obs_rv = model.observed_RVs[0].name  # only one observed variable for the moment
     pp_samples = idata.prior_predictive[obs_rv].squeeze().values
     prior_samples = idata.prior.squeeze()
     sample_size = pp_samples.shape[0]
-    pp_summary, kdt = pre_processing(pp_samples, prepros)
-    pp_samples_idxs, shown = initialize_subsamples(pp_summary, kdt)
+    pp_summary, kdt = pre_processing(pp_samples, summary)
+    pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt)
     fig, axes = plot_samples(pp_samples, pp_samples_idxs)
 
     clicked = []
     selected = []
+    choices = []
     subsample = []
 
     output = widgets.Output()
 
     with output:
         button_keep = widgets.Button(description="continue")
-        button_ready = widgets.Button(description="give me da prior")
+        button_ready = widgets.Button(description="return prior")
 
         def more_(_):
-            more(fig, axes, clicked, pp_samples, pp_summary, selected, shown, kdt)
+            more(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt)
 
         button_keep.on_click(more_)
 
-        def on_leave_fig_(_):
-            on_leave_fig(fig, model, sample_size, subsample)
+        def on_ready_(_):
+            on_ready(fig, selected, model, sample_size, subsample)
 
-        button_ready.on_click(on_leave_fig_)
+        button_ready.on_click(on_ready_)
 
         def pick(event):
             if event.inaxes not in clicked:
@@ -96,13 +94,10 @@ def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
                 plt.setp(ax.spines.values(), color="C1", lw=3)
             fig.canvas.draw()
 
-        def on_leave_fig(fig, model, sample_size, subsample):
-            subsample = resample(shown, prior_samples, model)
-            string = new_priors_back_fitting(model, subsample, sample_size)
-            # if backfitting:
-            #    string = new_priors_back_fitting(model, subsample, sample_size)
-            # else:
-            #     string = new_priors_posterior(model, pps1, sample_size)
+        def on_ready(fig, selected, model, sample_size, subsample):
+            selected = np.unique(selected)
+            subsample = resample(selected, prior_samples, model)
+            string = back_fitting(model, subsample, sample_size)
 
             fig.clf()
             plt.text(0.2, 0.5, string, fontsize=14)
@@ -111,64 +106,61 @@ def ppa(idata, model, prepros="octiles", random_seed=None, backfitting=True):
             fig.canvas.draw()
 
         fig.canvas.mpl_connect("button_press_event", pick)
-        # fig.canvas.mpl_connect("figure_leave_event", lambda event: on_leave_fig(fig, model, sample_size, subsample))
 
     controls = widgets.VBox([button_keep, button_ready])
 
     display(widgets.HBox([controls]))  # pylint:disable=undefined-variable
 
 
-def more(fig, axes, clicked, pp_samples, pp_summary, selected, shown, kdt):
-    choices = [int(ax.get_title()) for ax in clicked]
+def more(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt):
+    choices.extend([int(ax.get_title()) for ax in clicked])
     selected.extend(choices)
-    pp_samples_idxs, shown = keepsampling(pp_summary, choices, shown, kdt)
+
     for ax in clicked:
         plt.setp(ax.spines.values(), color="k", lw=1)
-    ## TODO reset clicked
     for ax in axes:
         ax.cla()
+    clicked = []
+
+    pp_samples_idxs, shown = keep_sampling(pp_summary, choices, shown, kdt)
     fig, _ = plot_samples(pp_samples, pp_samples_idxs, fig)
     fig.canvas.draw()
 
 
-def pre_processing(pp_samples, prepros):
-    if prepros is None:
-        pp_summary = pp_samples
-    else:
-        if prepros == "octiles":
-            pp_summary = np.quantile(
-                pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
-            ).T
-        elif prepros == "quartiles":
-            pp_summary = np.quantile(
-                pp_samples,
-                [
-                    0.25,
-                    0.5,
-                    0.75,
-                ],
-                axis=1,
-            ).T
+def pre_processing(pp_samples, summary):
+    if summary == "octiles":
+        pp_summary = np.quantile(
+            pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
+        ).T
+    elif summary == "quartiles":
+        pp_summary = np.quantile(
+            pp_samples,
+            [
+                0.25,
+                0.5,
+                0.75,
+            ],
+            axis=1,
+        ).T
 
-        elif prepros == "hexiles":
-            pp_summary = np.quantile(pp_samples, [0.25, 0.375, 0.5, 0.625, 0.75], axis=1).T
-        elif prepros == "sort":
-            pp_summary = np.sort(pp_samples)
-        elif prepros == "octi_sum":
-            suma = np.quantile(smp, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1).T
-            sa = suma[:, 3]
-            sb = suma[:, 5] - suma[:, 1]
-            sg = (suma[:, 5] + suma[:, 1] - 2 * suma[:, 3]) / sb
-            sk = (suma[:, 6] - suma[:, 4] + suma[:, 2] - suma[:, 0]) / sb
-            pp_summary = np.stack([sa, sb, sg, sk]).T
+    elif summary == "hexiles":
+        pp_summary = np.quantile(pp_samples, [0.25, 0.375, 0.5, 0.625, 0.75], axis=1).T
+    elif summary == "sort":
+        pp_summary = np.sort(pp_samples)
+    elif summary == "octi_sum":
+        suma = np.quantile(pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1).T
+        s_a = suma[:, 3]
+        s_b = suma[:, 5] - suma[:, 1]
+        s_g = (suma[:, 5] + suma[:, 1] - 2 * suma[:, 3]) / s_b
+        s_k = (suma[:, 6] - suma[:, 4] + suma[:, 2] - suma[:, 0]) / s_b
+        pp_summary = np.stack([s_a, s_b, s_g, s_k]).T
 
     kdt = KDTree(pp_summary)
     return pp_summary, kdt
 
 
-def initialize_subsamples(pp_summary, kdt):
-    shown = []
-    new = 0  # np.random.choice(list(set(range(0, len(smp))) - set(shown)))
+def initialize_subsamples(pp_summary, shown, kdt):
+    new = np.random.choice(list(set(range(0, len(pp_summary))) - set(shown)))
     samples = [new]
 
     for _ in range(8):
@@ -184,23 +176,25 @@ def initialize_subsamples(pp_summary, kdt):
     return samples, shown
 
 
-def keepsampling(pp_summary, choices, shown, kdt):
+def keep_sampling(pp_summary, choices, shown, kdt):
     # Select distributions that are similar
-    # TODO Generalize to work with more than one choice
-    new = choices[0]
-    samples = [new]
+    if choices:
+        new = choices.pop(0)
+        samples = [new]
 
-    for _ in range(9):
-        nearest_neighbor = 2
-        while new in samples or new in shown:
-            _, new = kdt.query(pp_summary[samples[-1]], [nearest_neighbor])
-            new = new.item()
-            nearest_neighbor += 1
-        samples.append(new)
+        for _ in range(9):
+            nearest_neighbor = 2
+            while new in samples or new in shown:
+                _, new = kdt.query(pp_summary[samples[-1]], [nearest_neighbor])
+                new = new.item()
+                nearest_neighbor += 1
+            samples.append(new)
 
-    shown.extend(samples[1:])
+        shown.extend(samples[1:])
 
-    return samples[1:], shown
+        return samples[1:], shown
+    else:
+        return [], shown
 
 
 def plot_samples(pp_samples, pp_samples_idxs, fig=None):
@@ -220,31 +214,27 @@ def plot_samples(pp_samples, pp_samples_idxs, fig=None):
         ax.axvline(0, ls="--", color="0.5")
 
         sample = pp_samples[idx]
-        # for s in sample:
-        #    az.plot_kde(s, ax=ax)
         az.plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})
 
         plot_pointinterval(sample, ax=ax)
         ax.set_title(idx)
         ax.set_yticks([])
 
-    for idx in range(len(pp_samples_idxs), len(axes)):
-        axes[idx].remove()
     return fig, axes
 
 
-def resample(shown, prior_samples, model):
+def resample(selected, prior_samples, model):
     ## Change name of the function
     rvs = model.unobserved_RVs  # we should exclude deterministics
     rv_names = [rv.name for rv in rvs]
-    subsample = {rv: prior_samples[rv].sel(draw=shown).values.squeeze() for rv in rv_names}
+    subsample = {rv: prior_samples[rv].sel(draw=selected).values.squeeze() for rv in rv_names}
 
     # # posti = pm.sample_posterior_predictive(az.from_dict(dado), model=model)
     # # dado.update(posti)
     return subsample
 
 
-def new_priors_back_fitting(model, pps1, sample_size):
+def back_fitting(model, pps1, sample_size):
     subset = len(pps1[list(pps1.keys())[0]])
 
     string = f"You have selected {subset} out of {sample_size} prior predictive samples\n"
