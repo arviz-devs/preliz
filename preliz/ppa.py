@@ -3,10 +3,10 @@
 import logging
 
 import arviz as az
+import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import KDTree
-import ipywidgets as widgets
 
 
 from preliz import distributions
@@ -30,9 +30,9 @@ def ppa(idata, model, summary="octiles"):
     ----------
 
     idata : InferenceData
-        With samples from the prior and prior predictive distributions
+        With at least the `prior` and `prior_predictive` groups
     model : PyMC model
-        Model associated to ``ìdata``.
+        Model associated to ``idata``.
     summary : str:
         Summary statistics applied to prior samples in order to define (dis)similarity
         of distributions. Current options are `octiles`, `hexiles`, `quantiles`,
@@ -58,32 +58,31 @@ def ppa(idata, model, summary="octiles"):
     pp_samples = idata.prior_predictive[obs_rv].squeeze().values
     prior_samples = idata.prior.squeeze()
     sample_size = pp_samples.shape[0]
-    pp_summary, kdt = pre_processing(pp_samples, summary)
+    pp_summary, kdt = compute_summaries(pp_samples, summary)
     pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt)
     fig, axes = plot_samples(pp_samples, pp_samples_idxs)
 
     clicked = []
     selected = []
     choices = []
-    subsample = []
 
     output = widgets.Output()
 
     with output:
-        button_keep = widgets.Button(description="continue")
-        button_ready = widgets.Button(description="return prior")
+        button_carry_on = widgets.Button(description="carry on")
+        button_return_prior = widgets.Button(description="return prior")
 
-        def more_(_):
-            more(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt)
+        def carry_on_(_):
+            carry_on(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt)
 
-        button_keep.on_click(more_)
+        button_carry_on.on_click(carry_on_)
 
-        def on_ready_(_):
-            on_ready(fig, selected, model, sample_size, subsample)
+        def on_return_prior_(_):
+            on_return_prior(fig, selected, model, sample_size)
 
-        button_ready.on_click(on_ready_)
+        button_return_prior.on_click(on_return_prior_)
 
-        def pick(event):
+        def click(event):
             if event.inaxes not in clicked:
                 clicked.append(event.inaxes)
             else:
@@ -94,28 +93,41 @@ def ppa(idata, model, summary="octiles"):
                 plt.setp(ax.spines.values(), color="C1", lw=3)
             fig.canvas.draw()
 
-        def on_ready(fig, selected, model, sample_size, subsample):
+        def on_return_prior(fig, selected, model, sample_size):
             selected = np.unique(selected)
-            subsample = resample(selected, prior_samples, model)
-            string = back_fitting(model, subsample, sample_size)
+            num_selected = len(selected)
 
-            fig.clf()
-            plt.text(0.2, 0.5, string, fontsize=14)
-            plt.yticks([])
-            plt.xticks([])
+            if num_selected > 1:
+                string = (
+                    f"You have selected {num_selected} out of {sample_size} prior"
+                    "predictive samples\nThat selection is consistent with the"
+                    "following priors:\n"
+                )
+
+                subsample = select_prior_samples(selected, prior_samples, model)
+                string = back_fitting(model, subsample, string)
+
+                fig.clf()
+                plt.text(0.2, 0.5, string, fontsize=14)
+                plt.yticks([])
+                plt.xticks([])
+            else:
+                fig.suptitle("Please select more distributions", fontsize=16)
+
             fig.canvas.draw()
 
-        fig.canvas.mpl_connect("button_press_event", pick)
+        fig.canvas.mpl_connect("button_press_event", click)
 
-    controls = widgets.VBox([button_keep, button_ready])
+    controls = widgets.VBox([button_carry_on, button_return_prior])
 
     display(widgets.HBox([controls]))  # pylint:disable=undefined-variable
 
 
-def more(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt):
+def carry_on(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt):
     choices.extend([int(ax.get_title()) for ax in clicked])
     selected.extend(choices)
 
+    fig.suptitle("")
     for ax in clicked:
         plt.setp(ax.spines.values(), color="k", lw=1)
     for ax in axes:
@@ -124,11 +136,13 @@ def more(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, k
         clicked.remove(ax)
 
     pp_samples_idxs, shown = keep_sampling(pp_summary, choices, shown, kdt)
+    if not pp_samples_idxs:
+        pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt)
     fig, _ = plot_samples(pp_samples, pp_samples_idxs, fig)
     fig.canvas.draw()
 
 
-def pre_processing(pp_samples, summary):
+def compute_summaries(pp_samples, summary):
     if summary == "octiles":
         pp_summary = np.quantile(
             pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
@@ -178,7 +192,10 @@ def initialize_subsamples(pp_summary, shown, kdt):
 
 
 def keep_sampling(pp_summary, choices, shown, kdt):
-    # Select distributions that are similar
+    """
+    Find distribution similar to the ones in `choices`, but not already shown.
+    If `choices` is empty return an empty selection.
+    """
     if choices:
         new = choices.pop(0)
         samples = [new]
@@ -224,39 +241,30 @@ def plot_samples(pp_samples, pp_samples_idxs, fig=None):
     return fig, axes
 
 
-def resample(selected, prior_samples, model):
-    ## Change name of the function
+def select_prior_samples(selected, prior_samples, model):
+    """
+    Given a selected set of prior predictive samples pick the corresponding
+    prior samples.
+    """
     rvs = model.unobserved_RVs  # we should exclude deterministics
     rv_names = [rv.name for rv in rvs]
     subsample = {rv: prior_samples[rv].sel(draw=selected).values.squeeze() for rv in rv_names}
 
-    # # posti = pm.sample_posterior_predictive(az.from_dict(dado), model=model)
-    # # dado.update(posti)
     return subsample
 
 
-def back_fitting(model, pps1, sample_size):
-    subset = len(pps1[list(pps1.keys())[0]])
-
-    string = f"You have selected {subset} out of {sample_size} prior predictive samples\n"
-    string += "That selection is consistent with the following priors:\n"
-
+def back_fitting(model, subset, string):
+    """
+    Use MLE to fit a subset of the prior samples to the individual prior distributions
+    """
     for unobserved in model.unobserved_RVs:
         distribution = unobserved.owner.op.name
         dist = getattr(distributions, pymc_to_preliz[distribution])()
-        # pymc_name, sp_rv = pymc_to_scipy[distribution]
         name = unobserved.name
         idx = unobserved.owner.nin - 3
         params = unobserved.owner.inputs[-idx:]
         is_fitable = any(param.name is None for param in params)
         if is_fitable:
-            # pymc_name, sp_rv = pymc_to_scipy[distribution]
-            dist._fit_mle(pps1[name])
+            dist._fit_mle(subset[name])
             string += f"{repr_to_matplotlib(dist)}\n"
-            # string += f'{name} = pm.{pymc_name}("{name}", '
-            # if distribution == "normal":
-            #    string += f"{prior[0]:.2f}, {prior[1]:.2f})\n"
-            # elif distribution == "halfnormal":
-            #    string += f"{prior[1]:.2f})\n"
-
     return string
