@@ -120,7 +120,8 @@ def more(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, k
         plt.setp(ax.spines.values(), color="k", lw=1)
     for ax in axes:
         ax.cla()
-    clicked = []
+    for ax in list(clicked):
+        clicked.remove(ax)
 
     pp_samples_idxs, shown = keep_sampling(pp_summary, choices, shown, kdt)
     fig, _ = plot_samples(pp_samples, pp_samples_idxs, fig)
