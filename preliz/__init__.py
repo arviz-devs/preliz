@@ -16,7 +16,7 @@ from .distributions import *
 
 __all__ = ["maxent", "mle", "ppa", "roulette", "quartile"]
 
-__version__ = "0.0.1.dev0"
+__version__ = "0.0.2"
 
 _log = logging.getLogger("preliz")
 
