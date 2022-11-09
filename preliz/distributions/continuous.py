@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-instance-attributes
 """
 Continuous probability distributions.
 """
@@ -44,25 +45,76 @@ class Beta(Continuous):
     Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)}`
     ========  ==============================================================
 
+    Beta distribution can be parameterized either in terms of alpha and
+    beta or mean and standard deviation. The link between the two
+    parametrizations is given by
+
+    .. math::
+
+       \alpha &= \mu \kappa \\
+       \beta  &= (1 - \mu) \kappa
+
+       \text{where } \kappa = \frac{\mu(1-\mu)}{\sigma^2} - 1
+
     Parameters
     ----------
     alpha : float
         alpha  > 0
     beta : float
         beta  > 0
+    mu : float
+        mean (0 < ``mu`` < 1).
+    sigma : float
+        standard deviation (``sigma`` < sqrt(``mu`` * (1 - ``mu``))).
     """
 
-    def __init__(self, alpha=None, beta=None):
+    def __init__(self, alpha=None, beta=None, mu=None, sigma=None, kappa=None):
         super().__init__()
-        self.alpha = alpha
-        self.beta = beta
         self.name = "beta"
-        self.params = (self.alpha, self.beta)
-        self.param_names = ("alpha", "beta")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
         self.dist = stats.beta
         self.support = (0, 1)
-        self._update_rv_frozen()
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.alpha, self.beta, self.param_names = self._parametrization(
+            alpha, beta, mu, sigma, kappa
+        )
+        if self.alpha is not None and self.beta is not None:
+            self._update(self.alpha, self.beta)
+
+    def _parametrization(self, alpha, beta, mu, sigma, kappa):
+        if mu is None and sigma is None:
+            names = ("alpha", "beta")
+
+        elif mu is not None and sigma is not None:
+            alpha, beta = self._from_mu_sigma(mu, sigma)
+            names = ("mu", "sigma")
+
+        elif mu is not None and kappa is not None:
+            alpha, beta = self._from_mu_kappa(mu, kappa)
+            names = ("mu", "kappa")
+
+        else:
+            raise ValueError(
+                "Incompatible parametrization. Either use alpha " "and beta, or mu and sigma."
+            )
+
+        return alpha, beta, names
+
+    def _from_mu_sigma(self, mu, sigma):
+        kappa = mu * (1 - mu) / sigma**2 - 1
+        alpha = mu * kappa
+        beta = (1 - mu) * kappa
+        return alpha, beta
+
+    def _from_mu_kappa(self, mu, kappa):
+        alpha = mu * kappa
+        beta = (1 - mu) * kappa
+        return alpha, beta
+
+    def _to_mu_sigma(self, alpha, beta):
+        alpha_plus_beta = alpha + beta
+        mu = alpha / alpha_plus_beta
+        sigma = (alpha * beta) ** 0.5 / alpha_plus_beta / (alpha_plus_beta + 1) ** 0.5
+        return mu, sigma
 
     def _get_frozen(self):
         frozen = None
@@ -73,13 +125,23 @@ class Beta(Continuous):
     def _update(self, alpha, beta):
         self.alpha = alpha
         self.beta = beta
+        self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
+        self.kappa = self.mu * (1 - self.mu) / self.sigma**2 - 1
+
+        if self.param_names[0] == "alpha":
+            self.params_report = (self.alpha, self.beta)
+        elif self.param_names[1] == "sigma":
+            self.params_report = (self.mu, self.sigma)
+        elif self.param_names[1] == "kappa":
+            self.params_report = (self.mu, self.kappa)
+
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        kappa = mean * (1 - mean) / sigma**2 - 1
-        alpha = max(0.5, kappa * mean)
-        beta = max(0.5, kappa * (1 - mean))
+        alpha, beta = self._from_mu_sigma(mean, sigma)
+        alpha = max(0.5, alpha)
+        beta = max(0.5, beta)
         self._update(alpha, beta)
 
     def _fit_mle(self, sample, **kwargs):

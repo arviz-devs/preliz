@@ -25,8 +25,15 @@ class Distribution:
     def __repr__(self):
         if self.is_frozen:
             bolded_name = "\033[1m" + self.name.capitalize() + "\033[0m"
+
+            # temporary patch until we migrate all distributions to use
+            # self.params_report and self.params
+            try:
+                params_value = self.params_report
+            except AttributeError:
+                params_value = self.params
             description = "".join(
-                f"{n}={v:.2f}," for n, v in zip(self.param_names, self.params)
+                f"{n}={v:.2f}," for n, v in zip(self.param_names, params_value)
             ).strip(",")
             return f"{bolded_name}({description})"
         else:
