@@ -45,9 +45,10 @@ class Beta(Continuous):
     Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)}`
     ========  ==============================================================
 
-    Beta distribution can be parameterized either in terms of alpha and
-    beta or mean and standard deviation. The link between the two
-    parametrizations is given by
+    Beta distribution has 3 alternative parameterizations. In terms of alpha and
+    beta, mean and sigma (standard deviation) or mean and kappa (concentration).
+
+    The link between the 3 alternatives is given by
 
     .. math::
 
@@ -55,6 +56,7 @@ class Beta(Continuous):
        \beta  &= (1 - \mu) \kappa
 
        \text{where } \kappa = \frac{\mu(1-\mu)}{\sigma^2} - 1
+
 
     Parameters
     ----------
@@ -66,6 +68,8 @@ class Beta(Continuous):
         mean (0 < ``mu`` < 1).
     sigma : float
         standard deviation (``sigma`` < sqrt(``mu`` * (1 - ``mu``))).
+    kappa : float
+        concentration > 0
     """
 
     def __init__(self, alpha=None, beta=None, mu=None, sigma=None, kappa=None):
