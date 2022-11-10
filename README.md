@@ -10,7 +10,7 @@ Tools to help you pick a prior.
 * Separate tasks among humans and computers.
 * Prevent overconfidence on users opinions.
 * Easily integrate with other tools.
-* Allow to perform prior predictive checks.
+* Allow predictive elicitation
 * Having a simple and intuitive interface suitable for non-specialists in order to minimize cognitive biases and heuristics.
 * Switching between different types of visualization such as kernel density estimates plots, quantile dotplots, histograms, etc. 
 * Being agnostic of the underlying programming language, or at least interoperable with as many languages as possible.
