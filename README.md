@@ -14,7 +14,7 @@ Tools to help you pick a prior.
 * Having a simple and intuitive interface suitable for non-specialists in order to minimize cognitive biases and heuristics.
 * Switching between different types of visualization such as kernel density estimates plots, quantile dotplots, histograms, etc. 
 * Being agnostic of the underlying probabilistic programming language
-* Modularity.
+* Being modular
 
 
 ## Contributions
