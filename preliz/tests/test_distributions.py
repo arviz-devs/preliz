@@ -127,3 +127,19 @@ def test_summary(fmt, mass):
     assert result._fields == ("mean", "median", "std", "lower", "upper")
     result = Poisson(2).summary()
     assert result.mean == 2
+
+
+@pytest.mark.parametrize(
+    "distribution, params, alt_names",
+    [
+        (Beta, (2, 5), ("mu", "sigma")),
+        (Beta, (5, 2), ("mu", "kappa")),
+    ],
+)
+def test_alternative_parametrization(distribution, params, alt_names):
+    dist0 = distribution(*params)
+    params1 = {p: getattr(dist0, p) for p in alt_names}
+    dist1 = distribution(**params1)
+    assert_almost_equal(dist0.params, dist1.params)
+    for p in alt_names:
+        assert p in dist1.__repr__()
