@@ -6,7 +6,7 @@ Tools to help you pick a prior.
 
 ## The Zen of PreliZ
 * Being open source. 
-* Avoid automated solutions.
+* Avoid fully-automated solutions, keep the human in the loop
 * Separate tasks among humans and computers.
 * Prevent overconfidence on users opinions.
 * Easily integrate with other tools.
