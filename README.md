@@ -8,7 +8,7 @@ Tools to help you pick a prior.
 * Being open source. 
 * Avoid fully-automated solutions, keep the human in the loop
 * Separate tasks among humans and computers.
-* Prevent overconfidence on users opinions.
+* Prevent users to become overconfidence in their own opinions.
 * Easily integrate with other tools.
 * Allow predictive elicitation
 * Having a simple and intuitive interface suitable for non-specialists in order to minimize cognitive biases and heuristics.
