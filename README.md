@@ -13,7 +13,7 @@ Tools to help you pick a prior.
 * Allow predictive elicitation
 * Having a simple and intuitive interface suitable for non-specialists in order to minimize cognitive biases and heuristics.
 * Switching between different types of visualization such as kernel density estimates plots, quantile dotplots, histograms, etc. 
-* Being agnostic of the underlying programming language, or at least interoperable with as many languages as possible.
+* Being agnostic of the underlying probabilistic programming language
 * Working on top of open source libraries related to Bayesian workflow and uncertainty visualization (ggdist, Bayesplot, ArviZ).
 * Modularity.
 
