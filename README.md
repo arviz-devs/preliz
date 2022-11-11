@@ -5,7 +5,7 @@ Tools to help you pick a prior.
 **This package is very new and all of its features are experimental, not yet well tested, and subject to change without notice.**
 
 ## The Zen of PreliZ
-* Being open source. 
+* Being open source, community-driven, diverse and inclusive.
 * Avoid fully-automated solutions, keep the human in the loop
 * Separate tasks between humans and computers, so users can retain control of important decisions while numerically demanding, error-prone or tedious tasks are automatized.
 * Prevent users to become overconfidence in their own opinions.
