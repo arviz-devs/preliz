@@ -4,6 +4,18 @@ Tools to help you pick a prior.
 
 **This package is very new and all of its features are experimental, not yet well tested, and subject to change without notice.**
 
+## The Zen of PreliZ
+* Being open source, community-driven, diverse and inclusive.
+* Avoid fully-automated solutions, keep the human in the loop
+* Separate tasks between humans and computers, so users can retain control of important decisions while numerically demanding, error-prone or tedious tasks are automatized.
+* Prevent users to become overconfidence in their own opinions.
+* Easily integrate with other tools.
+* Allow predictive elicitation
+* Having a simple and intuitive interface suitable for non-specialists in order to minimize cognitive biases and heuristics.
+* Switching between different types of visualization such as kernel density estimates plots, quantile dotplots, histograms, etc. 
+* Being agnostic of the underlying probabilistic programming language
+* Being modular
+
 
 ## Contributions
 PreliZ is a community project and welcomes contributions.
