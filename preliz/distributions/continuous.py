@@ -9,10 +9,9 @@ import numpy as np
 from scipy import stats
 from scipy.special import gamma as gammaf
 
-
-from .distributions import Continuous
-from ..utils.utils import garcia_approximation
 from ..utils.optimization import optimize_ml
+from ..utils.utils import garcia_approximation
+from .distributions import Continuous
 
 eps = np.finfo(float).eps
 
@@ -974,7 +973,8 @@ class Normal(Continuous):
     Variance  :math:`\sigma^2`
     ========  ==========================================
 
-    The Normal distribution has 2 alternative parameterizations. In terms of mean and sigma (standard deviation), or mean and tau (precision).
+    Normal distribution has 2 alternative parameterizations. In terms of mean and
+    sigma(standard deviation), or mean and tau (precision).
 
     The link between the 2 alternatives is given by
 
