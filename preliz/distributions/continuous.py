@@ -1012,13 +1012,13 @@ class Normal(Continuous):
 
         else:
             raise ValueError(
-                "Incompatible parametrization. Either use mu " "and sigma, or mu and tau."
+                "Incompatible parametrization. Either use mu and sigma, or mu and tau."
             )
 
         return mu, sigma, names
 
     def _from_tau(self, tau):
-        sigma = 1 / tau ** (1 / 2)
+        sigma = 1 / tau **  0.5
         return sigma
 
     def _to_tau(self, sigma):
@@ -1038,10 +1038,9 @@ class Normal(Continuous):
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma)
-            self.params = (self.mu, self.sigma)
         elif self.param_names[1] == "tau":
             self.param_report = (self.mu, self.tau)
-            self.params = (self.mu, self.tau)
+        self.params = (self.mu, self.sigma)
 
         self._update_rv_frozen()
 
