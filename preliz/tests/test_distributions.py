@@ -61,6 +61,8 @@ def test_moments(distribution, params):
     dist = distribution(*params)
     if "student" in dist.name:
         dist_ = distribution(nu=params[0])
+    elif "normal" == dist.name:
+        dist_ = distribution(mu=params[0],sigma=params[1])
     else:
         dist_ = distribution()
 
@@ -134,6 +136,8 @@ def test_summary(fmt, mass):
     [
         (Beta, (2, 5), ("mu", "sigma")),
         (Beta, (5, 2), ("mu", "kappa")),
+        (Normal, (0,1), ("mu", "tau")),
+
     ],
 )
 def test_alternative_parametrization(distribution, params, alt_names):
