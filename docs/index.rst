@@ -16,7 +16,7 @@ PreliZ
 
 
 
-The place for all your prior elicitation needs
+ Tools to help you pick a prior 
 
 **This package is very new and all of its features are experimental, not yet well tested, and subject to change without notice.**
 
@@ -27,6 +27,14 @@ PreliZ is tested on Python 3.8+.
 
 Installation
 ============
+
+For the latest release you can do:
+
+.. code-block:: bash
+
+  pip install preliz
+
+The latest development version can be installed from the main branch using pip:
 
 .. code-block:: bash
 
