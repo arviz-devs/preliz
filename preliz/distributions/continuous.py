@@ -1018,7 +1018,7 @@ class Normal(Continuous):
         return mu, sigma, names
 
     def _from_tau(self, tau):
-        sigma = 1 / tau **  0.5
+        sigma = 1 / tau**0.5
         return sigma
 
     def _to_tau(self, sigma):
