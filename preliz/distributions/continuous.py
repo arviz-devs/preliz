@@ -9,10 +9,9 @@ import numpy as np
 from scipy import stats
 from scipy.special import gamma as gammaf
 
-
-from .distributions import Continuous
-from ..utils.utils import garcia_approximation
 from ..utils.optimization import optimize_ml
+from ..utils.utils import garcia_approximation
+from .distributions import Continuous
 
 eps = np.finfo(float).eps
 
@@ -974,25 +973,57 @@ class Normal(Continuous):
     Variance  :math:`\sigma^2`
     ========  ==========================================
 
+    Normal distribution has 2 alternative parameterizations. In terms of mean and
+    sigma(standard deviation), or mean and tau (precision).
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+        \tau = \frac{1}{\sigma^2}
+
     Parameters
     ----------
     mu : float
         Mean.
     sigma : float
         Standard deviation (sigma > 0).
+    tau : float
+        Precision (tau > 0).
     """
 
-    def __init__(self, mu=None, sigma=None):
+    def __init__(self, mu=None, sigma=None, tau=None):
         super().__init__()
-        self.mu = mu
-        self.sigma = sigma
         self.name = "normal"
-        self.params = (self.mu, self.sigma)
-        self.param_names = ("mu", "sigma")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.norm
         self.support = (-np.inf, np.inf)
-        self._update_rv_frozen()
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.mu, self.sigma, self.param_names = self._parametrization(mu, sigma, tau)
+        if self.mu is not None and self.sigma is not None:
+            self._update(self.mu, self.sigma)
+
+    def _parametrization(self, mu, sigma, tau):
+        if tau is None:
+            names = ("mu", "sigma")
+
+        elif tau is not None:
+            sigma = self._from_tau(tau)
+            names = ("mu", "tau")
+
+        else:
+            raise ValueError(
+                "Incompatible parametrization. Either use mu and sigma, or mu and tau."
+            )
+
+        return mu, sigma, names
+
+    def _from_tau(self, tau):
+        sigma = 1 / tau**0.5
+        return sigma
+
+    def _to_tau(self, sigma):
+        tau = 1 / sigma**2
+        return tau
 
     def _get_frozen(self):
         frozen = None
@@ -1003,7 +1034,14 @@ class Normal(Continuous):
     def _update(self, mu, sigma):
         self.mu = mu
         self.sigma = sigma
+        self.tau = self._to_tau(sigma)
+
+        if self.param_names[1] == "sigma":
+            self.params_report = (self.mu, self.sigma)
+        elif self.param_names[1] == "tau":
+            self.param_report = (self.mu, self.tau)
         self.params = (self.mu, self.sigma)
+
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):

@@ -134,6 +134,7 @@ def test_summary(fmt, mass):
     [
         (Beta, (2, 5), ("mu", "sigma")),
         (Beta, (5, 2), ("mu", "kappa")),
+        (Normal, (0, 1), ("mu", "tau")),
     ],
 )
 def test_alternative_parametrization(distribution, params, alt_names):
