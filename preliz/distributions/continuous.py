@@ -1039,7 +1039,7 @@ class Normal(Continuous):
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma)
         elif self.param_names[1] == "tau":
-            self.param_report = (self.mu, self.tau)
+            self.params_report = (self.mu, self.tau)
         self.params = (self.mu, self.sigma)
 
         self._update_rv_frozen()
