@@ -405,7 +405,7 @@ class Gamma(Continuous):
     ========  ===============================
 
     Gamma distribution has 2 alternative parameterizations. In terms of alpha and
-    beta or mu (alternative shape parameter) and sigma (alternative scale parameter).
+    beta or mu (mean) and sigma (standard deviation).
 
     The link between the 2 alternatives is given by
 
@@ -421,9 +421,9 @@ class Gamma(Continuous):
     beta : float
         Rate parameter (beta > 0).
     mu : float
-        Alternative shape parameter (mu > 0).
+        Mean (mu > 0).
     sigma : float
-        Alternatve scale parameter (sigma > 0)
+        Standard deviation (sigma > 0)
     """
 
     def __init__(self, alpha=None, beta=None, mu=None, sigma=None):
