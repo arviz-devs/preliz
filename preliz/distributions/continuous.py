@@ -1295,7 +1295,7 @@ class Student(Continuous):
             frozen = self.dist(self.nu, self.mu, self.sigma)
         return frozen
 
-    def _update(self, mu, sigma, nu=3):
+    def _update(self, mu, sigma, nu=None):
         if nu is not None:
             self.nu = nu
         self.mu = mu
