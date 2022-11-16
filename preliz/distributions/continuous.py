@@ -1234,6 +1234,15 @@ class Student(Continuous):
               :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
     ========  ========================
 
+    Student's T distribution has 2 alternative parameterizations. In terms of nu, mu and
+    sigma (standard deviation as nu increases) or nu, mu and lam (precision as nu increases).
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+        \lambda = \frac{1}{\sigma^2}
+
     Parameters
     ----------
     nu : float
@@ -1243,20 +1252,42 @@ class Student(Continuous):
     sigma : float
         Scale parameter (sigma > 0). Converges to the standard deviation as nu
         increases.
+    lam : float
+        Scale parameter (lam > 0). Converges to the precision as nu increases.
     """
 
-    def __init__(self, nu=3, mu=None, sigma=None):
+    def __init__(self, nu=3, mu=None, sigma=None, lam=None):
         super().__init__()
-        self.nu = nu
-        self.mu = mu
-        self.sigma = sigma
         self.name = "student"
-        self.params = (self.nu, self.mu, self.sigma)
-        self.param_names = ("nu", "mu", "sigma")
-        self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
         self.dist = stats.t
         self.support = (-np.inf, np.inf)
-        self._update_rv_frozen()
+        self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
+        self.nu, self.mu, self.sigma, self.param_names = self._parametrization(nu, mu, sigma, lam)
+        if self.nu is not None and self.mu is not None and self.sigma is not None:
+            self._update(self.mu, self.sigma, self.nu)
+
+    def _parametrization(self, nu, mu, sigma, lam):
+        if lam is None:
+            names = ("nu", "mu", "sigma")
+
+        elif lam is not None:
+            sigma = self._from_lam(lam)
+            names = ("nu", "mu", "lam")
+
+        else:
+            raise ValueError(
+                "Incompatible parametrization. Either use nu, mu and sigma, or nu, mu and lam."
+            )
+
+        return nu, mu, sigma, names
+
+    def _from_lam(self, lam):
+        sigma = 1 / lam**0.5
+        return sigma
+
+    def _to_lam(self, sigma):
+        lam = 1 / sigma**2
+        return lam
 
     def _get_frozen(self):
         frozen = None
@@ -1269,7 +1300,14 @@ class Student(Continuous):
             self.nu = nu
         self.mu = mu
         self.sigma = sigma
+        self.lam = self._to_lam(sigma)
+
+        if self.param_names[2] == "sigma":
+            self.params_report = (self.nu, self.mu, self.sigma)
+        elif self.param_names[2] == "lam":
+            self.params_report = (self.nu, self.mu, self.lam)
         self.params = (self.nu, self.mu, self.sigma)
+
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
