@@ -404,25 +404,62 @@ class Gamma(Continuous):
     Variance  :math:`\dfrac{\alpha}{\beta^2}`
     ========  ===============================
 
+    Gamma distribution has 2 alternative parameterizations. In terms of alpha and
+    beta or mu (mean) and sigma (standard deviation).
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+       \alpha &= \frac{\mu^2}{\sigma^2} \\
+       \beta  &= \frac{\mu}{\sigma^2}
+
     Parameters
     ----------
     alpha : float
         Shape parameter (alpha > 0).
     beta : float
         Rate parameter (beta > 0).
+    mu : float
+        Mean (mu > 0).
+    sigma : float
+        Standard deviation (sigma > 0)
     """
 
-    def __init__(self, alpha=None, beta=None):
+    def __init__(self, alpha=None, beta=None, mu=None, sigma=None):
         super().__init__()
-        self.alpha = alpha
-        self.beta = beta
         self.name = "gamma"
-        self.params = (self.alpha, self.beta)
-        self.param_names = ("alpha", "beta")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
         self.dist = stats.gamma
         self.support = (0, np.inf)
-        self._update_rv_frozen()
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.alpha, self.beta, self.param_names = self._parametrization(alpha, beta, mu, sigma)
+        if self.alpha is not None and self.beta is not None:
+            self._update(self.alpha, self.beta)
+
+    def _parametrization(self, alpha, beta, mu, sigma):
+        if mu is None and sigma is None:
+            names = ("alpha", "beta")
+
+        elif mu is not None and sigma is not None:
+            alpha, beta = self._from_mu_sigma(mu, sigma)
+            names = ("mu", "sigma")
+
+        else:
+            raise ValueError(
+                "Incompatible parametrization. Either use alpha and beta or mu and sigma."
+            )
+
+        return alpha, beta, names
+
+    def _from_mu_sigma(self, mu, sigma):
+        alpha = mu**2 / sigma**2
+        beta = mu / sigma**2
+        return alpha, beta
+
+    def _to_mu_sigma(self, alpha, beta):
+        mu = alpha / beta
+        sigma = alpha**0.5 / beta
+        return mu, sigma
 
     def _get_frozen(self):
         frozen = None
@@ -433,12 +470,18 @@ class Gamma(Continuous):
     def _update(self, alpha, beta):
         self.alpha = alpha
         self.beta = beta
+        self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
+
+        if self.param_names[0] == "alpha":
+            self.params_report = (self.alpha, self.beta)
+        elif self.param_names[1] == "sigma":
+            self.params_report = (self.mu, self.sigma)
+
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        alpha = mean**2 / sigma**2
-        beta = mean / sigma**2
+        alpha, beta = self._from_mu_sigma(mean, sigma)
         self._update(alpha, beta)
 
     def _fit_mle(self, sample, **kwargs):
