@@ -5,6 +5,7 @@ import numpy as np
 from preliz.distributions import (
     Beta,
     Cauchy,
+    ChiSquared,
     Gamma,
     Exponential,
     HalfCauchy,
@@ -33,6 +34,7 @@ from preliz.distributions import (
     [
         (Normal, (0, 1)),
         (Beta, (2, 5)),
+        (ChiSquared, (1,)),
         (Gamma, (1, 0.5)),
         (HalfNormal, (1,)),
         (HalfStudent, (3, 1)),
@@ -80,6 +82,7 @@ def test_moments(distribution, params):
         (Normal, (0, 1)),
         (Beta, (2, 5)),
         (Cauchy, (0, 1)),
+        (ChiSquared, (1,)),
         (Gamma, (1, 0.5)),
         (HalfCauchy, (1,)),
         (HalfNormal, (1,)),

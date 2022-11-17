@@ -5,6 +5,7 @@ all_continuous = [
     Beta,
     BetaScaled,
     Cauchy,
+    ChiSquared,
     Exponential,
     Gamma,
     HalfCauchy,
