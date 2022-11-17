@@ -14,6 +14,7 @@ from preliz import maxent
 from preliz.distributions import (
     Beta,
     Cauchy,
+    ChiSquared,
     Exponential,
     Gamma,
     Laplace,
@@ -34,6 +35,7 @@ from preliz.distributions import (
     [
         (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.112, 9.101)),
         (Cauchy, "cauchy", -1, 1, 0.6, None, (-np.inf, np.inf), (0, 0.726)),
+        (ChiSquared, "chisquared", 0, 4, 0.9, 1, (0, np.inf), (1.659)),
         (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (0.868, 0.103)),
         (HalfCauchy, "halfcauchy", 0, 10, 0.7, None, (0, np.inf), (5.095)),
