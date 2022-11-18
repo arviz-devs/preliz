@@ -27,6 +27,7 @@ import preliz as pz
         (pz.Student, (4, 0, 1)),
         (pz.TruncatedNormal, (0, 1, -1, 1)),
         (pz.Uniform, (2, 5)),
+        (pz.VonMises, (1, 2)),
         (pz.Wald, (2, 1)),
         (pz.Weibull, (2, 1)),
         (pz.Binomial, (5, 0.5)),

@@ -9,6 +9,7 @@ from preliz.distributions.continuous import (
     HalfStudent,
     TruncatedNormal,
     InverseGamma,
+    VonMises,
 )
 from preliz import maxent
 from preliz.distributions import (
@@ -52,6 +53,7 @@ from preliz.distributions import (
         (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
         (TruncatedNormal, "truncatednormal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
         (Uniform, "uniform", -2, 10, 0.9, None, (-np.inf, np.inf), (-2.666, 10.666)),
+        (VonMises, "vonmises", -1, 1, 0.9, None, (-np.inf, np.inf), (0.0, 3.294)),
         (Wald, "wald", 0, 10, 0.9, None, (0, np.inf), (5.061, 7.937)),
         (Weibull, "weibull", 0, 10, 0.9, None, (0, np.inf), (1.411, 5.537)),
         (DiscreteUniform, "discreteuniform", -2, 10, 0.9, None, (-3, 11), (-2, 10)),

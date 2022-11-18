@@ -20,6 +20,7 @@ all_continuous = [
     Student,
     TruncatedNormal,
     Uniform,
+    VonMises,
     Wald,
     Weibull,
 ]

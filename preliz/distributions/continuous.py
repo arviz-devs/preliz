@@ -1595,6 +1595,78 @@ class Uniform(Continuous):
         self._update(lower, upper)
 
 
+class VonMises(Continuous):
+    r"""
+    Univariate VonMises log-likelihood.
+
+    The pdf of this distribution is
+
+    .. math::
+
+        f(x \mid \mu, \kappa) =
+            \frac{e^{\kappa\cos(x-\mu)}}{2\pi I_0(\kappa)}
+
+    where :math:`I_0` is the modified Bessel function of order 0.
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import VonMises
+        az.style.use('arviz-white')
+        mus = [0., 0., 0.,  -2.5]
+        kappas = [.01, 0.5, 4., 2.]
+        for mu, kappa in zip(mus, kappas):
+            VonMises(mu, kappa).plot_pdf(support=(-np.pi,np.pi))
+
+    ========  ==========================================
+    Support   :math:`x \in [-\pi, \pi]`
+    Mean      :math:`\mu`
+    Variance  :math:`1-\frac{I_1(\kappa)}{I_0(\kappa)}`
+    ========  ==========================================
+
+    Parameters
+    ----------
+    mu : float
+        Mean.
+    kappa : float
+        Concentration (\frac{1}{kappa} is analogous to \sigma^2).
+    """
+
+    def __init__(self, mu=None, kappa=None):
+        super().__init__()
+        self.mu = mu
+        self.kappa = kappa
+        self.name = "vonmises"
+        self.params = (self.mu, self.kappa)
+        self.param_names = ("mu", "kappa")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.dist = stats.vonmises
+        self.support = (-np.pi, np.pi)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(kappa=self.kappa, loc=self.mu)
+        return frozen
+
+    def _update(self, mu, kappa):
+        self.mu = mu
+        self.kappa = kappa
+        self.params = (self.mu, self.kappa)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        mu = mean
+        kappa = 1 / sigma**2
+        self._update(mu, kappa)
+
+    def _fit_mle(self, sample, **kwargs):
+        kappa, mu, _ = self.dist.fit(sample, **kwargs)
+        self._update(mu, kappa)
+
+
 class Wald(Continuous):
     r"""
     Wald distribution.
