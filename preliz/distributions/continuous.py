@@ -1630,7 +1630,7 @@ class VonMises(Continuous):
     mu : float
         Mean.
     kappa : float
-        Concentration (\frac{1}{kappa} is analogous to \sigma^2).
+        Concentration (:math:`\frac{1}{kappa}` is analogous to :math:`\sigma^2`).
     """
 
     def __init__(self, mu=None, kappa=None):
