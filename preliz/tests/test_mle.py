@@ -18,7 +18,7 @@ import preliz as pz
         (pz.HalfStudent, (3, 1)),
         (pz.HalfStudent, (1000000, 1)),
         (pz.HalfNormal, (2,)),
-        (pz.InverseGamma, (2, 5)),
+        (pz.InverseGamma, (3, 5)),
         (pz.Laplace, (0, 2)),
         (pz.LogNormal, (0, 1)),
         (pz.Normal, (0, 1)),
