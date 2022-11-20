@@ -59,6 +59,7 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
     if dist.kind == "continuous":
         density = dist.rv_frozen.pdf(x)
         ax.plot(x, density, label=label, color=color)
+        ax.get_ylim()
         ax.set_yticks([])
     else:
         mass = dist.rv_frozen.pmf(x)
