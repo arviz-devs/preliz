@@ -1191,17 +1191,17 @@ class Normal(Continuous):
             self._update(self.mu, self.sigma)
 
     def _parametrization(self, mu, sigma, tau):
+        if sigma is not None and tau is not None:
+            raise ValueError(
+                "Incompatible parametrization. Either use mu and sigma, or mu and tau."
+            )
+
         if tau is None:
             names = ("mu", "sigma")
 
         elif tau is not None:
             sigma = self._from_tau(tau)
             names = ("mu", "tau")
-
-        else:
-            raise ValueError(
-                "Incompatible parametrization. Either use mu and sigma, or mu and tau."
-            )
 
         return mu, sigma, names
 
@@ -1455,17 +1455,17 @@ class Student(Continuous):
             self._update(self.mu, self.sigma, self.nu)
 
     def _parametrization(self, nu, mu, sigma, lam):
+        if sigma is not None and lam is not None:
+            raise ValueError(
+                "Incompatible parametrization. Either use nu, mu and sigma, or nu, mu and lam."
+            )
+
         if lam is None:
             names = ("nu", "mu", "sigma")
 
         elif lam is not None:
             sigma = self._from_lam(lam)
             names = ("nu", "mu", "lam")
-
-        else:
-            raise ValueError(
-                "Incompatible parametrization. Either use nu, mu and sigma, or nu, mu and lam."
-            )
 
         return nu, mu, sigma, names
 
