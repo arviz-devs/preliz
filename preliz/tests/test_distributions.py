@@ -141,6 +141,7 @@ def test_summary(fmt, mass):
         (Beta, (2, 5), ("mu", "sigma")),
         (Beta, (5, 2), ("mu", "kappa")),
         (Gamma, (2, 1), ("mu", "sigma")),
+        (HalfNormal, (1,), ("tau",)),
         (InverseGamma, (0, 2), ("mu", "sigma")),
         (Normal, (0, 1), ("mu", "tau")),
         (Student, (1000, 0, 1), ("nu", "mu", "lam")),

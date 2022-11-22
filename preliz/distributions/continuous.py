@@ -638,29 +638,59 @@ class HalfNormal(Continuous):
         for sigma in [0.4,  2.]:
             HalfNormal(sigma).plot_pdf()
 
-
     ========  ==========================================
     Support   :math:`x \in [0, \infty)`
     Mean      :math:`\dfrac{\sigma \sqrt{2}}{\sqrt{\pi}}`
     Variance  :math:`\sigma^2\left(1 - \dfrac{2}{\pi}\right)`
     ========  ==========================================
 
+    HalfNormal distribution has 2 alternative parameterizations. In terms of sigma (standard
+    deviation) or tau (precision).
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+        \tau = \frac{1}{\sigma^2}
+
     Parameters
     ----------
     sigma : float
-        Scale parameter :math:`\sigma` (``sigma`` > 0)
+        Scale parameter :math:`\sigma` (``sigma`` > 0).
+    tau : float
+        Precision :math:`\tau` (``tau`` > 0).
     """
 
-    def __init__(self, sigma=None):
+    def __init__(self, sigma=None, tau=None):
         super().__init__()
-        self.sigma = sigma
         self.name = "halfnormal"
-        self.params = (self.sigma,)
-        self.param_names = ("sigma",)
-        self.params_support = ((eps, np.inf),)
         self.dist = stats.halfnorm
         self.support = (0, np.inf)
-        self._update_rv_frozen()
+        self.params_support = ((eps, np.inf),)
+        self.sigma, self.param_names = self._parametrization(sigma, tau)
+        if self.sigma is not None:
+            self._update(self.sigma)
+
+    def _parametrization(self, sigma, tau):
+        if sigma is not None and tau is not None:
+            raise ValueError("Incompatible parametrization. Either use sigma or tau.")
+
+        if tau is None:
+            names = ("sigma",)
+
+        elif tau is not None:
+            sigma = self._from_tau(tau)
+            names = ("tau",)
+
+        return sigma, names
+
+    def _from_tau(self, tau):
+        sigma = 1 / tau**0.5
+        return sigma
+
+    def _to_tau(self, sigma):
+        tau = 1 / sigma**2
+        return tau
 
     def _get_frozen(self):
         frozen = None
@@ -670,7 +700,14 @@ class HalfNormal(Continuous):
 
     def _update(self, sigma):
         self.sigma = sigma
+        self.tau = self._to_tau(sigma)
+
+        if self.param_names[0] == "sigma":
+            self.params_report = (self.sigma,)
+        elif self.param_names[0] == "tau":
+            self.params_report = (self.tau,)
         self.params = (self.sigma,)
+
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
@@ -1125,7 +1162,7 @@ class Normal(Continuous):
     ========  ==========================================
 
     Normal distribution has 2 alternative parameterizations. In terms of mean and
-    sigma(standard deviation), or mean and tau (precision).
+    sigma (standard deviation), or mean and tau (precision).
 
     The link between the 2 alternatives is given by
 
