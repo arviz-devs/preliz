@@ -672,7 +672,7 @@ class HalfNormal(Continuous):
             self._update(self.sigma)
 
     def _parametrization(self, sigma, tau):
-        if tau is not None and sigma is not None:
+        if sigma is not None and tau is not None:
             raise ValueError("Incompatible parametrization. Either use sigma or tau.")
 
         if tau is None:
