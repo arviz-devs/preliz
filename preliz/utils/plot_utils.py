@@ -34,16 +34,17 @@ def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
 
     if rotated:
         if q_s_size == 5:
-            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", lw=1.5)
+            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", solid_capstyle="butt", lw=1.5)
         if q_s_size > 2:
-            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", lw=4)
+            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", solid_capstyle="butt", lw=4)
         if q_s_size > 0:
             ax.plot(0, q_s[0], "wo", mec="k")
     else:
         if q_s_size == 5:
-            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", lw=1.5)
+            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", solid_capstyle="butt", lw=1.5)
         if q_s_size > 2:
-            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", lw=4)
+            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", solid_capstyle="butt", lw=4)
+
         if q_s_size > 0:
             ax.plot(q_s[0], 0, "wo", mec="k")
 
