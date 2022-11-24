@@ -208,7 +208,7 @@ class Distribution:
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
-            ``"title"`` or not include them ``None``.
+            ``"title"`` or not include them ``False``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
@@ -254,7 +254,7 @@ class Distribution:
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
-            ``"title"`` or not include them ``None``.
+            ``"title"`` or not include them ``False``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
@@ -294,7 +294,7 @@ class Distribution:
             should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
-            ``"title"`` or not include them ``None``.
+            ``"title"`` or not include them ``False``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes

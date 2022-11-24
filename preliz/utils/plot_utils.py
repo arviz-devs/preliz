@@ -52,7 +52,10 @@ def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
 def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    label = repr_to_matplotlib(dist)
+    if legend:
+        label = repr_to_matplotlib(dist)
+    else:
+        label = None
     if moments is not None:
         label += get_moments(dist, moments)
 
@@ -90,7 +93,10 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
 def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    label = repr_to_matplotlib(dist)
+    if legend:
+        label = repr_to_matplotlib(dist)
+    else:
+        label = None
     if moments is not None:
         label += get_moments(dist, moments)
 
@@ -112,7 +118,10 @@ def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, 
 def plot_ppf(dist, moments, pointinterval, quantiles, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    label = repr_to_matplotlib(dist)
+    if legend:
+        label = repr_to_matplotlib(dist)
+    else:
+        label = None
     if moments is not None:
         label += get_moments(dist, moments)
 
