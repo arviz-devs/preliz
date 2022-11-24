@@ -54,10 +54,15 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
     color = next(ax._get_lines.prop_cycler)["color"]
     if legend:
         label = repr_to_matplotlib(dist)
+
+        if moments is not None:
+            label += get_moments(dist, moments)
+
+        if legend == "title":
+            ax.set_title(label)
+            label = None
     else:
         label = None
-    if moments is not None:
-        label += get_moments(dist, moments)
 
     x = dist.xvals(support)
     if dist.kind == "continuous":
@@ -83,10 +88,9 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
     if pointinterval:
         plot_pointinterval(dist.rv_frozen, quantiles=quantiles, ax=ax)
 
-    if legend == "title":
-        ax.set_title(label)
-    elif legend == "legend":
+    if legend == "legend":
         side_legend(ax)
+
     return ax
 
 
@@ -95,10 +99,15 @@ def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, 
     color = next(ax._get_lines.prop_cycler)["color"]
     if legend:
         label = repr_to_matplotlib(dist)
+
+        if moments is not None:
+            label += get_moments(dist, moments)
+
+        if legend == "title":
+            ax.set_title(label)
+            label = None
     else:
         label = None
-    if moments is not None:
-        label += get_moments(dist, moments)
 
     eps = dist._finite_endpoints(support)
     x = np.linspace(*eps, 1000)
@@ -108,9 +117,7 @@ def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, 
     if pointinterval:
         plot_pointinterval(dist.rv_frozen, quantiles=quantiles, ax=ax)
 
-    if legend == "title":
-        ax.set_title(label)
-    elif legend == "legend":
+    if legend == "legend":
         side_legend(ax)
     return ax
 
@@ -118,12 +125,18 @@ def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, 
 def plot_ppf(dist, moments, pointinterval, quantiles, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
+
     if legend:
         label = repr_to_matplotlib(dist)
+
+        if moments is not None:
+            label += get_moments(dist, moments)
+
+        if legend == "title":
+            ax.set_title(label)
+            label = None
     else:
         label = None
-    if moments is not None:
-        label += get_moments(dist, moments)
 
     x = np.linspace(0, 1, 1000)
     ax.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
@@ -131,9 +144,7 @@ def plot_ppf(dist, moments, pointinterval, quantiles, legend, figsize, ax):
     if pointinterval:
         plot_pointinterval(dist.rv_frozen, quantiles=quantiles, rotated=True, ax=ax)
 
-    if legend == "title":
-        ax.set_title(label)
-    elif legend == "legend":
+    if legend == "legend":
         side_legend(ax)
     return ax
 
