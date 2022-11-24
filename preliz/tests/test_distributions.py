@@ -144,6 +144,7 @@ def test_summary(fmt, mass):
         (HalfNormal, (1,), ("tau",)),
         (InverseGamma, (0, 2), ("mu", "sigma")),
         (Normal, (0, 1), ("mu", "tau")),
+        (SkewNormal, (0, 1, 0), ("mu", "tau", "alpha")),
         (Student, (1000, 0, 1), ("nu", "mu", "lam")),
     ],
 )

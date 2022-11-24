@@ -1335,6 +1335,15 @@ class SkewNormal(Continuous):
     Variance  :math:`\sigma^2 \left(  1-\frac{2\alpha^2}{(\alpha^2+1) \pi} \right)`
     ========  ==========================================
 
+    SkewNormal distribution has 2 alternative parameterizations. In terms of mu, sigma (standard
+    deviation) and alpha, or mu, tau (precision) and alpha.
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+        \tau = \frac{1}{\sigma^2}
+
     Parameters
     ----------
     mu : float
@@ -1343,6 +1352,8 @@ class SkewNormal(Continuous):
         Scale parameter (sigma > 0).
     alpha : float
         Skewness parameter.
+    tau : float
+        Precision (tau > 0).
 
     Notes
     -----
@@ -1351,20 +1362,43 @@ class SkewNormal(Continuous):
     plus/minus infinite we get a half-normal distribution.
     """
 
-    def __init__(self, mu=None, sigma=None, alpha=None):
+    def __init__(self, mu=None, sigma=None, alpha=None, tau=None):
         super().__init__()
-        if alpha is None:
-            alpha = 0
-        self.mu = mu
-        self.sigma = sigma
-        self.alpha = alpha
         self.name = "skewnormal"
-        self.params = (self.mu, self.sigma, self.alpha)
-        self.param_names = ("mu", "sigma", "alpha")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (-np.inf, np.inf))
         self.dist = stats.skewnorm
         self.support = (-np.inf, np.inf)
-        self._update_rv_frozen()
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (-np.inf, np.inf))
+        self.mu, self.sigma, self.alpha, self.param_names = self._parametrization(
+            mu, sigma, alpha, tau
+        )
+        if self.alpha is None:
+            self.alpha = 0
+        if self.mu is not None and self.sigma is not None and self.alpha is not None:
+            self._update(self.mu, self.sigma, self.alpha)
+
+    def _parametrization(self, mu, sigma, alpha, tau):
+        if sigma is not None and tau is not None:
+            raise ValueError(
+                "Incompatible parametrization. Either use mu, sigma and alpha,"
+                " or mu, tau and alpha."
+            )
+
+        if tau is None:
+            names = ("mu", "sigma", "alpha")
+
+        elif tau is not None:
+            sigma = self._from_tau(tau)
+            names = ("mu", "tau", "alpha")
+
+        return mu, sigma, alpha, names
+
+    def _from_tau(self, tau):
+        sigma = 1 / tau**0.5
+        return sigma
+
+    def _to_tau(self, sigma):
+        tau = 1 / sigma**2
+        return tau
 
     def _get_frozen(self):
         frozen = None
@@ -1375,9 +1409,17 @@ class SkewNormal(Continuous):
     def _update(self, mu, sigma, alpha=None):
         if alpha is not None:
             self.alpha = alpha
+
         self.mu = mu
         self.sigma = sigma
+        self.tau = self._to_tau(sigma)
+
+        if self.param_names[1] == "sigma":
+            self.params_report = (self.mu, self.sigma, self.alpha)
+        elif self.param_names[1] == "tau":
+            self.params_report = (self.mu, self.tau, self.alpha)
         self.params = (self.mu, self.sigma, self.alpha)
+
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
