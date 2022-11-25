@@ -16,6 +16,16 @@ from .distributions import Continuous
 eps = np.finfo(float).eps
 
 
+def from_tau(tau):
+    sigma = 1 / tau**0.5
+    return sigma
+
+
+def to_tau(sigma):
+    tau = 1 / sigma**2
+    return tau
+
+
 class Beta(Continuous):
     r"""
     Beta distribution.
@@ -679,18 +689,10 @@ class HalfNormal(Continuous):
             names = ("sigma",)
 
         elif tau is not None:
-            sigma = self._from_tau(tau)
+            sigma = from_tau(tau)
             names = ("tau",)
 
         return sigma, names
-
-    def _from_tau(self, tau):
-        sigma = 1 / tau**0.5
-        return sigma
-
-    def _to_tau(self, sigma):
-        tau = 1 / sigma**2
-        return tau
 
     def _get_frozen(self):
         frozen = None
@@ -700,7 +702,7 @@ class HalfNormal(Continuous):
 
     def _update(self, sigma):
         self.sigma = sigma
-        self.tau = self._to_tau(sigma)
+        self.tau = to_tau(sigma)
 
         if self.param_names[0] == "sigma":
             self.params_report = (self.sigma,)
@@ -1200,18 +1202,10 @@ class Normal(Continuous):
             names = ("mu", "sigma")
 
         elif tau is not None:
-            sigma = self._from_tau(tau)
+            sigma = from_tau(tau)
             names = ("mu", "tau")
 
         return mu, sigma, names
-
-    def _from_tau(self, tau):
-        sigma = 1 / tau**0.5
-        return sigma
-
-    def _to_tau(self, sigma):
-        tau = 1 / sigma**2
-        return tau
 
     def _get_frozen(self):
         frozen = None
@@ -1222,7 +1216,7 @@ class Normal(Continuous):
     def _update(self, mu, sigma):
         self.mu = mu
         self.sigma = sigma
-        self.tau = self._to_tau(sigma)
+        self.tau = to_tau(sigma)
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma)
@@ -1387,18 +1381,10 @@ class SkewNormal(Continuous):
             names = ("mu", "sigma", "alpha")
 
         elif tau is not None:
-            sigma = self._from_tau(tau)
+            sigma = from_tau(tau)
             names = ("mu", "tau", "alpha")
 
         return mu, sigma, alpha, names
-
-    def _from_tau(self, tau):
-        sigma = 1 / tau**0.5
-        return sigma
-
-    def _to_tau(self, sigma):
-        tau = 1 / sigma**2
-        return tau
 
     def _get_frozen(self):
         frozen = None
@@ -1412,7 +1398,7 @@ class SkewNormal(Continuous):
 
         self.mu = mu
         self.sigma = sigma
-        self.tau = self._to_tau(sigma)
+        self.tau = to_tau(sigma)
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma, self.alpha)
