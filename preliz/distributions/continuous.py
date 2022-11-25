@@ -16,24 +16,14 @@ from .distributions import Continuous
 eps = np.finfo(float).eps
 
 
-class TauSigma:
-    """
-    Base class for tau sigma interconversion used by some continuous distributions.
+def from_tau(tau):
+    sigma = 1 / tau**0.5
+    return sigma
 
-    Not intended for direct instantiation.
-    """
 
-    def __init__(self):
-        self.tau = None
-        self.sigma = None
-
-    def _from_tau(self, tau):
-        self.sigma = 1 / tau**0.5
-        return self.sigma
-
-    def _to_tau(self, sigma):
-        self.tau = 1 / sigma**2
-        return self.tau
+def to_tau(sigma):
+    tau = 1 / sigma**2
+    return tau
 
 
 class Beta(Continuous):
@@ -637,7 +627,7 @@ class HalfCauchy(Continuous):
         self._update(beta)
 
 
-class HalfNormal(Continuous, TauSigma):
+class HalfNormal(Continuous):
     r"""
     HalfNormal Distribution
 
@@ -699,7 +689,7 @@ class HalfNormal(Continuous, TauSigma):
             names = ("sigma",)
 
         elif tau is not None:
-            sigma = self._from_tau(tau)
+            sigma = from_tau(tau)
             names = ("tau",)
 
         return sigma, names
@@ -712,7 +702,7 @@ class HalfNormal(Continuous, TauSigma):
 
     def _update(self, sigma):
         self.sigma = sigma
-        self.tau = self._to_tau(sigma)
+        self.tau = to_tau(sigma)
 
         if self.param_names[0] == "sigma":
             self.params_report = (self.sigma,)
@@ -1144,7 +1134,7 @@ class LogNormal(Continuous):
         self._update(np.log(mu), sigma)
 
 
-class Normal(Continuous, TauSigma):
+class Normal(Continuous):
     r"""
     Normal distribution.
 
@@ -1212,7 +1202,7 @@ class Normal(Continuous, TauSigma):
             names = ("mu", "sigma")
 
         elif tau is not None:
-            sigma = self._from_tau(tau)
+            sigma = from_tau(tau)
             names = ("mu", "tau")
 
         return mu, sigma, names
@@ -1226,7 +1216,7 @@ class Normal(Continuous, TauSigma):
     def _update(self, mu, sigma):
         self.mu = mu
         self.sigma = sigma
-        self.tau = self._to_tau(sigma)
+        self.tau = to_tau(sigma)
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma)
@@ -1313,7 +1303,7 @@ class Pareto(Continuous):
         self._update(alpha, m)
 
 
-class SkewNormal(Continuous, TauSigma):
+class SkewNormal(Continuous):
     r"""
     SkewNormal distribution.
 
@@ -1391,7 +1381,7 @@ class SkewNormal(Continuous, TauSigma):
             names = ("mu", "sigma", "alpha")
 
         elif tau is not None:
-            sigma = self._from_tau(tau)
+            sigma = from_tau(tau)
             names = ("mu", "tau", "alpha")
 
         return mu, sigma, alpha, names
@@ -1408,7 +1398,7 @@ class SkewNormal(Continuous, TauSigma):
 
         self.mu = mu
         self.sigma = sigma
-        self.tau = self._to_tau(sigma)
+        self.tau = to_tau(sigma)
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma, self.alpha)
