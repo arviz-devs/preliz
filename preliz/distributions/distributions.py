@@ -341,6 +341,14 @@ class Continuous(Distribution):
         """
         raise NotImplementedError
 
+    def _from_tau(self, tau):
+        sigma = 1 / tau**0.5
+        return sigma
+
+    def _to_tau(self, sigma):
+        tau = 1 / sigma**2
+        return tau
+
 
 class Discrete(Distribution):
     """Base class for discrete distributions."""

@@ -684,14 +684,6 @@ class HalfNormal(Continuous):
 
         return sigma, names
 
-    def _from_tau(self, tau):
-        sigma = 1 / tau**0.5
-        return sigma
-
-    def _to_tau(self, sigma):
-        tau = 1 / sigma**2
-        return tau
-
     def _get_frozen(self):
         frozen = None
         if any(self.params):
@@ -1205,14 +1197,6 @@ class Normal(Continuous):
 
         return mu, sigma, names
 
-    def _from_tau(self, tau):
-        sigma = 1 / tau**0.5
-        return sigma
-
-    def _to_tau(self, sigma):
-        tau = 1 / sigma**2
-        return tau
-
     def _get_frozen(self):
         frozen = None
         if any(self.params):
@@ -1391,14 +1375,6 @@ class SkewNormal(Continuous):
             names = ("mu", "tau", "alpha")
 
         return mu, sigma, alpha, names
-
-    def _from_tau(self, tau):
-        sigma = 1 / tau**0.5
-        return sigma
-
-    def _to_tau(self, sigma):
-        tau = 1 / sigma**2
-        return tau
 
     def _get_frozen(self):
         frozen = None
