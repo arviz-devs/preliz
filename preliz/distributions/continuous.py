@@ -16,6 +16,26 @@ from .distributions import Continuous
 eps = np.finfo(float).eps
 
 
+class TauSigma:
+    """
+    Base class for tau sigma interconversion used by some continuous distributions.
+
+    Not intended for direct instantiation.
+    """
+
+    def __init__(self):
+        self.tau = None
+        self.sigma = None
+
+    def _from_tau(self, tau):
+        self.sigma = 1 / tau**0.5
+        return self.sigma
+
+    def _to_tau(self, sigma):
+        self.tau = 1 / sigma**2
+        return self.tau
+
+
 class Beta(Continuous):
     r"""
     Beta distribution.
@@ -617,7 +637,7 @@ class HalfCauchy(Continuous):
         self._update(beta)
 
 
-class HalfNormal(Continuous):
+class HalfNormal(Continuous, TauSigma):
     r"""
     HalfNormal Distribution
 
@@ -1124,7 +1144,7 @@ class LogNormal(Continuous):
         self._update(np.log(mu), sigma)
 
 
-class Normal(Continuous):
+class Normal(Continuous, TauSigma):
     r"""
     Normal distribution.
 
@@ -1293,7 +1313,7 @@ class Pareto(Continuous):
         self._update(alpha, m)
 
 
-class SkewNormal(Continuous):
+class SkewNormal(Continuous, TauSigma):
     r"""
     SkewNormal distribution.
 
