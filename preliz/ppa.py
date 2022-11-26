@@ -9,15 +9,10 @@ import numpy as np
 from scipy.spatial import KDTree
 
 
-from preliz import distributions
 from .utils.plot_utils import plot_pointinterval, repr_to_matplotlib
+from .utils.utils import get_pymc_to_preliz
 
 _log = logging.getLogger("preliz")
-
-pymc_to_preliz = {
-    "normal": "Normal",
-    "halfnormal": "HalfNormal",
-}
 
 
 def ppa(idata, model, summary="octiles"):
@@ -99,8 +94,8 @@ def ppa(idata, model, summary="octiles"):
 
             if num_selected > 1:
                 string = (
-                    f"You have selected {num_selected} out of {sample_size} prior"
-                    "predictive samples\nThat selection is consistent with the"
+                    f"You have selected {num_selected} out of {sample_size} prior "
+                    "predictive samples\nThat selection is consistent with the "
                     "following priors:\n"
                 )
 
@@ -257,9 +252,10 @@ def back_fitting(model, subset, string):
     """
     Use MLE to fit a subset of the prior samples to the individual prior distributions
     """
+    pymc_to_preliz = get_pymc_to_preliz()
     for unobserved in model.unobserved_RVs:
         distribution = unobserved.owner.op.name
-        dist = getattr(distributions, pymc_to_preliz[distribution])()
+        dist = pymc_to_preliz[distribution]
         name = unobserved.name
         idx = unobserved.owner.nin - 3
         params = unobserved.owner.inputs[-idx:]

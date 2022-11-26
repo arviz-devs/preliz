@@ -1,3 +1,5 @@
+from sys import modules
+
 import numpy as np
 from scipy.special import gamma
 
@@ -47,3 +49,26 @@ def garcia_approximation(mean, sigma):
     alpha = 1 / (z * (1 + (1 - z) ** 2 * poly))
     beta = 1 / (gamma(1 + 1 / alpha) / (mean))
     return alpha, beta
+
+
+def get_distributions(dist_names):
+    """
+    Generate a subset of distributions which names agree with those in dist_names
+    """
+    dists = []
+    for name in dist_names:
+        dist = getattr(modules["preliz"], name)
+        dists.append(dist())
+
+    return dists
+
+
+def get_pymc_to_preliz():
+    """
+    Generate dictionary mapping pymc to preliz distributions
+    """
+    all_distributions = modules["preliz.distributions"].__all__
+    pymc_to_preliz = dict(
+        zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
+    )
+    return pymc_to_preliz

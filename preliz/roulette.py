@@ -8,7 +8,8 @@ from matplotlib import patches, get_backend
 
 
 import ipywidgets as widgets
-from preliz.utils.optimization import fit_to_ecdf, get_distributions
+from .utils.optimization import fit_to_ecdf
+from .utils.utils import get_distributions
 
 
 _log = logging.getLogger("preliz")
