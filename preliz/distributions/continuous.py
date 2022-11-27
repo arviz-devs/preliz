@@ -781,7 +781,7 @@ class HalfStudent(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all(self.params):
             frozen = self.dist(nu=self.nu, sigma=self.sigma)
         return frozen
 
