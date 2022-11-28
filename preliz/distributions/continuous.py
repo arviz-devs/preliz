@@ -26,6 +26,16 @@ def to_tau(sigma):
     return tau
 
 
+def from_lam(lam):
+    sigma = 1 / lam**0.5
+    return sigma
+
+
+def to_lam(sigma):
+    lam = 1 / sigma**2
+    return lam
+
+
 class Beta(Continuous):
     r"""
     Beta distribution.
@@ -743,7 +753,7 @@ class HalfStudent(Continuous):
         sigmas = [1., 2., 2.]
         nus = [3, 3., 10.]
         for sigma, nu in zip(sigmas, nus):
-            HalfStudent(nu, sigma).plot_pdf()
+            HalfStudent(nu, sigma).plot_pdf(support=(0,10))
 
     ========  ==========================================
     Support   :math:`x \in [0, \infty)`
@@ -758,6 +768,15 @@ class HalfStudent(Continuous):
                   \text{for } 1 < \nu \le 2\, \text{otherwise undefined}
     ========  ==========================================
 
+    HalfStudent distribution has 2 alternative parameterizations. In terms of nu and
+    sigma (standard deviation as nu increases) or nu lam (precision as nu increases).
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+        \lambda = \frac{1}{\sigma^2}
+
     Parameters
     ----------
     nu : float
@@ -765,19 +784,34 @@ class HalfStudent(Continuous):
     sigma : float
         Scale parameter (sigma > 0). Converges to the standard deviation as nu
         increases.
+    lam : float
+        Scale parameter (lam > 0). Converges to the precision as nu increases.
     """
 
-    def __init__(self, nu=3, sigma=None):
+    def __init__(self, nu=3, sigma=None, lam=None):
         super().__init__()
-        self.nu = nu
-        self.sigma = sigma
         self.name = "halfstudent"
-        self.params = (self.nu, self.sigma)
-        self.param_names = ("nu", "sigma")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
         self.dist = _HalfStudent
         self.support = (0, np.inf)
-        self._update_rv_frozen()
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.nu, self.sigma, self.param_names = self._parametrization(nu, sigma, lam)
+        if self.nu is not None and self.sigma is not None:
+            self._update(self.sigma, self.nu)
+
+    def _parametrization(self, nu, sigma, lam):
+        if sigma is not None and lam is not None:
+            raise ValueError(
+                "Incompatible parametrization. Either use nu and sigma, or nu and lam."
+            )
+
+        if lam is None:
+            names = ("nu", "sigma")
+
+        elif lam is not None:
+            sigma = from_lam(lam)
+            names = ("nu", "lam")
+
+        return nu, sigma, names
 
     def _get_frozen(self):
         frozen = None
@@ -789,7 +823,14 @@ class HalfStudent(Continuous):
         if nu is not None:
             self.nu = nu
         self.sigma = sigma
+        self.lam = to_lam(sigma)
+
+        if self.param_names[1] == "sigma":
+            self.params_report = (self.nu, self.sigma)
+        elif self.param_names[1] == "lam":
+            self.params_report = (self.nu, self.lam)
         self.params = (self.nu, self.sigma)
+
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
@@ -1492,18 +1533,10 @@ class Student(Continuous):
             names = ("nu", "mu", "sigma")
 
         elif lam is not None:
-            sigma = self._from_lam(lam)
+            sigma = from_lam(lam)
             names = ("nu", "mu", "lam")
 
         return nu, mu, sigma, names
-
-    def _from_lam(self, lam):
-        sigma = 1 / lam**0.5
-        return sigma
-
-    def _to_lam(self, sigma):
-        lam = 1 / sigma**2
-        return lam
 
     def _get_frozen(self):
         frozen = None
@@ -1516,7 +1549,7 @@ class Student(Continuous):
             self.nu = nu
         self.mu = mu
         self.sigma = sigma
-        self.lam = self._to_lam(sigma)
+        self.lam = to_lam(sigma)
 
         if self.param_names[2] == "sigma":
             self.params_report = (self.nu, self.mu, self.sigma)
