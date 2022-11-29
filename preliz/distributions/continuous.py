@@ -26,16 +26,6 @@ def to_tau(sigma):
     return tau
 
 
-def from_lam(lam):
-    sigma = 1 / lam**0.5
-    return sigma
-
-
-def to_lam(sigma):
-    lam = 1 / sigma**2
-    return lam
-
-
 class Beta(Continuous):
     r"""
     Beta distribution.
@@ -808,7 +798,7 @@ class HalfStudent(Continuous):
             names = ("nu", "sigma")
 
         elif lam is not None:
-            sigma = from_lam(lam)
+            sigma = from_tau(lam)
             names = ("nu", "lam")
 
         return nu, sigma, names
@@ -823,7 +813,7 @@ class HalfStudent(Continuous):
         if nu is not None:
             self.nu = nu
         self.sigma = sigma
-        self.lam = to_lam(sigma)
+        self.lam = to_tau(sigma)
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.nu, self.sigma)
@@ -1533,7 +1523,7 @@ class Student(Continuous):
             names = ("nu", "mu", "sigma")
 
         elif lam is not None:
-            sigma = from_lam(lam)
+            sigma = from_tau(lam)
             names = ("nu", "mu", "lam")
 
         return nu, mu, sigma, names
@@ -1549,7 +1539,7 @@ class Student(Continuous):
             self.nu = nu
         self.mu = mu
         self.sigma = sigma
-        self.lam = to_lam(sigma)
+        self.lam = to_tau(sigma)
 
         if self.param_names[2] == "sigma":
             self.params_report = (self.nu, self.mu, self.sigma)
