@@ -16,14 +16,14 @@ from .distributions import Continuous
 eps = np.finfo(float).eps
 
 
-def from_tau(tau):
-    sigma = 1 / tau**0.5
+def from_precision(precision):
+    sigma = 1 / precision**0.5
     return sigma
 
 
-def to_tau(sigma):
-    tau = 1 / sigma**2
-    return tau
+def to_precision(sigma):
+    precision = 1 / sigma**2
+    return precision
 
 
 class Beta(Continuous):
@@ -689,7 +689,7 @@ class HalfNormal(Continuous):
             names = ("sigma",)
 
         elif tau is not None:
-            sigma = from_tau(tau)
+            sigma = from_precision(tau)
             names = ("tau",)
 
         return sigma, names
@@ -702,7 +702,7 @@ class HalfNormal(Continuous):
 
     def _update(self, sigma):
         self.sigma = sigma
-        self.tau = to_tau(sigma)
+        self.tau = to_precision(sigma)
 
         if self.param_names[0] == "sigma":
             self.params_report = (self.sigma,)
@@ -1202,7 +1202,7 @@ class Normal(Continuous):
             names = ("mu", "sigma")
 
         elif tau is not None:
-            sigma = from_tau(tau)
+            sigma = from_precision(tau)
             names = ("mu", "tau")
 
         return mu, sigma, names
@@ -1216,7 +1216,7 @@ class Normal(Continuous):
     def _update(self, mu, sigma):
         self.mu = mu
         self.sigma = sigma
-        self.tau = to_tau(sigma)
+        self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma)
@@ -1381,7 +1381,7 @@ class SkewNormal(Continuous):
             names = ("mu", "sigma", "alpha")
 
         elif tau is not None:
-            sigma = from_tau(tau)
+            sigma = from_precision(tau)
             names = ("mu", "tau", "alpha")
 
         return mu, sigma, alpha, names
@@ -1398,7 +1398,7 @@ class SkewNormal(Continuous):
 
         self.mu = mu
         self.sigma = sigma
-        self.tau = to_tau(sigma)
+        self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
             self.params_report = (self.mu, self.sigma, self.alpha)
