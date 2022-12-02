@@ -13,6 +13,7 @@ all_continuous = [
     HalfStudent,
     InverseGamma,
     Laplace,
+    Logistic,
     LogNormal,
     Normal,
     Pareto,

@@ -20,6 +20,7 @@ import preliz as pz
         (pz.HalfNormal, (2,)),
         (pz.InverseGamma, (3, 5)),
         (pz.Laplace, (0, 2)),
+        (pz.Logistic, (0, 1)),
         (pz.LogNormal, (0, 1)),
         (pz.Normal, (0, 1)),
         (pz.Pareto, (5, 1)),
