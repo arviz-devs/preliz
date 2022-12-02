@@ -1089,6 +1089,77 @@ class Laplace(Continuous):
         self._update(mu, b)
 
 
+class Logistic(Continuous):
+    r"""
+     Logistic distribution.
+
+     The pdf of this distribution is
+
+     .. math::
+
+        f(x \mid \mu, s) =
+            \frac{\exp\left(-\frac{x - \mu}{s}\right)}
+            {s \left(1 + \exp\left(-\frac{x - \mu}{s}\right)\right)^2}
+
+     .. plot::
+         :context: close-figs
+
+         import arviz as az
+         from preliz import Logistic
+         az.style.use('arviz-white')
+         mus = [0., 0., -2.]
+         ss = [1., 2., .4]
+         for mu, s in zip(mus, ss):
+             Logistic(mu, s).plot_pdf(support=(-5,5))
+
+    ========  ==========================================
+     Support   :math:`x \in \mathbb{R}`
+     Mean      :math:`\mu`
+     Variance  :math:`\frac{s^2 \pi^2}{3}`
+     ========  ==========================================
+
+     Parameters
+     ----------
+     mu : float
+        Mean.
+     s : float
+        Scale (s > 0).
+    """
+
+    def __init__(self, mu=None, s=None):
+        super().__init__()
+        self.mu = mu
+        self.s = s  # pylint: disable=invalid-name
+        self.name = "logistic"
+        self.params = (self.mu, self.s)
+        self.param_names = ("mu", "s")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.dist = stats.logistic
+        self.support = (-np.inf, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(loc=self.mu, scale=self.s)
+        return frozen
+
+    def _update(self, mu, s):  # pylint: disable=invalid-name
+        self.mu = mu
+        self.s = s
+        self.params = (self.mu, self.s)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        mu = mean
+        s = (3 * sigma**2 / np.pi**2) ** 0.5  # pylint: disable=invalid-name
+        self._update(mu, s)
+
+    def _fit_mle(self, sample, **kwargs):
+        mu, s = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
+        self._update(mu, s)
+
+
 class LogNormal(Continuous):
     r"""
     Log-normal distribution.
