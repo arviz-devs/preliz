@@ -73,7 +73,7 @@ class Distribution:
         else:
             return None
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, *args, **kwds):
         """Random sample
 
         Parameters
@@ -83,7 +83,27 @@ class Distribution:
         random_state : {None, int, numpy.random.Generator, numpy.random.RandomState}
             Defaults to None
         """
-        return self.rv_frozen.rvs(size=size, random_state=random_state)
+        return self.rv_frozen.rvs(*args, **kwds)
+
+    def cdf(self, x, *args, **kwds):
+        """Cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the cdf
+        """
+        return self.rv_frozen.cdf(x, *args, **kwds)
+
+    def ppf(self, q, *args, **kwds):
+        """Percent point function (inverse of cdf).
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the inverse of the cdf
+        """
+        return self.rv_frozen.ppf(q, *args, **kwds)
 
     def eti(self, fmt=".2f", mass=0.94):
         """Equal-tailed interval containing `mass`.
@@ -341,6 +361,16 @@ class Continuous(Distribution):
         """
         raise NotImplementedError
 
+    def pdf(self, x, *args, **kwds):
+        """Probability density function at x.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the pdf
+        """
+        return self.rv_frozen.pdf(x, *args, **kwds)
+
 
 class Discrete(Distribution):
     """Base class for discrete distributions."""
@@ -356,3 +386,13 @@ class Discrete(Distribution):
         lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals
+
+    def pdf(self, x, *args, **kwds):
+        """Probability mass function at x.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the pdf
+        """
+        return self.rv_frozen.pmf(x, *args, **kwds)
