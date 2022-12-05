@@ -580,8 +580,8 @@ class Gumbel(Continuous):
 
         z = \frac{x - \mu}{\beta}
 
-     .. plot::
-         :context: close-figs
+    .. plot::
+        :context: close-figs
 
         import arviz as az
         from preliz import Gumbel
