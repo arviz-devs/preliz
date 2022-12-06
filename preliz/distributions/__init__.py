@@ -16,6 +16,7 @@ all_continuous = [
     Laplace,
     Logistic,
     LogNormal,
+    Moyal,
     Normal,
     Pareto,
     SkewNormal,

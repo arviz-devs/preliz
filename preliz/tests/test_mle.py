@@ -23,6 +23,7 @@ import preliz as pz
         (pz.Laplace, (0, 2)),
         (pz.Logistic, (0, 1)),
         (pz.LogNormal, (0, 1)),
+        (pz.Moyal, (0, 2)),
         (pz.Normal, (0, 1)),
         (pz.Pareto, (5, 1)),
         (pz.SkewNormal, (0, 1, 6)),

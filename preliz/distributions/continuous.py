@@ -1311,6 +1311,83 @@ class LogNormal(Continuous):
         self._update(np.log(mu), sigma)
 
 
+class Moyal(Continuous):
+    r"""
+    Moyal distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+       f(x \mid \mu,\sigma) =
+            \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{1}{2}\left(z + e^{-z}\right)},
+
+    where
+
+    .. math::
+
+       z = \frac{x-\mu}{\sigma}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Moyal
+        az.style.use('arviz-white')
+        mus = [-1., 0., 4.]
+        sigmas = [2., 1., 4.]
+        for mu, sigma in zip(mus, sigmas):
+            Moyal(mu, sigma).plot_pdf(support=(-10,20))
+
+    ========  ==============================================================
+    Support   :math:`x \in (-\infty, \infty)`
+    Mean      :math:`\mu + \sigma\left(\gamma + \log 2\right)`, where
+              :math:`\gamma` is the Euler-Mascheroni constant
+    Variance  :math:`\frac{\pi^{2}}{2}\sigma^{2}`
+    ========  ==============================================================
+
+    Parameters
+    ----------
+    mu : float
+        Location parameter.
+    sigma : float
+        Scale parameter (sigma > 0).
+    """
+
+    def __init__(self, mu=None, sigma=None):
+        super().__init__()
+        self.mu = mu
+        self.sigma = sigma
+        self.name = "moyal"
+        self.params = (self.mu, self.sigma)
+        self.param_names = ("mu", "sigma")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.dist = stats.moyal
+        self.support = (-np.inf, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            frozen = self.dist(loc=self.mu, scale=self.sigma)
+        return frozen
+
+    def _update(self, mu, sigma):
+        self.mu = mu
+        self.sigma = sigma
+        self.params = (self.mu, self.sigma)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        sigma = sigma / np.pi * 2**0.5
+        mu = mean - sigma * (np.euler_gamma + np.log(2))
+        self._update(mu, sigma)
+
+    def _fit_mle(self, sample, **kwargs):
+        mu, sigma = self.dist.fit(sample, **kwargs)
+        self._update(mu, sigma)
+
+
 class Normal(Continuous):
     r"""
     Normal distribution.
