@@ -8,6 +8,7 @@ all_continuous = [
     ChiSquared,
     Exponential,
     Gamma,
+    Gumbel,
     HalfCauchy,
     HalfNormal,
     HalfStudent,

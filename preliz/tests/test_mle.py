@@ -13,6 +13,7 @@ import preliz as pz
         (pz.ChiSquared, (1,)),
         (pz.Exponential, (5,)),
         (pz.Gamma, (2, 5)),
+        (pz.Gumbel, (0, 2)),
         (pz.HalfCauchy, (1,)),
         (pz.HalfNormal, (1,)),
         (pz.HalfStudent, (3, 1)),
