@@ -34,7 +34,7 @@ def ppa(idata, model, summary="octiles"):
         `sort` (sort data) `octi_sum` (robust estimation of first 4 moments from octiles).
     """
     _log.info(
-        """Enter at your own risk."""
+        """Enter at your own risk. """
         """This is highly experimental code and not recommended for regular use."""
     )
 
