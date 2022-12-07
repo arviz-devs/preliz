@@ -3,14 +3,6 @@ import numpy as np
 
 from numpy.testing import assert_allclose
 
-from preliz.distributions.continuous import (
-    HalfCauchy,
-    HalfNormal,
-    HalfStudent,
-    TruncatedNormal,
-    InverseGamma,
-    VonMises,
-)
 from preliz import maxent
 from preliz.distributions import (
     Beta,
@@ -19,6 +11,10 @@ from preliz.distributions import (
     Exponential,
     Gamma,
     Gumbel,
+    HalfCauchy,
+    HalfNormal,
+    HalfStudent,
+    InverseGamma,
     Laplace,
     Logistic,
     LogNormal,
@@ -26,10 +22,13 @@ from preliz.distributions import (
     Normal,
     Pareto,
     Student,
+    TruncatedNormal,
     Uniform,
+    VonMises,
     Wald,
     Weibull,
     DiscreteUniform,
+    NegativeBinomial,
     Poisson,
 )
 
@@ -63,6 +62,7 @@ from preliz.distributions import (
         (Wald, "wald", 0, 10, 0.9, None, (0, np.inf), (5.061, 7.937)),
         (Weibull, "weibull", 0, 10, 0.9, None, (0, np.inf), (1.411, 5.537)),
         (DiscreteUniform, "discreteuniform", -2, 10, 0.9, None, (-3, 11), (-2, 10)),
+        (NegativeBinomial, "negativebinomial", 0, 15, 0.9, None, (0, np.inf), (7.546, 2.041)),
         (Poisson, "poisson", 0, 3, 0.7, None, (0, np.inf), (2.763)),
     ],
 )
