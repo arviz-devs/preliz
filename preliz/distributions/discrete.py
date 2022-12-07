@@ -198,8 +198,8 @@ class NegativeBinomial(Discrete):
 
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`
-    Mean      :math:`mu`
-    Variance  :math:`\frac{mu (alpha + mu)}{alpha}`
+    Mean      :math:`\mu`
+    Variance  :math:`\frac{\mu (\alpha + \mu)}{\alpha}`
     ========  ==========================
 
     The negative binomial distribution can be parametrized either in terms of mu and alpha,
