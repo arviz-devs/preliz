@@ -175,10 +175,10 @@ class NegativeBinomial(Discrete):
     Negative binomial distribution.
 
     The negative binomial distribution describes a Poisson random variable
-        whose rate parameter is gamma distributed.
-        Its pmf, parametrized by the parameters alpha and mu of the gamma distribution, is
+    whose rate parameter is gamma distributed.
+    Its pmf, parametrized by the parameters alpha and mu of the gamma distribution, is
 
-        .. math::
+    .. math::
 
        f(x \mid \mu, \alpha) =
            \binom{x + \alpha - 1}{x}
@@ -198,8 +198,8 @@ class NegativeBinomial(Discrete):
 
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`
-    Mean      :math:`\frac{(1-p) r}{p}`
-    Variance  :math:`\frac{(1-p) r}{p^2}`
+    Mean      :math:`mu`
+    Variance  :math:`\frac{mu (alpha + mu)}{alpha}`
     ========  ==========================
 
     The negative binomial distribution can be parametrized either in terms of mu and alpha,
@@ -285,8 +285,8 @@ class NegativeBinomial(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
+        mu = mean
         alpha = mean**2 / (sigma**2 - mean)
-        mu = alpha * (1 / (mean / sigma**2) - 1)
         self._update(mu, alpha)
 
     def _fit_mle(self, sample):
