@@ -228,7 +228,7 @@ class NegativeBinomial(Discrete):
         Gamma distribution mean (mu > 0).
     p : float
         Probability of success in each trial (0 < p < 1).
-    n : tensor_like of float
+    n : float
         Number of target success trials (n > 0)
     """
 
