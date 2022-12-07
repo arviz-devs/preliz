@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-instance-attributes
 """
 Discrete probability distributions.
 """
@@ -172,15 +174,16 @@ class NegativeBinomial(Discrete):
     R"""
     Negative binomial distribution.
 
-    If it is parametrized in terms of n and p, the negative binomial describes
-    the probability to have x failures before the n-th success, given the
-    probability p of success in each trial. Its pmf is
+    The negative binomial distribution describes a Poisson random variable
+        whose rate parameter is gamma distributed.
+        Its pmf, parametrized by the parameters alpha and mu of the gamma distribution, is
 
-    .. math::
+        .. math::
 
-        f(x \mid n, p) =
-           \binom{x + n - 1}{x}
-           (p)^n (1 - p)^x
+       f(x \mid \mu, \alpha) =
+           \binom{x + \alpha - 1}{x}
+           (\alpha/(\mu+\alpha))^\alpha (\mu/(\mu+\alpha))^x
+
 
     .. plot::
         :context: close-figs
@@ -188,10 +191,10 @@ class NegativeBinomial(Discrete):
         import arviz as az
         from preliz import NegativeBinomial
         az.style.use('arviz-white')
-        ns = [5, 10, 10]
-        ps = [0.5, 0.5, 0.7]
-        for n, p in zip(ns, ps):
-            NegativeBinomial(n, p).plot_pdf()
+        mus = [1, 2, 8]
+        alphas = [0.9, 2, 4]
+        for mu, alpha in zip(mus, alphas):
+            NegativeBinomial(mu, alpha).plot_pdf(support=(0, 20))
 
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`
@@ -199,25 +202,68 @@ class NegativeBinomial(Discrete):
     Variance  :math:`\frac{(1-p) r}{p^2}`
     ========  ==========================
 
+    The negative binomial distribution can be parametrized either in terms of mu and alpha,
+    or in terms of n and p. The link between the parametrizations is given by
+
+    .. math::
+
+        p &= \frac{\alpha}{\mu + \alpha} \\
+        n &= \alpha
+
+    If it is parametrized in terms of n and p, the negative binomial describes the probability
+    to have x failures before the n-th success, given the probability p of success in each trial.
+    Its pmf is
+
+    .. math::
+
+        f(x \mid n, p) =
+           \binom{x + n - 1}{x}
+           (p)^n (1 - p)^x
+
     Parameters
     ----------
-    n: float
-        Number of target success trials (n > 0)
-    p: float
+    alpha : float
+        Gamma distribution shape parameter (alpha > 0).
+    mu : float
+        Gamma distribution mean (mu > 0).
+    p : float
         Probability of success in each trial (0 < p < 1).
+    n : tensor_like of float
+        Number of target success trials (n > 0)
     """
 
-    def __init__(self, n=None, p=None):
+    def __init__(self, mu=None, alpha=None, p=None, n=None):
         super().__init__()
-        self.n = n
-        self.p = p
         self.name = "negativebinomial"
-        self.params = (self.n, self.p)
-        self.param_names = ("n", "p")
-        self.params_support = ((eps, np.inf), (eps, 1 - eps))
         self.dist = stats.nbinom
         self.support = (0, np.inf)
-        self._update_rv_frozen()
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+        self.mu, self.alpha, self.param_names = self._parametrization(mu, alpha, p, n)
+        if self.mu is not None and self.alpha is not None:
+            self._update(self.mu, self.alpha)
+
+    def _parametrization(self, mu, alpha, p, n):
+        if p is None and n is None:
+            names = ("mu", "alpha")
+
+        elif p is not None and n is not None:
+            mu, alpha = self._from_p_n(p, n)
+            names = ("mu", "alpha")
+
+        else:
+            raise ValueError("Incompatible parametrization. Either use mu and alpha, or p and n.")
+
+        return mu, alpha, names
+
+    def _from_p_n(self, p, n):
+        alpha = n
+        mu = n * (1 / p - 1)
+        return mu, alpha
+
+    def _to_p_n(self, mu, alpha):
+        p = alpha / (mu + alpha)
+        n = alpha
+        return p, n
 
     def _get_frozen(self):
         frozen = None
@@ -225,24 +271,32 @@ class NegativeBinomial(Discrete):
             frozen = self.dist(self.n, self.p)
         return frozen
 
-    def _update(self, n, p):
-        self.n = n
-        self.p = p
-        self.params = (self.n, p)
+    def _update(self, mu, alpha):
+        self.mu = mu
+        self.alpha = alpha
+        self.p, self.n = self._to_p_n(self.mu, self.alpha)
+
+        if self.param_names[0] == "mu":
+            self.params_report = (self.mu, self.alpha)
+        elif self.param_names[0] == "p":
+            self.params_report = (self.p, self.n)
+
+        self.params = (self.mu, self.alpha)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        n = mean**2 / (sigma**2 - mean)
-        p = mean / sigma**2
-        self._update(n, p)
+        alpha = mean**2 / (sigma**2 - mean)
+        mu = alpha * (1 / (mean / sigma**2) - 1)
+        self._update(mu, alpha)
 
     def _fit_mle(self, sample):
         # the upper bound is based on a quick heuristic. The fit will underestimate
         # the value of n when p is very close to 1.
-        fitted = stats.fit(self.dist, sample, bounds={"n": (1, max(sample) * 5)})
+        fitted = stats.fit(self.dist, sample, bounds={"n": (1, max(sample) * 2)})
         if not fitted.success:
             _log.info("Optimization did not terminate successfully.")
-        self._update(fitted.params.n, fitted.params.p)  # pylint: disable=no-member
+        mu, alpha = self._from_p_n(fitted.params.p, fitted.params.n)  # pylint: disable=no-member
+        self._update(mu, alpha)
 
 
 class Poisson(Discrete):
