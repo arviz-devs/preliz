@@ -468,7 +468,7 @@ class ExGaussian(Continuous):
         self._update(mu, sigma, nu)
 
     def _fit_mle(self, sample, **kwargs):
-        K, mu, sigma = self.dist.fit(sample, **kwargs) # pylint: disable=invalid-name
+        K, mu, sigma = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
         nu = sigma * K
         self._update(mu, sigma, nu)
 
