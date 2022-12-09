@@ -8,6 +8,7 @@ from preliz.distributions import (
     Beta,
     Cauchy,
     ChiSquared,
+    ExGaussian,
     Exponential,
     Gamma,
     Gumbel,
@@ -39,6 +40,7 @@ from preliz.distributions import (
         (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.112, 9.101)),
         (Cauchy, "cauchy", -1, 1, 0.6, None, (-np.inf, np.inf), (0, 0.726)),
         (ChiSquared, "chisquared", 0, 4, 0.9, 1, (0, np.inf), (1.659)),
+        (ExGaussian, "exgaussian", -2, 4, 0.99, 1, (-np.inf, np.inf), (0.989, 1.164, 0.01)),
         (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
         (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (0.868, 0.103)),
         (Gumbel, "gumbel", 0, 10, 0.9, None, (-np.inf, np.inf), (3.557, 2.598)),
@@ -67,11 +69,11 @@ from preliz.distributions import (
     ],
 )
 def test_maxent(distribution, name, lower, upper, mass, nu, support, result):
-    if nu is None:
+    if nu is None or "exgaussian" in name:
         dist = distribution()
     else:
         dist = distribution(nu=nu)
-    _, opt = maxent(dist, lower, upper, mass)
+    _, opt = maxent(dist, lower, upper, mass, nu)
     rv_frozen = dist.rv_frozen
 
     assert rv_frozen.name == name

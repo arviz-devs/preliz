@@ -11,6 +11,7 @@ import preliz as pz
         (pz.BetaScaled, (2, 5, -1, 4)),
         (pz.Cauchy, (0, 1)),
         (pz.ChiSquared, (1,)),
+        (pz.ExGaussian, (1, 2, 1)),
         (pz.Exponential, (5,)),
         (pz.Gamma, (2, 5)),
         (pz.Gumbel, (0, 2)),

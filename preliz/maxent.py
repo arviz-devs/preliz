@@ -11,6 +11,7 @@ def maxent(
     lower=-1,
     upper=1,
     mass=0.90,
+    nu=None,
     plot=True,
     plot_kwargs=None,
     ax=None,
@@ -30,6 +31,8 @@ def maxent(
         Upper end-point
     mass: float
         Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.9
+    nu : float
+        Mean of the exponential distribution (nu > 0) for ``ExGaussian`` distribution.
     plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defaults to True.
     plot_kwargs : dict
@@ -65,9 +68,15 @@ def maxent(
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
     # from intervals and mass and then use those values for moment matching
-    distribution._fit_moments(  # pylint:disable=protected-access
-        mean=(lower + upper) / 2, sigma=((upper - lower) / 4) / mass
-    )
+    mean = (lower + upper) / 2
+    sigma = ((upper - lower) / 4) / mass
+
+    if "exgaussian" in distribution.name:
+        distribution._fit_moments(  # pylint:disable=protected-access
+            mean, sigma, skewness=2 * nu**3 / (sigma**2 + nu**2) ** 1.5
+        )
+    else:
+        distribution._fit_moments(mean, sigma)  # pylint:disable=protected-access
 
     opt = optimize_max_ent(distribution, lower, upper, mass)
 

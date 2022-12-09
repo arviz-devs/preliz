@@ -8,6 +8,7 @@ from preliz.distributions import (
     ChiSquared,
     Gamma,
     Gumbel,
+    ExGaussian,
     Exponential,
     HalfCauchy,
     HalfNormal,
@@ -36,9 +37,10 @@ from preliz.distributions import (
 @pytest.mark.parametrize(
     "distribution, params",
     [
-        (Normal, (0, 1)),
         (Beta, (2, 5)),
         (ChiSquared, (1,)),
+        (ExGaussian, (1, 2, 4)),
+        (Exponential, (0.5,)),
         (Gamma, (1, 0.5)),
         (Gumbel, (1, 2)),
         (HalfNormal, (1,)),
@@ -49,7 +51,7 @@ from preliz.distributions import (
         (Logistic, (1, 2)),
         (LogNormal, (0, 0.5)),
         (Moyal, (1, 2)),
-        (Exponential, (0.5,)),
+        (Normal, (0, 1)),
         (Pareto, (5, 1)),
         (SkewNormal, (0, 1, 0)),
         (Student, (3, 0, 1)),
@@ -73,7 +75,12 @@ def test_moments(distribution, params):
     else:
         dist_ = distribution()
 
-    dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
+    if "exgaussian" in dist.name:
+        dist_._fit_moments(
+            dist.rv_frozen.mean(), dist.rv_frozen.std(), float(dist.rv_frozen.stats("s"))
+        )
+    else:
+        dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
     if dist.name == "binomial":
@@ -86,10 +93,11 @@ def test_moments(distribution, params):
 @pytest.mark.parametrize(
     "distribution, params",
     [
-        (Normal, (0, 1)),
         (Beta, (2, 5)),
         (Cauchy, (0, 1)),
         (ChiSquared, (1,)),
+        (ExGaussian, (0, 2, 3)),
+        (Exponential, (0.5,)),
         (Gamma, (1, 0.5)),
         (Gumbel, (0, 1)),
         (HalfCauchy, (1,)),
@@ -100,7 +108,7 @@ def test_moments(distribution, params):
         (Logistic, (0, 1)),
         (LogNormal, (0, 0.5)),
         (Moyal, (0, 2)),
-        (Exponential, (0.5,)),
+        (Normal, (0, 1)),
         (Pareto, (5, 1)),
         (SkewNormal, (0, 1, 0)),
         (SkewNormal, (0, 1, -1)),

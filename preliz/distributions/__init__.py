@@ -6,6 +6,7 @@ all_continuous = [
     BetaScaled,
     Cauchy,
     ChiSquared,
+    ExGaussian,
     Exponential,
     Gamma,
     Gumbel,
