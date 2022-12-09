@@ -17,7 +17,7 @@ from .distributions.distributions import Distribution
 _log = logging.getLogger("preliz")
 
 
-def ppa(idata, model, summary="octiles", ref_dist=None):
+def ppa(idata, model, summary="octiles", init=None):
     """
     Prior predictive check assistant.
 
@@ -34,10 +34,10 @@ def ppa(idata, model, summary="octiles", ref_dist=None):
         Summary statistics applied to prior samples in order to define (dis)similarity
         of distributions. Current options are `octiles`, `hexiles`, `quantiles`,
         `sort` (sort data) `octi_sum` (robust estimation of first 4 moments from octiles).
-    ref_dist : tuple or PreliZ distribtuion
-        Reference distribution used to initialize the search. Available options are,
-        a PreliZ distribution or a 2-tuple with the first element representing the mean
-        and the second the standard deviation.
+    init : tuple or PreliZ distribtuion
+        Initial distribution. The first shown distributions will be selected to be as close
+        as possible to `init`. Available options are, a PreliZ distribution or a 2-tuple with
+        the first element representing the mean and the second the standard deviation.
     """
     _log.info(
         """Enter at your own risk. """
@@ -58,12 +58,12 @@ def ppa(idata, model, summary="octiles", ref_dist=None):
     obs_rv = model.observed_RVs[0].name  # only one observed variable for the moment
     pp_samples = idata.prior_predictive[obs_rv].squeeze().values
     prior_samples = idata.prior.squeeze()
-    if ref_dist is not None:
-        pp_samples = add_ref_dist(ref_dist, pp_samples)
+    if init is not None:
+        pp_samples = add_init_dist(init, pp_samples)
 
     sample_size = pp_samples.shape[0]
     pp_summary, kdt = compute_summaries(pp_samples, summary)
-    pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, ref_dist)
+    pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, init)
     fig, axes = plot_samples(pp_samples, pp_samples_idxs)
 
     clicked = []
@@ -178,7 +178,7 @@ def compute_summaries(pp_samples, summary):
     return pp_summary, kdt
 
 
-def add_ref_dist(ref_dist, pp_samples):
+def add_init_dist(ref_dist, pp_samples):
     sample_size = pp_samples.shape[1]
     if isinstance(ref_dist, tuple):
         ref_sample = Normal(*ref_dist).rvs(sample_size)
