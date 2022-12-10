@@ -1,3 +1,4 @@
+# pylint:disable=global-variable-undefined
 """Prior predictive check assistant."""
 
 import logging
@@ -53,6 +54,7 @@ def ppa(idata, model, summary="octiles", init=None):
             )
     except NameError:
         pass
+    global pp_samples_idxs  # pylint:disable=invalid-name
 
     shown = []
     obs_rv = model.observed_RVs[0].name  # only one observed variable for the moment
@@ -64,7 +66,7 @@ def ppa(idata, model, summary="octiles", init=None):
     sample_size = pp_samples.shape[0]
     pp_summary, kdt = compute_summaries(pp_samples, summary)
     pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, init)
-    fig, axes = plot_samples(pp_samples, pp_samples_idxs)
+    fig, axes = plot_samples(pp_samples)
 
     clicked = []
     selected = []
@@ -75,9 +77,31 @@ def ppa(idata, model, summary="octiles", init=None):
     with output:
         button_carry_on = widgets.Button(description="carry on")
         button_return_prior = widgets.Button(description="return prior")
+        radio_buttons_kind = widgets.RadioButtons(
+            options=["pdf", "hist", "ecdf"],
+            value="pdf",
+            description="",
+            disabled=False,
+        )
+
+        check_button_sharex = widgets.Checkbox(
+            value=True, description="sharex", disabled=False, indent=False
+        )
 
         def carry_on_(_):
-            carry_on(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt)
+            carry_on(
+                fig,
+                axes,
+                radio_buttons_kind.value,
+                check_button_sharex.value,
+                clicked,
+                pp_samples,
+                pp_summary,
+                choices,
+                selected,
+                shown,
+                kdt,
+            )
 
         button_carry_on.on_click(carry_on_)
 
@@ -85,6 +109,13 @@ def ppa(idata, model, summary="octiles", init=None):
             on_return_prior(fig, selected, model, sample_size)
 
         button_return_prior.on_click(on_return_prior_)
+
+        def kind_(_):
+            plot_samples(pp_samples, radio_buttons_kind.value, check_button_sharex.value, fig)
+
+        radio_buttons_kind.observe(kind_, names=["value"])
+
+        check_button_sharex.observe(kind_, names=["value"])
 
         def click(event):
             if event.inaxes not in clicked:
@@ -124,10 +155,16 @@ def ppa(idata, model, summary="octiles", init=None):
 
     controls = widgets.VBox([button_carry_on, button_return_prior])
 
-    display(widgets.HBox([controls]))  # pylint:disable=undefined-variable
+    display(  # pylint:disable=undefined-variable
+        widgets.HBox([controls, radio_buttons_kind, check_button_sharex])
+    )
 
 
-def carry_on(fig, axes, clicked, pp_samples, pp_summary, choices, selected, shown, kdt):
+def carry_on(
+    fig, axes, kind, sharex, clicked, pp_samples, pp_summary, choices, selected, shown, kdt
+):
+    global pp_samples_idxs  # pylint:disable=invalid-name
+
     choices.extend([int(ax.get_title()) for ax in clicked])
     selected.extend(choices)
 
@@ -142,8 +179,7 @@ def carry_on(fig, axes, clicked, pp_samples, pp_summary, choices, selected, show
     pp_samples_idxs, shown = keep_sampling(pp_summary, choices, shown, kdt)
     if not pp_samples_idxs:
         pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, None)
-    fig, _ = plot_samples(pp_samples, pp_samples_idxs, fig)
-    fig.canvas.draw()
+    fig, _ = plot_samples(pp_samples, kind, sharex, fig)
 
 
 def compute_summaries(pp_samples, summary):
@@ -244,11 +280,11 @@ def keep_sampling(pp_summary, choices, shown, kdt):
         return [], shown
 
 
-def plot_samples(pp_samples, pp_samples_idxs, fig=None):
+def plot_samples(pp_samples, kind="pdf", sharex=True, fig=None):
     row_colum = int(np.ceil(len(pp_samples_idxs) ** 0.5))
 
     if fig is None:
-        fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6), sharex=True)
+        fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6))
     else:
         axes = np.array(fig.axes)
 
@@ -257,16 +293,43 @@ def plot_samples(pp_samples, pp_samples_idxs, fig=None):
     except AttributeError:
         axes = [axes]
 
+    x_lims = [np.inf, -np.inf]
+
     for ax, idx in zip(axes, pp_samples_idxs):
+        ax.clear()
         ax.axvline(0, ls="--", color="0.5")
+        ax.relim()
 
         sample = pp_samples[idx]
-        az.plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
+
+        if sharex:
+            min_ = sample.min()
+            max_ = sample.max()
+            if min_ < x_lims[0]:
+                x_lims[0] = min_
+            if max_ > x_lims[1]:
+                x_lims[1] = max_
+
+        if kind == "pdf":
+            az.plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
+        elif kind == "hist":
+            bins, *_ = ax.hist(
+                sample, color="C0", bins="auto", alpha=0.5, density=True
+            )  # pylint:disable=no-member
+            ax.set_ylim(-bins.max() * 0.05, None)
+
+        elif kind == "ecdf":
+            az.plot_ecdf(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
 
         plot_pointinterval(sample, ax=ax)
         ax.set_title(idx)
         ax.set_yticks([])
 
+    if sharex:
+        for ax in axes:
+            ax.set_xlim(np.floor(x_lims[0]), np.ceil(x_lims[1]))
+
+    fig.canvas.draw()
     return fig, axes
 
 
