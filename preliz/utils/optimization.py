@@ -51,12 +51,19 @@ def optimize_quartile(dist, x_vals):
         return loss
 
     init_vals = dist.params
-    if dist.name == "student":
+    bounds = dist.params_support
+    if dist.name in ["halfstudent", "student"]:
         init_vals = init_vals[1:]
+        bounds = bounds[1:]
     if dist.name == "skewnormal":
         init_vals = init_vals[:-1]
+        bounds = bounds[:-1]
+    if dist.name in ["betascaled", "truncatednormal"]:
+        init_vals = init_vals[:-2]
+        bounds = bounds[:-2]
+    bounds = list(zip(*bounds))
 
-    opt = least_squares(func, x0=init_vals, args=(dist, x_vals))
+    opt = least_squares(func, x0=init_vals, args=(dist, x_vals), bounds=bounds)
     dist._update(*opt["x"])
 
     return opt
