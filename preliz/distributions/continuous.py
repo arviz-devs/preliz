@@ -490,7 +490,7 @@ class Exponential(Continuous):
         from preliz import Exponential
         az.style.use('arviz-white')
         for lam in [0.5,  2.]:
-            Exponential(lam).plot_pdf()
+            Exponential(lam).plot_pdf(support=(0,5))
 
 
     ========  ============================
@@ -809,7 +809,7 @@ class HalfNormal(Continuous):
         from preliz import HalfNormal
         az.style.use('arviz-white')
         for sigma in [0.4,  2.]:
-            HalfNormal(sigma).plot_pdf()
+            HalfNormal(sigma).plot_pdf(support=(0,5))
 
     ========  ==========================================
     Support   :math:`x \in [0, \infty)`
@@ -1202,7 +1202,7 @@ class Laplace(Continuous):
         mus = [0., 0., 0., -5.]
         bs = [1., 2., 4., 4.]
         for mu, b in zip(mus, bs):
-            Laplace(mu, b).plot_pdf()
+            Laplace(mu, b).plot_pdf(support=(-10,10))
 
     ========  ========================
     Support   :math:`x \in \mathbb{R}`
@@ -1349,7 +1349,7 @@ class LogNormal(Continuous):
         mus = [ 0., 0.]
         sigmas = [.5, 1.]
         for mu, sigma in zip(mus, sigmas):
-            LogNormal(mu, sigma).plot_pdf()
+            LogNormal(mu, sigma).plot_pdf(support=(0,5))
 
     ========  =========================================================================
     Support   :math:`x \in [0, \infty)`
@@ -1783,7 +1783,7 @@ class Student(Continuous):
         mus = [0., 0.,  -4.]
         sigmas = [1., 1., 2.]
         for nu, mu, sigma in zip(nus, mus, sigmas):
-            Student(nu, mu, sigma).plot_pdf()
+            Student(nu, mu, sigma).plot_pdf(support=(-10,6))
 
     ========  ========================
     Support   :math:`x \in \mathbb{R}`
@@ -1896,7 +1896,7 @@ class TruncatedNormal(Continuous):
         lowers = [-3, -5, -5]
         uppers = [7, 5, 4]
         for mu, sigma, lower, upper in zip(mus, sigmas,lowers,uppers):
-            TruncatedNormal(mu, sigma, lower, upper).plot_pdf()
+            TruncatedNormal(mu, sigma, lower, upper).plot_pdf(support=(-10,10))
 
     ========  ==========================================
     Support   :math:`x \in [a, b]`
@@ -2128,11 +2128,11 @@ class Wald(Continuous):
 
         import arviz as az
         from preliz import Wald
-        plt.style.use('arviz-white')
+        az.style.use('arviz-white')
         mus = [1., 1.]
         lams = [1., 3.]
         for mu, lam in zip(mus, lams):
-            Wald(mu, lam).plot_pdf()
+            Wald(mu, lam).plot_pdf(support=(0,4))
 
     ========  =============================
     Support   :math:`x \in (0, \infty)`
@@ -2198,11 +2198,11 @@ class Weibull(Continuous):
 
         import arviz as az
         from preliz import Weibull
-        plt.style.use('arviz-white')
+        az.style.use('arviz-white')
         alphas = [1., 2, 5.]
         betas = [1., 1., 2.]
         for a, b in zip(alphas, betas):
-            Weibull(a, b).plot_pdf()
+            Weibull(a, b).plot_pdf(support=(0,5))
 
     ========  ====================================================
     Support   :math:`x \in [0, \infty)`

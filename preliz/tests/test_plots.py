@@ -7,8 +7,8 @@ import preliz as pz
 
 
 @pytest.fixture(scope="function")
-def a_dist():
-    return pz.Beta(2, 6)
+def two_dist():
+    return pz.Beta(2, 6), pz.Poisson(4.5)
 
 
 @pytest.mark.parametrize(
@@ -24,8 +24,9 @@ def a_dist():
         {"ax": plt.subplots()[1]},
     ],
 )
-def test_plot_pdf_cdf_ppf(a_dist, kwargs):
-    a_dist.plot_pdf(**kwargs)
-    a_dist.plot_cdf(**kwargs)
-    kwargs.pop("support", None)
-    a_dist.plot_ppf(**kwargs)
+def test_continuous_plot_pdf_cdf_ppf(two_dist, kwargs):
+    for a_dist in two_dist:
+        a_dist.plot_pdf(**kwargs)
+        a_dist.plot_cdf(**kwargs)
+        kwargs.pop("support", None)
+        a_dist.plot_ppf(**kwargs)

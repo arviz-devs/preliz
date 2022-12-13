@@ -191,9 +191,9 @@ class Distribution:
             lower_ep, upper_ep = self.support
 
             if not np.isfinite(lower_ep) or support == "restricted":
-                lower_ep = self.rv_frozen.ppf(0.0001)
+                lower_ep = self.ppf(0.0001)
             if not np.isfinite(upper_ep) or support == "restricted":
-                upper_ep = self.rv_frozen.ppf(0.9999)
+                upper_ep = self.ppf(0.9999)
 
         return lower_ep, upper_ep
 
