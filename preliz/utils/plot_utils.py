@@ -66,12 +66,12 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
 
     x = dist.xvals(support)
     if dist.kind == "continuous":
-        density = dist.rv_frozen.pdf(x)
+        density = dist.pdf(x)
         ax.plot(x, density, label=label, color=color)
         ax.get_ylim()
         ax.set_yticks([])
     else:
-        mass = dist.rv_frozen.pmf(x)
+        mass = dist.pdf(x)
         eps = np.clip(dist._finite_endpoints(support), *dist.support)
         x_c = np.linspace(*eps, 1000)
 
@@ -111,7 +111,7 @@ def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, 
 
     eps = dist._finite_endpoints(support)
     x = np.linspace(*eps, 1000)
-    cdf = dist.rv_frozen.cdf(x)
+    cdf = dist.cdf(x)
     ax.plot(x, cdf, label=label, color=color)
 
     if pointinterval:
@@ -139,7 +139,7 @@ def plot_ppf(dist, moments, pointinterval, quantiles, legend, figsize, ax):
         label = None
 
     x = np.linspace(0, 1, 1000)
-    ax.plot(x, dist.rv_frozen.ppf(x), label=label, color=color)
+    ax.plot(x, dist.ppf(x), label=label, color=color)
 
     if pointinterval:
         plot_pointinterval(dist.rv_frozen, quantiles=quantiles, rotated=True, ax=ax)
