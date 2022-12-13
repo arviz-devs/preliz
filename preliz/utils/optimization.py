@@ -31,7 +31,7 @@ def optimize_max_ent(dist, lower, upper, mass):
     if dist.name in ["halfstudent", "student"]:
         init_vals = init_vals[1:]
         bounds = bounds[1:]
-    if dist.name == "skewnormal":
+    if dist.name in ["skewnormal", "exgaussian"]:
         init_vals = init_vals[:-1]
         bounds = bounds[:-1]
     if dist.name in ["betascaled", "truncatednormal"]:
