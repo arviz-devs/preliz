@@ -385,6 +385,95 @@ class ChiSquared(Continuous):
         self._update(nu)
 
 
+class ExGaussian(Continuous):
+    r"""
+    Exponentially modified Gaussian (EMG) Distribution
+
+    Results from the convolution of a normal distribution with an exponential
+    distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+        f(x \mid \mu, \sigma, \tau) =
+            \frac{1}{\nu}\;
+            \exp\left\{\frac{\mu-x}{\nu}+\frac{\sigma^2}{2\nu^2}\right\}
+            \Phi\left(\frac{x-\mu}{\sigma}-\frac{\sigma}{\nu}\right)
+
+    where :math:`\Phi` is the cumulative distribution function of the
+    standard normal distribution.
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import ExGaussian
+        az.style.use('arviz-white')
+        mus = [0., 0., -3.]
+        sigmas = [1., 3., 1.]
+        nus = [1., 1., 4.]
+        for mu, sigma, nu in zip(mus, sigmas, nus):
+            ExGaussian(mu, sigma, nu).plot_pdf(support=(-6,9))
+
+    ========  ========================
+    Support   :math:`x \in \mathbb{R}`
+    Mean      :math:`\mu + \nu`
+    Variance  :math:`\sigma^2 + \nu^2`
+    ========  ========================
+
+    Parameters
+    ----------
+    mu : float
+        Mean of the normal distribution.
+    sigma : float
+        Standard deviation of the normal distribution (sigma > 0).
+    nu : float
+        Mean of the exponential distribution (nu > 0).
+    """
+
+    def __init__(self, mu=None, sigma=None, nu=None):
+        super().__init__()
+        self.mu = mu
+        self.sigma = sigma
+        self.nu = nu
+        if self.nu is None:
+            self.nu = 1
+
+        self.name = "exgaussian"
+        self.params = (self.mu, self.sigma, self.nu)
+        self.param_names = ("mu", "sigma", "nu")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (eps, np.inf))
+        self.dist = stats.exponnorm
+        self.support = (-np.inf, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if all(self.params):
+            frozen = self.dist(K=self.nu / self.sigma, loc=self.mu, scale=self.sigma)
+        return frozen
+
+    def _update(self, mu, sigma, nu=None):
+        if nu is not None:
+            self.nu = nu
+
+        self.mu = mu
+        self.sigma = sigma
+        self.params = (self.mu, self.sigma, self.nu)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        nu = self.nu
+        mu = mean - nu
+        sigma = (sigma**2 - nu**2) ** 0.5
+        self._update(mu, sigma, nu)
+
+    def _fit_mle(self, sample, **kwargs):
+        K, mu, sigma = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
+        self._update(mu, sigma, K * sigma)
+
+
 class Exponential(Continuous):
     r"""
     Exponential Distribution
