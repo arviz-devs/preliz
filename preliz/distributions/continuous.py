@@ -437,9 +437,6 @@ class ExGaussian(Continuous):
         self.mu = mu
         self.sigma = sigma
         self.nu = nu
-        if self.nu is None:
-            self.nu = 1
-
         self.name = "exgaussian"
         self.params = (self.mu, self.sigma, self.nu)
         self.param_names = ("mu", "sigma", "nu")
@@ -450,24 +447,20 @@ class ExGaussian(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all(self.params):
+        if self.nu is not None and self.sigma is not None:
             frozen = self.dist(K=self.nu / self.sigma, loc=self.mu, scale=self.sigma)
         return frozen
 
-    def _update(self, mu, sigma, nu=None):
-        if nu is not None:
-            self.nu = nu
-
+    def _update(self, mu, sigma, nu):
+        self.nu = nu
         self.mu = mu
         self.sigma = sigma
         self.params = (self.mu, self.sigma, self.nu)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        nu = self.nu
-        mu = mean - nu
-        sigma = (sigma**2 - nu**2) ** 0.5
-        self._update(mu, sigma, nu)
+        # Just assume this is a approximately Gaussian
+        self._update(mean, sigma, 1e-6)
 
     def _fit_mle(self, sample, **kwargs):
         K, mu, sigma = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
