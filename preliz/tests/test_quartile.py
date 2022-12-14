@@ -1,3 +1,4 @@
+import sys
 import pytest
 
 from numpy.testing import assert_allclose
@@ -51,7 +52,16 @@ from preliz.distributions import (
         (Moyal(), 0.5, 1, 2, (0.620, 0.567)),
         (Normal(), -1, 0, 1, (0, 1.482)),
         (Pareto(), 0.5, 1, 4, (0.541, 0.289)),
-        (Student(), -1, 0, 1, (84576.43, 0, 1.482)),
+        pytest.param(
+            Student(),
+            -1,
+            0,
+            1,
+            (84576.43, 0, 1.482),
+            marks=pytest.mark.skipif(
+                sys.version_info >= (3, 8), reason="third party implementations details"
+            ),
+        ),
         (Student(nu=4), -1, 0, 1, (0, 1.350)),
         (TruncatedNormal(), -1, 0, 1, (0, 1.482)),
         (Uniform(), -1, 0, 1, (-2, 2)),
