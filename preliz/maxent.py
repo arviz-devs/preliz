@@ -1,7 +1,7 @@
 import logging
 
 from .distributions import Normal
-from .utils.optimization import relative_error, optimize_max_ent
+from .utils.optimization import relative_error, optimize_max_ent, get_fixed_params
 
 _log = logging.getLogger("preliz")
 
@@ -62,6 +62,9 @@ def maxent(
                 distribution.name.capitalize(),
             )
 
+    # Find which parameters has been fixed
+    none_idx, fixed = get_fixed_params(distribution)
+
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
     # from intervals and mass and then use those values for moment matching
@@ -69,7 +72,7 @@ def maxent(
         mean=(lower + upper) / 2, sigma=((upper - lower) / 4) / mass
     )
 
-    opt = optimize_max_ent(distribution, lower, upper, mass)
+    opt = optimize_max_ent(distribution, lower, upper, mass, none_idx, fixed)
 
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)
 

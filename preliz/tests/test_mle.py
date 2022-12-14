@@ -4,58 +4,89 @@ from numpy.testing import assert_allclose
 import preliz as pz
 
 
+from preliz.distributions import (
+    Beta,
+    BetaScaled,
+    Cauchy,
+    ChiSquared,
+    Exponential,
+    Gamma,
+    Gumbel,
+    HalfCauchy,
+    HalfNormal,
+    HalfStudent,
+    InverseGamma,
+    Laplace,
+    Logistic,
+    LogNormal,
+    Moyal,
+    Normal,
+    Pareto,
+    SkewNormal,
+    Student,
+    TruncatedNormal,
+    Uniform,
+    VonMises,
+    Wald,
+    Weibull,
+    Binomial,
+    DiscreteUniform,
+    NegativeBinomial,
+    Poisson,
+)
+
+
 @pytest.mark.parametrize(
     "distribution, params",
     [
-        (pz.Beta, (2, 5)),
-        (pz.BetaScaled, (2, 5, -1, 4)),
-        (pz.Cauchy, (0, 1)),
-        (pz.ChiSquared, (1,)),
-        (pz.Exponential, (5,)),
-        (pz.Gamma, (2, 5)),
-        (pz.Gumbel, (0, 2)),
-        (pz.HalfCauchy, (1,)),
-        (pz.HalfNormal, (1,)),
-        (pz.HalfStudent, (3, 1)),
-        (pz.HalfStudent, (1000000, 1)),
-        (pz.HalfNormal, (2,)),
-        (pz.InverseGamma, (3, 5)),
-        (pz.Laplace, (0, 2)),
-        (pz.Logistic, (0, 1)),
-        (pz.LogNormal, (0, 1)),
-        (pz.Moyal, (0, 2)),
-        (pz.Normal, (0, 1)),
-        (pz.Pareto, (5, 1)),
-        (pz.SkewNormal, (0, 1, 6)),
-        (pz.Student, (4, 0, 1)),
-        (pz.TruncatedNormal, (0, 1, -1, 1)),
-        (pz.Uniform, (2, 5)),
-        (pz.VonMises, (1, 2)),
-        (pz.Wald, (2, 1)),
-        (pz.Weibull, (2, 1)),
-        (pz.Binomial, (5, 0.5)),
-        (pz.DiscreteUniform, (-2, 2)),
-        (pz.NegativeBinomial, (10, 0.5)),
-        (pz.Poisson, (4.2,)),
+        (Beta, (2, 5)),
+        (BetaScaled, (2, 5, -1, 4)),
+        (Cauchy, (0, 1)),
+        (ChiSquared, (1,)),
+        (Exponential, (5,)),
+        (Gamma, (2, 5)),
+        (Gumbel, (0, 2)),
+        (HalfCauchy, (1,)),
+        (HalfNormal, (1,)),
+        (HalfStudent, (3, 1)),
+        (HalfNormal, (2,)),
+        (InverseGamma, (3, 5)),
+        (Laplace, (0, 2)),
+        (Logistic, (0, 1)),
+        (LogNormal, (0, 1)),
+        (Moyal, (0, 2)),
+        (Normal, (0, 1)),
+        (Pareto, (5, 1)),
+        (SkewNormal, (0, 1, 6)),
+        (Student, (4, 0, 1)),
+        (TruncatedNormal, (0, 1, -1, 1)),
+        (Uniform, (2, 5)),
+        (VonMises, (1, 2)),
+        (Wald, (2, 1)),
+        (Weibull, (2, 1)),
+        (Binomial, (5, 0.5)),
+        (DiscreteUniform, (-2, 2)),
+        (NegativeBinomial, (10, 0.5)),
+        (Poisson, (4.2,)),
     ],
 )
 def test_auto_recover(distribution, params):
     dist = distribution(*params)
     sample = dist.rvs(10000)
-    pz.mle([dist], sample)
+    pz.mle([distribution()], sample)
     assert_allclose(dist.params, params, atol=1)
 
 
 def test_recover_right():
-    dists = [pz.Normal(), pz.Gamma(), pz.Poisson()]
-    sample = pz.Normal(0, 1).rvs(10000)
+    dists = [Normal(), Gamma(), Poisson()]
+    sample = Normal(0, 1).rvs(10000)
     pz.mle(dists, sample)
     assert dists[0].name == "normal"
 
-    sample = pz.Gamma(2, 10).rvs(10000)
+    sample = Gamma(2, 10).rvs(10000)
     pz.mle(dists, sample)
     assert dists[1].name == "gamma"
 
-    sample = pz.Poisson(10).rvs(10000)
+    sample = Poisson(10).rvs(10000)
     pz.mle(dists, sample)
     assert dists[2].name == "poisson"

@@ -131,7 +131,7 @@ class DiscreteUniform(Discrete):
         Upper limit (upper > lower).
     """
 
-    def __init__(self, lower=-np.inf, upper=np.inf):
+    def __init__(self, lower=None, upper=None):
         super().__init__()
         self.lower = lower
         self.upper = upper
@@ -140,9 +140,13 @@ class DiscreteUniform(Discrete):
         self.param_names = ("lower", "upper")
         self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
         self.dist = stats.randint
+        if lower is None:
+            lower = -np.inf
+        if upper is None:
+            upper = -np.inf
         self.support = (lower, upper)
-        self.dist.a = -np.inf
-        self.dist.b = np.inf
+        self.dist.a = lower
+        self.dist.b = upper
         self._update_rv_frozen()
 
     def _get_frozen(self):

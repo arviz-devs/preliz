@@ -1,7 +1,7 @@
 import logging
 
 from .distributions import Normal
-from .utils.optimization import relative_error, optimize_quartile
+from .utils.optimization import relative_error, optimize_quartile, get_fixed_params
 
 _log = logging.getLogger("preliz")
 
@@ -52,12 +52,15 @@ def quartile(
 
     distribution._check_endpoints(q1, q3)
 
+    # Find which parameters has been fixed
+    none_idx, fixed = get_fixed_params(distribution)
+
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
     # from the quartiles and then use those values for moment matching
     distribution._fit_moments(mean=q2, sigma=(q3 - q1) * 1.5)  # pylint:disable=protected-access
 
-    opt = optimize_quartile(distribution, (q1, q2, q3))
+    opt = optimize_quartile(distribution, (q1, q2, q3), none_idx, fixed)
 
     r_error, computed_mass = relative_error(distribution, q1, q3, 0.5)
 
