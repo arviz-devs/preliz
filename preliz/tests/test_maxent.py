@@ -25,6 +25,7 @@ from preliz.distributions import (
     Pareto,
     SkewNormal,
     Student,
+    Triangular,
     TruncatedNormal,
     Uniform,
     VonMises,
@@ -64,6 +65,15 @@ from preliz.distributions import (
         (SkewNormal(mu=-1), "skewnormal", -2, 10, 0.9, (-np.inf, np.inf), (6.2924, 4.905)),
         (Student(), "student", -1, 1, 0.683, (-np.inf, np.inf), (99.999, 0, 0.994)),
         (Student(nu=7), "student", -1, 1, 0.683, (-np.inf, np.inf), (0, 0.928)),
+        (
+            Triangular(),
+            "triangular",
+            0,
+            4,
+            0.8,
+            (-1.6180339692233918, 5.618034008063666),
+            (-1.6180, 1.9999, 5.6180),
+        ),
         (TruncatedNormal(), "truncatednormal", -1, 1, 0.683, (-np.inf, np.inf), (0, 1)),
         (
             TruncatedNormal(lower=-3, upper=2),

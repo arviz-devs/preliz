@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=invalid-name
 """
 Continuous probability distributions.
 """
@@ -463,7 +464,7 @@ class ExGaussian(Continuous):
         self._update(mean, sigma, 1e-6)
 
     def _fit_mle(self, sample, **kwargs):
-        K, mu, sigma = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
+        K, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, K * sigma)
 
 
@@ -1287,7 +1288,7 @@ class Logistic(Continuous):
     def __init__(self, mu=None, s=None):
         super().__init__()
         self.mu = mu
-        self.s = s  # pylint: disable=invalid-name
+        self.s = s
         self.name = "logistic"
         self.params = (self.mu, self.s)
         self.param_names = ("mu", "s")
@@ -1302,7 +1303,7 @@ class Logistic(Continuous):
             frozen = self.dist(loc=self.mu, scale=self.s)
         return frozen
 
-    def _update(self, mu, s):  # pylint: disable=invalid-name
+    def _update(self, mu, s):
         self.mu = mu
         self.s = s
         self.params = (self.mu, self.s)
@@ -1310,11 +1311,11 @@ class Logistic(Continuous):
 
     def _fit_moments(self, mean, sigma):
         mu = mean
-        s = (3 * sigma**2 / np.pi**2) ** 0.5  # pylint: disable=invalid-name
+        s = (3 * sigma**2 / np.pi**2) ** 0.5
         self._update(mu, s)
 
     def _fit_mle(self, sample, **kwargs):
-        mu, s = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
+        mu, s = self.dist.fit(sample, **kwargs)
         self._update(mu, s)
 
 
@@ -1609,7 +1610,7 @@ class Pareto(Continuous):
     def __init__(self, alpha=None, m=None):
         super().__init__()
         self.alpha = alpha
-        self.m = m  # pylint: disable=invalid-name
+        self.m = m
         self.name = "pareto"
         self.params = (self.alpha, self.m)
         self.param_names = ("alpha", "m")
@@ -1624,7 +1625,7 @@ class Pareto(Continuous):
             frozen = self.dist(self.alpha, scale=self.m)
         return frozen
 
-    def _update(self, alpha, m):  # pylint: disable=invalid-name
+    def _update(self, alpha, m):
         self.alpha = alpha
         self.m = m
         self.params = (self.alpha, self.m)
@@ -1632,11 +1633,11 @@ class Pareto(Continuous):
 
     def _fit_moments(self, mean, sigma):
         alpha = 1 + (1 + (mean / sigma) ** 2) ** (1 / 2)
-        m = (alpha - 1) * mean / alpha  # pylint: disable=invalid-name
+        m = (alpha - 1) * mean / alpha
         self._update(alpha, m)
 
     def _fit_mle(self, sample, **kwargs):
-        alpha, _, m = self.dist.fit(sample, **kwargs)  # pylint: disable=invalid-name
+        alpha, _, m = self.dist.fit(sample, **kwargs)
         self._update(alpha, m)
 
 
@@ -1866,6 +1867,95 @@ class Student(Continuous):
     def _fit_mle(self, sample, **kwargs):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(nu, mu, sigma)
+
+
+class Triangular(Continuous):
+    r"""
+    Triangular distribution
+
+    The pdf of this distribution is
+
+    .. math::
+
+       \begin{cases}
+         0 & \text{for } x < a, \\
+         \frac{2(x-a)}{(b-a)(c-a)} & \text{for } a \le x < c, \\[4pt]
+         \frac{2}{b-a}             & \text{for } x = c, \\[4pt]
+         \frac{2(b-x)}{(b-a)(b-c)} & \text{for } c < x \le b, \\[4pt]
+         0 & \text{for } b < x.
+        \end{cases}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Triangular
+        az.style.use('arviz-white')
+        lowers = [0., -1, 2]
+        cs = [2., 0., 6.5]
+        uppers = [4., 1, 8]
+        for lower, c, upper in zip(lowers, cs, uppers):
+            scale = upper - lower
+            c_ = (c - lower) / scale
+            Triangular(lower, c, upper).plot_pdf()
+
+
+    ========  ============================================================================
+    Support   :math:`x \in [lower, upper]`
+    Mean      :math:`\dfrac{lower + upper + c}{3}`
+    Variance  :math:`\dfrac{upper^2 + lower^2 +c^2 - lower*upper - lower*c - upper*c}{18}`
+    ========  ============================================================================
+
+    Parameters
+    ----------
+    lower : float
+        Lower limit.
+    c : float
+        Mode.
+    upper : float
+        Upper limit.
+    """
+
+    def __init__(self, lower=None, c=None, upper=None):
+        super().__init__()
+        self.lower = lower
+        self.c = c
+        self.upper = upper
+        self.name = "triangular"
+        self.params = (self.lower, self.c, self.upper)
+        self.param_names = ("lower", "c", "upper")
+        self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
+        self.dist = stats.triang
+        self.support = (-np.inf, np.inf)
+        self._update_rv_frozen()
+
+    def _get_frozen(self):
+        frozen = None
+        if any(self.params):
+            scale = self.upper - self.lower
+            c_ = (self.c - self.lower) / scale
+            frozen = self.dist(c=c_, loc=self.lower, scale=scale)
+        return frozen
+
+    def _update(self, lower, c, upper):
+        self.lower = lower
+        self.c = c
+        self.upper = upper
+        self.params = (self.lower, self.c, self.upper)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        # Assume symmetry
+        lower = mean - 6**0.5 * sigma
+        upper = mean + 6**0.5 * sigma
+        c = mean
+        self._update(lower, c, upper)
+
+    def _fit_mle(self, sample, **kwargs):
+        c_, lower, scale = self.dist.fit(sample, **kwargs)
+        upper = scale + lower
+        c = c_ * scale + lower
+        self._update(lower, c, upper)
 
 
 class TruncatedNormal(Continuous):
