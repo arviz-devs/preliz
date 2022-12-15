@@ -51,7 +51,9 @@ def quartile(
     .. plot::
         :context: close-figs
 
+        >>> import arviz as az
         >>> import preliz as pz
+        >>> az.style.use('arviz-white')
         >>> pz.quartile(pz.Gamma(), 3, 6, 8)
 
     Calculate the HalfStudent T distribution with quartiles 2, 9 and 12
@@ -60,7 +62,9 @@ def quartile(
     .. plot::
         :context: close-figs
 
+        >>> import arviz as az
         >>> import preliz as pz
+        >>> az.style.use('arviz-white')
         >>> pz.quartile(pz.HalfStudent(nu=7), 2, 9, 12)
 
     """

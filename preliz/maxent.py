@@ -52,7 +52,9 @@ def maxent(
     .. plot::
         :context: close-figs
 
+        >>> import arviz as az
         >>> import preliz as pz
+        >>> az.style.use('arviz-white')
         >>> pz.maxent(pz.Gamma(), 1, 8, 0.9)
 
     Calculate the maxent HalfStudent T distribution with 90 % of the mass between 0 and 12
@@ -61,7 +63,9 @@ def maxent(
     .. plot::
         :context: close-figs
 
+        >>> import arviz as az
         >>> import preliz as pz
+        >>> az.style.use('arviz-white')
         >>> pz.maxent(pz.HalfStudent(nu=4), 0, 12, 0.9)
 
     """
