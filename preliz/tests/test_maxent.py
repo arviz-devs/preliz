@@ -71,7 +71,7 @@ from preliz.distributions import (
             0,
             4,
             0.8,
-            (-1.6180339692233918, 5.618034008063666),
+            (-1.618, 5.618),
             (-1.6180, 1.9999, 5.6180),
         ),
         (TruncatedNormal(), "truncatednormal", -1, 1, 0.683, (-np.inf, np.inf), (0, 1)),
