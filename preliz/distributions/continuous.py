@@ -1899,7 +1899,6 @@ class Triangular(Continuous):
             c_ = (c - lower) / scale
             Triangular(lower, c, upper).plot_pdf()
 
-
     ========  ============================================================================
     Support   :math:`x \in [lower, upper]`
     Mean      :math:`\dfrac{lower + upper + c}{3}`
