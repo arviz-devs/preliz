@@ -42,8 +42,7 @@ from preliz.distributions import (
         (Gamma, (1, 0.5)),
         (Gumbel, (1, 2)),
         (HalfNormal, (1,)),
-        (HalfStudent, (3, 1)),
-        (HalfStudent, (1000000, 1)),
+        (HalfStudent, (100, 1)),
         (InverseGamma, (3, 1)),
         (Laplace, (0, 1)),
         (Logistic, (1, 2)),
@@ -52,8 +51,7 @@ from preliz.distributions import (
         (Exponential, (0.5,)),
         (Pareto, (5, 1)),
         (SkewNormal, (0, 1, 0)),
-        (Student, (3, 0, 1)),
-        (Student, (1000000, 0, 1)),
+        (Student, (100, 0, 1)),
         (TruncatedNormal, (0, 1, -np.inf, np.inf)),
         (Uniform, (0, 1)),
         (VonMises, (0, 1000)),
@@ -68,15 +66,12 @@ from preliz.distributions import (
 )
 def test_moments(distribution, params):
     dist = distribution(*params)
-    if "student" in dist.name:
-        dist_ = distribution(nu=params[0])
-    else:
-        dist_ = distribution()
+    dist_ = distribution()
 
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
-    if dist.name == "binomial":
+    if dist.name in ["binomial", "student"]:
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
@@ -94,7 +89,7 @@ def test_moments(distribution, params):
         (Gumbel, (0, 1)),
         (HalfCauchy, (1,)),
         (HalfNormal, (1,)),
-        (HalfStudent, (3, 1)),
+        (HalfStudent, (10, 1)),
         (InverseGamma, (3, 0.5)),
         (Laplace, (0, 1)),
         (Logistic, (0, 1)),

@@ -853,7 +853,7 @@ class HalfStudent(Continuous):
         Scale parameter (lam > 0). Converges to the precision as nu increases.
     """
 
-    def __init__(self, nu=3, sigma=None, lam=None):
+    def __init__(self, nu=None, sigma=None, lam=None):
         super().__init__()
         self.name = "halfstudent"
         self.dist = _HalfStudent
@@ -861,7 +861,7 @@ class HalfStudent(Continuous):
         self.params_support = ((eps, np.inf), (eps, np.inf))
         self.nu, self.sigma, self.param_names = self._parametrization(nu, sigma, lam)
         if self.nu is not None and self.sigma is not None:
-            self._update(self.sigma, self.nu)
+            self._update(self.nu, self.sigma)
 
     def _parametrization(self, nu, sigma, lam):
         if sigma is not None and lam is not None:
@@ -884,9 +884,8 @@ class HalfStudent(Continuous):
             frozen = self.dist(nu=self.nu, sigma=self.sigma)
         return frozen
 
-    def _update(self, sigma, nu=None):
-        if nu is not None:
-            self.nu = nu
+    def _update(self, nu, sigma):
+        self.nu = nu
         self.sigma = sigma
         self.lam = to_precision(sigma)
 
@@ -902,7 +901,9 @@ class HalfStudent(Continuous):
         # if nu is smaller than 2 the variance is not defined,
         # so if that happens we use 2.1 as an approximation
         nu = self.nu
-        if nu <= 2:
+        if nu is None:
+            nu = 100
+        elif nu <= 2:
             nu = 2.1
 
         gamma0 = gammaf((nu + 1) / 2)
@@ -915,14 +916,14 @@ class HalfStudent(Continuous):
         else:
             # we assume a Gaussian for large nu
             sigma = sigma / (1 - 2 / np.pi) ** 0.5
-        self._update(sigma)
+        self._update(nu, sigma)
 
     def _fit_mle(self, sample, **kwargs):
         optimize_ml(self, sample)
 
 
 class _HalfStudent(stats._distn_infrastructure.rv_continuous):
-    def __init__(self, nu=2, sigma=1):
+    def __init__(self, nu=None, sigma=None):
         super().__init__()
         self.nu = nu
         self.sigma = sigma
@@ -1619,8 +1620,6 @@ class SkewNormal(Continuous):
         self.mu, self.sigma, self.alpha, self.param_names = self._parametrization(
             mu, sigma, alpha, tau
         )
-        if self.alpha is None:
-            self.alpha = 0
         if self.mu is not None and self.sigma is not None and self.alpha is not None:
             self._update(self.mu, self.sigma, self.alpha)
 
@@ -1646,12 +1645,10 @@ class SkewNormal(Continuous):
             frozen = self.dist(self.alpha, self.mu, self.sigma)
         return frozen
 
-    def _update(self, mu, sigma, alpha=None):
-        if alpha is not None:
-            self.alpha = alpha
-
+    def _update(self, mu, sigma, alpha):
         self.mu = mu
         self.sigma = sigma
+        self.alpha = alpha
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -1663,8 +1660,8 @@ class SkewNormal(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        # Just assume this is a gaussian
-        self._update(mean, sigma)
+        # Assume gaussian
+        self._update(mean, sigma, 0)
 
     def _fit_mle(self, sample, **kwargs):
         alpha, mu, sigma = self.dist.fit(sample, **kwargs)
@@ -1726,7 +1723,7 @@ class Student(Continuous):
         Scale parameter (lam > 0). Converges to the precision as nu increases.
     """
 
-    def __init__(self, nu=3, mu=None, sigma=None, lam=None):
+    def __init__(self, nu=None, mu=None, sigma=None, lam=None):
         super().__init__()
         self.name = "student"
         self.dist = stats.t
@@ -1734,7 +1731,7 @@ class Student(Continuous):
         self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
         self.nu, self.mu, self.sigma, self.param_names = self._parametrization(nu, mu, sigma, lam)
         if self.nu is not None and self.mu is not None and self.sigma is not None:
-            self._update(self.mu, self.sigma, self.nu)
+            self._update(self.nu, self.mu, self.sigma)
 
     def _parametrization(self, nu, mu, sigma, lam):
         if sigma is not None and lam is not None:
@@ -1757,9 +1754,8 @@ class Student(Continuous):
             frozen = self.dist(self.nu, self.mu, self.sigma)
         return frozen
 
-    def _update(self, mu, sigma, nu=None):
-        if nu is not None:
-            self.nu = nu
+    def _update(self, nu, mu, sigma):
+        self.nu = nu
         self.mu = mu
         self.sigma = sigma
         self.lam = to_precision(sigma)
@@ -1776,14 +1772,18 @@ class Student(Continuous):
         # if nu is smaller than 2 the variance is not defined,
         # so if that happens we use 2.1 as an approximation
         nu = self.nu
-        if nu <= 2:
+        if nu is None:
+            nu = 100
+        elif nu <= 2:
             nu = 2.1
-        sigma = sigma / (nu / (nu - 2)) ** 0.5
-        self._update(mean, sigma)
+        else:
+            sigma = sigma / (nu / (nu - 2)) ** 0.5
+
+        self._update(nu, mean, sigma)
 
     def _fit_mle(self, sample, **kwargs):
         nu, mu, sigma = self.dist.fit(sample, **kwargs)
-        self._update(mu, sigma, nu)
+        self._update(nu, mu, sigma)
 
 
 class TruncatedNormal(Continuous):
@@ -1868,7 +1868,7 @@ class TruncatedNormal(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        # aproximated version
+        # Assume gaussian
         self._update(mean, sigma)
 
     def _fit_mle(self, sample, **kwargs):
@@ -1911,7 +1911,7 @@ class Uniform(Continuous):
         Upper limit (upper > lower).
     """
 
-    def __init__(self, lower=-np.inf, upper=np.inf):
+    def __init__(self, lower=None, upper=None):
         super().__init__()
         self.lower = lower
         self.upper = upper
@@ -1920,9 +1920,13 @@ class Uniform(Continuous):
         self.param_names = ("lower", "upper")
         self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
         self.dist = stats.uniform
+        if lower is None:
+            lower = -np.inf
+        if upper is None:
+            upper = np.inf
         self.support = (lower, upper)
-        self.dist.a = -np.inf
-        self.dist.b = np.inf
+        self.dist.a = lower
+        self.dist.b = upper
         self._update_rv_frozen()
 
     def _get_frozen(self):

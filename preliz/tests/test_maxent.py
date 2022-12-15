@@ -6,6 +6,7 @@ from numpy.testing import assert_allclose
 from preliz import maxent
 from preliz.distributions import (
     Beta,
+    BetaScaled,
     Cauchy,
     ChiSquared,
     Exponential,
@@ -21,6 +22,7 @@ from preliz.distributions import (
     Moyal,
     Normal,
     Pareto,
+    SkewNormal,
     Student,
     TruncatedNormal,
     Uniform,
@@ -34,43 +36,51 @@ from preliz.distributions import (
 
 
 @pytest.mark.parametrize(
-    "distribution, name, lower, upper, mass, nu, support, result",
+    "dist, name, lower, upper, mass, support, result",
     [
-        (Beta, "beta", 0.2, 0.6, 0.9, None, (0, 1), (6.112, 9.101)),
-        (Cauchy, "cauchy", -1, 1, 0.6, None, (-np.inf, np.inf), (0, 0.726)),
-        (ChiSquared, "chisquared", 0, 4, 0.9, 1, (0, np.inf), (1.659)),
-        (Exponential, "exponential", 0, 4, 0.9, None, (0, np.inf), (0.575)),
-        (Gamma, "gamma", 0, 10, 0.7, None, (0, np.inf), (0.868, 0.103)),
-        (Gumbel, "gumbel", 0, 10, 0.9, None, (-np.inf, np.inf), (3.557, 2.598)),
-        (HalfCauchy, "halfcauchy", 0, 10, 0.7, None, (0, np.inf), (5.095)),
-        (HalfNormal, "halfnormal", 0, 10, 0.7, None, (0, np.inf), (9.648)),
-        (HalfStudent, "halfstudent", 0, 10, 0.7, 3, (0, np.inf), (8.001)),
-        (HalfStudent, "halfstudent", 0, 10, 0.7, 10000, (0, np.inf), (9.648)),
-        (InverseGamma, "inversegamma", 0, 1, 0.99, None, (0, np.inf), (8.889, 3.439)),
-        (Laplace, "laplace", -1, 1, 0.9, None, (-np.inf, np.inf), (0, 0.435)),
-        (Logistic, "logistic", -1, 1, 0.5, None, (-np.inf, np.inf), (0, 0.91)),
-        (LogNormal, "lognormal", 1, 4, 0.5, None, (0, np.inf), (1.216, 0.859)),
-        (Moyal, "moyal", 0, 10, 0.9, None, (-np.inf, np.inf), (2.935, 1.6)),
-        (Normal, "normal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
-        (Normal, "normal", 10, 12, 0.99, None, (-np.inf, np.inf), (11, 0.388)),
-        (Pareto, "pareto", 1, 4, 0.9, None, (1, np.inf), (1.660, 1)),
-        (Student, "student", -1, 1, 0.683, 4, (-np.inf, np.inf), (0, 0.875)),
-        (Student, "student", -1, 1, 0.683, 10000, (-np.inf, np.inf), (0, 1)),
-        (TruncatedNormal, "truncatednormal", -1, 1, 0.683, None, (-np.inf, np.inf), (0, 1)),
-        (Uniform, "uniform", -2, 10, 0.9, None, (-np.inf, np.inf), (-2.666, 10.666)),
-        (VonMises, "vonmises", -1, 1, 0.9, None, (-np.inf, np.inf), (0.0, 3.294)),
-        (Wald, "wald", 0, 10, 0.9, None, (0, np.inf), (5.061, 7.937)),
-        (Weibull, "weibull", 0, 10, 0.9, None, (0, np.inf), (1.411, 5.537)),
-        (DiscreteUniform, "discreteuniform", -2, 10, 0.9, None, (-3, 11), (-2, 10)),
-        (NegativeBinomial, "negativebinomial", 0, 15, 0.9, None, (0, np.inf), (7.546, 2.041)),
-        (Poisson, "poisson", 0, 3, 0.7, None, (0, np.inf), (2.763)),
+        (Beta(), "beta", 0.2, 0.6, 0.9, (0, 1), (6.112, 9.101)),
+        (BetaScaled(lower=-2, upper=3), "betascaled", -1, 1, 0.8, (-2, 3), (3.883, 5.560)),
+        (Cauchy(), "cauchy", -1, 1, 0.6, (-np.inf, np.inf), (0, 0.726)),
+        (ChiSquared(), "chisquared", 2, 7, 0.6, (0, np.inf), (4.002)),
+        (Exponential(), "exponential", 0, 4, 0.9, (0, np.inf), (0.575)),
+        (Gamma(), "gamma", 0, 10, 0.7, (0, np.inf), (0.868, 0.103)),
+        (Gumbel(), "gumbel", 0, 10, 0.9, (-np.inf, np.inf), (3.557, 2.598)),
+        (HalfCauchy(), "halfcauchy", 0, 10, 0.7, (0, np.inf), (5.095)),
+        (HalfNormal(), "halfnormal", 0, 10, 0.7, (0, np.inf), (9.648)),
+        (HalfStudent(), "halfstudent", 1, 10, 0.7, (0, np.inf), (99.997, 7.697)),
+        (HalfStudent(nu=7), "halfstudent", 1, 10, 0.7, (0, np.inf), (2.541)),
+        (InverseGamma(), "inversegamma", 0, 1, 0.99, (0, np.inf), (8.889, 3.439)),
+        (Laplace(), "laplace", -1, 1, 0.9, (-np.inf, np.inf), (0, 0.435)),
+        (Logistic(), "logistic", -1, 1, 0.5, (-np.inf, np.inf), (0, 0.91)),
+        (LogNormal(), "lognormal", 1, 4, 0.5, (0, np.inf), (1.216, 0.859)),
+        (Moyal(), "moyal", 0, 10, 0.9, (-np.inf, np.inf), (2.935, 1.6)),
+        (Normal(), "normal", -1, 1, 0.683, (-np.inf, np.inf), (0, 1)),
+        (Normal(), "normal", 10, 12, 0.99, (-np.inf, np.inf), (11, 0.388)),
+        (Pareto(), "pareto", 1, 4, 0.9, (1, np.inf), (1.660, 1)),
+        (SkewNormal(), "skewnormal", -2, 10, 0.9, (-np.inf, np.inf), (3.999, 3.647, 0)),
+        (SkewNormal(mu=-1), "skewnormal", -2, 10, 0.9, (-np.inf, np.inf), (6.2924, 4.905)),
+        (Student(), "student", -1, 1, 0.683, (-np.inf, np.inf), (99.999, 0, 0.994)),
+        (Student(nu=7), "student", -1, 1, 0.683, (-np.inf, np.inf), (0, 0.928)),
+        (TruncatedNormal(), "truncatednormal", -1, 1, 0.683, (-np.inf, np.inf), (0, 1)),
+        (
+            TruncatedNormal(lower=-3, upper=2),
+            "truncatednormal",
+            -1,
+            1,
+            0.683,
+            (-3, 2),
+            (-0.076, 1.031),
+        ),
+        (Uniform(), "uniform", -2, 10, 0.9, (-np.inf, np.inf), (-2.666, 10.666)),
+        (VonMises(), "vonmises", -1, 1, 0.9, (-np.inf, np.inf), (0.0, 3.294)),
+        (Wald(), "wald", 0, 10, 0.9, (0, np.inf), (5.061, 7.937)),
+        (Weibull(), "weibull", 0, 10, 0.9, (0, np.inf), (1.411, 5.537)),
+        (DiscreteUniform(), "discreteuniform", -2, 10, 0.9, (-3, 11), (-2, 10)),
+        (NegativeBinomial(), "negativebinomial", 0, 15, 0.9, (0, np.inf), (7.546, 2.041)),
+        (Poisson(), "poisson", 0, 3, 0.7, (0, np.inf), (2.763)),
     ],
 )
-def test_maxent(distribution, name, lower, upper, mass, nu, support, result):
-    if nu is None:
-        dist = distribution()
-    else:
-        dist = distribution(nu=nu)
+def test_maxent(dist, name, lower, upper, mass, support, result):
     _, opt = maxent(dist, lower, upper, mass)
     rv_frozen = dist.rv_frozen
 

@@ -6,8 +6,9 @@ import numpy as np
 from scipy.optimize import minimize, least_squares
 
 
-def optimize_max_ent(dist, lower, upper, mass):
+def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
     def prob_bound(params, dist, lower, upper, mass):
+        params = get_params(dist, params, none_idx, fixed)
         dist._update(*params)
         if dist.kind == "discrete":
             lower -= 1
@@ -17,6 +18,7 @@ def optimize_max_ent(dist, lower, upper, mass):
         return loss
 
     def entropy_loss(params, dist):
+        params = get_params(dist, params, none_idx, fixed)
         dist._update(*params)
         return -dist.rv_frozen.entropy()
 
@@ -25,46 +27,45 @@ def optimize_max_ent(dist, lower, upper, mass):
         "fun": prob_bound,
         "args": (dist, lower, upper, mass),
     }
-    init_vals = dist.params
-    bounds = dist.params_support
-    if dist.name in ["halfstudent", "student"]:
-        init_vals = init_vals[1:]
-        bounds = bounds[1:]
-    if dist.name == "skewnormal":
-        init_vals = init_vals[:-1]
-        bounds = bounds[:-1]
-    if dist.name in ["betascaled", "truncatednormal"]:
-        init_vals = init_vals[:-2]
-        bounds = bounds[:-2]
+    init_vals = np.array(dist.params)[none_idx]
+    bounds = np.array(dist.params_support)[none_idx]
 
     opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
-    dist._update(*opt["x"])
+    params = get_params(dist, opt["x"], none_idx, fixed)
+    dist._update(*params)
 
     return opt
 
 
-def optimize_quartile(dist, x_vals):
+def get_params(dist, params, none_idx, fixed):
+    params_ = []
+    pdx = 0
+    fdx = 0
+    for idx in range(len(dist.params)):
+        if idx in none_idx:
+            params_.append(params[pdx])
+            pdx += 1
+        else:
+            params_.append(fixed[fdx])
+            fdx += 1
+
+    return params_
+
+
+def optimize_quartile(dist, x_vals, none_idx, fixed):
     def func(params, dist, x_vals):
+        params = get_params(dist, params, none_idx, fixed)
         dist._update(*params)
         loss = dist.cdf(x_vals) - [0.25, 0.5, 0.75]
         return loss
 
-    init_vals = dist.params
-    bounds = dist.params_support
-    if dist.name in ["halfstudent", "student"]:
-        init_vals = init_vals[1:]
-        bounds = bounds[1:]
-    if dist.name == "skewnormal":
-        init_vals = init_vals[:-1]
-        bounds = bounds[:-1]
-    if dist.name in ["betascaled", "truncatednormal"]:
-        init_vals = init_vals[:-2]
-        bounds = bounds[:-2]
+    init_vals = np.array(dist.params)[none_idx]
+    bounds = np.array(dist.params_support)[none_idx]
     bounds = list(zip(*bounds))
 
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals), bounds=bounds)
-    dist._update(*opt["x"])
-
+    params = get_params(dist, opt["x"], none_idx, fixed)
+    dist._update(*params)
     return opt
 
 
@@ -194,3 +195,15 @@ class Loss:
         if loss < self.old_loss:
             self.old_loss = loss
             self.dist = dist
+
+
+def get_fixed_params(distribution):
+    none_idx = []
+    fixed = []
+    for idx, p_n in enumerate(distribution.param_names):
+        value = getattr(distribution, p_n)
+        if value is None:
+            none_idx.append(idx)
+        else:
+            fixed.append(value)
+    return none_idx, fixed
