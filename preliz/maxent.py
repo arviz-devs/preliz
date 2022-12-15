@@ -51,6 +51,7 @@ def maxent(
 
     .. plot::
         :context: close-figs
+        :include-source: true
 
         >>> import arviz as az
         >>> import preliz as pz
@@ -62,6 +63,7 @@ def maxent(
 
     .. plot::
         :context: close-figs
+        :include-source: true
 
         >>> import arviz as az
         >>> import preliz as pz

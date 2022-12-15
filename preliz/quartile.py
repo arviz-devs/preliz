@@ -50,6 +50,7 @@ def quartile(
 
     .. plot::
         :context: close-figs
+        :include-source: true
 
         >>> import arviz as az
         >>> import preliz as pz
@@ -61,6 +62,7 @@ def quartile(
 
     .. plot::
         :context: close-figs
+        :include-source: true
 
         >>> import arviz as az
         >>> import preliz as pz
