@@ -8,6 +8,7 @@ from preliz.distributions import (
     Beta,
     Cauchy,
     ChiSquared,
+    ExGaussian,
     Exponential,
     Gamma,
     Gumbel,
@@ -39,6 +40,8 @@ from preliz.distributions import (
         (Beta(), 0.3, 0.5, 0.7, (1.528, 1.528)),
         (Cauchy(), -1, 0, 1, (0, 1)),
         (ChiSquared(), 2, 4, 5.5, (4.329)),
+        (ExGaussian(), 8, 9, 10, (8.996, 1.482, 0.003)),
+        (ExGaussian(mu=8.5), 8, 9, 10, (1.401, 0.513)),
         (Exponential(), 0.5, 1, 2.5, (0.611)),
         (Gamma(), 0.5, 1, 2.5, (0.894, 0.523)),
         (Gumbel(), 0.5, 1, 2.5, (0.751, 1.265)),
@@ -76,4 +79,4 @@ from preliz.distributions import (
 def test_quartile(distribution, q1, q2, q3, result):
     _, opt = quartile(distribution, q1, q2, q3)
 
-    assert_allclose(opt.x, result, atol=0.001)
+    assert_allclose(opt.x, result, atol=0.01)
