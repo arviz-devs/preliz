@@ -99,7 +99,7 @@ def test_maxent(dist, name, lower, upper, mass, support, result):
 
     assert rv_frozen.name == name
 
-    if dist.name == "pareto":
+    if dist.name in ["pareto", "triangular"]:
         assert pytest.approx(rv_frozen.support(), 0.3) == support
     else:
         assert rv_frozen.support() == support
