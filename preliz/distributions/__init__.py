@@ -22,6 +22,7 @@ all_continuous = [
     Pareto,
     SkewNormal,
     Student,
+    Triangular,
     TruncatedNormal,
     Uniform,
     VonMises,
