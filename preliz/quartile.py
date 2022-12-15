@@ -48,18 +48,21 @@ def quartile(
     --------
     Calculate the Gamma distribution with quartiles 3, 6 and 8:
 
-    .. ipython::
+    .. plot::
+        :context: close-figs
 
-        In [1]: import preliz as pz
-           ...: pz.quartile(pz.Gamma(), 3, 6, 8)
+        >>> import preliz as pz
+        >>> pz.quartile(pz.Gamma(), 3, 6, 8)
 
     Calculate the HalfStudent T distribution with quartiles 2, 9 and 12
     and a value of nu=7:
 
-    .. ipython::
+    .. plot::
+        :context: close-figs
 
-        In [1]: import preliz as pz
-           ...: pz.quartile(pz.HalfStudent(nu=7), 2, 9, 12);
+        >>> import preliz as pz
+        >>> pz.quartile(pz.HalfStudent(nu=7), 2, 9, 12)
+
     """
     if plot_kwargs is None:
         plot_kwargs = {}

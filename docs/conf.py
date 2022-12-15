@@ -50,8 +50,6 @@ extensions = [
     "sphinx_thebe",
     "myst_nb",
     "matplotlib.sphinxext.plot_directive",
-    "IPython.sphinxext.ipython_directive",
-    "IPython.sphinxext.ipython_console_highlighting",
 ]
 
 # -- Extension configuration -------------------------------------------------
