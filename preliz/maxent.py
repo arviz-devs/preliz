@@ -40,6 +40,36 @@ def maxent(
     -------
 
     axes: matplotlib axes
+
+    See Also
+    --------
+    quartile : Find the distribution with the specified quartiles.
+
+    Examples
+    --------
+    Calculate the maxent Gamma distribution with 90 % of the mass between 1 and 8:
+
+    .. plot::
+        :context: close-figs
+        :include-source: true
+
+        >>> import arviz as az
+        >>> import preliz as pz
+        >>> az.style.use('arviz-white')
+        >>> pz.maxent(pz.Gamma(), 1, 8, 0.9)
+
+    Calculate the maxent HalfStudent T distribution with 90 % of the mass between 0 and 12
+    and a value of nu=4:
+
+    .. plot::
+        :context: close-figs
+        :include-source: true
+
+        >>> import arviz as az
+        >>> import preliz as pz
+        >>> az.style.use('arviz-white')
+        >>> pz.maxent(pz.HalfStudent(nu=4), 0, 12, 0.9)
+
     """
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")

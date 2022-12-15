@@ -16,8 +16,7 @@ def quartile(
     ax=None,
 ):
     """
-    Find the maximum entropy distribution with `mass` in the interval defined by the `lower` and
-    `upper` end-points.
+    Find the distribution with the specified quartiles.
 
     Parameters
     ----------
@@ -40,6 +39,36 @@ def quartile(
     -------
 
     axes: matplotlib axes
+
+    See Also
+    --------
+    maxent : Find the maximum entropy distribution with a given mass inside a user defined interval.
+
+    Examples
+    --------
+    Calculate the Gamma distribution with quartiles 3, 6 and 8:
+
+    .. plot::
+        :context: close-figs
+        :include-source: true
+
+        >>> import arviz as az
+        >>> import preliz as pz
+        >>> az.style.use('arviz-white')
+        >>> pz.quartile(pz.Gamma(), 3, 6, 8)
+
+    Calculate the HalfStudent T distribution with quartiles 2, 9 and 12
+    and a value of nu=7:
+
+    .. plot::
+        :context: close-figs
+        :include-source: true
+
+        >>> import arviz as az
+        >>> import preliz as pz
+        >>> az.style.use('arviz-white')
+        >>> pz.quartile(pz.HalfStudent(nu=7), 2, 9, 12)
+
     """
     if plot_kwargs is None:
         plot_kwargs = {}
