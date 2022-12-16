@@ -69,14 +69,16 @@ def optimize_quartile(dist, x_vals, none_idx, fixed):
     return opt
 
 
-def optimize_cdf(dist, x_vals, ecdf, **kwargs):
-    def func(params, dist, x_vals, ecdf, **kwargs):
-        dist._update(*params, **kwargs)
+def optimize_cdf(dist, x_vals, ecdf, none_idx, fixed):
+    def func(params, dist, x_vals, ecdf):
+        params = get_params(dist, params, none_idx, fixed)
+        dist._update(*params)
         loss = dist.cdf(x_vals) - ecdf
         return loss
 
-    init_vals = dist.params[:2]
-    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf), kwargs=kwargs)
+    init_vals = np.array(dist.params)[none_idx]
+
+    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf))
     dist._update(*opt["x"])
     loss = opt["cost"]
     return loss
@@ -135,17 +137,18 @@ def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
     """
     Minimize the difference between the cdf and the ecdf over a grid of values
     defined by x_min and x_max
+
+    Note: This function is intended to be used with pz.roulette
     """
     fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
-        kwargs = {}
         if dist.name == "betascaled":
             update_bounds_beta_scaled(dist, x_min, x_max)
-            kwargs = {"lower": x_min, "upper": x_max}
 
         if dist._check_endpoints(x_min, x_max, raise_error=False):
+            none_idx, fixed = get_fixed_params(dist)
             dist._fit_moments(mean, std)  # pylint:disable=protected-access
-            loss = optimize_cdf(dist, x_vals, ecdf, **kwargs)
+            loss = optimize_cdf(dist, x_vals, ecdf, none_idx, fixed)
 
             fitted.update(loss, dist)
 
