@@ -329,7 +329,7 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def interactive(self, kind="pdf", xlim=None):
+    def interactive(self, kind="pdf", xlim=None, fixed_lim=None):
         """
         Interactive exploration of distributions parameters
 
@@ -337,9 +337,12 @@ class Distribution:
         ----------
         kind : str:
             Type of plot. Available options are `pdf`, `cdf` and `ppf`.
-        xlim : tuple or str
-            Values to set the limits of the x-axis. Defaults to None, the values are computed
-            automatically. Use `auto` for automatic rescaling
+        fixed_lim : tuple or str
+            Values to set the limits of the x-axis and y-axis.
+            Defaults to None, the values are computed automatically.
+            Use `both` for automatic rescaling of x-axis and y-axis. Or pass a tuple
+            of 4 elements the first two fox x-axis, the last two for x-axis. The elements
+            of the tuple can be `None`.
         """
 
         # temporary patch until we migrate all distributions to use
@@ -350,9 +353,15 @@ class Distribution:
             params_value = self.params
 
         args = dict(zip(self.param_names, params_value))
-        if xlim is None:
+
+        if fixed_lim is None:
             self.__init__(**args)
             xlim = self._finite_endpoints("full")
+            xvals = self.xvals("restricted")
+            ylim = (0, np.max(self.pdf(xvals) * 1.5))
+        if isinstance(fixed_lim, tuple):
+            xlim = fixed_lim[:2]
+            ylim = fixed_lim[2:]
 
         sliders = {}
         for name, value, support in zip(self.param_names, params_value, self.params_support):
@@ -378,8 +387,10 @@ class Distribution:
                 ax = self.plot_cdf(legend=False)
             elif kind == "ppf":
                 ax = self.plot_ppf(legend=False)
-            if xlim != "auto":
+            if fixed_lim != "both" and kind != "ppf":
                 ax.set_xlim(*xlim)
+            if fixed_lim != "both" and kind != "cdf":
+                ax.set_ylim(*ylim)
 
         interact(plot, **sliders)
 
