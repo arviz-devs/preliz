@@ -18,7 +18,7 @@ from .distributions.distributions import Distribution
 _log = logging.getLogger("preliz")
 
 
-def ppa(idata, model, summary="octiles", init=None):
+def ppa(idata, model, summary="octiles", references=0, init=None):
     """
     Prior predictive check assistant.
 
@@ -54,6 +54,10 @@ def ppa(idata, model, summary="octiles", init=None):
             )
     except NameError:
         pass
+
+    if isinstance(references, (float, int)):
+        references = [references]
+
     global pp_samples_idxs  # pylint:disable=invalid-name
 
     shown = []
@@ -66,7 +70,7 @@ def ppa(idata, model, summary="octiles", init=None):
     sample_size = pp_samples.shape[0]
     pp_summary, kdt = compute_summaries(pp_samples, summary)
     pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, init)
-    fig, axes = plot_samples(pp_samples)
+    fig, axes = plot_samples(pp_samples, references)
 
     clicked = []
     selected = []
@@ -94,6 +98,7 @@ def ppa(idata, model, summary="octiles", init=None):
                 axes,
                 radio_buttons_kind.value,
                 check_button_sharex.value,
+                references,
                 clicked,
                 pp_samples,
                 pp_summary,
@@ -111,7 +116,9 @@ def ppa(idata, model, summary="octiles", init=None):
         button_return_prior.on_click(on_return_prior_)
 
         def kind_(_):
-            plot_samples(pp_samples, radio_buttons_kind.value, check_button_sharex.value, fig)
+            plot_samples(
+                pp_samples, references, radio_buttons_kind.value, check_button_sharex.value, fig
+            )
 
         radio_buttons_kind.observe(kind_, names=["value"])
 
@@ -161,7 +168,18 @@ def ppa(idata, model, summary="octiles", init=None):
 
 
 def carry_on(
-    fig, axes, kind, sharex, clicked, pp_samples, pp_summary, choices, selected, shown, kdt
+    fig,
+    axes,
+    kind,
+    sharex,
+    references,
+    clicked,
+    pp_samples,
+    pp_summary,
+    choices,
+    selected,
+    shown,
+    kdt,
 ):
     global pp_samples_idxs  # pylint:disable=invalid-name
 
@@ -179,7 +197,7 @@ def carry_on(
     pp_samples_idxs, shown = keep_sampling(pp_summary, choices, shown, kdt)
     if not pp_samples_idxs:
         pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, None)
-    fig, _ = plot_samples(pp_samples, kind, sharex, fig)
+    fig, _ = plot_samples(pp_samples, references, kind, sharex, fig)
 
 
 def compute_summaries(pp_samples, summary):
@@ -280,7 +298,7 @@ def keep_sampling(pp_summary, choices, shown, kdt):
         return [], shown
 
 
-def plot_samples(pp_samples, kind="pdf", sharex=True, fig=None):
+def plot_samples(pp_samples, references, kind="pdf", sharex=True, fig=None):
     row_colum = int(np.ceil(len(pp_samples_idxs) ** 0.5))
 
     if fig is None:
@@ -297,7 +315,8 @@ def plot_samples(pp_samples, kind="pdf", sharex=True, fig=None):
 
     for ax, idx in zip(axes, pp_samples_idxs):
         ax.clear()
-        ax.axvline(0, ls="--", color="0.5")
+        for ref in references:
+            ax.axvline(ref, ls="--", color="0.5")
         ax.relim()
 
         sample = pp_samples[idx]
