@@ -31,10 +31,13 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
         With at least the `prior` and `prior_predictive` groups
     model : PyMC model
         Model associated to ``idata``.
-    summary : str:
+    summary : str
         Summary statistics applied to prior samples in order to define (dis)similarity
         of distributions. Current options are `octiles`, `hexiles`, `quantiles`,
         `sort` (sort data) `octi_sum` (robust estimation of first 4 moments from octiles).
+    references : int, float, list or tuple
+        Value(s) used as reference points representing prior knowledge. For example expected
+        values or values that are considered extreme.
     init : tuple or PreliZ distribtuion
         Initial distribution. The first shown distributions will be selected to be as close
         as possible to `init`. Available options are, a PreliZ distribution or a 2-tuple with
