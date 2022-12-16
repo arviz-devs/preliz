@@ -329,7 +329,7 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def interactive(self, kind="pdf", xlim=None, fixed_lim="both"):
+    def interactive(self, kind="pdf", fixed_lim="both", pointinterval=True, quantiles=None):
         """
         Interactive exploration of distributions parameters
 
@@ -343,6 +343,13 @@ class Distribution:
             Use `"auto"` for automatic rescaling of x-axis and y-axis.
             Or set them manually by passing a tuple of 4 elements,
             the first two fox x-axis, the last two for x-axis. The tuple can have `None`.
+        pointinterval : bool
+            Whether to include a plot of the quantiles. Defaults to False. If True the default is to
+            plot the median and two interquantiles ranges.
+        quantiles : list
+            Values of the five quantiles to use when ``pointinterval=True`` if None (default)
+            the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
+            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         """
 
         # temporary patch until we migrate all distributions to use
@@ -377,16 +384,22 @@ class Distribution:
 
             step = (max_v - min_v) / 100
 
-            sliders[name] = ipyw.FloatSlider(min=min_v, max=max_v, step=step, value=value)
+            sliders[name] = ipyw.FloatSlider(
+                min=min_v,
+                max=max_v,
+                step=step,
+                description=f"{name} ({lower:.0f}, {upper:.0f})",
+                value=value,
+            )
 
         def plot(**args):
             self.__init__(**args)
             if kind == "pdf":
-                ax = self.plot_pdf(legend=False)
+                ax = self.plot_pdf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
             elif kind == "cdf":
-                ax = self.plot_cdf(legend=False)
+                ax = self.plot_cdf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
             elif kind == "ppf":
-                ax = self.plot_ppf(legend=False)
+                ax = self.plot_ppf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
             if fixed_lim != "auto" and kind != "ppf":
                 ax.set_xlim(*xlim)
             if fixed_lim != "auto" and kind != "cdf":
