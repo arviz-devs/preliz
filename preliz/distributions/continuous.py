@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=invalid-name
+# pylint: disable=attribute-defined-outside-init
 """
 Continuous probability distributions.
 """
@@ -87,31 +88,33 @@ class Beta(Continuous):
         self.name = "beta"
         self.dist = stats.beta
         self.support = (0, 1)
-        self.params_support = ((eps, np.inf), (eps, np.inf))
-        self.alpha, self.beta, self.param_names = self._parametrization(
-            alpha, beta, mu, sigma, kappa
-        )
-        if self.alpha is not None and self.beta is not None:
-            self._update(self.alpha, self.beta)
+        self._parametrization(alpha, beta, mu, sigma, kappa)
 
-    def _parametrization(self, alpha, beta, mu, sigma, kappa):
+    def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None, kappa=None):
         if mu is None and sigma is None:
             names = ("alpha", "beta")
+            self.params_support = ((eps, np.inf), (eps, np.inf))
 
         elif mu is not None and sigma is not None:
             alpha, beta = self._from_mu_sigma(mu, sigma)
             names = ("mu", "sigma")
+            self.params_support = ((eps, 1 - eps), (eps, (mu * (1 - mu)) ** 0.5))
 
         elif mu is not None and kappa is not None:
             alpha, beta = self._from_mu_kappa(mu, kappa)
             names = ("mu", "kappa")
+            self.params_support = ((eps, 1 - eps), (eps, np.inf))
 
         else:
             raise ValueError(
                 "Incompatible parametrization. Either use alpha " "and beta, or mu and sigma."
             )
 
-        return alpha, beta, names
+        self.alpha = alpha
+        self.beta = beta
+        self.param_names = names
+        if self.alpha is not None and self.beta is not None:
+            self._update(self.alpha, self.beta)
 
     def _from_mu_sigma(self, mu, sigma):
         kappa = mu * (1 - mu) / sigma**2 - 1
@@ -1526,11 +1529,9 @@ class Normal(Continuous):
         self.dist = stats.norm
         self.support = (-np.inf, np.inf)
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        self.mu, self.sigma, self.param_names = self._parametrization(mu, sigma, tau)
-        if self.mu is not None and self.sigma is not None:
-            self._update(self.mu, self.sigma)
+        self._parametrization(mu, sigma, tau)
 
-    def _parametrization(self, mu, sigma, tau):
+    def _parametrization(self, mu=None, sigma=None, tau=None):
         if sigma is not None and tau is not None:
             raise ValueError(
                 "Incompatible parametrization. Either use mu and sigma, or mu and tau."
@@ -1543,7 +1544,11 @@ class Normal(Continuous):
             sigma = from_precision(tau)
             names = ("mu", "tau")
 
-        return mu, sigma, names
+        self.mu = mu
+        self.sigma = sigma
+        self.param_names = names
+        if mu is not None and sigma is not None:
+            self._update(mu, sigma)
 
     def _get_frozen(self):
         frozen = None

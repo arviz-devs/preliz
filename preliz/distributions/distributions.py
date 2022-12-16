@@ -4,6 +4,8 @@ Parent classes for all families.
 # pylint: disable=no-member
 from collections import namedtuple
 
+from ipywidgets import interact
+import ipywidgets as ipyw
 import numpy as np
 
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
@@ -326,6 +328,60 @@ class Distribution:
                 "Undefined distribution, "
                 "you need to first define its parameters or use one of the fit methods"
             )
+
+    def interactive(self, kind="pdf", xlim=None):
+        """
+        Interactive exploration of distributions parameters
+
+        Parameters
+        ----------
+        kind : str:
+            Type of plot. Available options are `pdf`, `cdf` and `ppf`.
+        xlim : tuple or str
+            Values to set the limits of the x-axis. Defaults to None, the values are computed
+            automatically. Use `auto` for automatic rescaling
+        """
+
+        # temporary patch until we migrate all distributions to use
+        # self.params_report and self.params
+        try:
+            params_value = self.params_report
+        except AttributeError:
+            params_value = self.params
+
+        args = dict(zip(self.param_names, params_value))
+        if xlim is None:
+            self.__init__(**args)
+            xlim = self._finite_endpoints("full")
+
+        sliders = {}
+        for name, value, support in zip(self.param_names, params_value, self.params_support):
+            lower, upper = support
+            if np.isfinite(lower):
+                min_v = lower
+            else:
+                min_v = value - 10
+            if np.isfinite(upper):
+                max_v = upper
+            else:
+                max_v = value + 10
+
+            step = (max_v - min_v) / 100
+
+            sliders[name] = ipyw.FloatSlider(min=min_v, max=max_v, step=step, value=value)
+
+        def plot(**args):
+            self.__init__(**args)
+            if kind == "pdf":
+                ax = self.plot_pdf(legend=False)
+            elif kind == "cdf":
+                ax = self.plot_cdf(legend=False)
+            elif kind == "ppf":
+                ax = self.plot_ppf(legend=False)
+            if xlim != "auto":
+                ax.set_xlim(*xlim)
+
+        interact(plot, **sliders)
 
 
 class Continuous(Distribution):
