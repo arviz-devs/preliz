@@ -142,8 +142,12 @@ class DiscreteUniform(Discrete):
         self.dist = stats.randint
         if lower is None:
             lower = -np.inf
+        else:
+            lower = int(lower)
         if upper is None:
             upper = -np.inf
+        else:
+            upper = int(upper)
         self.support = (lower, upper)
         self.dist.a = lower
         self.dist.b = upper
