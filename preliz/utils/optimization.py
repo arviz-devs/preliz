@@ -102,10 +102,14 @@ def optimize_matching_moments(dist, mean, sigma):
 def optimize_ml(dist, sample):
     def negll(params, dist, sample):
         dist._update(*params)
-        return -dist.rv_frozen.logpdf(sample).sum()
+        if dist.kind == "continuous":
+            neg = -dist.rv_frozen.logpdf(sample).sum()
+        else:
+            neg = -dist.rv_frozen.logpmf(sample).sum()
+        return neg
 
-    dist._fit_moments(0, np.std(sample))
-    init_vals = dist.params[::-1]
+    dist._fit_moments(np.mean(sample), np.std(sample))
+    init_vals = dist.params
 
     opt = minimize(negll, x0=init_vals, bounds=dist.params_support, args=(dist, sample))
 
