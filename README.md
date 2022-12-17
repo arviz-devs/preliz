@@ -29,15 +29,15 @@ pip install git+git://github.com/arviz-devs/preliz.git
 
 ## The Zen of PreliZ
 * Being open source, community-driven, diverse and inclusive.
-* Avoid fully-automated solutions, keep the human in the loop
+* Avoid fully-automated solutions, keep the human in the loop.
 * Separate tasks between humans and computers, so users can retain control of important decisions while numerically demanding, error-prone or tedious tasks are automatized.
-* Prevent users to become overconfidence in their own opinions.
+* Prevent users to become overconfident in their own opinions.
 * Easily integrate with other tools.
-* Allow predictive elicitation
+* Allow predictive elicitation.
 * Having a simple and intuitive interface suitable for non-specialists in order to minimize cognitive biases and heuristics.
 * Switching between different types of visualization such as kernel density estimates plots, quantile dotplots, histograms, etc. 
-* Being agnostic of the underlying probabilistic programming language
-* Being modular
+* Being agnostic of the underlying probabilistic programming language.
+* Being modular.
 
 
 ## Contributions
