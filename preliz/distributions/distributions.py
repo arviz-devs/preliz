@@ -4,6 +4,8 @@ Parent classes for all families.
 # pylint: disable=no-member
 from collections import namedtuple
 
+from ipywidgets import interact
+import ipywidgets as ipyw
 import numpy as np
 
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
@@ -326,6 +328,84 @@ class Distribution:
                 "Undefined distribution, "
                 "you need to first define its parameters or use one of the fit methods"
             )
+
+    def interactive(self, kind="pdf", fixed_lim="both", pointinterval=True, quantiles=None):
+        """
+        Interactive exploration of distributions parameters
+
+        Parameters
+        ----------
+        kind : str:
+            Type of plot. Available options are `pdf`, `cdf` and `ppf`.
+        fixed_lim : str or tuple
+            Set the limits of the x-axis and/or y-axis.
+            Defaults to `"both"`, the limits of both axis are fixed.
+            Use `"auto"` for automatic rescaling of x-axis and y-axis.
+            Or set them manually by passing a tuple of 4 elements,
+            the first two fox x-axis, the last two for x-axis. The tuple can have `None`.
+        pointinterval : bool
+            Whether to include a plot of the quantiles. Defaults to False. If True the default is to
+            plot the median and two interquantiles ranges.
+        quantiles : list
+            Values of the five quantiles to use when ``pointinterval=True`` if None (default)
+            the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
+            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
+        """
+
+        # temporary patch until we migrate all distributions to use
+        # self.params_report and self.params
+        try:
+            params_value = self.params_report
+        except AttributeError:
+            params_value = self.params
+
+        args = dict(zip(self.param_names, params_value))
+
+        if fixed_lim == "both":
+            self.__init__(**args)
+            xlim = self._finite_endpoints("full")
+            xvals = self.xvals("restricted")
+            ylim = (0, np.max(self.pdf(xvals) * 1.5))
+        elif isinstance(fixed_lim, tuple):
+            xlim = fixed_lim[:2]
+            ylim = fixed_lim[2:]
+
+        sliders = {}
+        for name, value, support in zip(self.param_names, params_value, self.params_support):
+            lower, upper = support
+            if np.isfinite(lower):
+                min_v = lower
+            else:
+                min_v = value - 10
+            if np.isfinite(upper):
+                max_v = upper
+            else:
+                max_v = value + 10
+
+            step = (max_v - min_v) / 100
+
+            sliders[name] = ipyw.FloatSlider(
+                min=min_v,
+                max=max_v,
+                step=step,
+                description=f"{name} ({lower:.0f}, {upper:.0f})",
+                value=value,
+            )
+
+        def plot(**args):
+            self.__init__(**args)
+            if kind == "pdf":
+                ax = self.plot_pdf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
+            elif kind == "cdf":
+                ax = self.plot_cdf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
+            elif kind == "ppf":
+                ax = self.plot_ppf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
+            if fixed_lim != "auto" and kind != "ppf":
+                ax.set_xlim(*xlim)
+            if fixed_lim != "auto" and kind != "cdf":
+                ax.set_ylim(*ylim)
+
+        interact(plot, **sliders)
 
 
 class Continuous(Distribution):
