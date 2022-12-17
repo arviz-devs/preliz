@@ -329,7 +329,7 @@ class Distribution:
                 "you need to first define its parameters or use one of the fit methods"
             )
 
-    def interactive(self, kind="pdf", fixed_lim="both", pointinterval=True, quantiles=None):
+    def plot_interactive(self, kind="pdf", fixed_lim="both", pointinterval=True, quantiles=None):
         """
         Interactive exploration of distributions parameters
 
@@ -382,9 +382,13 @@ class Distribution:
             else:
                 max_v = value + 10
 
-            step = (max_v - min_v) / 100
-
-            sliders[name] = ipyw.FloatSlider(
+            if isinstance(value, float):
+                slider_type = ipyw.FloatSlider
+                step = (max_v - min_v) / 100
+            else:
+                slider_type = ipyw.FloatSlider
+                step = 1
+            sliders[name] = slider_type(
                 min=min_v,
                 max=max_v,
                 step=step,

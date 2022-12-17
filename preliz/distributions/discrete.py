@@ -57,7 +57,7 @@ class Binomial(Discrete):
 
     def __init__(self, n=None, p=None):
         super().__init__()
-        self.n = n
+        self.n = int(n)
         self.p = p
         self.name = "binomial"
         self.params = (self.n, self.p)
@@ -133,8 +133,8 @@ class DiscreteUniform(Discrete):
 
     def __init__(self, lower=None, upper=None):
         super().__init__()
-        self.lower = lower
-        self.upper = upper
+        self.lower = int(lower)
+        self.upper = int(upper)
         self.name = "discreteuniform"
         self.params = (self.lower, self.upper)
         self.param_names = ("lower", "upper")
