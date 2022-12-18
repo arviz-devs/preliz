@@ -125,9 +125,13 @@ def test_mle(distribution, params):
     dist_ = distribution()
     dist_._fit_mle(sample)
 
-    assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), 1)
-    assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), 1)
-    if dist.name in "student":
+    if dist.name == "pareto":
+        tol = 0
+    else:
+        tol = 1
+    assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
+    assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
+    if dist.name == "student":
         assert_almost_equal(params[1:], dist_.params[1:], 0)
     else:
         assert_almost_equal(params, dist_.params, 0)
