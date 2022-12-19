@@ -1,7 +1,8 @@
 import pytest
 import numpy as np
 
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_almost_equal
+
 
 from preliz import maxent
 from preliz.distributions import (
@@ -27,11 +28,11 @@ from preliz.distributions import (
     Student,
     Triangular,
     TruncatedNormal,
-    # Uniform,
+    Uniform,
     VonMises,
     Wald,
     Weibull,
-    # Binomial
+    # Binomial,
     DiscreteUniform,
     NegativeBinomial,
     Poisson,
@@ -102,14 +103,14 @@ from preliz.distributions import (
             (-3, 2),
             (-0.076, 1.031),
         ),
-        # (Uniform(), "uniform", -2, 10, 0.9, (-2.666, 10.666), (-2.666, 10.666)),
-        (VonMises(), "vonmises", -1, 1, 0.9, (-np.inf, np.inf), (0.0, 3.294)),
-        (VonMises(mu=0.5), "vonmises", -1, 1, 0.9, (-np.inf, np.inf), (6.997)),
+        (Uniform(), "uniform", -2, 10, 0.9, (-2.666, 10.666), (-2.666, 10.666)),
+        (VonMises(), "vonmises", -1, 1, 0.9, (-np.pi, np.pi), (0.0, 3.294)),
+        (VonMises(mu=0.5), "vonmises", -1, 1, 0.9, (-np.pi, np.pi), (6.997)),
         (Wald(), "wald", 0, 10, 0.9, (0, np.inf), (5.061, 7.937)),
         (Wald(mu=5), "wald", 0, 10, 0.9, (0, np.inf), (7.348)),
         (Weibull(), "weibull", 0, 10, 0.9, (0, np.inf), (1.411, 5.537)),
         (Weibull(alpha=2), "weibull", 0, 10, 0.9, (0, np.inf), (6.590)),
-        ## Binomial
+        # Binomial
         (DiscreteUniform(), "discreteuniform", -2, 10, 0.9, (-3, 11), (-2, 10)),
         (NegativeBinomial(), "negativebinomial", 0, 15, 0.9, (0, np.inf), (7.546, 2.041)),
         (NegativeBinomial(p=0.2), "negativebinomial", 0, 15, 0.9, (0, np.inf), (1.847)),
@@ -121,11 +122,7 @@ def test_maxent(dist, name, lower, upper, mass, support, result):
     rv_frozen = dist.rv_frozen
 
     assert rv_frozen.name == name
-
-    if dist.name in ["pareto", "triangular"]:
-        assert pytest.approx(rv_frozen.support(), 0.3) == support
-    else:
-        assert rv_frozen.support() == support
+    assert_almost_equal(dist.support, support, 0.3)
 
     if dist.name != "discreteuniform":  # optimization fails to converge, but results are reasonable
         assert opt.success

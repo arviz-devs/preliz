@@ -1693,6 +1693,7 @@ class Pareto(Continuous):
     def _update(self, alpha, m):
         self.alpha = alpha
         self.m = m
+        self.support = (m, np.inf)
         self.params = (self.alpha, self.m)
         self._update_rv_frozen()
 
@@ -2013,6 +2014,7 @@ class Triangular(Continuous):
         self.lower = lower
         self.c = c
         self.upper = upper
+        self.support = (self.lower, self.upper)
         self.params = (self.lower, self.c, self.upper)
         self._update_rv_frozen()
 
