@@ -147,24 +147,25 @@ def test_summary(fmt, mass):
     assert result.mean == 2
 
 
-@pytest.mark.parametrize(
-    "distribution, params, alt_names",
-    [
-        (Beta, (2, 5), ("mu", "sigma")),
-        (Beta, (5, 2), ("mu", "kappa")),
-        (Gamma, (2, 1), ("mu", "sigma")),
-        (HalfNormal, (1,), ("tau",)),
-        (HalfStudent, (1000, 1), ("nu", "lam")),
-        (InverseGamma, (0, 2), ("mu", "sigma")),
-        (Normal, (0, 1), ("mu", "tau")),
-        (SkewNormal, (0, 1, 0), ("mu", "tau", "alpha")),
-        (Student, (1000, 0, 1), ("nu", "mu", "lam")),
-    ],
-)
-def test_alternative_parametrization(distribution, params, alt_names):
-    dist0 = distribution(*params)
-    params1 = {p: getattr(dist0, p) for p in alt_names}
-    dist1 = distribution(**params1)
-    assert_almost_equal(dist0.params, dist1.params)
-    for p in alt_names:
-        assert p in dist1.__repr__()
+# @pytest.mark.parametrize(
+#     "distribution, params, alt_names",
+#     [
+#         (Beta, (2, 5), ("mu", "sigma")),
+#         (Beta, (5, 2), ("mu", "kappa")),
+#         (Gamma, (2, 1), ("mu", "sigma")),
+#         (HalfNormal, (1,), ("tau",)),
+#         (HalfStudent, (1000, 1), ("nu", "lam")),
+#         (InverseGamma, (0, 2), ("mu", "sigma")),
+#         (Normal, (0, 1), ("mu", "tau")),
+#         (SkewNormal, (0, 1, 0), ("mu", "tau", "alpha")),
+#         (Student, (1000, 0, 1), ("nu", "mu", "lam")),
+#     ],
+# )
+# def test_alternative_parametrization(distribution, params, alt_names):
+#     dist0 = distribution(*params)
+#     params1 = {p: getattr(dist0, p) for p in alt_names}
+#     dist1 = distribution(**params1)
+
+#     assert_almost_equal(dist0.params, dist1.params)
+#     for p in alt_names:
+#         assert p in dist1.__repr__()
