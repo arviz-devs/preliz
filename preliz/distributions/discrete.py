@@ -12,7 +12,7 @@ from scipy import stats
 
 
 from .distributions import Discrete
-from ..utils.optimization import optimize_matching_moments, optimize_ml
+from ..utils.optimization import optimize_ml
 
 _log = logging.getLogger("preliz")
 
@@ -90,7 +90,6 @@ class Binomial(Discrete):
         n = mean + sigma * 2
         p = mean / n
         self._update(n, p)
-        optimize_matching_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         # see https://doi.org/10.1016/j.jspi.2004.02.019 for details

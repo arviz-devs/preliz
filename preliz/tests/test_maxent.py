@@ -32,7 +32,7 @@ from preliz.distributions import (
     VonMises,
     Wald,
     Weibull,
-    # Binomial,
+    Binomial,
     DiscreteUniform,
     NegativeBinomial,
     Poisson,
@@ -110,7 +110,9 @@ from preliz.distributions import (
         (Wald(mu=5), "wald", 0, 10, 0.9, (0, np.inf), (7.348)),
         (Weibull(), "weibull", 0, 10, 0.9, (0, np.inf), (1.411, 5.537)),
         (Weibull(alpha=2), "weibull", 0, 10, 0.9, (0, np.inf), (6.590)),
-        # Binomial
+        # results for binomial are close to the correct result, but still off
+        (Binomial(), "binomial", 3, 9, 0.9, (0, 9), (9, 0.490)),
+        (Binomial(n=12), "binomial", 3, 9, 0.9, (0, 12), (0.612)),
         (DiscreteUniform(), "discreteuniform", -2, 10, 0.9, (-3, 11), (-2, 10)),
         (NegativeBinomial(), "negativebinomial", 0, 15, 0.9, (0, np.inf), (7.546, 2.041)),
         (NegativeBinomial(p=0.2), "negativebinomial", 0, 15, 0.9, (0, np.inf), (1.847)),

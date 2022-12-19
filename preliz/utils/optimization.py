@@ -85,21 +85,6 @@ def optimize_cdf(dist, x_vals, ecdf, none_idx, fixed):
     return loss
 
 
-def optimize_matching_moments(dist, mean, sigma):
-    def func(params, dist, mean, sigma):
-        dist._update(*params)
-        loss = ((dist.rv_frozen.mean() - mean) / mean) ** 2 + (
-            (dist.rv_frozen.std() - sigma) / sigma
-        ) ** 2
-        return loss
-
-    init_vals = dist.params
-    opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
-    dist._update(*opt["x"])
-    loss = opt["cost"]
-    return loss
-
-
 def optimize_ml(dist, sample):
     def negll(params, dist, sample):
         dist._update(*params)
