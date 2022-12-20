@@ -1,3 +1,10 @@
+<img src="https://raw.githubusercontent.com/arviz-devs/preliz/main/docs/logos/PreliZ.png" width=200></img>
+
+[![PyPi version](https://badge.fury.io/py/preliz.svg)](https://badge.fury.io/py/preliz)
+[![Build Status](https://github.com/arviz-devs/preliz/actions/workflows/test.yml/badge.svg)](https://github.com/arviz-devs/preliz/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/arviz-devs/preliz/branch/master/graph/badge.svg?token=ZqH0KCLKAE)](https://codecov.io/gh/arviz-devs/preliz/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+
 # PreliZ
 Tools to help you pick a prior.
 
