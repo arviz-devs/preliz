@@ -9,7 +9,7 @@ from scipy.optimize import minimize, least_squares
 def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
     def prob_bound(params, dist, lower, upper, mass):
         params = get_params(dist, params, none_idx, fixed)
-        dist._update(*params)
+        dist._parametrization(**params)
         if dist.kind == "discrete":
             lower -= 1
         cdf0 = dist.cdf(lower)
@@ -19,7 +19,7 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
 
     def entropy_loss(params, dist):
         params = get_params(dist, params, none_idx, fixed)
-        dist._update(*params)
+        dist._parametrization(**params)
         return -dist.rv_frozen.entropy()
 
     cons = {
@@ -32,21 +32,22 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
 
     opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
     params = get_params(dist, opt["x"], none_idx, fixed)
-    dist._update(*params)
+    dist._parametrization(**params)
 
     return opt
 
 
 def get_params(dist, params, none_idx, fixed):
-    params_ = []
+    params_ = {}
     pdx = 0
     fdx = 0
     for idx in range(len(dist.params)):
+        name = dist.param_names[idx]
         if idx in none_idx:
-            params_.append(params[pdx])
+            params_[name] = params[pdx]
             pdx += 1
         else:
-            params_.append(fixed[fdx])
+            params_[name] = fixed[fdx]
             fdx += 1
 
     return params_
@@ -55,7 +56,7 @@ def get_params(dist, params, none_idx, fixed):
 def optimize_quartile(dist, x_vals, none_idx, fixed):
     def func(params, dist, x_vals):
         params = get_params(dist, params, none_idx, fixed)
-        dist._update(*params)
+        dist._parametrization(**params)
         loss = dist.cdf(x_vals) - [0.25, 0.5, 0.75]
         return loss
 
@@ -65,35 +66,20 @@ def optimize_quartile(dist, x_vals, none_idx, fixed):
 
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals), bounds=bounds)
     params = get_params(dist, opt["x"], none_idx, fixed)
-    dist._update(*params)
+    dist._parametrization(**params)
     return opt
 
 
 def optimize_cdf(dist, x_vals, ecdf, none_idx, fixed):
     def func(params, dist, x_vals, ecdf):
         params = get_params(dist, params, none_idx, fixed)
-        dist._update(*params)
+        dist._parametrization(**params)
         loss = dist.cdf(x_vals) - ecdf
         return loss
 
     init_vals = np.array(dist.params)[none_idx]
 
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf))
-    dist._update(*opt["x"])
-    loss = opt["cost"]
-    return loss
-
-
-def optimize_matching_moments(dist, mean, sigma):
-    def func(params, dist, mean, sigma):
-        dist._update(*params)
-        loss = ((dist.rv_frozen.mean() - mean) / mean) ** 2 + (
-            (dist.rv_frozen.std() - sigma) / sigma
-        ) ** 2
-        return loss
-
-    init_vals = dist.params
-    opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
     dist._update(*opt["x"])
     loss = opt["cost"]
     return loss

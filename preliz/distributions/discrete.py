@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=attribute-defined-outside-init
 """
 Discrete probability distributions.
 """
@@ -11,7 +12,7 @@ from scipy import stats
 
 
 from .distributions import Discrete
-from ..utils.optimization import optimize_matching_moments, optimize_ml
+from ..utils.optimization import optimize_ml
 
 _log = logging.getLogger("preliz")
 
@@ -57,15 +58,19 @@ class Binomial(Discrete):
 
     def __init__(self, n=None, p=None):
         super().__init__()
+        self.name = "binomial"
+        self.dist = stats.binom
+        self.support = (0, np.inf)
+        self._parametrization(n, p)
+
+    def _parametrization(self, n=None, p=None):
         self.n = n
         self.p = p
-        self.name = "binomial"
         self.params = (self.n, self.p)
         self.param_names = ("n", "p")
         self.params_support = ((eps, np.inf), (eps, 1 - eps))
-        self.dist = stats.binom
-        self.support = (0, np.inf)
-        self._update_rv_frozen()
+        if (n and p) is not None:
+            self._update(n, p)
 
     def _get_frozen(self):
         frozen = None
@@ -85,7 +90,6 @@ class Binomial(Discrete):
         n = mean + sigma * 2
         p = mean / n
         self._update(n, p)
-        optimize_matching_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         # see https://doi.org/10.1016/j.jspi.2004.02.019 for details
@@ -133,25 +137,28 @@ class DiscreteUniform(Discrete):
 
     def __init__(self, lower=None, upper=None):
         super().__init__()
+        self.name = "discreteuniform"
+        self.dist = stats.randint
+        self._parametrization(lower, upper)
+
+    def _parametrization(self, lower=None, upper=None):
         self.lower = lower
         self.upper = upper
-        self.name = "discreteuniform"
         self.params = (self.lower, self.upper)
         self.param_names = ("lower", "upper")
         self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
-        self.dist = stats.randint
         if lower is None:
-            lower = -np.inf
-        else:
-            lower = int(lower)
+            self.lower = -np.inf
         if upper is None:
-            upper = -np.inf
+            self.upper = np.inf
+        self.support = (self.lower, self.upper)
+        self.dist.a = self.lower
+        self.dist.b = self.upper
+        if (lower and upper) is not None:
+            self._update(lower, upper)
         else:
-            upper = int(upper)
-        self.support = (lower, upper)
-        self.dist.a = lower
-        self.dist.b = upper
-        self._update_rv_frozen()
+            self.lower = lower
+            self.upper = upper
 
     def _get_frozen(self):
         frozen = None
@@ -245,23 +252,26 @@ class NegativeBinomial(Discrete):
         self.name = "negativebinomial"
         self.dist = stats.nbinom
         self.support = (0, np.inf)
-        self.params_support = ((eps, np.inf), (eps, np.inf))
-        self.mu, self.alpha, self.param_names = self._parametrization(mu, alpha, p, n)
-        if self.mu is not None and self.alpha is not None:
-            self._update(self.mu, self.alpha)
+        self._parametrization(mu, alpha, p, n)
 
-    def _parametrization(self, mu, alpha, p, n):
-        if p is None and n is None:
-            names = ("mu", "alpha")
-
-        elif p is not None and n is not None:
-            mu, alpha = self._from_p_n(p, n)
-            names = ("mu", "alpha")
-
-        else:
+    def _parametrization(self, mu=None, alpha=None, p=None, n=None):
+        if (mu or alpha) is not None and (p or n) is not None:
             raise ValueError("Incompatible parametrization. Either use mu and alpha, or p and n.")
 
-        return mu, alpha, names
+        self.param_names = ("mu", "alpha")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+
+        if (p or n) is not None:
+            self.p = p
+            self.n = n
+            self.param_names = ("p", "n")
+            if (p and n) is not None:
+                mu, alpha = self._from_p_n(p, n)
+
+        self.mu = mu
+        self.alpha = alpha
+        if (mu and alpha) is not None:
+            self._update(mu, alpha)
 
     def _from_p_n(self, p, n):
         alpha = n
@@ -342,12 +352,17 @@ class Poisson(Discrete):
         super().__init__()
         self.mu = mu
         self.name = "poisson"
+        self.dist = stats.poisson
+        self.support = (0, np.inf)
+        self._parametrization(mu)
+
+    def _parametrization(self, mu=None):
+        self.mu = mu
         self.params = (self.mu,)
         self.param_names = ("mu",)
         self.params_support = ((eps, np.inf),)
-        self.dist = stats.poisson
-        self.support = (0, np.inf)
-        self._update_rv_frozen()
+        if (mu) is not None:
+            self._update(mu)
 
     def _get_frozen(self):
         frozen = None
