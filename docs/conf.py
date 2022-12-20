@@ -101,6 +101,8 @@ pygments_style = "sphinx"
 # a list of builtin themes.
 #
 html_theme = "pydata_sphinx_theme"
+html_logo = "PreliZ.png"
+html_favicon = "logos/favicon.ico"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -125,10 +127,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["logos"]
-
-logo = "PreliZ.png"
-html_favicon = "logos/favicon.ico"
+# html_static_path = ["_static"]
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
