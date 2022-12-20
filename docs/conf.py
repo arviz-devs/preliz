@@ -127,8 +127,8 @@ html_theme_options = {
         },
     ],
     "logo": {
-        "image_light": "PreliZ.png",
-        "image_dark": "PreliZ_white.png",
+        "image_light": "PreliZ_flat.png",
+        "image_dark": "PreliZ_flat_white.png",
     },
 }
 
