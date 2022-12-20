@@ -1,14 +1,17 @@
 PreliZ
 ===================================================
+|PyPI version|
 |Tests|
 |Coverage|
 |Black|
 
-
+.. |PyPI version| image:: https://badge.fury.io/py/preliz.svg
+    :target: https://badge.fury.io/py/preliz
+  
 .. |Tests| image:: https://github.com/arviz-devs/preliz/actions/workflows/test.yml/badge.svg
     :target: https://github.com/arviz-devs/preliz
 
-.. |Coverage| image:: https://codecov.io/gh/arviz-devs/preliz/branch/main/graph/badge.svg?token=ZqH0KCLKAE
+.. |Coverage| image:: https://codecov.io/gh/arviz-devs/preliz/branch/main/graph/badge.svg?token=SLJIK2O4C5 
     :target: https://codecov.io/gh/arviz-devs/preliz
 
 .. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
