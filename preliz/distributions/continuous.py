@@ -152,7 +152,6 @@ class Beta(Continuous):
         self.beta = beta
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
         self.kappa = self.mu * (1 - self.mu) / self.sigma**2 - 1
-        self.params = (self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
             self.params = (self.alpha, self.beta)
@@ -664,11 +663,10 @@ class Gamma(Continuous):
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
-            self.params_report = (self.alpha, self.beta)
+            self.params = (self.alpha, self.beta)
         elif self.param_names[1] == "sigma":
-            self.params_report = (self.mu, self.sigma)
+            self.params = (self.mu, self.sigma)
 
-        self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
@@ -902,10 +900,9 @@ class HalfNormal(Continuous):
         self.tau = to_precision(sigma)
 
         if self.param_names[0] == "sigma":
-            self.params_report = (self.sigma,)
+            self.params = (self.sigma,)
         elif self.param_names[0] == "tau":
-            self.params_report = (self.tau,)
-        self.params = (self.sigma,)
+            self.params = (self.tau,)
 
         self._update_rv_frozen()
 
@@ -1013,10 +1010,9 @@ class HalfStudent(Continuous):
         self.lam = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
-            self.params_report = (self.nu, self.sigma)
+            self.params = (self.nu, self.sigma)
         elif self.param_names[1] == "lam":
-            self.params_report = (self.nu, self.lam)
-        self.params = (self.nu, self.sigma)
+            self.params = (self.nu, self.lam)
 
         self._update_rv_frozen()
 
@@ -1205,11 +1201,10 @@ class InverseGamma(Continuous):
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
-            self.params_report = (self.alpha, self.beta)
+            self.params = (self.alpha, self.beta)
         elif self.param_names[1] == "sigma":
-            self.params_report = (self.mu, self.sigma)
+            self.params = (self.mu, self.sigma)
 
-        self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
@@ -1618,10 +1613,9 @@ class Normal(Continuous):
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
-            self.params_report = (self.mu, self.sigma)
+            self.params = (self.mu, self.sigma)
         elif self.param_names[1] == "tau":
-            self.params_report = (self.mu, self.tau)
-        self.params = (self.mu, self.sigma)
+            self.params = (self.mu, self.tau)
 
         self._update_rv_frozen()
 
@@ -1801,10 +1795,9 @@ class SkewNormal(Continuous):
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
-            self.params_report = (self.mu, self.sigma, self.alpha)
+            self.params = (self.mu, self.sigma, self.alpha)
         elif self.param_names[1] == "tau":
-            self.params_report = (self.mu, self.tau, self.alpha)
-        self.params = (self.mu, self.sigma, self.alpha)
+            self.params = (self.mu, self.tau, self.alpha)
 
         self._update_rv_frozen()
 
@@ -1914,10 +1907,9 @@ class Student(Continuous):
         self.lam = to_precision(sigma)
 
         if self.param_names[2] == "sigma":
-            self.params_report = (self.nu, self.mu, self.sigma)
+            self.params = (self.nu, self.mu, self.sigma)
         elif self.param_names[2] == "lam":
-            self.params_report = (self.nu, self.mu, self.lam)
-        self.params = (self.nu, self.mu, self.sigma)
+            self.params = (self.nu, self.mu, self.lam)
 
         self._update_rv_frozen()
 

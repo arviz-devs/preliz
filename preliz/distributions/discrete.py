@@ -295,11 +295,10 @@ class NegativeBinomial(Discrete):
         self.p, self.n = self._to_p_n(self.mu, self.alpha)
 
         if self.param_names[0] == "mu":
-            self.params_report = (self.mu, self.alpha)
+            self.params = (self.mu, self.alpha)
         elif self.param_names[0] == "p":
-            self.params_report = (self.p, self.n)
+            self.params = (self.p, self.n)
 
-        self.params = (self.mu, self.alpha)
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):

@@ -28,14 +28,8 @@ class Distribution:
         if self.is_frozen:
             bolded_name = "\033[1m" + self.name.capitalize() + "\033[0m"
 
-            # temporary patch until we migrate all distributions to use
-            # self.params_report and self.params
-            try:
-                params_value = self.params_report
-            except AttributeError:
-                params_value = self.params
             description = "".join(
-                f"{n}={v:.2f}," for n, v in zip(self.param_names, params_value)
+                f"{n}={v:.2f}," for n, v in zip(self.param_names, self.params)
             ).strip(",")
             return f"{bolded_name}({description})"
         else:
@@ -351,15 +345,7 @@ class Distribution:
             the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
             should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         """
-
-        # temporary patch until we migrate all distributions to use
-        # self.params_report and self.params
-        try:
-            params_value = self.params_report
-        except AttributeError:
-            params_value = self.params
-
-        args = dict(zip(self.param_names, params_value))
+        args = dict(zip(self.param_names, self.params))
 
         if fixed_lim == "both":
             self.__init__(**args)
@@ -371,7 +357,7 @@ class Distribution:
             ylim = fixed_lim[2:]
 
         sliders = {}
-        for name, value, support in zip(self.param_names, params_value, self.params_support):
+        for name, value, support in zip(self.param_names, self.params, self.params_support):
             lower, upper = support
             if np.isfinite(lower):
                 min_v = lower
