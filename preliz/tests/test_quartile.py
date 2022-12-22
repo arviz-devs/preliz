@@ -5,6 +5,7 @@ from numpy.testing import assert_allclose
 
 from preliz import quartile
 from preliz.distributions import (
+    AsymmetricLaplace,
     Beta,
     Cauchy,
     ChiSquared,
@@ -38,6 +39,7 @@ from preliz.distributions import (
 @pytest.mark.parametrize(
     "distribution, q1, q2, q3, result",
     [
+        (AsymmetricLaplace(), -1, 1, 3, (1.0, 1.0, 2.885)),
         (Beta(), 0.3, 0.5, 0.7, (1.528, 1.528)),
         (Cauchy(), -1, 0, 1, (0, 1)),
         (ChiSquared(), 2, 4, 5.5, (4.329)),

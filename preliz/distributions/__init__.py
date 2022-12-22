@@ -2,6 +2,7 @@ from .continuous import *
 from .discrete import *
 
 all_continuous = [
+    AsymmetricLaplace,
     Beta,
     BetaScaled,
     Cauchy,
