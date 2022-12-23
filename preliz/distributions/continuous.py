@@ -100,7 +100,7 @@ class AsymmetricLaplace(Continuous):
         if q is not None:
             self.q = q
             kappa = self._from_q(q)
-            self.param_names = ("q", "mu", "sigma")
+            self.param_names = ("q", "mu", "b")
             self.params_support = ((eps, 1 - eps), (-np.inf, np.inf), (eps, np.inf))
 
         self.kappa = kappa
@@ -139,7 +139,7 @@ class AsymmetricLaplace(Continuous):
     def _fit_moments(self, mean, sigma):
         # Assume symmetry
         mu = mean
-        b = (2 / sigma**2) ** 0.5
+        b = (sigma / 2) * (2**0.5)
         self._update(1, mu, b)
 
     def _fit_mle(self, sample, **kwargs):
