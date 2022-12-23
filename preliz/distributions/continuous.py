@@ -101,6 +101,7 @@ class AsymmetricLaplace(Continuous):
             self.q = q
             kappa = self._from_q(q)
             self.param_names = ("q", "mu", "sigma")
+            self.params_support = ((eps, 1-eps), (-np.inf, np.inf), (eps, np.inf))
 
         self.kappa = kappa
         self.mu = mu
