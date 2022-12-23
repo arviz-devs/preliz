@@ -6,6 +6,7 @@ from numpy.testing import assert_allclose, assert_almost_equal
 
 from preliz import maxent
 from preliz.distributions import (
+    AsymmetricLaplace,
     Beta,
     BetaScaled,
     Cauchy,
@@ -42,6 +43,15 @@ from preliz.distributions import (
 @pytest.mark.parametrize(
     "dist, name, lower, upper, mass, support, result",
     [
+        (
+            AsymmetricLaplace(kappa=1),
+            "asymmetriclaplace",
+            -5,
+            5,
+            0.9,
+            (-np.inf, np.inf),
+            (0.000, 2.171),
+        ),
         (Beta(), "beta", 0.2, 0.6, 0.9, (0, 1), (6.112, 9.101)),
         (BetaScaled(lower=-2, upper=3), "betascaled", -1, 1, 0.8, (-2, 3), (3.883, 5.560)),
         (Cauchy(), "cauchy", -1, 1, 0.6, (-np.inf, np.inf), (0, 0.726)),

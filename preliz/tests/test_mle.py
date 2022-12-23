@@ -5,6 +5,7 @@ import preliz as pz
 
 
 from preliz.distributions import (
+    AsymmetricLaplace,
     Beta,
     BetaScaled,
     Cauchy,
@@ -41,6 +42,7 @@ from preliz.distributions import (
 @pytest.mark.parametrize(
     "distribution, params",
     [
+        (AsymmetricLaplace, (2, 3, 1)),
         (Beta, (2, 5)),
         (BetaScaled, (2, 5, -1, 4)),
         (Cauchy, (0, 1)),
