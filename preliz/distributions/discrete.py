@@ -80,7 +80,7 @@ class Binomial(Discrete):
 
     def _update(self, n, p):
         self.n = int(n)
-        self.p = p
+        self.p = float(p)
         self.params = (self.n, self.p)
         self.support = (0, self.n)
         self._update_rv_frozen()
@@ -290,8 +290,8 @@ class NegativeBinomial(Discrete):
         return frozen
 
     def _update(self, mu, alpha):
-        self.mu = mu
-        self.alpha = alpha
+        self.mu = float(mu)
+        self.alpha = float(alpha)
         self.p, self.n = self._to_p_n(self.mu, self.alpha)
 
         if self.param_names[0] == "mu":
@@ -370,7 +370,7 @@ class Poisson(Discrete):
         return frozen
 
     def _update(self, mu):
-        self.mu = mu
+        self.mu = float(mu)
         self.params = (self.mu,)
         self._update_rv_frozen()
 

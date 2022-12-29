@@ -2,6 +2,7 @@ from sys import modules
 
 import numpy as np
 from scipy.special import gamma
+from ipywidgets import FloatSlider, IntSlider
 
 
 def hdi_from_pdf(dist, mass=0.95):
@@ -72,3 +73,33 @@ def get_pymc_to_preliz():
         zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
     )
     return pymc_to_preliz
+
+
+def get_slider(name, value, lower, upper, continuous_update=True):
+    if np.isfinite(lower):
+        min_v = lower
+    else:
+        min_v = value - 10
+    if np.isfinite(upper):
+        max_v = upper
+    else:
+        max_v = value + 10
+
+    if isinstance(value, float):
+        slider_type = FloatSlider
+        step = (max_v - min_v) / 100
+    else:
+        slider_type = IntSlider
+        step = 1
+
+    slider = slider_type(
+        min=min_v,
+        max=max_v,
+        step=step,
+        description=f"{name} ({lower:.0f}, {upper:.0f})",
+        value=value,
+        style={"description_width": "initial"},
+        continuous_update=continuous_update,
+    )
+
+    return slider
