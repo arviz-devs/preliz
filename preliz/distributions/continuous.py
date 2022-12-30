@@ -1295,8 +1295,14 @@ class InverseGamma(Continuous):
         return alpha, beta
 
     def _to_mu_sigma(self, alpha, beta):
-        mu = beta / (alpha - 1)
-        sigma = beta / ((alpha - 1) * (alpha - 2) ** 0.5)
+        if alpha > 1:
+            mu = beta / (alpha - 1)
+        else:
+            mu = None
+        if alpha > 2:
+            sigma = beta / ((alpha - 1) * (alpha - 2) ** 0.5)
+        else:
+            sigma = None
         return mu, sigma
 
     def _get_frozen(self):
