@@ -33,6 +33,8 @@ def test_continuous_plot_pdf_cdf_ppf(two_dist, kwargs):
 
 
 def test_plot_interactive():
-    for distribution in pz.distributions.__all__:
+    for idx, distribution in enumerate(pz.distributions.__all__):
         dist = getattr(pz.distributions, distribution)
-        dist().plot_interactive()
+        kind = ["pdf", "cdf", "ppf"][idx % 3]
+        fixed_lim = ["auto", "both"][idx % 2]
+        dist().plot_interactive(kind=kind, fixed_lim=fixed_lim)

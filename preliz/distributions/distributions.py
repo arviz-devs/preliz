@@ -350,8 +350,9 @@ class Distribution:
         else:
             args = init_vals[self.__class__.__name__]
 
+        self.__init__(**args)
+
         if fixed_lim == "both":
-            self.__init__(**args)
             xlim = self._finite_endpoints("full")
             xvals = self.xvals("restricted")
             max_pdf = np.max(self.pdf(xvals))
