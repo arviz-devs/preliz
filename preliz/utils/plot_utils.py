@@ -68,7 +68,7 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
     if dist.kind == "continuous":
         density = dist.pdf(x)
         ax.plot(x, density, label=label, color=color)
-        ax.get_ylim()
+        ax.axhline(0, color="0.8", ls="--", zorder=0)
         ax.set_yticks([])
     else:
         mass = dist.pdf(x)
@@ -84,6 +84,7 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
 
         ax.plot(x_c, mass_c, ls="dotted", color=color)
         ax.plot(x, mass, "o", label=label, color=color)
+        ax.axhline(0, color="0.8", ls="--", zorder=0)
 
     if pointinterval:
         plot_pointinterval(dist.rv_frozen, quantiles=quantiles, ax=ax)

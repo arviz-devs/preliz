@@ -350,7 +350,8 @@ class Distribution:
             self.__init__(**args)
             xlim = self._finite_endpoints("full")
             xvals = self.xvals("restricted")
-            ylim = (0, np.max(self.pdf(xvals) * 1.5))
+            max_pdf = np.max(self.pdf(xvals))
+            ylim = (-max_pdf * 0.075, max_pdf * 1.5)
         elif isinstance(fixed_lim, tuple):
             xlim = fixed_lim[:2]
             ylim = fixed_lim[2:]
