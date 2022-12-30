@@ -132,7 +132,7 @@ def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
     """
     fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
-        if dist.__class__.__name__ == "betascaled":
+        if dist.__class__.__name__ == "BetaScaled":
             update_bounds_beta_scaled(dist, x_min, x_max)
 
         if dist._check_endpoints(x_min, x_max, raise_error=False):
@@ -151,7 +151,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     """
     fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
-        if dist.__class__.__name__ in ["betascaled", "truncatednormal"]:
+        if dist.__class__.__name__ in ["BetaScaled", "TruncatedNormal"]:
             update_bounds_beta_scaled(dist, x_min, x_max)
 
         if dist._check_endpoints(x_min, x_max, raise_error=False):
