@@ -89,7 +89,7 @@ def maxent(
         if not end_points_ints(lower, upper):
             _log.info(
                 "%s distribution is discrete, but the provided bounds are not integers",
-                distribution.name.capitalize(),
+                distribution.__class__.__name__,
             )
 
     # Find which parameters has been fixed

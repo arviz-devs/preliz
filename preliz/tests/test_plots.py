@@ -30,3 +30,9 @@ def test_continuous_plot_pdf_cdf_ppf(two_dist, kwargs):
         a_dist.plot_cdf(**kwargs)
         kwargs.pop("support", None)
         a_dist.plot_ppf(**kwargs)
+
+
+def test_plot_interactive():
+    for distribution in pz.distributions.__all__:
+        dist = getattr(pz.distributions, distribution)
+        dist().plot_interactive()

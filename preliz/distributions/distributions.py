@@ -8,7 +8,7 @@ from ipywidgets import interact
 import numpy as np
 
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
-from ..utils.utils import hdi_from_pdf, get_slider
+from ..utils.utils import hdi_from_pdf, get_slider, init_vals
 
 
 class Distribution:
@@ -24,15 +24,16 @@ class Distribution:
         self.opt = None
 
     def __repr__(self):
+        name = self.__class__.__name__
         if self.is_frozen:
-            bolded_name = "\033[1m" + self.name.capitalize() + "\033[0m"
+            bolded_name = "\033[1m" + name + "\033[0m"
 
             description = "".join(
                 f"{n}={v:.2f}," for n, v in zip(self.param_names, self.params)
             ).strip(",")
             return f"{bolded_name}({description})"
         else:
-            return self.name
+            return name
 
     def _update_rv_frozen(self):
         """Update the rv_frozen object"""
@@ -41,7 +42,6 @@ class Distribution:
         if frozen is not None:
             self.is_frozen = True
             self.rv_frozen = frozen
-            self.rv_frozen.name = self.name
 
     def summary(self, fmt=".2f", mass=0.94):
         """
@@ -57,7 +57,7 @@ class Distribution:
             Probability mass for the equal-tailed interval. Defaults to 0.94
         """
         if self.is_frozen:
-            attr = namedtuple(self.name.capitalize(), ["mean", "median", "std", "lower", "upper"])
+            attr = namedtuple(self.__class__.__name__, ["mean", "median", "std", "lower", "upper"])
             mean = float(f"{self.rv_frozen.mean():{fmt}}")
             median = float(f"{self.rv_frozen.median():{fmt}}")
             std = float(f"{self.rv_frozen.std():{fmt}}")
@@ -151,7 +151,8 @@ class Distribution:
 
         if raise_error:
             domain_error = (
-                f"The provided endpoints are outside the domain of the {self.name} distribution"
+                f"The provided endpoints are outside the domain of the "
+                f"{self.__class__.__name__} distribution"
             )
 
             if np.isfinite(s_l):
@@ -344,7 +345,10 @@ class Distribution:
             the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
             should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         """
-        args = dict(zip(self.param_names, self.params))
+        if self.is_frozen:
+            args = dict(zip(self.param_names, self.params))
+        else:
+            args = init_vals[self.__class__.__name__]
 
         if fixed_lim == "both":
             self.__init__(**args)
