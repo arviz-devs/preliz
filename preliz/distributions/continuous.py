@@ -124,9 +124,9 @@ class AsymmetricLaplace(Continuous):
         return frozen
 
     def _update(self, kappa, mu, b):
-        self.kappa = kappa
-        self.mu = mu
-        self.b = b
+        self.kappa = float(kappa)
+        self.mu = float(mu)
+        self.b = float(b)
         self.q = self._to_q(self.kappa)
 
         if self.param_names[0] == "kappa":
@@ -267,8 +267,8 @@ class Beta(Continuous):
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = alpha
-        self.beta = beta
+        self.alpha = float(alpha)
+        self.beta = float(beta)
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
         self.kappa = self.mu * (1 - self.mu) / self.sigma**2 - 1
 
@@ -360,12 +360,12 @@ class BetaScaled(Continuous):
 
     def _update(self, alpha, beta, lower=None, upper=None):
         if lower is not None:
-            self.lower = lower
+            self.lower = float(lower)
         if upper is not None:
-            self.upper = upper
+            self.upper = float(upper)
 
-        self.alpha = alpha
-        self.beta = beta
+        self.alpha = float(alpha)
+        self.beta = float(beta)
         self.params = (self.alpha, self.beta, self.lower, self.upper)
         self.support = self.lower, self.upper
         self._update_rv_frozen()
@@ -442,8 +442,8 @@ class Cauchy(Continuous):
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = alpha
-        self.beta = beta
+        self.alpha = float(alpha)
+        self.beta = float(beta)
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
@@ -504,7 +504,8 @@ class ChiSquared(Continuous):
         self.param_names = ("nu",)
         self.params_support = ((eps, np.inf),)
         self.params = (self.nu,)
-        self._update(self.nu)
+        if self.nu is not None:
+            self._update(self.nu)
 
     def _get_frozen(self):
         frozen = None
@@ -513,7 +514,7 @@ class ChiSquared(Continuous):
         return frozen
 
     def _update(self, nu):
-        self.nu = nu
+        self.nu = float(nu)
         self.params = (self.nu,)
         self._update_rv_frozen()
 
@@ -597,9 +598,9 @@ class ExGaussian(Continuous):
         return frozen
 
     def _update(self, mu, sigma, nu):
-        self.nu = nu
-        self.mu = mu
-        self.sigma = sigma
+        self.nu = float(nu)
+        self.mu = float(mu)
+        self.sigma = float(sigma)
         self.params = (self.mu, self.sigma, self.nu)
         self._update_rv_frozen()
 
@@ -657,7 +658,8 @@ class Exponential(Continuous):
         self.params = (self.lam,)
         self.param_names = ("lam",)
         self.params_support = ((eps, np.inf),)
-        self._update(self.lam)
+        if self.lam is not None:
+            self._update(self.lam)
 
     def _get_frozen(self):
         frozen = None
@@ -666,7 +668,7 @@ class Exponential(Continuous):
         return frozen
 
     def _update(self, lam):
-        self.lam = lam
+        self.lam = float(lam)
         self.params = (self.lam,)
         self._update_rv_frozen()
 
@@ -777,8 +779,8 @@ class Gamma(Continuous):
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = alpha
-        self.beta = beta
+        self.alpha = float(alpha)
+        self.beta = float(beta)
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
@@ -851,7 +853,8 @@ class Gumbel(Continuous):
         self.params = (self.mu, self.beta)
         self.param_names = ("mu", "beta")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        self._update(self.mu, self.beta)
+        if (self.mu and self.beta) is not None:
+            self._update(self.mu, self.beta)
 
     def _get_frozen(self):
         frozen = None
@@ -860,8 +863,8 @@ class Gumbel(Continuous):
         return frozen
 
     def _update(self, mu, beta):
-        self.mu = mu
-        self.beta = beta
+        self.mu = float(mu)
+        self.beta = float(beta)
         self.params = (self.mu, self.beta)
         self._update_rv_frozen()
 
@@ -919,7 +922,8 @@ class HalfCauchy(Continuous):
         self.params = (self.beta,)
         self.param_names = ("beta",)
         self.params_support = ((eps, np.inf),)
-        self._update(self.beta)
+        if self.beta is not None:
+            self._update(self.beta)
 
     def _get_frozen(self):
         frozen = None
@@ -928,7 +932,7 @@ class HalfCauchy(Continuous):
         return frozen
 
     def _update(self, beta):
-        self.beta = beta
+        self.beta = float(beta)
         self.params = (self.beta,)
         self._update_rv_frozen()
 
@@ -1015,7 +1019,7 @@ class HalfNormal(Continuous):
         return frozen
 
     def _update(self, sigma):
-        self.sigma = sigma
+        self.sigma = float(sigma)
         self.tau = to_precision(sigma)
 
         if self.param_names[0] == "sigma":
@@ -1124,8 +1128,8 @@ class HalfStudent(Continuous):
         return frozen
 
     def _update(self, nu, sigma):
-        self.nu = nu
-        self.sigma = sigma
+        self.nu = float(nu)
+        self.sigma = float(sigma)
         self.lam = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -1315,8 +1319,8 @@ class InverseGamma(Continuous):
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = alpha
-        self.beta = beta
+        self.alpha = float(alpha)
+        self.beta = float(beta)
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
@@ -1394,8 +1398,8 @@ class Laplace(Continuous):
         return frozen
 
     def _update(self, mu, b):
-        self.mu = mu
-        self.b = b
+        self.mu = float(mu)
+        self.b = float(b)
         self.params = (self.mu, self.b)
         self._update_rv_frozen()
 
@@ -1460,7 +1464,8 @@ class Logistic(Continuous):
         self.params = (self.mu, self.s)
         self.param_names = ("mu", "s")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        self._update(self.mu, self.s)
+        if (self.mu and self.s) is not None:
+            self._update(self.mu, self.s)
 
     def _get_frozen(self):
         frozen = None
@@ -1469,8 +1474,8 @@ class Logistic(Continuous):
         return frozen
 
     def _update(self, mu, s):
-        self.mu = mu
-        self.s = s
+        self.mu = float(mu)
+        self.s = float(s)
         self.params = (self.mu, self.s)
         self._update_rv_frozen()
 
@@ -1549,8 +1554,8 @@ class LogNormal(Continuous):
         return frozen
 
     def _update(self, mu, sigma):
-        self.mu = mu
-        self.sigma = sigma
+        self.mu = float(mu)
+        self.sigma = float(sigma)
         self.params = (self.mu, self.sigma)
         self._update_rv_frozen()
 
@@ -1630,8 +1635,8 @@ class Moyal(Continuous):
         return frozen
 
     def _update(self, mu, sigma):
-        self.mu = mu
-        self.sigma = sigma
+        self.mu = float(mu)
+        self.sigma = float(sigma)
         self.params = (self.mu, self.sigma)
         self._update_rv_frozen()
 
@@ -1727,8 +1732,8 @@ class Normal(Continuous):
         return frozen
 
     def _update(self, mu, sigma):
-        self.mu = mu
-        self.sigma = sigma
+        self.mu = float(mu)
+        self.sigma = float(sigma)
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -1804,9 +1809,9 @@ class Pareto(Continuous):
         return frozen
 
     def _update(self, alpha, m):
-        self.alpha = alpha
-        self.m = m
-        self.support = (m, np.inf)
+        self.alpha = float(alpha)
+        self.m = float(m)
+        self.support = (self.m, np.inf)
         self.params = (self.alpha, self.m)
         self._update_rv_frozen()
 
@@ -1908,9 +1913,9 @@ class SkewNormal(Continuous):
         return frozen
 
     def _update(self, mu, sigma, alpha):
-        self.mu = mu
-        self.sigma = sigma
-        self.alpha = alpha
+        self.mu = float(mu)
+        self.sigma = float(sigma)
+        self.alpha = float(alpha)
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -2020,9 +2025,9 @@ class Student(Continuous):
         return frozen
 
     def _update(self, nu, mu, sigma):
-        self.nu = nu
-        self.mu = mu
-        self.sigma = sigma
+        self.nu = float(nu)
+        self.mu = float(mu)
+        self.sigma = float(sigma)
         self.lam = to_precision(sigma)
 
         if self.param_names[2] == "sigma":
@@ -2122,9 +2127,9 @@ class Triangular(Continuous):
         return frozen
 
     def _update(self, lower, c, upper):
-        self.lower = lower
-        self.c = c
-        self.upper = upper
+        self.lower = float(lower)
+        self.c = float(c)
+        self.upper = float(upper)
         self.support = (self.lower, self.upper)
         self.params = (self.lower, self.c, self.upper)
         self._update_rv_frozen()
@@ -2222,12 +2227,12 @@ class TruncatedNormal(Continuous):
 
     def _update(self, mu, sigma, lower=None, upper=None):
         if lower is not None:
-            self.lower = lower
+            self.lower = float(lower)
         if upper is not None:
-            self.upper = upper
+            self.upper = float(upper)
 
-        self.mu = mu
-        self.sigma = sigma
+        self.mu = float(mu)
+        self.sigma = float(sigma)
         self.params = (self.mu, self.sigma, self.lower, self.upper)
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
@@ -2308,8 +2313,8 @@ class Uniform(Continuous):
         return frozen
 
     def _update(self, lower, upper):
-        self.lower = lower
-        self.upper = upper
+        self.lower = float(lower)
+        self.upper = float(upper)
         self.params = (self.lower, self.upper)
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
@@ -2385,8 +2390,8 @@ class VonMises(Continuous):
         return frozen
 
     def _update(self, mu, kappa):
-        self.mu = mu
-        self.kappa = kappa
+        self.mu = float(mu)
+        self.kappa = float(kappa)
         self.params = (self.mu, self.kappa)
         self._update_rv_frozen()
 
@@ -2461,8 +2466,8 @@ class Wald(Continuous):
         return frozen
 
     def _update(self, mu, lam):
-        self.mu = mu
-        self.lam = lam
+        self.mu = float(mu)
+        self.lam = float(lam)
         self.params = (self.mu, self.lam)
         self._update_rv_frozen()
 
@@ -2534,8 +2539,8 @@ class Weibull(Continuous):
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = alpha
-        self.beta = beta
+        self.alpha = float(alpha)
+        self.beta = float(beta)
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 

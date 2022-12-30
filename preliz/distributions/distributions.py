@@ -5,11 +5,10 @@ Parent classes for all families.
 from collections import namedtuple
 
 from ipywidgets import interact
-import ipywidgets as ipyw
 import numpy as np
 
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
-from ..utils.utils import hdi_from_pdf
+from ..utils.utils import hdi_from_pdf, get_slider
 
 
 class Distribution:
@@ -351,7 +350,8 @@ class Distribution:
             self.__init__(**args)
             xlim = self._finite_endpoints("full")
             xvals = self.xvals("restricted")
-            ylim = (0, np.max(self.pdf(xvals) * 1.5))
+            max_pdf = np.max(self.pdf(xvals))
+            ylim = (-max_pdf * 0.075, max_pdf * 1.5)
         elif isinstance(fixed_lim, tuple):
             xlim = fixed_lim[:2]
             ylim = fixed_lim[2:]
@@ -359,28 +359,8 @@ class Distribution:
         sliders = {}
         for name, value, support in zip(self.param_names, self.params, self.params_support):
             lower, upper = support
-            if np.isfinite(lower):
-                min_v = lower
-            else:
-                min_v = value - 10
-            if np.isfinite(upper):
-                max_v = upper
-            else:
-                max_v = value + 10
 
-            if isinstance(value, float):
-                slider_type = ipyw.FloatSlider
-                step = (max_v - min_v) / 100
-            else:
-                slider_type = ipyw.FloatSlider
-                step = 1
-            sliders[name] = slider_type(
-                min=min_v,
-                max=max_v,
-                step=step,
-                description=f"{name} ({lower:.0f}, {upper:.0f})",
-                value=value,
-            )
+            sliders[name] = get_slider(name, value, lower, upper)
 
         def plot(**args):
             self.__init__(**args)
