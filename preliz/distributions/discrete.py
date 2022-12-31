@@ -4,6 +4,7 @@
 """
 Discrete probability distributions.
 """
+from copy import copy
 import logging
 from math import ceil, floor
 
@@ -58,7 +59,7 @@ class Binomial(Discrete):
 
     def __init__(self, n=None, p=None):
         super().__init__()
-        self.dist = stats.binom
+        self.dist = copy(stats.binom)
         self.support = (0, np.inf)
         self._parametrization(n, p)
 
@@ -136,7 +137,7 @@ class DiscreteUniform(Discrete):
 
     def __init__(self, lower=None, upper=None):
         super().__init__()
-        self.dist = stats.randint
+        self.dist = copy(stats.randint)
         self._parametrization(lower, upper)
 
     def _parametrization(self, lower=None, upper=None):
@@ -247,7 +248,7 @@ class NegativeBinomial(Discrete):
 
     def __init__(self, mu=None, alpha=None, p=None, n=None):
         super().__init__()
-        self.dist = stats.nbinom
+        self.dist = copy(stats.nbinom)
         self.support = (0, np.inf)
         self._parametrization(mu, alpha, p, n)
 
@@ -347,7 +348,7 @@ class Poisson(Discrete):
     def __init__(self, mu=None):
         super().__init__()
         self.mu = mu
-        self.dist = stats.poisson
+        self.dist = copy(stats.poisson)
         self.support = (0, np.inf)
         self._parametrization(mu)
 

@@ -85,7 +85,7 @@ class AsymmetricLaplace(Continuous):
 
     def __init__(self, kappa=None, mu=None, b=None, q=None):
         super().__init__()
-        self.dist = stats.laplace_asymmetric
+        self.dist = copy(stats.laplace_asymmetric)
         self.support = (-np.inf, np.inf)
         self._parametrization(kappa, mu, b, q)
 
@@ -203,7 +203,7 @@ class Beta(Continuous):
 
     def __init__(self, alpha=None, beta=None, mu=None, sigma=None, kappa=None):
         super().__init__()
-        self.dist = stats.beta
+        self.dist = copy(stats.beta)
         self.support = (0, 1)
         self._parametrization(alpha, beta, mu, sigma, kappa)
 
@@ -418,7 +418,7 @@ class Cauchy(Continuous):
 
     def __init__(self, alpha=None, beta=None):
         super().__init__()
-        self.dist = stats.cauchy
+        self.dist = copy(stats.cauchy)
         self.support = (-np.inf, np.inf)
         self._parametrization(alpha, beta)
 
@@ -490,7 +490,7 @@ class ChiSquared(Continuous):
     def __init__(self, nu=None):
         super().__init__()
         self.nu = nu
-        self.dist = stats.chi2
+        self.dist = copy(stats.chi2)
         self.support = (0, np.inf)
         self._parametrization(nu)
 
@@ -571,7 +571,7 @@ class ExGaussian(Continuous):
 
     def __init__(self, mu=None, sigma=None, nu=None):
         super().__init__()
-        self.dist = stats.exponnorm
+        self.dist = copy(stats.exponnorm)
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, sigma, nu)
 
@@ -642,7 +642,7 @@ class Exponential(Continuous):
     def __init__(self, lam=None):
         super().__init__()
         self.lam = lam
-        self.dist = stats.expon
+        self.dist = copy(stats.expon)
         self.support = (0, np.inf)
         self._parametrization(lam)
 
@@ -729,7 +729,7 @@ class Gamma(Continuous):
 
     def __init__(self, alpha=None, beta=None, mu=None, sigma=None):
         super().__init__()
-        self.dist = stats.gamma
+        self.dist = copy(stats.gamma)
         self.support = (0, np.inf)
         self._parametrization(alpha, beta, mu, sigma)
 
@@ -834,7 +834,7 @@ class Gumbel(Continuous):
 
     def __init__(self, mu=None, beta=None):
         super().__init__()
-        self.dist = stats.gumbel_r
+        self.dist = copy(stats.gumbel_r)
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, beta)
 
@@ -903,7 +903,7 @@ class HalfCauchy(Continuous):
 
     def __init__(self, beta=None):
         super().__init__()
-        self.dist = stats.halfcauchy
+        self.dist = copy(stats.halfcauchy)
         self.support = (0, np.inf)
         self._parametrization(beta)
 
@@ -981,7 +981,7 @@ class HalfNormal(Continuous):
 
     def __init__(self, sigma=None, tau=None):
         super().__init__()
-        self.dist = stats.halfnorm
+        self.dist = copy(stats.halfnorm)
         self.support = (0, np.inf)
         self._parametrization(sigma, tau)
 
@@ -1264,7 +1264,7 @@ class InverseGamma(Continuous):
 
     def __init__(self, alpha=None, beta=None, mu=None, sigma=None):
         super().__init__()
-        self.dist = stats.invgamma
+        self.dist = copy(stats.invgamma)
         self.support = (0, np.inf)
         self._parametrization(alpha, beta, mu, sigma)
 
@@ -1370,7 +1370,7 @@ class Laplace(Continuous):
 
     def __init__(self, mu=None, b=None):
         super().__init__()
-        self.dist = stats.laplace
+        self.dist = copy(stats.laplace)
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, b)
 
@@ -1444,7 +1444,7 @@ class Logistic(Continuous):
 
     def __init__(self, mu=None, s=None):
         super().__init__()
-        self.dist = stats.logistic
+        self.dist = copy(stats.logistic)
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, s)
 
@@ -1523,7 +1523,7 @@ class LogNormal(Continuous):
 
     def __init__(self, mu=None, sigma=None):
         super().__init__()
-        self.dist = stats.lognorm
+        self.dist = copy(stats.lognorm)
         self.support = (0, np.inf)
         self._parametrization(mu, sigma)
 
@@ -1603,7 +1603,7 @@ class Moyal(Continuous):
 
     def __init__(self, mu=None, sigma=None):
         super().__init__()
-        self.dist = stats.moyal
+        self.dist = copy(stats.moyal)
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, sigma)
 
@@ -1688,7 +1688,7 @@ class Normal(Continuous):
 
     def __init__(self, mu=None, sigma=None, tau=None):
         super().__init__()
-        self.dist = stats.norm
+        self.dist = copy(stats.norm)
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, sigma, tau)
 
@@ -1775,7 +1775,7 @@ class Pareto(Continuous):
 
     def __init__(self, alpha=None, m=None):
         super().__init__()
-        self.dist = stats.pareto
+        self.dist = copy(stats.pareto)
         self.support = (0, np.inf)
         self._parametrization(alpha, m)
 
@@ -1866,7 +1866,7 @@ class SkewNormal(Continuous):
 
     def __init__(self, mu=None, sigma=None, alpha=None, tau=None):
         super().__init__()
-        self.dist = stats.skewnorm
+        self.dist = copy(stats.skewnorm)
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, sigma, alpha, tau)
 
@@ -1976,7 +1976,7 @@ class Student(Continuous):
 
     def __init__(self, nu=None, mu=None, sigma=None, lam=None):
         super().__init__()
-        self.dist = stats.t
+        self.dist = copy(stats.t)
         self.support = (-np.inf, np.inf)
         self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
         self._parametrization(nu, mu, sigma, lam)
@@ -2087,7 +2087,7 @@ class Triangular(Continuous):
 
     def __init__(self, lower=None, c=None, upper=None):
         super().__init__()
-        self.dist = stats.triang
+        self.dist = copy(stats.triang)
         self.support = (-np.inf, np.inf)
         self._parametrization(lower, c, upper)
 
@@ -2176,7 +2176,7 @@ class TruncatedNormal(Continuous):
 
     def __init__(self, mu=None, sigma=None, lower=None, upper=None):
         super().__init__()
-        self.dist = stats.truncnorm
+        self.dist = copy(stats.truncnorm)
         self._parametrization(mu, sigma, lower, upper)
 
     def _parametrization(self, mu=None, sigma=None, lower=None, upper=None):
@@ -2265,7 +2265,7 @@ class Uniform(Continuous):
 
     def __init__(self, lower=None, upper=None):
         super().__init__()
-        self.dist = stats.uniform
+        self.dist = copy(stats.uniform)
         self._parametrization(lower, upper)
 
     def _parametrization(self, lower=None, upper=None):
@@ -2351,7 +2351,7 @@ class VonMises(Continuous):
 
     def __init__(self, mu=None, kappa=None):
         super().__init__()
-        self.dist = stats.vonmises
+        self.dist = copy(stats.vonmises)
         self._parametrization(mu, kappa)
 
     def _parametrization(self, mu=None, kappa=None):
@@ -2426,7 +2426,7 @@ class Wald(Continuous):
 
     def __init__(self, mu=None, lam=None):
         super().__init__()
-        self.dist = stats.invgauss
+        self.dist = copy(stats.invgauss)
         self.support = (0, np.inf)
         self._parametrization(mu, lam)
 
@@ -2498,7 +2498,7 @@ class Weibull(Continuous):
 
     def __init__(self, alpha=None, beta=None):
         super().__init__()
-        self.dist = stats.weibull_min
+        self.dist = copy(stats.weibull_min)
         self.support = (0, np.inf)
         self._parametrization(alpha, beta)
 
