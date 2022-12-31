@@ -28,7 +28,7 @@ def hdi_from_pdf(dist, mass=0.95):
         indices.append(idx)
         if mass_cum >= mass:
             break
-    return x_vals[np.sort(indices)[[0, -1]]]
+    return x_vals[np.sort(indices)[[0.0, -1]]]
 
 
 def garcia_approximation(mean, sigma):
@@ -103,3 +103,38 @@ def get_slider(name, value, lower, upper, continuous_update=True):
     )
 
     return slider
+
+
+init_vals = {
+    "AsymmetricLaplace": {"kappa": 1.0, "mu": 0.0, "b": 1.0},
+    "Beta": {"alpha": 2, "beta": 2},
+    "BetaScaled": {"alpha": 2, "beta": 2, "lower": -1.0, "upper": 2.0},
+    "Cauchy": {"alpha": 0.0, "beta": 1.0},
+    "ChiSquared": {"nu": 5.0},
+    "ExGaussian": {"mu": 0.0, "sigma": 1, "nu": 2},
+    "Exponential": {"lam": 1},
+    "Gamma": {"alpha": 2.0, "beta": 5.0},
+    "Gumbel": {"mu": 2.0, "beta": 5.0},
+    "HalfCauchy": {"beta": 1.0},
+    "HalfNormal": {"sigma": 1.0},
+    "HalfStudent": {"nu": 7.0, "sigma": 1.0},
+    "InverseGamma": {"alpha": 3.0, "beta": 5.0},
+    "Laplace": {"mu": 0.0, "b": 1.0},
+    "Logistic": {"mu": 0.0, "s": 1},
+    "LogNormal": {"mu": 0.0, "sigma": 0.5},
+    "Moyal": {"mu": 0.0, "sigma": 1.0},
+    "Normal": {"mu": 0.0, "sigma": 1.0},
+    "Pareto": {"alpha": 5, "m": 2.0},
+    "SkewNormal": {"mu": 0.0, "sigma": 1, "alpha": 6.0},
+    "Student": {"nu": 7, "mu": 0.0, "sigma": 1},
+    "Triangular": {"lower": -2, "c": 0.0, "upper": 2.0},
+    "TruncatedNormal": {"mu": 0.0, "sigma": 1, "lower": -2, "upper": 3.0},
+    "Uniform": {"lower": 0.0, "upper": 1.0},
+    "VonMises": {"mu": 0.0, "kappa": 1.0},
+    "Wald": {"mu": 1, "lam": 3.0},
+    "Weibull": {"alpha": 5.0, "beta": 2.0},
+    "Binomial": {"n": 5, "p": 0.5},
+    "DiscreteUniform": {"lower": -2.0, "upper": 2.0},
+    "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},
+    "Poisson": {"mu": 4.5},
+}

@@ -87,12 +87,12 @@ def test_recover_right():
     dists = [Normal(), Gamma(), Poisson()]
     sample = Normal(0, 1).rvs(10000)
     pz.mle(dists, sample)
-    assert dists[0].name == "normal"
+    assert dists[0].__class__.__name__ == "Normal"
 
     sample = Gamma(2, 10).rvs(10000)
     pz.mle(dists, sample)
-    assert dists[1].name == "gamma"
+    assert dists[1].__class__.__name__ == "Gamma"
 
     sample = Poisson(10).rvs(10000)
     pz.mle(dists, sample)
-    assert dists[2].name == "poisson"
+    assert dists[2].__class__.__name__ == "Poisson"

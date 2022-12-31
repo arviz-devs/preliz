@@ -58,7 +58,6 @@ class Binomial(Discrete):
 
     def __init__(self, n=None, p=None):
         super().__init__()
-        self.name = "binomial"
         self.dist = stats.binom
         self.support = (0, np.inf)
         self._parametrization(n, p)
@@ -137,7 +136,6 @@ class DiscreteUniform(Discrete):
 
     def __init__(self, lower=None, upper=None):
         super().__init__()
-        self.name = "discreteuniform"
         self.dist = stats.randint
         self._parametrization(lower, upper)
 
@@ -249,7 +247,6 @@ class NegativeBinomial(Discrete):
 
     def __init__(self, mu=None, alpha=None, p=None, n=None):
         super().__init__()
-        self.name = "negativebinomial"
         self.dist = stats.nbinom
         self.support = (0, np.inf)
         self._parametrization(mu, alpha, p, n)
@@ -350,7 +347,6 @@ class Poisson(Discrete):
     def __init__(self, mu=None):
         super().__init__()
         self.mu = mu
-        self.name = "poisson"
         self.dist = stats.poisson
         self.support = (0, np.inf)
         self._parametrization(mu)
