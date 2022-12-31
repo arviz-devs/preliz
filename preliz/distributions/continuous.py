@@ -2279,10 +2279,10 @@ class Uniform(Continuous):
         if upper is None:
             self.upper = np.inf
         self.support = (self.lower, self.upper)
-        self.dist.a = self.lower
-        self.dist.b = self.upper
         if (lower and upper) is not None:
             self._update(lower, upper)
+            self.dist.a = self.lower
+            self.dist.b = self.upper
         else:
             self.lower = lower
             self.upper = upper
