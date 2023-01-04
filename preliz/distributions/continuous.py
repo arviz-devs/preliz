@@ -12,7 +12,7 @@ from scipy import stats
 from scipy.special import gamma as gammaf
 
 from ..utils.optimization import optimize_ml
-from ..utils.utils import garcia_approximation
+from ..utils.utils import garcia_approximation, all_not_none
 from .distributions import Continuous
 
 eps = np.finfo(float).eps
@@ -118,14 +118,14 @@ class AsymmetricLaplace(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(kappa=self.kappa, loc=self.mu, scale=self.b)
         return frozen
 
     def _update(self, kappa, mu, b):
-        self.kappa = float(kappa)
-        self.mu = float(mu)
-        self.b = float(b)
+        self.kappa = np.float64(kappa)
+        self.mu = np.float64(mu)
+        self.b = np.float64(b)
         self.q = self._to_q(self.kappa)
 
         if self.param_names[0] == "kappa":
@@ -260,13 +260,13 @@ class Beta(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.alpha, self.beta)
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = float(alpha)
-        self.beta = float(beta)
+        self.alpha = np.float64(alpha)
+        self.beta = np.float64(beta)
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
         self.kappa = self.mu * (1 - self.mu) / self.sigma**2 - 1
 
@@ -351,18 +351,18 @@ class BetaScaled(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if self.alpha is not None or self.beta is not None:
+        if all_not_none(self):
             frozen = self.dist(self.alpha, self.beta, loc=self.lower, scale=self.upper - self.lower)
         return frozen
 
     def _update(self, alpha, beta, lower=None, upper=None):
         if lower is not None:
-            self.lower = float(lower)
+            self.lower = np.float64(lower)
         if upper is not None:
-            self.upper = float(upper)
+            self.upper = np.float64(upper)
 
-        self.alpha = float(alpha)
-        self.beta = float(beta)
+        self.alpha = np.float64(alpha)
+        self.beta = np.float64(beta)
         self.params = (self.alpha, self.beta, self.lower, self.upper)
         self.support = self.lower, self.upper
         self._update_rv_frozen()
@@ -433,13 +433,13 @@ class Cauchy(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.alpha, self.beta)
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = float(alpha)
-        self.beta = float(beta)
+        self.alpha = np.float64(alpha)
+        self.beta = np.float64(beta)
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 
@@ -504,12 +504,12 @@ class ChiSquared(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.nu)
         return frozen
 
     def _update(self, nu):
-        self.nu = float(nu)
+        self.nu = np.float64(nu)
         self.params = (self.nu,)
         self._update_rv_frozen()
 
@@ -592,9 +592,9 @@ class ExGaussian(Continuous):
         return frozen
 
     def _update(self, mu, sigma, nu):
-        self.nu = float(nu)
-        self.mu = float(mu)
-        self.sigma = float(sigma)
+        self.nu = np.float64(nu)
+        self.mu = np.float64(mu)
+        self.sigma = np.float64(sigma)
         self.params = (self.mu, self.sigma, self.nu)
         self._update_rv_frozen()
 
@@ -656,12 +656,12 @@ class Exponential(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(scale=1 / self.lam)
         return frozen
 
     def _update(self, lam):
-        self.lam = float(lam)
+        self.lam = np.float64(lam)
         self.params = (self.lam,)
         self._update_rv_frozen()
 
@@ -766,13 +766,13 @@ class Gamma(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(a=self.alpha, scale=1 / self.beta)
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = float(alpha)
-        self.beta = float(beta)
+        self.alpha = np.float64(alpha)
+        self.beta = np.float64(beta)
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
@@ -849,13 +849,13 @@ class Gumbel(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(loc=self.mu, scale=self.beta)
         return frozen
 
     def _update(self, mu, beta):
-        self.mu = float(mu)
-        self.beta = float(beta)
+        self.mu = np.float64(mu)
+        self.beta = np.float64(beta)
         self.params = (self.mu, self.beta)
         self._update_rv_frozen()
 
@@ -917,12 +917,12 @@ class HalfCauchy(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(scale=self.beta)
         return frozen
 
     def _update(self, beta):
-        self.beta = float(beta)
+        self.beta = np.float64(beta)
         self.params = (self.beta,)
         self._update_rv_frozen()
 
@@ -1003,12 +1003,12 @@ class HalfNormal(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(scale=self.sigma)
         return frozen
 
     def _update(self, sigma):
-        self.sigma = float(sigma)
+        self.sigma = np.float64(sigma)
         self.tau = to_precision(sigma)
 
         if self.param_names[0] == "sigma":
@@ -1111,13 +1111,13 @@ class HalfStudent(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all(self.params):
+        if all_not_none(self):
             frozen = self.dist(nu=self.nu, sigma=self.sigma)
         return frozen
 
     def _update(self, nu, sigma):
-        self.nu = float(nu)
-        self.sigma = float(sigma)
+        self.nu = np.float64(nu)
+        self.sigma = np.float64(sigma)
         self.lam = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -1307,13 +1307,13 @@ class InverseGamma(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(a=self.alpha, scale=self.beta)
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = float(alpha)
-        self.beta = float(beta)
+        self.alpha = np.float64(alpha)
+        self.beta = np.float64(beta)
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
@@ -1385,13 +1385,13 @@ class Laplace(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(loc=self.mu, scale=self.b)
         return frozen
 
     def _update(self, mu, b):
-        self.mu = float(mu)
-        self.b = float(b)
+        self.mu = np.float64(mu)
+        self.b = np.float64(b)
         self.params = (self.mu, self.b)
         self._update_rv_frozen()
 
@@ -1459,13 +1459,13 @@ class Logistic(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(loc=self.mu, scale=self.s)
         return frozen
 
     def _update(self, mu, s):
-        self.mu = float(mu)
-        self.s = float(s)
+        self.mu = np.float64(mu)
+        self.s = np.float64(s)
         self.params = (self.mu, self.s)
         self._update_rv_frozen()
 
@@ -1538,13 +1538,13 @@ class LogNormal(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.sigma, scale=np.exp(self.mu))
         return frozen
 
     def _update(self, mu, sigma):
-        self.mu = float(mu)
-        self.sigma = float(sigma)
+        self.mu = np.float64(mu)
+        self.sigma = np.float64(sigma)
         self.params = (self.mu, self.sigma)
         self._update_rv_frozen()
 
@@ -1618,13 +1618,13 @@ class Moyal(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(loc=self.mu, scale=self.sigma)
         return frozen
 
     def _update(self, mu, sigma):
-        self.mu = float(mu)
-        self.sigma = float(sigma)
+        self.mu = np.float64(mu)
+        self.sigma = np.float64(sigma)
         self.params = (self.mu, self.sigma)
         self._update_rv_frozen()
 
@@ -1714,13 +1714,13 @@ class Normal(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.mu, self.sigma)
         return frozen
 
     def _update(self, mu, sigma):
-        self.mu = float(mu)
-        self.sigma = float(sigma)
+        self.mu = np.float64(mu)
+        self.sigma = np.float64(sigma)
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -1790,13 +1790,13 @@ class Pareto(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.alpha, scale=self.m)
         return frozen
 
     def _update(self, alpha, m):
-        self.alpha = float(alpha)
-        self.m = float(m)
+        self.alpha = np.float64(alpha)
+        self.m = np.float64(m)
         self.support = (self.m, np.inf)
         self.params = (self.alpha, self.m)
         self._update_rv_frozen()
@@ -1893,14 +1893,14 @@ class SkewNormal(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.alpha, self.mu, self.sigma)
         return frozen
 
     def _update(self, mu, sigma, alpha):
-        self.mu = float(mu)
-        self.sigma = float(sigma)
-        self.alpha = float(alpha)
+        self.mu = np.float64(mu)
+        self.sigma = np.float64(sigma)
+        self.alpha = np.float64(alpha)
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -2004,14 +2004,14 @@ class Student(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.nu, self.mu, self.sigma)
         return frozen
 
     def _update(self, nu, mu, sigma):
-        self.nu = float(nu)
-        self.mu = float(mu)
-        self.sigma = float(sigma)
+        self.nu = np.float64(nu)
+        self.mu = np.float64(mu)
+        self.sigma = np.float64(sigma)
         self.lam = to_precision(sigma)
 
         if self.param_names[2] == "sigma":
@@ -2103,16 +2103,16 @@ class Triangular(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             scale = self.upper - self.lower
             c_ = (self.c - self.lower) / scale
             frozen = self.dist(c=c_, loc=self.lower, scale=scale)
         return frozen
 
     def _update(self, lower, c, upper):
-        self.lower = float(lower)
-        self.c = float(c)
-        self.upper = float(upper)
+        self.lower = np.float64(lower)
+        self.c = np.float64(c)
+        self.upper = np.float64(upper)
         self.support = (self.lower, self.upper)
         self.params = (self.lower, self.c, self.upper)
         self._update_rv_frozen()
@@ -2209,12 +2209,12 @@ class TruncatedNormal(Continuous):
 
     def _update(self, mu, sigma, lower=None, upper=None):
         if lower is not None:
-            self.lower = float(lower)
+            self.lower = np.float64(lower)
         if upper is not None:
-            self.upper = float(upper)
+            self.upper = np.float64(upper)
 
-        self.mu = float(mu)
-        self.sigma = float(sigma)
+        self.mu = np.float64(mu)
+        self.sigma = np.float64(sigma)
         self.params = (self.mu, self.sigma, self.lower, self.upper)
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
@@ -2289,13 +2289,13 @@ class Uniform(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.lower, self.upper - self.lower)
         return frozen
 
     def _update(self, lower, upper):
-        self.lower = float(lower)
-        self.upper = float(upper)
+        self.lower = np.float64(lower)
+        self.upper = np.float64(upper)
         self.params = (self.lower, self.upper)
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
@@ -2365,13 +2365,13 @@ class VonMises(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(kappa=self.kappa, loc=self.mu)
         return frozen
 
     def _update(self, mu, kappa):
-        self.mu = float(mu)
-        self.kappa = float(kappa)
+        self.mu = np.float64(mu)
+        self.kappa = np.float64(kappa)
         self.params = (self.mu, self.kappa)
         self._update_rv_frozen()
 
@@ -2440,13 +2440,13 @@ class Wald(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.mu / self.lam, scale=self.lam)
         return frozen
 
     def _update(self, mu, lam):
-        self.mu = float(mu)
-        self.lam = float(lam)
+        self.mu = np.float64(mu)
+        self.lam = np.float64(lam)
         self.params = (self.mu, self.lam)
         self._update_rv_frozen()
 
@@ -2512,13 +2512,13 @@ class Weibull(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.alpha, scale=self.beta)
         return frozen
 
     def _update(self, alpha, beta):
-        self.alpha = float(alpha)
-        self.beta = float(beta)
+        self.alpha = np.float64(alpha)
+        self.beta = np.float64(beta)
         self.params = (self.alpha, self.beta)
         self._update_rv_frozen()
 

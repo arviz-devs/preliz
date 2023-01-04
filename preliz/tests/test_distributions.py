@@ -1,3 +1,4 @@
+# pylint: disable=redefined-outer-name
 import pytest
 from numpy.testing import assert_almost_equal
 import numpy as np
@@ -34,6 +35,11 @@ from preliz.distributions import (
     NegativeBinomial,
     Poisson,
 )
+
+
+@pytest.fixture(scope="session")
+def a_few_poissons():
+    return Poisson(), Poisson([1.0, 2.0]), Poisson(4.5)
 
 
 @pytest.mark.parametrize(
@@ -142,12 +148,68 @@ def test_mle(distribution, params):
 
 @pytest.mark.parametrize("fmt", (".2f", ".1g"))
 @pytest.mark.parametrize("mass", (0.5, 0.95))
-def test_summary(fmt, mass):
+def test_summary_args(fmt, mass):
     result = Normal(0, 1).summary(fmt, mass)
     assert result.mean == 0
-    assert result._fields == ("mean", "median", "std", "lower", "upper")
-    result = Poisson(2).summary()
-    assert result.mean == 2
+    assert result.std == 1
+
+
+def test_summary_valid(a_few_poissons):
+    d_0, d_1, d_2 = a_few_poissons
+    with pytest.raises(ValueError):
+        d_0.summary()
+    with pytest.raises(ValueError):
+        d_1.summary()
+    result = d_2.summary()
+    assert result.__class__.__name__ == "Poisson"
+    assert result.mean == 4.5
+    assert result.std == 2.12
+    assert result.lower == 1.0
+    assert result.upper == 9.0
+
+
+def test_eti(a_few_poissons):
+    d_0, d_1, d_2 = a_few_poissons
+    with pytest.raises(ValueError):
+        d_0.eti()
+    with pytest.raises(ValueError):
+        d_1.eti()
+    result = d_2.eti()
+    assert result == (1.0, 9.0)
+
+
+def test_hdi(a_few_poissons):
+    d_0, d_1, d_2 = a_few_poissons
+    with pytest.raises(ValueError):
+        d_0.hdi()
+    with pytest.raises(ValueError):
+        d_1.hdi()
+    result = d_2.hdi()
+    assert result == (1.0, 8.0)
+
+
+def test_rvs(a_few_poissons):
+    _, d_1, d_2 = a_few_poissons
+    result0 = d_2.rvs()
+    result1 = d_1.rvs()
+    assert isinstance(result0, int)
+    assert len(result1) == 2
+
+
+def test_cdf(a_few_poissons):
+    _, d_1, d_2 = a_few_poissons
+    result1 = d_1.cdf(1)
+    result2 = d_2.cdf(1)
+    assert round(result2, 2) == 0.06
+    assert np.allclose(result1, (0.73, 0.41), 2)
+
+
+def test_ppf(a_few_poissons):
+    _, d_1, d_2 = a_few_poissons
+    result1 = d_1.ppf(0.5)
+    result2 = d_2.ppf(0.5)
+    assert np.allclose(result1, (1, 2))
+    assert result2 == 4.0
 
 
 # @pytest.mark.parametrize(
