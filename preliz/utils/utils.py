@@ -124,7 +124,7 @@ def valid_scalar_params(self, check_frozen=True):
     if all(isinstance(param, (int, float, np.int64)) for param in self.params):
         return True
 
-    raise ValueError("parameters must be integer or floats")
+    raise ValueError("parameters must be integers or floats")
 
 
 init_vals = {
