@@ -4,11 +4,17 @@ Parent classes for all families.
 # pylint: disable=no-member
 from collections import namedtuple
 
-from ipywidgets import interact
+from ipywidgets import interactive
 import numpy as np
 
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
-from ..utils.utils import hdi_from_pdf, get_slider, valid_scalar_params, init_vals
+from ..utils.utils import (
+    hdi_from_pdf,
+    get_slider,
+    valid_scalar_params,
+    init_vals,
+    check_inside_notebook,
+)
 
 
 class Distribution:
@@ -344,6 +350,8 @@ class Distribution:
             the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
             should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         """
+        check_inside_notebook()
+
         if valid_scalar_params(self, check_frozen=False):
             args = dict(zip(self.param_names, self.params))
         else:
@@ -354,8 +362,12 @@ class Distribution:
         if fixed_lim == "both":
             xlim = self._finite_endpoints("full")
             xvals = self.xvals("restricted")
-            max_pdf = np.max(self.pdf(xvals))
-            ylim = (-max_pdf * 0.075, max_pdf * 1.5)
+            if kind == "pdf":
+                max_pdf = np.max(self.pdf(xvals))
+                ylim = (-max_pdf * 0.075, max_pdf * 1.5)
+            elif kind == "ppf":
+                max_ppf = self.ppf(0.999)
+                ylim = (-max_ppf * 0.075, max_ppf * 1.5)
         elif isinstance(fixed_lim, tuple):
             xlim = fixed_lim[:2]
             ylim = fixed_lim[2:]
@@ -379,7 +391,7 @@ class Distribution:
             if fixed_lim != "auto" and kind != "cdf":
                 ax.set_ylim(*ylim)
 
-        interact(plot, **sliders)
+        return interactive(plot, **sliders)
 
 
 class Continuous(Distribution):

@@ -11,7 +11,7 @@ from scipy.spatial import KDTree
 
 
 from .utils.plot_utils import plot_pointinterval, repr_to_matplotlib
-from .utils.utils import get_pymc_to_preliz
+from .utils.utils import get_pymc_to_preliz, check_inside_notebook
 from .distributions.continuous import Normal
 from .distributions.distributions import Distribution
 
@@ -43,20 +43,12 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
         as possible to `init`. Available options are, a PreliZ distribution or a 2-tuple with
         the first element representing the mean and the second the standard deviation.
     """
+    check_inside_notebook(need_widget=True)
+
     _log.info(
         """Enter at your own risk. """
         """This is highly experimental code and not recommended for regular use."""
     )
-
-    try:
-        shell = get_ipython().__class__.__name__  # pylint:disable=undefined-variable
-        if shell == "ZMQInteractiveShell" and "nbagg" not in get_backend():
-            _log.info(
-                "To run ppa you need Jupyter notebook, or Jupyter lab."
-                "You will also need to use the magic `%matplotlib widget`"
-            )
-    except NameError:
-        pass
 
     if isinstance(references, (float, int)):
         references = [references]
