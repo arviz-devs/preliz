@@ -5,3 +5,4 @@ pytest-cov>=2.6.1
 pytest>=4.4.0
 pre-commit>=2.19
 ipytest>=0.13.0 
+nbconvert>=6.5.4 
