@@ -8,7 +8,7 @@ from ipywidgets import interact
 import numpy as np
 
 from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
-from ..utils.utils import hdi_from_pdf, get_slider, init_vals
+from ..utils.utils import hdi_from_pdf, get_slider, valid_scalar_params, init_vals
 
 
 class Distribution:
@@ -29,8 +29,9 @@ class Distribution:
             bolded_name = "\033[1m" + name + "\033[0m"
 
             description = "".join(
-                f"{n}={v:.2f}," for n, v in zip(self.param_names, self.params)
+                f"{n}={np.round(v, 2)}," for n, v in zip(self.param_names, self.params)
             ).strip(",")
+
             return f"{bolded_name}({description})"
         else:
             return name
@@ -56,7 +57,7 @@ class Distribution:
         mass: float
             Probability mass for the equal-tailed interval. Defaults to 0.94
         """
-        if self.is_frozen:
+        if valid_scalar_params(self):
             attr = namedtuple(self.__class__.__name__, ["mean", "median", "std", "lower", "upper"])
             mean = float(f"{self.rv_frozen.mean():{fmt}}")
             median = float(f"{self.rv_frozen.median():{fmt}}")
@@ -111,10 +112,13 @@ class Distribution:
         mass: float
             Probability mass in the interval. Defaults to 0.94
         """
-        eti = self.rv_frozen.interval(mass)
-        lower_tail = float(f"{eti[0]:{fmt}}")
-        upper_tail = float(f"{eti[1]:{fmt}}")
-        return (lower_tail, upper_tail)
+        if valid_scalar_params(self):
+            eti = self.rv_frozen.interval(mass)
+            lower_tail = float(f"{eti[0]:{fmt}}")
+            upper_tail = float(f"{eti[1]:{fmt}}")
+            return (lower_tail, upper_tail)
+        else:
+            return None
 
     def hdi(self, fmt=".2f", mass=0.94):
         """Highest density interval containing `mass`.
@@ -127,10 +131,13 @@ class Distribution:
         mass: float
             Probability mass in the interval. Defaults to 0.94
         """
-        hdi = hdi_from_pdf(self, mass)
-        lower_tail = float(f"{hdi[0]:{fmt}}")
-        upper_tail = float(f"{hdi[1]:{fmt}}")
-        return (lower_tail, upper_tail)
+        if valid_scalar_params(self):
+            hdi = hdi_from_pdf(self, mass)
+            lower_tail = float(f"{hdi[0]:{fmt}}")
+            upper_tail = float(f"{hdi[1]:{fmt}}")
+            return (lower_tail, upper_tail)
+        else:
+            return None
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """
@@ -229,15 +236,13 @@ class Distribution:
             Size of the figure
         ax : matplotlib axes
         """
-        if self.is_frozen:
+
+        if valid_scalar_params(self):
             return plot_pdfpmf(
                 self, moments, pointinterval, quantiles, support, legend, figsize, ax
             )
         else:
-            raise ValueError(
-                "Undefined distribution, "
-                "you need to first define its parameters or use one of the fit methods"
-            )
+            return None
 
     def plot_cdf(
         self,
@@ -275,13 +280,10 @@ class Distribution:
             Size of the figure
         ax : matplotlib axes
         """
-        if self.is_frozen:
+        if valid_scalar_params(self):
             return plot_cdf(self, moments, pointinterval, quantiles, support, legend, figsize, ax)
         else:
-            raise ValueError(
-                "Undefined distribution, "
-                "you need to first define its parameters or use one of the fit methods"
-            )
+            return None
 
     def plot_ppf(
         self,
@@ -315,13 +317,10 @@ class Distribution:
             Size of the figure
         ax : matplotlib axes
         """
-        if self.is_frozen:
+        if valid_scalar_params(self):
             return plot_ppf(self, moments, pointinterval, quantiles, legend, figsize, ax)
         else:
-            raise ValueError(
-                "Undefined distribution, "
-                "you need to first define its parameters or use one of the fit methods"
-            )
+            return None
 
     def plot_interactive(self, kind="pdf", fixed_lim="both", pointinterval=True, quantiles=None):
         """
@@ -345,7 +344,7 @@ class Distribution:
             the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
             should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
         """
-        if self.is_frozen:
+        if valid_scalar_params(self, check_frozen=False):
             args = dict(zip(self.param_names, self.params))
         else:
             args = init_vals[self.__class__.__name__]

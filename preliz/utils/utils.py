@@ -28,7 +28,7 @@ def hdi_from_pdf(dist, mass=0.95):
         indices.append(idx)
         if mass_cum >= mass:
             break
-    return x_vals[np.sort(indices)[[0.0, -1]]]
+    return x_vals[np.sort(indices)[[0, -1]]]
 
 
 def garcia_approximation(mean, sigma):
@@ -103,6 +103,28 @@ def get_slider(name, value, lower, upper, continuous_update=True):
     )
 
     return slider
+
+
+def all_not_none(self):
+    return all(x is not None for x in self.params)
+
+
+def valid_scalar_params(self, check_frozen=True):
+    if not self.is_frozen:
+        if check_frozen:
+            raise ValueError(
+                "Undefined distribution, "
+                "you need to first define its parameters or use one of the fit methods"
+            )
+        return False
+
+    if self.kind not in ["discrete", "continuous"]:
+        return True
+
+    if all(isinstance(param, (int, float, np.int64)) for param in self.params):
+        return True
+
+    raise ValueError("parameters must be integers or floats")
 
 
 init_vals = {

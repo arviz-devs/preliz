@@ -6,7 +6,7 @@ Discrete probability distributions.
 """
 from copy import copy
 import logging
-from math import ceil, floor
+from math import ceil
 
 import numpy as np
 from scipy import stats
@@ -14,6 +14,8 @@ from scipy import stats
 
 from .distributions import Discrete
 from ..utils.optimization import optimize_ml
+from ..utils.utils import all_not_none
+
 
 _log = logging.getLogger("preliz")
 
@@ -74,13 +76,13 @@ class Binomial(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.n, self.p)
         return frozen
 
     def _update(self, n, p):
-        self.n = int(n)
-        self.p = float(p)
+        self.n = np.int64(n)
+        self.p = np.float64(p)
         self.params = (self.n, self.p)
         self.support = (0, self.n)
         self._update_rv_frozen()
@@ -161,13 +163,13 @@ class DiscreteUniform(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.lower, self.upper + 1)
         return frozen
 
     def _update(self, lower, upper):
-        self.lower = floor(lower)
-        self.upper = ceil(upper)
+        self.lower = np.floor(lower)
+        self.upper = np.ceil(upper)
         self.params = (self.lower, self.upper)
         self.support = (self.lower, self.upper)
         self._update_rv_frozen()
@@ -283,13 +285,13 @@ class NegativeBinomial(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.n, self.p)
         return frozen
 
     def _update(self, mu, alpha):
-        self.mu = float(mu)
-        self.alpha = float(alpha)
+        self.mu = np.float64(mu)
+        self.alpha = np.float64(alpha)
         self.p, self.n = self._to_p_n(self.mu, self.alpha)
 
         if self.param_names[0] == "mu":
@@ -362,12 +364,12 @@ class Poisson(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if any(self.params):
+        if all_not_none(self):
             frozen = self.dist(self.mu)
         return frozen
 
     def _update(self, mu):
-        self.mu = float(mu)
+        self.mu = np.float64(mu)
         self.params = (self.mu,)
         self._update_rv_frozen()
 
