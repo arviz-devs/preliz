@@ -1,7 +1,11 @@
 # pylint: disable=redefined-outer-name
+
 import pytest
 from numpy.testing import assert_almost_equal
 import numpy as np
+
+from test_helper import run_notebook
+
 
 from preliz.distributions import (
     AsymmetricLaplace,
@@ -210,3 +214,11 @@ def test_ppf(a_few_poissons):
     result2 = d_2.ppf(0.5)
     assert np.allclose(result1, (1, 2))
     assert result2 == 4.0
+
+
+def test_plot_interactive(capsys, a_few_poissons):
+    d_0, _, _ = a_few_poissons
+    d_0.plot_interactive()
+    out, _ = capsys.readouterr()
+    assert "RuntimeError" in out
+    run_notebook("plot_interactive.ipynb")

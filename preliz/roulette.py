@@ -1,18 +1,14 @@
-import logging
 from math import ceil, floor
 
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import patches, get_backend
+from matplotlib import patches
 
 
 import ipywidgets as widgets
 from .utils.optimization import fit_to_ecdf
-from .utils.utils import get_distributions
-
-
-_log = logging.getLogger("preliz")
+from .utils.utils import get_distributions, check_inside_notebook
 
 
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
@@ -43,15 +39,8 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
     * Morris D.E. et al. (2014) see https://doi.org/10.1016/j.envsoft.2013.10.010
     * See roulette mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
     """
-    try:
-        shell = get_ipython().__class__.__name__  # pylint:disable=undefined-variable
-        if shell == "ZMQInteractiveShell" and "nbagg" not in get_backend():
-            _log.info(
-                "To run roulette you need Jupyter notebook, or Jupyter lab."
-                "You will also need to use the magic `%matplotlib widget`"
-            )
-    except NameError:
-        pass
+
+    check_inside_notebook(need_widget=True)
 
     w_x_min, w_x_max, w_ncols, w_nrows, w_repr, w_distributions = get_widgets(
         x_min, x_max, nrows, ncols

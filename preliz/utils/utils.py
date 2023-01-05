@@ -1,8 +1,16 @@
-from sys import modules
+from sys import modules, stdout
+import logging
+import inspect
+import traceback
 
 import numpy as np
 from scipy.special import gamma
 from ipywidgets import FloatSlider, IntSlider
+from matplotlib import get_backend
+from IPython import get_ipython
+
+
+_log = logging.getLogger("preliz")
 
 
 def hdi_from_pdf(dist, mass=0.95):
@@ -125,6 +133,25 @@ def valid_scalar_params(self, check_frozen=True):
         return True
 
     raise ValueError("parameters must be integers or floats")
+
+
+def check_inside_notebook(need_widget=False):
+    shell = get_ipython()
+    name = inspect.currentframe().f_back.f_code.co_name
+    try:
+        if shell is None:
+            raise RuntimeError(
+                f"To run {name}, you need to call it from within a Jupyter notebook or Jupyter lab."
+            )
+        if need_widget:
+            shell_name = shell.__class__.__name__
+            if shell_name == "ZMQInteractiveShell" and "nbagg" not in get_backend():
+                msg = f"To run {name}, you need use the magic `%matplotlib widget`"
+                raise RuntimeError(msg)
+    except Exception:  # pylint: disable=broad-except
+        tb_as_str = traceback.format_exc()
+        # Print only the last line of the traceback, which contains the error message
+        print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=stdout)
 
 
 init_vals = {
