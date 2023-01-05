@@ -1,4 +1,4 @@
-from sys import modules, stdout
+import sys
 import logging
 import inspect
 import traceback
@@ -66,7 +66,7 @@ def get_distributions(dist_names):
     """
     dists = []
     for name in dist_names:
-        dist = getattr(modules["preliz"], name)
+        dist = getattr(sys.modules["preliz"], name)
         dists.append(dist())
 
     return dists
@@ -76,7 +76,7 @@ def get_pymc_to_preliz():
     """
     Generate dictionary mapping pymc to preliz distributions
     """
-    all_distributions = modules["preliz.distributions"].__all__
+    all_distributions = sys.modules["preliz.distributions"].__all__
     pymc_to_preliz = dict(
         zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
     )
@@ -151,7 +151,7 @@ def check_inside_notebook(need_widget=False):
     except Exception:  # pylint: disable=broad-except
         tb_as_str = traceback.format_exc()
         # Print only the last line of the traceback, which contains the error message
-        print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=stdout)
+        print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=sys.stdout)
 
 
 init_vals = {
