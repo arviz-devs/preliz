@@ -1,16 +1,5 @@
-import sys
-import logging
-import inspect
-import traceback
-
 import numpy as np
 from scipy.special import gamma
-from ipywidgets import FloatSlider, IntSlider
-from matplotlib import get_backend
-from IPython import get_ipython
-
-
-_log = logging.getLogger("preliz")
 
 
 def hdi_from_pdf(dist, mass=0.95):
@@ -60,59 +49,6 @@ def garcia_approximation(mean, sigma):
     return alpha, beta
 
 
-def get_distributions(dist_names):
-    """
-    Generate a subset of distributions which names agree with those in dist_names
-    """
-    dists = []
-    for name in dist_names:
-        dist = getattr(sys.modules["preliz"], name)
-        dists.append(dist())
-
-    return dists
-
-
-def get_pymc_to_preliz():
-    """
-    Generate dictionary mapping pymc to preliz distributions
-    """
-    all_distributions = sys.modules["preliz.distributions"].__all__
-    pymc_to_preliz = dict(
-        zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
-    )
-    return pymc_to_preliz
-
-
-def get_slider(name, value, lower, upper, continuous_update=True):
-    if np.isfinite(lower):
-        min_v = lower
-    else:
-        min_v = value - 10
-    if np.isfinite(upper):
-        max_v = upper
-    else:
-        max_v = value + 10
-
-    if isinstance(value, float):
-        slider_type = FloatSlider
-        step = (max_v - min_v) / 100
-    else:
-        slider_type = IntSlider
-        step = 1
-
-    slider = slider_type(
-        min=min_v,
-        max=max_v,
-        step=step,
-        description=f"{name} ({lower:.0f}, {upper:.0f})",
-        value=value,
-        style={"description_width": "initial"},
-        continuous_update=continuous_update,
-    )
-
-    return slider
-
-
 def all_not_none(self):
     return all(x is not None for x in self.params)
 
@@ -133,25 +69,6 @@ def valid_scalar_params(self, check_frozen=True):
         return True
 
     raise ValueError("parameters must be integers or floats")
-
-
-def check_inside_notebook(need_widget=False):
-    shell = get_ipython()
-    name = inspect.currentframe().f_back.f_code.co_name
-    try:
-        if shell is None:
-            raise RuntimeError(
-                f"To run {name}, you need to call it from within a Jupyter notebook or Jupyter lab."
-            )
-        if need_widget:
-            shell_name = shell.__class__.__name__
-            if shell_name == "ZMQInteractiveShell" and "nbagg" not in get_backend():
-                msg = f"To run {name}, you need use the magic `%matplotlib widget`"
-                raise RuntimeError(msg)
-    except Exception:  # pylint: disable=broad-except
-        tb_as_str = traceback.format_exc()
-        # Print only the last line of the traceback, which contains the error message
-        print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=sys.stdout)
 
 
 init_vals = {

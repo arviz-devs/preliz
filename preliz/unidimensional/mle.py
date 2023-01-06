@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 
-from ..utils.optimization import fit_to_sample
+from ..internal.optimization import fit_to_sample
 
 _log = logging.getLogger("preliz")
 

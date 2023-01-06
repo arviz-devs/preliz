@@ -1,7 +1,7 @@
 import logging
 
 from ..distributions import Normal
-from ..utils.optimization import relative_error, optimize_max_ent, get_fixed_params
+from ..internal.optimization import relative_error, optimize_max_ent, get_fixed_params
 
 _log = logging.getLogger("preliz")
 

@@ -7,8 +7,8 @@ from matplotlib import patches
 
 
 import ipywidgets as widgets
-from ..utils.optimization import fit_to_ecdf
-from ..utils.utils import get_distributions, check_inside_notebook
+from ..internal.optimization import fit_to_ecdf, get_distributions
+from ..internal.plot_helper import check_inside_notebook
 
 
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):

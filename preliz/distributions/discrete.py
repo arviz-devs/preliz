@@ -13,8 +13,8 @@ from scipy import stats
 
 
 from .distributions import Discrete
-from ..utils.optimization import optimize_ml
-from ..utils.utils import all_not_none
+from ..internal.optimization import optimize_ml
+from ..internal.distribution_helper import all_not_none
 
 
 _log = logging.getLogger("preliz")
