@@ -22,5 +22,7 @@ def test_roulette_mock():
     for idx, dist in enumerate(distributions):
         w_distributions = distributions[idx:]
 
-        dist = on_leave_fig(fig.canvas, grid, w_distributions, w_repr, x_min, x_max, ncols, ax_fit)
-        assert dist.__class__.__name__ == dist
+        fitted_dist = on_leave_fig(
+            fig.canvas, grid, w_distributions, w_repr, x_min, x_max, ncols, ax_fit
+        )
+        assert fitted_dist.__class__.__name__ == dist
