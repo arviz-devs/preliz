@@ -7,12 +7,10 @@ import logging
 
 from matplotlib import rcParams
 
-from .maxent import maxent
-from .ppa import ppa
-from .roulette import roulette
-from .quartile import quartile
-from .mle import mle
 from .distributions import *
+from .predictive import *
+from .unidimensional import *
+
 
 __all__ = ["maxent", "mle", "ppa", "roulette", "quartile"]
 

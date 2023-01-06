@@ -10,10 +10,10 @@ import numpy as np
 from scipy.spatial import KDTree
 
 
-from .utils.plot_utils import plot_pointinterval, repr_to_matplotlib
-from .utils.utils import get_pymc_to_preliz, check_inside_notebook
-from .distributions.continuous import Normal
-from .distributions.distributions import Distribution
+from ..utils.plot_utils import plot_pointinterval, repr_to_matplotlib
+from ..utils.utils import get_pymc_to_preliz, check_inside_notebook
+from ..distributions.continuous import Normal
+from ..distributions.distributions import Distribution
 
 _log = logging.getLogger("preliz")
 
