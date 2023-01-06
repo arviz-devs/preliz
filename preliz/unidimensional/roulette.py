@@ -7,8 +7,8 @@ from matplotlib import patches
 
 
 import ipywidgets as widgets
-from .utils.optimization import fit_to_ecdf
-from .utils.utils import get_distributions, check_inside_notebook
+from ..utils.optimization import fit_to_ecdf
+from ..utils.utils import get_distributions, check_inside_notebook
 
 
 def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
@@ -206,6 +206,7 @@ def on_leave_fig(canvas, grid, dist_names, kind_plot, x_min, x_max, ncols, ax):
 
     x_vals, ecdf, mean, std, filled_columns = weights_to_ecdf(grid.weights, x_min, x_range, ncols)
 
+    fitted_dist = None
     if filled_columns > 1:
         selected_distributions = get_distributions(dist_names)
 
@@ -228,6 +229,8 @@ def on_leave_fig(canvas, grid, dist_names, kind_plot, x_min, x_max, ncols, ax):
     else:
         reset_dist_panel(x_min, x_max, ax, yticks=True)
     canvas.draw()
+
+    return fitted_dist
 
 
 def weights_to_ecdf(weights, x_min, x_range, ncols):

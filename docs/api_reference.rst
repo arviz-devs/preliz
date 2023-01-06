@@ -8,12 +8,17 @@ This reference provides detailed documentation for user functions in the current
   :maxdepth: 2
 
 
-:mod:`preliz`
-=============
+:mod:`preliz.unidimensional`
+======================================
 
-.. automodule:: preliz
+.. automodule:: preliz.unidimensional
    :members:
 
+:mod:`preliz.predictive`
+======================================
+
+.. automodule:: preliz.predictive
+   :members:
 
 :mod:`preliz.distributions.continuous`
 ======================================
