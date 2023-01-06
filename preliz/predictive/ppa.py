@@ -2,6 +2,7 @@
 """Prior predictive check assistant."""
 
 import logging
+from sys import modules
 
 import arviz as az
 import ipywidgets as widgets
@@ -10,8 +11,9 @@ import numpy as np
 from scipy.spatial import KDTree
 
 
-from ..utils.plot_utils import plot_pointinterval, repr_to_matplotlib
-from ..utils.utils import get_pymc_to_preliz, check_inside_notebook
+from ..internal.plot_helper import plot_pointinterval, repr_to_matplotlib
+from ..internal.plot_helper import check_inside_notebook
+from ..internal.optimization import get_distributions
 from ..distributions.continuous import Normal
 from ..distributions.distributions import Distribution
 
@@ -375,3 +377,14 @@ def back_fitting(model, subset, string):
             dist._fit_mle(subset[name])
             string += f"{repr_to_matplotlib(dist)}\n"
     return string
+
+
+def get_pymc_to_preliz():
+    """
+    Generate dictionary mapping pymc to preliz distributions
+    """
+    all_distributions = modules["preliz.distributions"].__all__
+    pymc_to_preliz = dict(
+        zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
+    )
+    return pymc_to_preliz

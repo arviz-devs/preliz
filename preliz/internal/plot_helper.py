@@ -1,8 +1,17 @@
+import inspect
+import logging
+import traceback
+import sys
+
+from IPython import get_ipython
+from ipywidgets import FloatSlider, IntSlider
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import _pylab_helpers
+from matplotlib import _pylab_helpers, get_backend
 from scipy.stats._distn_infrastructure import rv_continuous_frozen, rv_discrete_frozen
 from scipy.interpolate import interp1d, PchipInterpolator
+
+_log = logging.getLogger("preliz")
 
 
 def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
@@ -195,3 +204,52 @@ def get_moments(dist, moments):
         seen.append(moment)
 
     return "\n" + ", ".join(str_m)
+
+
+def get_slider(name, value, lower, upper, continuous_update=True):
+    if np.isfinite(lower):
+        min_v = lower
+    else:
+        min_v = value - 10
+    if np.isfinite(upper):
+        max_v = upper
+    else:
+        max_v = value + 10
+
+    if isinstance(value, float):
+        slider_type = FloatSlider
+        step = (max_v - min_v) / 100
+    else:
+        slider_type = IntSlider
+        step = 1
+
+    slider = slider_type(
+        min=min_v,
+        max=max_v,
+        step=step,
+        description=f"{name} ({lower:.0f}, {upper:.0f})",
+        value=value,
+        style={"description_width": "initial"},
+        continuous_update=continuous_update,
+    )
+
+    return slider
+
+
+def check_inside_notebook(need_widget=False):
+    shell = get_ipython()
+    name = inspect.currentframe().f_back.f_code.co_name
+    try:
+        if shell is None:
+            raise RuntimeError(
+                f"To run {name}, you need to call it from within a Jupyter notebook or Jupyter lab."
+            )
+        if need_widget:
+            shell_name = shell.__class__.__name__
+            if shell_name == "ZMQInteractiveShell" and "nbagg" not in get_backend():
+                msg = f"To run {name}, you need use the magic `%matplotlib widget`"
+                raise RuntimeError(msg)
+    except Exception:  # pylint: disable=broad-except
+        tb_as_str = traceback.format_exc()
+        # Print only the last line of the traceback, which contains the error message
+        print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=sys.stdout)

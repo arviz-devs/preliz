@@ -7,14 +7,14 @@ from collections import namedtuple
 from ipywidgets import interactive
 import numpy as np
 
-from ..utils.plot_utils import plot_pdfpmf, plot_cdf, plot_ppf
-from ..utils.utils import (
-    hdi_from_pdf,
+from ..internal.plot_helper import (
+    plot_pdfpmf,
+    plot_cdf,
+    plot_ppf,
     get_slider,
-    valid_scalar_params,
-    init_vals,
     check_inside_notebook,
 )
+from ..internal.distribution_helper import init_vals, valid_scalar_params, hdi_from_pdf
 
 
 class Distribution:

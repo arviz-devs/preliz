@@ -11,8 +11,8 @@ import numpy as np
 from scipy import stats
 from scipy.special import gamma as gammaf
 
-from ..utils.optimization import optimize_ml
-from ..utils.utils import garcia_approximation, all_not_none
+from ..internal.optimization import optimize_ml
+from ..internal.distribution_helper import garcia_approximation, all_not_none
 from .distributions import Continuous
 
 eps = np.finfo(float).eps
