@@ -1,16 +1,15 @@
 <img src="https://raw.githubusercontent.com/arviz-devs/preliz/main/docs/logos/PreliZ.png#gh-light-mode-only" width=200></img>
 <img src="https://raw.githubusercontent.com/arviz-devs/preliz/main/docs/logos/PreliZ_white.png#gh-dark-mode-only" width=200></img>
 
+Tools to help you pick a prior.
 
 [![PyPi version](https://badge.fury.io/py/preliz.svg)](https://badge.fury.io/py/preliz)
 [![Build Status](https://github.com/arviz-devs/preliz/actions/workflows/test.yml/badge.svg)](https://github.com/arviz-devs/preliz/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/arviz-devs/preliz/branch/master/graph/badge.svg?token=SLJIK2O4C5 )](https://codecov.io/gh/arviz-devs/preliz/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
-Tools to help you pick a prior.
 
-
-**This package is very new and all of its features are experimental, not yet well tested, and subject to change without notice.**
+**This package is very new and many of its features are experimental, or not yet well tested, or subject to change without notice.**
 
 
 ## Documentation

@@ -1,5 +1,9 @@
-PreliZ
+Tools to help you pick a prior 
 ===================================================
+
+ **This package is very new and many of its features are experimental, or not yet well tested, or subject to change without notice.**
+
+
 |PyPI version|
 |Tests|
 |Coverage|
@@ -16,13 +20,6 @@ PreliZ
 
 .. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
-
-
-
- Tools to help you pick a prior 
-
-**This package is very new and all of its features are experimental, not yet well tested, and subject to change without notice.**
-
 
 Dependencies
 ============
@@ -45,7 +42,7 @@ The latest development version can be installed from the main branch using pip:
 
 Contributing
 ============
-We welcome contributions from interested individuals or groups! For information about contributing to preliz check out our instructions, policies, and guidelines `here <https://github.com/arviz-devs/preliz/blob/main/CONTRIBUTING.md>`_.
+We welcome contributions from interested individuals or groups! For information about contributing to PreliZ check out our instructions, policies, and guidelines `here <https://github.com/arviz-devs/preliz/blob/main/CONTRIBUTING.md>`_.
 
 Contributors
 ============
