@@ -57,7 +57,9 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   examples/interactive_examples
+   examples/param_space_1d_examples
+   examples/observed_space_examples
+
    api_reference
 
 Indices
