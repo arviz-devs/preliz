@@ -5,6 +5,7 @@ import sys
 
 from IPython import get_ipython
 from ipywidgets import FloatSlider, IntSlider
+from arviz import plot_kde
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
@@ -234,6 +235,60 @@ def get_slider(name, value, lower, upper, continuous_update=True):
     )
 
     return slider
+
+
+def get_sliders(signature, model):
+    sliders = {}
+    for name, param in signature.parameters.items():
+        if isinstance(param.default, (int, float)):
+            value = float(param.default)
+        else:
+            value = None
+
+        dist, idx = model[name]
+        lower, upper = dist.params_support[idx]
+
+        if value is None:
+            value = getattr(dist, dist.param_names[idx])
+
+        sliders[name] = get_slider(name, value, lower, upper, continuous_update=False)
+    return sliders
+
+
+def plot_decorator(func, iterations, kind_plot):
+    def looper(*args, **kwargs):
+        results = []
+        alpha = max(0.01, 1 - iterations * 0.009)
+        for _ in range(iterations):
+            result = func(*args, **kwargs)
+            results.append(result)
+            if kind_plot == "hist":
+                plt.hist(
+                    result, alpha=alpha, density=True, bins="auto", color="C0", histtype="step"
+                )
+            elif kind_plot == "kde":
+                plot_kde(result, plot_kwargs={"alpha": alpha})
+            elif kind_plot == "ecdf":
+                plt.plot(
+                    np.sort(result), np.linspace(0, 1, len(result), endpoint=False), color="C0"
+                )
+
+        if kind_plot == "hist":
+            plt.hist(
+                np.concatenate(results),
+                density=True,
+                bins="auto",
+                color="k",
+                ls="--",
+                histtype="step",
+            )
+        elif kind_plot == "kde":
+            plot_kde(np.concatenate(results), plot_kwargs={"color": "k", "ls": "--"})
+        elif kind_plot == "ecdf":
+            a = np.concatenate(results)
+            plt.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
+
+    return looper
 
 
 def check_inside_notebook(need_widget=False):
