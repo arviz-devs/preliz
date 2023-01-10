@@ -245,8 +245,18 @@ def get_sliders(signature, model):
         else:
             value = None
 
-        dist, idx = model[name]
+        dist, idx, func = model[name]
         lower, upper = dist.params_support[idx]
+        # ((eps, 1 - eps),
+        # (-np.inf, np.inf),
+        # (eps, np.inf))
+        # ((-np.pi, np.pi)
+        
+        if lower == np.finfo(float).eps:
+            if func in ["exp", "abs"]:
+                lower = -np.inf
+            if func in ["log"]:
+                lower = 1.
 
         if value is None:
             value = getattr(dist, dist.param_names[idx])
