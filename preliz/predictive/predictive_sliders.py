@@ -28,7 +28,6 @@ def predictive_sliders(fmodel, samples=50, kind_plot="hist"):
     source = inspect.getsource(fmodel)
 
     model = parse_function(source, signature)
-    print(model)
     sliders = get_sliders(signature, model)
 
     if kind_plot is None:
