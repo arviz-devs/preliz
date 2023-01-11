@@ -1152,7 +1152,7 @@ class HalfStudent(Continuous):
         optimize_ml(self, sample)
 
 
-class _HalfStudent(stats._distn_infrastructure.rv_continuous):
+class _HalfStudent(stats.rv_continuous):
     def __init__(self, nu=None, sigma=None):
         super().__init__()
         self.nu = nu
