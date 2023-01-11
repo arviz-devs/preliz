@@ -9,7 +9,7 @@ from arviz import plot_kde
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
-from scipy.stats._distn_infrastructure import rv_continuous_frozen, rv_discrete_frozen
+from scipy.stats._distn_infrastructure import rv_frozen
 from scipy.interpolate import interp1d, PchipInterpolator
 
 _log = logging.getLogger("preliz")
@@ -33,7 +33,7 @@ def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
     if quantiles is None:
         quantiles = [0.05, 0.25, 0.5, 0.75, 0.95]
 
-    if isinstance(distribution, (rv_continuous_frozen, rv_discrete_frozen)):
+    if isinstance(distribution, rv_frozen):
         q_s = distribution.ppf(quantiles).tolist()
     else:
         q_s = np.quantile(distribution, quantiles).tolist()
