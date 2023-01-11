@@ -11,6 +11,10 @@ import numpy as np
 from scipy.spatial import KDTree
 
 
+import inspect
+import re
+from sys import modules
+
 from ..internal.plot_helper import plot_pointinterval, repr_to_matplotlib
 from ..internal.plot_helper import check_inside_notebook
 from ..internal.optimization import get_distributions
@@ -20,7 +24,7 @@ from ..distributions.distributions import Distribution
 _log = logging.getLogger("preliz")
 
 
-def ppa(idata, model, summary="octiles", references=0, init=None):
+def ppa(fmodel, summary="octiles", references=0, init=None):
     """
     Prior predictive check assistant.
 
@@ -28,10 +32,7 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
 
     Parameters
     ----------
-
-    idata : InferenceData
-        With at least the `prior` and `prior_predictive` groups
-    model : PyMC model
+    model : PreliZ model
         Model associated to ``idata``.
     summary : str
         Summary statistics applied to prior samples in order to define (dis)similarity
@@ -58,13 +59,21 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
     global pp_samples_idxs  # pylint:disable=invalid-name
 
     shown = []
-    obs_rv = model.observed_RVs[0].name  # only one observed variable for the moment
-    pp_samples = idata.prior_predictive[obs_rv].squeeze().values
-    prior_samples = idata.prior.squeeze()
+
+    result = get_prior_prior_predictive(fmodel)
+
+
+    obs_rv = list(result.keys())[-1]   # only one observed variable for the moment
+
+    pp_samples = result[obs_rv]
+    prior_samples = result
     if init is not None:
         pp_samples = add_init_dist(init, pp_samples)
 
-    sample_size = pp_samples.shape[0]
+    sample_size = len(pp_samples)
+    model = parse_function(fmodel)
+    del model[obs_rv]
+
     pp_summary, kdt = compute_summaries(pp_samples, summary)
     pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, init)
     fig, axes = plot_samples(pp_samples, references)
@@ -162,6 +171,60 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
     display(  # pylint:disable=undefined-variable
         widgets.HBox([controls, radio_buttons_kind, check_button_sharex])
     )
+
+
+
+
+
+
+def get_prior_prior_predictive(fmodel):
+    source = inspect.getsource(fmodel)
+
+    all_distributions = modules["preliz.distributions"].__all__
+
+    all_dist_str = "|".join(all_distributions)
+
+    source_un = re.sub(r"#.*$|^#.*$", "", source, flags=re.MULTILINE)
+    regex = rf"(.*?({all_dist_str}))"
+    matches = re.finditer(regex, source_un)
+    variables = [match.group(0).split("=")[0].strip() for match in matches]
+
+    result = {name: [] for name in variables}
+    for _ in range(500):
+        lala = fmodel()
+        for name, value in zip(variables, lala):
+            result[name].append(value)
+    new_dict = {key: np.array(val) for key, val in result.items()}
+
+    return new_dict
+
+
+def parse_function(fmodel):
+    source = inspect.getsource(fmodel)
+
+    model = {}
+
+    all_distributions = modules["preliz.distributions"].__all__
+
+    all_dist_str = "|".join(all_distributions)
+
+    source = re.sub(r"#.*$|^#.*$", "", source, flags=re.MULTILINE)
+    regex = rf"(.*?({all_dist_str}).*?)\(([^()]*(?:\([^()]*\)[^()]*)*)\)"
+    matches = re.finditer(regex, source)
+    for match in matches:
+        var_name = match.group(0).split("=")[0].strip()
+        dist = getattr(modules["preliz.distributions"], match.group(2))
+        arguments = [s.strip() for s in match.group(3).split(",")]
+        model[var_name] = (dist, arguments)
+
+    return model
+
+
+
+
+
+
+
 
 
 def carry_on(
@@ -354,14 +417,26 @@ def select_prior_samples(selected, prior_samples, model):
     Given a selected set of prior predictive samples pick the corresponding
     prior samples.
     """
-    rvs = model.unobserved_RVs  # we should exclude deterministics
-    rv_names = [rv.name for rv in rvs]
-    subsample = {rv: prior_samples[rv].sel(draw=selected).values.squeeze() for rv in rv_names}
+    rv_names = list(model.keys()) # we should exclude deterministics
+    subsample = {rv: prior_samples[rv][selected] for rv in rv_names}
 
     return subsample
 
 
 def back_fitting(model, subset, string):
+    """
+    Use MLE to fit a subset of the prior samples to the individual prior distributions
+    """
+    for name, (dist, params) in model.items():
+        dist = dist()
+        is_fitable = True#any(param.name is None for param in params)
+        if is_fitable:
+            dist._fit_mle(subset[name])
+            string += f"{repr_to_matplotlib(dist)}\n"
+    return string
+
+
+def back_fitting__(model, subset, string):
     """
     Use MLE to fit a subset of the prior samples to the individual prior distributions
     """
