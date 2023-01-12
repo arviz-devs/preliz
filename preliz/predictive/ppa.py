@@ -1,26 +1,22 @@
-# pylint:disable=global-variable-undefined
 """Prior predictive check assistant."""
 
 import logging
-from sys import modules
 
-import arviz as az
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import KDTree
 
 
-from ..internal.plot_helper import plot_pointinterval, repr_to_matplotlib
-from ..internal.plot_helper import check_inside_notebook
-from ..internal.optimization import get_distributions
+from ..internal.plot_helper import check_inside_notebook, plot_pp_samples, repr_to_matplotlib
+from ..internal.parser import inspect_source, parse_function_for_ppa, get_prior_pp_samples
 from ..distributions.continuous import Normal
 from ..distributions.distributions import Distribution
 
 _log = logging.getLogger("preliz")
 
 
-def ppa(idata, model, summary="octiles", references=0, init=None):
+def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
     """
     Prior predictive check assistant.
 
@@ -28,11 +24,10 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
 
     Parameters
     ----------
-
-    idata : InferenceData
-        With at least the `prior` and `prior_predictive` groups
-    model : PyMC model
+    model : PreliZ model
         Model associated to ``idata``.
+    draws : int
+        Number of draws from the prior and prior predictive distribution
     summary : str
         Summary statistics applied to prior samples in order to define (dis)similarity
         of distributions. Current options are `octiles`, `hexiles`, `quantiles`,
@@ -55,19 +50,20 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
     if isinstance(references, (float, int)):
         references = [references]
 
-    global pp_samples_idxs  # pylint:disable=invalid-name
-
     shown = []
-    obs_rv = model.observed_RVs[0].name  # only one observed variable for the moment
-    pp_samples = idata.prior_predictive[obs_rv].squeeze().values
-    prior_samples = idata.prior.squeeze()
+
+    source, _ = inspect_source(fmodel)
+
+    pp_samples, prior_samples, obs_rv = get_prior_pp_samples(fmodel, draws)
+    sample_size = pp_samples.size
+    model = parse_function_for_ppa(source, obs_rv)
+
     if init is not None:
         pp_samples = add_init_dist(init, pp_samples)
 
-    sample_size = pp_samples.shape[0]
     pp_summary, kdt = compute_summaries(pp_samples, summary)
     pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, init)
-    fig, axes = plot_samples(pp_samples, references)
+    fig, axes = plot_pp_samples(pp_samples, pp_samples_idxs, references)
 
     clicked = []
     selected = []
@@ -113,8 +109,13 @@ def ppa(idata, model, summary="octiles", references=0, init=None):
         button_return_prior.on_click(on_return_prior_)
 
         def kind_(_):
-            plot_samples(
-                pp_samples, references, radio_buttons_kind.value, check_button_sharex.value, fig
+            plot_pp_samples(
+                pp_samples,
+                pp_samples_idxs,
+                references,
+                radio_buttons_kind.value,
+                check_button_sharex.value,
+                fig,
             )
 
         radio_buttons_kind.observe(kind_, names=["value"])
@@ -178,8 +179,6 @@ def carry_on(
     shown,
     kdt,
 ):
-    global pp_samples_idxs  # pylint:disable=invalid-name
-
     choices.extend([int(ax.get_title()) for ax in clicked])
     selected.extend(choices)
 
@@ -194,7 +193,7 @@ def carry_on(
     pp_samples_idxs, shown = keep_sampling(pp_summary, choices, shown, kdt)
     if not pp_samples_idxs:
         pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, None)
-    fig, _ = plot_samples(pp_samples, references, kind, sharex, fig)
+    fig, _ = plot_pp_samples(pp_samples, pp_samples_idxs, references, kind, sharex, fig)
 
 
 def compute_summaries(pp_samples, summary):
@@ -295,68 +294,13 @@ def keep_sampling(pp_summary, choices, shown, kdt):
         return [], shown
 
 
-def plot_samples(pp_samples, references, kind="pdf", sharex=True, fig=None):
-    row_colum = int(np.ceil(len(pp_samples_idxs) ** 0.5))
-
-    if fig is None:
-        fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6))
-    else:
-        axes = np.array(fig.axes)
-
-    try:
-        axes = axes.ravel()
-    except AttributeError:
-        axes = [axes]
-
-    x_lims = [np.inf, -np.inf]
-
-    for ax, idx in zip(axes, pp_samples_idxs):
-        ax.clear()
-        for ref in references:
-            ax.axvline(ref, ls="--", color="0.5")
-        ax.relim()
-
-        sample = pp_samples[idx]
-
-        if sharex:
-            min_ = sample.min()
-            max_ = sample.max()
-            if min_ < x_lims[0]:
-                x_lims[0] = min_
-            if max_ > x_lims[1]:
-                x_lims[1] = max_
-
-        if kind == "pdf":
-            az.plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
-        elif kind == "hist":
-            bins, *_ = ax.hist(
-                sample, color="C0", bins="auto", alpha=0.5, density=True
-            )  # pylint:disable=no-member
-            ax.set_ylim(-bins.max() * 0.05, None)
-
-        elif kind == "ecdf":
-            az.plot_ecdf(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
-
-        plot_pointinterval(sample, ax=ax)
-        ax.set_title(idx)
-        ax.set_yticks([])
-
-    if sharex:
-        for ax in axes:
-            ax.set_xlim(np.floor(x_lims[0]), np.ceil(x_lims[1]))
-
-    fig.canvas.draw()
-    return fig, axes
-
-
 def select_prior_samples(selected, prior_samples, model):
     """
     Given a selected set of prior predictive samples pick the corresponding
     prior samples.
     """
-    rvs = model.unobserved_RVs  # we should exclude deterministics
-    rv_names = [rv.name for rv in rvs]
-    subsample = {rv: prior_samples[rv].sel(draw=selected).values.squeeze() for rv in rv_names}
+    rv_names = list(model.keys())  # we should exclude deterministics
+    subsample = {rv: prior_samples[rv][selected] for rv in rv_names}
 
     return subsample
 
@@ -365,26 +309,7 @@ def back_fitting(model, subset, string):
     """
     Use MLE to fit a subset of the prior samples to the individual prior distributions
     """
-    pymc_to_preliz = get_pymc_to_preliz()
-    for unobserved in model.unobserved_RVs:
-        distribution = unobserved.owner.op.name
-        dist = pymc_to_preliz[distribution]
-        name = unobserved.name
-        idx = unobserved.owner.nin - 3
-        params = unobserved.owner.inputs[-idx:]
-        is_fitable = any(param.name is None for param in params)
-        if is_fitable:
-            dist._fit_mle(subset[name])
-            string += f"{repr_to_matplotlib(dist)}\n"
+    for name, dist in model.items():
+        dist._fit_mle(subset[name])
+        string += f"{repr_to_matplotlib(dist)}\n"
     return string
-
-
-def get_pymc_to_preliz():
-    """
-    Generate dictionary mapping pymc to preliz distributions
-    """
-    all_distributions = modules["preliz.distributions"].__all__
-    pymc_to_preliz = dict(
-        zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
-    )
-    return pymc_to_preliz

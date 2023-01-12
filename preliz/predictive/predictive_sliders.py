@@ -1,7 +1,5 @@
-import inspect
-
 from ipywidgets import interactive
-from preliz.internal.parser import parse_function
+from preliz.internal.parser import inspect_source, parse_function_for_pred_sliders
 from preliz.internal.plot_helper import get_sliders, plot_decorator
 
 
@@ -24,10 +22,9 @@ def predictive_sliders(fmodel, samples=50, kind_plot="hist"):
         "kde" (kernel density estimate), "ecdf" (empirical cumulative distribution function),
         or None (no plot).
     """
-    signature = inspect.signature(fmodel)
-    source = inspect.getsource(fmodel)
+    source, signature = inspect_source(fmodel)
 
-    model = parse_function(source, signature)
+    model = parse_function_for_pred_sliders(source, signature)
     sliders = get_sliders(signature, model)
 
     if kind_plot is None:
