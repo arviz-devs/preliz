@@ -5,7 +5,7 @@ import sys
 
 from IPython import get_ipython
 from ipywidgets import FloatSlider, IntSlider
-from arviz import plot_kde
+from arviz import plot_kde, plot_ecdf
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
@@ -305,6 +305,60 @@ def plot_decorator(func, iterations, kind_plot):
             plt.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
 
     return looper
+
+
+def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=True, fig=None):
+    row_colum = int(np.ceil(len(pp_samples_idxs) ** 0.5))
+
+    if fig is None:
+        fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6))
+    else:
+        axes = np.array(fig.axes)
+
+    try:
+        axes = axes.ravel()
+    except AttributeError:
+        axes = [axes]
+
+    x_lims = [np.inf, -np.inf]
+
+    for ax, idx in zip(axes, pp_samples_idxs):
+        ax.clear()
+        for ref in references:
+            ax.axvline(ref, ls="--", color="0.5")
+        ax.relim()
+
+        sample = pp_samples[idx]
+
+        if sharex:
+            min_ = sample.min()
+            max_ = sample.max()
+            if min_ < x_lims[0]:
+                x_lims[0] = min_
+            if max_ > x_lims[1]:
+                x_lims[1] = max_
+
+        if kind == "pdf":
+            plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
+        elif kind == "hist":
+            bins, *_ = ax.hist(
+                sample, color="C0", bins="auto", alpha=0.5, density=True
+            )  # pylint:disable=no-member
+            ax.set_ylim(-bins.max() * 0.05, None)
+
+        elif kind == "ecdf":
+            plot_ecdf(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
+
+        plot_pointinterval(sample, ax=ax)
+        ax.set_title(idx)
+        ax.set_yticks([])
+
+    if sharex:
+        for ax in axes:
+            ax.set_xlim(np.floor(x_lims[0]), np.ceil(x_lims[1]))
+
+    fig.canvas.draw()
+    return fig, axes
 
 
 def check_inside_notebook(need_widget=False):
