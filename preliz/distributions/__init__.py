@@ -30,7 +30,7 @@ all_continuous = [
     Wald,
     Weibull,
 ]
-all_discrete = [Binomial, DiscreteUniform, NegativeBinomial, Poisson]
+all_discrete = [Bernoulli, Binomial, DiscreteUniform, NegativeBinomial, Poisson]
 
 
 __all__ = [s.__name__ for s in all_continuous] + [s.__name__ for s in all_discrete]

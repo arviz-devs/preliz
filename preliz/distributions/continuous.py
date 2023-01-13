@@ -62,7 +62,7 @@ class AsymmetricLaplace(Continuous):
     Variance  :math:`\frac{1+\kappa^{4}}{b^2\kappa^2 }`
     ========  ========================
 
-    AsymmetricLaplace distribution has 2 alternative parametrizarions. In terms of kappa,
+    AsymmetricLaplace distribution has 2 alternative parametrizations. In terms of kappa,
     mu and b or q, mu and b.
 
     The link between the 2 alternatives is given by

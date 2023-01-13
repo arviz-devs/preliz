@@ -99,6 +99,7 @@ init_vals = {
     "VonMises": {"mu": 0.0, "kappa": 1.0},
     "Wald": {"mu": 1, "lam": 3.0},
     "Weibull": {"alpha": 5.0, "beta": 2.0},
+    "Bernoulli": {"p": 0.5},
     "Binomial": {"n": 5, "p": 0.5},
     "DiscreteUniform": {"lower": -2.0, "upper": 2.0},
     "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},
