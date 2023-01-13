@@ -154,6 +154,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
         if dist.__class__.__name__ in ["BetaScaled", "TruncatedNormal"]:
             update_bounds_beta_scaled(dist, x_min, x_max)
 
+        loss = np.inf
         if dist._check_endpoints(x_min, x_max, raise_error=False):
             dist._fit_mle(sample)  # pylint:disable=protected-access
             if dist.kind == "continuous":
@@ -161,7 +162,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
             else:
                 loss = -dist.rv_frozen.logpmf(sample).sum()
 
-            fitted.update(loss, dist)
+        fitted.update(loss, dist)
 
     return fitted
 

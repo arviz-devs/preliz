@@ -34,7 +34,8 @@ def mle(
 
     Returns
     -------
-    axes: matplotlib axes
+    idx : array with the indexes to sort ``distributions`` from best to worst match
+    axes : matplotlib axes
     """
     sample = np.array(sample)
     x_min = sample.min()
@@ -45,10 +46,12 @@ def mle(
     if plot > len(distributions):
         plot = len(distributions)
 
+    idx = np.argsort(fitted.losses)
+
     if plot:
-        idx = np.argsort(fitted.losses)
-        idx = idx[:plot]
-        for dist in fitted.distributions[idx]:
+        plot_idx = idx[:plot]
+        for dist in fitted.distributions[plot_idx]:
             if dist is not None:
                 ax = dist.plot_pdf(plot_kwargs)
-    return ax
+
+    return idx, ax
