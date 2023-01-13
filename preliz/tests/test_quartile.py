@@ -30,6 +30,7 @@ from preliz.distributions import (
     VonMises,
     Wald,
     Weibull,
+    Bernoulli,
     # DiscreteUniform,
     NegativeBinomial,
     Poisson,
@@ -75,6 +76,7 @@ from preliz.distributions import (
         (VonMises(), -1, 0, 1, (0, 0.656)),
         (Wald(), 0.5, 1, 2, (1.698, 1.109)),
         (Weibull(), 0.5, 1, 2, (1.109, 1.456)),
+        (Bernoulli(), 0.25, 0.5, 0.75, (0.5)),
         # (DiscreteUniform(), -1, 0, 1, (-5, 5)), # the mass is 0.27 instead of 0.5
         (NegativeBinomial(), 3, 5, 10, (7.283, 2.167)),
         (Poisson(), 4, 5, 6, (5.641)),

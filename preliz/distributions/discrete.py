@@ -22,6 +22,102 @@ _log = logging.getLogger("preliz")
 eps = np.finfo(float).eps
 
 
+class Bernoulli(Discrete):
+    R"""Bernoulli distribution
+
+    The Bernoulli distribution describes the probability of successes (x=1) and failures (x=0).
+    The pmf of this distribution is
+
+    .. math::
+        f(x \mid p) = p^{x} (1-p)^{1-x}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Bernoulli
+        az.style.use('arviz-white')
+        ps = [0, 0.5, 0.8]
+        for p in [0, 0.5, 0.8]:
+            Bernoulli(p).plot_pdf()
+
+    ========  ======================
+    Support   :math:`x \in \{0, 1\}`
+    Mean      :math:`p`
+    Variance  :math:`p (1 - p)`
+    ========  ======================
+
+    The Bernoulli distribution has 2 alternative parametrizations. In terms of p or logit_p.
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+        logit(p) = ln(\frac{p}{1-p})
+
+    Parameters
+    ----------
+    p : float
+        Probability of success (0 < p < 1).
+    logit_p : float
+        Alternative log odds for the probability of success.
+    """
+
+    def __init__(self, p=None, logit_p=None):
+        super().__init__()
+        self.dist = copy(stats.bernoulli)
+        self.support = (0, 1)
+        self._parametrization(p, logit_p)
+
+    def _parametrization(self, p=None, logit_p=None):
+        if p is not None and logit_p is not None:
+            raise ValueError("Incompatible parametrization. Either use p or logit_p.")
+
+        self.param_names = "p"
+        self.params_support = ((eps, 1),)
+
+        if logit_p is not None:
+            p = self._from_logit_p(logit_p)
+            self.param_names = ("logit_p",)
+
+        self.p = p
+        self.logit_p = logit_p
+        if self.p is not None:
+            self._update(self.p)
+
+    def _from_logit_p(self, logit_p):
+        p = np.e**logit_p / (1 + np.e**logit_p)
+        return p
+
+    def _to_logit_p(self, p):
+        logit_p = np.log(p / (1 - p))
+        return logit_p
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self):
+            frozen = self.dist(self.p)
+        return frozen
+
+    def _update(self, p):
+        self.p = np.float64(p)
+        self.logit_p = self._to_logit_p(p)
+
+        if self.param_names[0] == "p":
+            self.params = (self.p,)
+        elif self.param_names[0] == "logit_p":
+            self.params = (self.logit_p,)
+
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+        p = mean
+        self._update(p)
+
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
+
+
 class Binomial(Discrete):
     R"""
     Binomial distribution.
