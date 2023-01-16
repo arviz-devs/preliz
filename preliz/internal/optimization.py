@@ -150,6 +150,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     Maximize the likelihood given a sample
     """
     fitted = Loss(len(selected_distributions))
+    sample_size = len(sample)
     for dist in selected_distributions:
         if dist.__class__.__name__ in ["BetaScaled", "TruncatedNormal"]:
             update_bounds_beta_scaled(dist, x_min, x_max)
@@ -157,10 +158,11 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
         loss = np.inf
         if dist._check_endpoints(x_min, x_max, raise_error=False):
             dist._fit_mle(sample)  # pylint:disable=protected-access
+            corr = get_penalization(sample_size, dist)
             if dist.kind == "continuous":
-                loss = -dist.rv_frozen.logpdf(sample).sum()
+                loss = -(dist.rv_frozen.logpdf(sample).sum() - corr)
             else:
-                loss = -dist.rv_frozen.logpmf(sample).sum()
+                loss = -(dist.rv_frozen.logpmf(sample).sum() - corr)
 
         fitted.update(loss, dist)
 
@@ -172,6 +174,18 @@ def update_bounds_beta_scaled(dist, x_min, x_max):
     dist.upper = x_max
     dist.support = (x_min, x_max)
     return dist
+
+
+def get_penalization(n, dist):
+    """
+    AIC with a correction for small sample sizes.
+
+    Burnham, K. P.; Anderson, D. R. (2004),
+    "Multimodel inference: understanding AIC and BIC in Model Selection"
+    shorturl.at/IUWX6
+    """
+    k = len(dist.params)
+    return k + ((k + 1) * k) / (-k + n - 1)
 
 
 class Loss:
