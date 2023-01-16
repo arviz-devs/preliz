@@ -53,8 +53,18 @@ extensions = [
 ]
 
 # -- Extension configuration -------------------------------------------------
-jupyter_execute_notebooks = "off"
+nb_execution_mode = "off"
 myst_enable_extensions = ["colon_fence", "deflist"]
+nb_ipywidgets_js = {
+   "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js": {
+      "integrity": "sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=",
+      "crossorigin": "anonymous"
+    },
+    "https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@*/dist/embed-amd.js": {
+      "data-jupyter-widgets-cdn": "https://cdn.jsdelivr.net/npm/",
+      "crossorigin": "anonymous"
+    }
+}
 
 thebe_config = {
     "always_load": True,
@@ -123,13 +133,20 @@ html_theme_options = {
         {
             "name": "GitHub",
             "url": "https://github.com/arviz-devs/preliz",
-            "icon": "fab fa-github-square",
+            "icon": "fa-brands fa-github",
         },
     ],
     "logo": {
         "image_light": "PreliZ_flat.png",
         "image_dark": "PreliZ_flat_white.png",
     },
+}
+html_context = {
+    "github_user": "arviz-devs",
+    "github_repo": "preliz",
+    "github_version": "main",
+    "doc_path": "docs/",
+    "default_mode": "light",
 }
 
 
