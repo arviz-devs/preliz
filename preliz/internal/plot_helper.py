@@ -311,7 +311,7 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
     row_colum = int(np.ceil(len(pp_samples_idxs) ** 0.5))
 
     if fig is None:
-        fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6))
+        fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6), constrained_layout=True)
     else:
         axes = np.array(fig.axes)
 
@@ -350,7 +350,7 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
             plot_ecdf(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
 
         plot_pointinterval(sample, ax=ax)
-        ax.set_title(idx)
+        ax.set_title(idx, alpha=0)
         ax.set_yticks([])
 
     if sharex:
