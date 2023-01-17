@@ -55,7 +55,7 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
     source, _ = inspect_source(fmodel)
 
     pp_samples, prior_samples, obs_rv = get_prior_pp_samples(fmodel, draws)
-    sample_size = pp_samples.size
+    sample_size = pp_samples.shape[0]
     model = parse_function_for_ppa(source, obs_rv)
 
     if init is not None:
@@ -67,6 +67,7 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
 
     clicked = []
     selected = []
+    selected_distances = []
     choices = []
 
     output = widgets.Output()
@@ -97,6 +98,7 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
                 pp_summary,
                 choices,
                 selected,
+                selected_distances,
                 shown,
                 kdt,
             )
@@ -104,7 +106,7 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
         button_carry_on.on_click(carry_on_)
 
         def on_return_prior_(_):
-            on_return_prior(fig, selected, model, sample_size)
+            on_return_prior(fig, selected, selected_distances, model, sample_size)
 
         button_return_prior.on_click(on_return_prior_)
 
@@ -123,29 +125,25 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
         check_button_sharex.observe(kind_, names=["value"])
 
         def click(event):
-            if event.inaxes not in clicked:
-                clicked.append(event.inaxes)
-            else:
-                clicked.remove(event.inaxes)
-                plt.setp(event.inaxes.spines.values(), color="k", lw=1)
+            if event.inaxes is not None:
+                if event.inaxes not in clicked:
+                    clicked.append(event.inaxes)
+                else:
+                    clicked.remove(event.inaxes)
+                    plt.setp(event.inaxes.spines.values(), color="k", lw=1)
 
-            for ax in clicked:
-                plt.setp(ax.spines.values(), color="C1", lw=3)
-            fig.canvas.draw()
+                for ax in clicked:
+                    plt.setp(ax.spines.values(), color="C1", lw=3)
+                fig.canvas.draw()
 
-        def on_return_prior(fig, selected, model, sample_size):
-            selected = np.unique(selected)
-            num_selected = len(selected)
+        def on_return_prior(fig, selected, selected_distances, model, sample_size):
 
-            if num_selected > 1:
-                string = (
-                    f"You have selected {num_selected} out of {sample_size} prior "
-                    "predictive samples\nThat selection is consistent with the "
-                    "following priors:\n"
+            if selected:
+                selected = collect_more_samples(
+                    selected, selected_distances, pp_summary, sample_size, kdt
                 )
-
                 subsample = select_prior_samples(selected, prior_samples, model)
-                string = back_fitting(model, subsample, string)
+                string = back_fitting(model, subsample)
 
                 fig.clf()
                 plt.text(0.2, 0.5, string, fontsize=14)
@@ -176,6 +174,7 @@ def carry_on(
     pp_summary,
     choices,
     selected,
+    selected_distances,
     shown,
     kdt,
 ):
@@ -190,7 +189,9 @@ def carry_on(
     for ax in list(clicked):
         clicked.remove(ax)
 
-    pp_samples_idxs, shown = keep_sampling(pp_summary, choices, shown, kdt)
+    pp_samples_idxs, distances, shown = keep_sampling(pp_summary, choices, shown, kdt)
+    selected_distances.extend(distances)
+
     if not pp_samples_idxs:
         pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, None)
     fig, _ = plot_pp_samples(pp_samples, pp_samples_idxs, references, kind, sharex, fig)
@@ -278,20 +279,33 @@ def keep_sampling(pp_summary, choices, shown, kdt):
     if choices:
         new = choices.pop(0)
         samples = [new]
+        distances = []
 
         for _ in range(9):
             nearest_neighbor = 2
             while new in samples or new in shown:
-                _, new = kdt.query(pp_summary[samples[-1]], [nearest_neighbor])
+                distance, new = kdt.query(pp_summary[samples[-1]], [nearest_neighbor])
                 new = new.item()
                 nearest_neighbor += 1
+            distances.append(distance.item())
             samples.append(new)
 
         shown.extend(samples[1:])
 
-        return samples[1:], shown
+        return samples[1:], distances, shown
     else:
-        return [], shown
+        return [], [], shown
+
+
+def collect_more_samples(selected, selected_distances, pp_summary, sample_size, kdt):
+    """
+    Automatically extend the user selected distributions
+    """
+    min_dist = np.max(selected_distances)
+    _, new = kdt.query(pp_summary[selected], sample_size, distance_upper_bound=min_dist)
+    new = np.ravel(new)
+    new = new[new < sample_size]
+    return np.unique(np.concatenate([selected, new]))
 
 
 def select_prior_samples(selected, prior_samples, model):
@@ -299,16 +313,17 @@ def select_prior_samples(selected, prior_samples, model):
     Given a selected set of prior predictive samples pick the corresponding
     prior samples.
     """
-    rv_names = list(model.keys())  # we should exclude deterministics
-    subsample = {rv: prior_samples[rv][selected] for rv in rv_names}
+    subsample = {rv: prior_samples[rv][selected] for rv in model.keys()}
 
     return subsample
 
 
-def back_fitting(model, subset, string):
+def back_fitting(model, subset):
     """
-    Use MLE to fit a subset of the prior samples to the individual prior distributions
+    Use MLE to fit a subset of the prior samples to the marginal prior distributions
     """
+    string = "Your selection is consistent with the following priors:\n"
+
     for name, dist in model.items():
         dist._fit_mle(subset[name])
         string += f"{repr_to_matplotlib(dist)}\n"
