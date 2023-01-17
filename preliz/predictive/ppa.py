@@ -1,6 +1,7 @@
 """Prior predictive check assistant."""
 
 import logging
+from sys import modules
 
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
@@ -8,10 +9,11 @@ import numpy as np
 from scipy.spatial import KDTree
 
 
-from ..internal.plot_helper import check_inside_notebook, plot_pp_samples, repr_to_matplotlib
+from ..internal.plot_helper import check_inside_notebook, plot_pp_samples, plot_pp_mean, repr_to_matplotlib
 from ..internal.parser import inspect_source, parse_function_for_ppa, get_prior_pp_samples
 from ..distributions.continuous import Normal
 from ..distributions.distributions import Distribution
+from ..unidimensional import mle
 
 _log = logging.getLogger("preliz")
 
@@ -50,7 +52,12 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
     if isinstance(references, (float, int)):
         references = [references]
 
+    choices = []
+    clicked = []
+    selected = []
+    selected_distances = []
     shown = []
+
 
     source, _ = inspect_source(fmodel)
 
@@ -64,11 +71,9 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
     pp_summary, kdt = compute_summaries(pp_samples, summary)
     pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, init)
     fig, axes = plot_pp_samples(pp_samples, pp_samples_idxs, references)
+    fig_pp_mean = plot_pp_mean(pp_samples, selected, references)
 
-    clicked = []
-    selected = []
-    selected_distances = []
-    choices = []
+
 
     output = widgets.Output()
 
@@ -78,7 +83,7 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
         radio_buttons_kind = widgets.RadioButtons(
             options=["pdf", "hist", "ecdf"],
             value="pdf",
-            description="",
+            description=" ",
             disabled=False,
         )
 
@@ -90,6 +95,7 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
             carry_on(
                 fig,
                 axes,
+                fig_pp_mean,
                 radio_buttons_kind.value,
                 check_button_sharex.value,
                 references,
@@ -106,19 +112,29 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
         button_carry_on.on_click(carry_on_)
 
         def on_return_prior_(_):
-            on_return_prior(fig, selected, selected_distances, model, sample_size)
+            on_return_prior(fig, fig_pp_mean, selected, selected_distances, model, sample_size)
 
         button_return_prior.on_click(on_return_prior_)
 
         def kind_(_):
+            kind = radio_buttons_kind.value
+
             plot_pp_samples(
                 pp_samples,
                 pp_samples_idxs,
                 references,
-                radio_buttons_kind.value,
+                kind,
                 check_button_sharex.value,
                 fig,
             )
+
+            # plot_pp_mean(
+            #     pp_samples,
+            #     selected,
+            #     references,
+            #     kind,
+            #     fig_pp_mean,
+            # )
 
         radio_buttons_kind.observe(kind_, names=["value"])
 
@@ -136,9 +152,10 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
                     plt.setp(ax.spines.values(), color="C1", lw=3)
                 fig.canvas.draw()
 
-        def on_return_prior(fig, selected, selected_distances, model, sample_size):
+        def on_return_prior(fig, fig_pp_mean, selected, selected_distances, model, sample_size):
 
             if selected:
+                plot_pp_mean(pp_samples, selected, references, "pdf", fig_pp_mean)
                 selected = collect_more_samples(
                     selected, selected_distances, pp_summary, sample_size, kdt
                 )
@@ -147,12 +164,15 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
 
                 fig.clf()
                 plt.text(0.2, 0.5, string, fontsize=14)
+
+                plot_pp_mean(pp_samples, selected, references, "pdf", fig_pp_mean, update=False)
                 plt.yticks([])
                 plt.xticks([])
             else:
                 fig.suptitle("Please select more distributions", fontsize=16)
 
             fig.canvas.draw()
+            return string
 
         fig.canvas.mpl_connect("button_press_event", click)
 
@@ -166,6 +186,7 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, init=None):
 def carry_on(
     fig,
     axes,
+    fig_pp_mean,
     kind,
     sharex,
     references,
@@ -194,8 +215,9 @@ def carry_on(
 
     if not pp_samples_idxs:
         pp_samples_idxs, shown = initialize_subsamples(pp_summary, shown, kdt, None)
-    fig, _ = plot_pp_samples(pp_samples, pp_samples_idxs, references, kind, sharex, fig)
-
+    plot_pp_samples(pp_samples, pp_samples_idxs, references, kind, sharex, fig)
+    plot_pp_mean(pp_samples, selected, references, kind, fig_pp_mean)
+    
 
 def compute_summaries(pp_samples, summary):
     if summary == "octiles":
@@ -322,9 +344,32 @@ def back_fitting(model, subset):
     """
     Use MLE to fit a subset of the prior samples to the marginal prior distributions
     """
-    string = "Your selection is consistent with the following priors:\n"
+    string = "Your selection is consistent with the priors (original families):\n"
 
     for name, dist in model.items():
         dist._fit_mle(subset[name])
         string += f"{repr_to_matplotlib(dist)}\n"
+
+    string += "\nYour selection is consistent with the priors (new families):\n"
+
+    exclude, distributions = get_distributions()
+    for name, dist in model.items():
+        if dist.__class__.__name__ in exclude:
+            dist._fit_mle(subset[name])
+        else:
+            idx, _ = mle(distributions, subset[name])
+            dist = distributions[idx[0]]
+        string += f"{repr_to_matplotlib(dist)}\n"
+
     return string
+
+
+def get_distributions():
+    exclude = ["Beta", "BetaScaled", "Triangular", "TruncatedNormal", "Uniform", "VonMises", "DiscreteUniform"]
+    all_distributions = modules["preliz.distributions"].__all__
+    distributions = []
+    for a_dist in all_distributions:
+        dist = getattr(modules["preliz.distributions"], a_dist)()
+        if dist.__class__.__name__ not in exclude:
+            distributions.append(dist)
+    return exclude, distributions
