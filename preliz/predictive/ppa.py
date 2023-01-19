@@ -1,6 +1,7 @@
 """Prior predictive check assistant."""
 
 import logging
+from random import shuffle
 from sys import modules
 
 import ipywidgets as widgets
@@ -9,7 +10,12 @@ import numpy as np
 from scipy.spatial import KDTree
 
 
-from ..internal.plot_helper import check_inside_notebook, plot_pp_samples, plot_pp_mean, repr_to_matplotlib
+from ..internal.plot_helper import (
+    check_inside_notebook,
+    plot_pp_samples,
+    plot_pp_mean,
+    repr_to_matplotlib,
+)
 from ..internal.parser import inspect_source, parse_function_for_ppa, get_prior_pp_samples
 from ..distributions.continuous import Normal
 from ..distributions.distributions import Distribution
@@ -18,7 +24,9 @@ from ..unidimensional import mle
 _log = logging.getLogger("preliz")
 
 
-def ppa(fmodel, draws=500, summary="octiles", references=0, boundaries=(-np.inf, np.inf), init=None):
+def ppa(
+    fmodel, draws=2000, summary="octiles", references=0, boundaries=(-np.inf, np.inf), init=None
+):
     """
     Prior predictive check assistant.
 
@@ -37,8 +45,9 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, boundaries=(-np.inf,
     references : int, float, list or tuple
         Value(s) used as reference points representing prior knowledge. For example expected
         values or values that are considered extreme.
-    boundaries : 
-
+    boundaries : tuple
+        Hard boundaries (lower, upper). Posterior predictive samples with values outside these
+        boundaries will be excluded from the analysis.
     init : tuple or PreliZ distribtuion
         Initial distribution. The first shown distributions will be selected to be as close
         as possible to `init`. Available options are, a PreliZ distribution or a 2-tuple with
@@ -69,17 +78,17 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, boundaries=(-np.inf,
         if np.min(sample) < boundaries[0] or np.max(sample) > boundaries[1]:
             shown.append(idx)
 
+    shown = set(shown)
+
     choices = []
     clicked = []
-    selected = []
+    selected = set()
     collected_distances = {}
 
     pp_summary, kdt = compute_summaries(pp_samples, summary)
     pp_samples_idxs, _, shown = initialize_subsamples(pp_summary, shown, sample_size, kdt, init)
     fig, axes = plot_pp_samples(pp_samples, pp_samples_idxs, references)
     fig_pp_mean = plot_pp_mean(pp_samples, selected, references)
-
-
 
     output = widgets.Output()
 
@@ -113,13 +122,14 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, boundaries=(-np.inf,
                 collected_distances,
                 shown,
                 sample_size,
+                boundaries,
                 kdt,
             )
 
         button_carry_on.on_click(carry_on_)
 
         def on_return_prior_(_):
-            on_return_prior(fig, fig_pp_mean, selected, collected_distances, model, sample_size)
+            on_return_prior(fig, selected, model)
 
         button_return_prior.on_click(on_return_prior_)
 
@@ -159,23 +169,18 @@ def ppa(fmodel, draws=500, summary="octiles", references=0, boundaries=(-np.inf,
                     plt.setp(ax.spines.values(), color="C1", lw=3)
                 fig.canvas.draw()
 
-        def on_return_prior(fig, fig_pp_mean, selected, collected_distances, model, sample_size):
+        def on_return_prior(fig, selected, model):
 
-            selected = np.unique(selected)
+            selected = list(selected)
 
-            if selected.size > 4:
-                plot_pp_mean(pp_samples, selected, references, "pdf", fig_pp_mean)
-                selected = collect_more_samples(
-                    selected, collected_distances, shown, pp_summary, sample_size, kdt
-                )
-
+            if len(selected) > 4:
                 subsample = select_prior_samples(selected, prior_samples, model)
+
                 string = back_fitting(model, subsample)
 
                 fig.clf()
-                plt.text(0.2, 0.5, string, fontsize=14)
+                plt.text(0.05, 0.5, string, fontsize=14)
 
-                plot_pp_mean(pp_samples, selected, references, "pdf", fig_pp_mean, update=False)
                 plt.yticks([])
                 plt.xticks([])
             else:
@@ -207,37 +212,51 @@ def carry_on(
     collected_distances,
     shown,
     sample_size,
+    boundaries,
     kdt,
 ):
-    choices.extend([int(ax.get_title()) for ax in clicked])
-    selected.extend(choices)
-    selected = np.unique(selected)
-
     fig.suptitle("")
-    for ax in clicked:
-        plt.setp(ax.spines.values(), color="k", lw=1)
-    for ax in axes:
-        ax.cla()
-    for ax in list(clicked):
-        clicked.remove(ax)
+
+    if clicked:
+        choices.extend([int(ax.get_title()) for ax in clicked])
+        shuffle(choices)
+        selected.update(choices)
+        selected, shown = collect_more_samples(
+            selected,
+            collected_distances,
+            shown,
+            pp_summary,
+            pp_samples,
+            sample_size,
+            boundaries,
+            kdt,
+        )
+
+        for ax in clicked:
+            plt.setp(ax.spines.values(), color="k", lw=1)
+        for ax in axes:
+            ax.cla()
+        for ax in list(clicked):
+            clicked.remove(ax)
 
     pp_samples_idxs, distances, shown = keep_sampling(pp_summary, choices, shown, sample_size, kdt)
 
     if not pp_samples_idxs:
-        pp_samples_idxs, distances, shown = initialize_subsamples(pp_summary, shown, sample_size, kdt, None)
-    
+        pp_samples_idxs, distances, shown = initialize_subsamples(
+            pp_summary, shown, sample_size, kdt, None
+        )
+
     collected_distances.update(distances)
+    plot_pp_mean(pp_samples, list(selected), references, kind, fig_pp_mean)
 
     if pp_samples_idxs:
         plot_pp_samples(pp_samples, pp_samples_idxs, references, kind, sharex, fig)
-        plot_pp_mean(pp_samples, selected, references, kind, fig_pp_mean)
     else:
         # Instead of showing this message, we should resample.
         fig.clf()
         fig.suptitle("We have seen all the samples", fontsize=16)
         fig.canvas.draw()
 
-        
 
 def compute_summaries(pp_samples, summary):
     if summary == "octiles":
@@ -288,7 +307,7 @@ def initialize_subsamples(pp_summary, shown, sample_size, kdt, ref_dist):
 
     if len(shown) != sample_size:
         if ref_dist is None:
-            new = np.random.choice(list(set(range(0, len(pp_summary))) - set(shown)))
+            new = np.random.choice(list(set(range(0, len(pp_summary))) - shown))
             samples.append(new)
 
             for _ in range(8):
@@ -301,8 +320,6 @@ def initialize_subsamples(pp_summary, shown, sample_size, kdt, ref_dist):
                 # Missing neighbors are indicated with index==sample_size
                 if new != sample_size:
                     samples.append(new)
-                
-            shown.extend(samples)
         else:
             new = 0
             samples.append(new)
@@ -310,7 +327,9 @@ def initialize_subsamples(pp_summary, shown, sample_size, kdt, ref_dist):
             for _ in range(9):
                 nearest_neighbor = 2
                 while new in samples:
-                    distance, new = kdt.query(pp_summary[samples[-1]], [nearest_neighbor], workers=-1)
+                    distance, new = kdt.query(
+                        pp_summary[samples[-1]], [nearest_neighbor], workers=-1
+                    )
                     new = new.item()
                     nearest_neighbor += 1
 
@@ -319,7 +338,8 @@ def initialize_subsamples(pp_summary, shown, sample_size, kdt, ref_dist):
                     distances[new] = distance.item()
 
             samples = samples[1:]
-            shown.extend(samples)
+
+        shown.update(samples)
 
     return samples, distances, shown
 
@@ -346,29 +366,52 @@ def keep_sampling(pp_summary, choices, shown, sample_size, kdt):
                 distances[new] = distance.item()
                 samples.append(new)
 
-        shown.extend(samples[1:])
+        shown.update(samples[1:])
 
         return samples[1:], distances, shown
     else:
         return [], [], shown
 
 
-def collect_more_samples(selected, collected_distances, shown, pp_summary, sample_size, kdt):
+def collect_more_samples(
+    selected, collected_distances, shown, pp_summary, pp_samples, sample_size, boundaries, kdt
+):
     """
     Automatically extend the user selected distributions
+
+    Lot of room for improving this function
     """
-    selected_distances = [v for k, v in collected_distances.items() if k in selected]
+    selected_distances = np.array([v for k, v in collected_distances.items() if k in selected])
 
-    min_dist = np.mean(selected_distances)
-
-    _, new = kdt.query(pp_summary[selected], range(2, sample_size), distance_upper_bound=min_dist, workers=-1)
-    new = new[new < sample_size]
-    new = list(set(new) - set(shown))
-    if new:
-        new_selected = np.unique(np.concatenate([selected, new]))
-        return new_selected
+    if len(selected_distances) > 2:
+        q_r = np.quantile(selected_distances, [0.1, 0.9])
+        max_dist = np.mean(
+            selected_distances[(selected_distances > q_r[0]) & (selected_distances < q_r[1])]
+        )
+        upper = sample_size
     else:
-        return selected
+        max_dist = np.inf
+        upper = 3
+
+    _, new = kdt.query(
+        pp_summary[list(selected)], range(2, upper), distance_upper_bound=max_dist, workers=-1
+    )
+    new = new[new < sample_size].tolist()
+
+    if np.any(np.isfinite(boundaries)):
+        new_ = []
+        for n_s in new:
+            sample = pp_samples[n_s]
+            if np.min(sample) > boundaries[0] and np.max(sample) < boundaries[1]:
+                new_.append(n_s)
+        new = new_
+
+    if new:
+        selected.update(new)
+        shown.update(new)
+        return selected, shown
+    else:
+        return selected, shown
 
 
 def select_prior_samples(selected, prior_samples, model):
@@ -389,7 +432,7 @@ def back_fitting(model, subset):
 
     for name, dist in model.items():
         dist._fit_mle(subset[name])
-        string += f"{repr_to_matplotlib(dist)}\n"
+        string += f"{name} = {repr_to_matplotlib(dist)}\n"
 
     string += "\nYour selection is consistent with the priors (new families):\n"
 
@@ -400,13 +443,21 @@ def back_fitting(model, subset):
         else:
             idx, _ = mle(distributions, subset[name])
             dist = distributions[idx[0]]
-        string += f"{repr_to_matplotlib(dist)}\n"
+        string += f"{name} = {repr_to_matplotlib(dist)}\n"
 
     return string
 
 
 def get_distributions():
-    exclude = ["Beta", "BetaScaled", "Triangular", "TruncatedNormal", "Uniform", "VonMises", "DiscreteUniform"]
+    exclude = [
+        "Beta",
+        "BetaScaled",
+        "Triangular",
+        "TruncatedNormal",
+        "Uniform",
+        "VonMises",
+        "DiscreteUniform",
+    ]
     all_distributions = modules["preliz.distributions"].__all__
     distributions = []
     for a_dist in all_distributions:
