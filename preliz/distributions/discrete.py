@@ -10,7 +10,7 @@ from math import ceil
 
 import numpy as np
 from scipy import stats
-from scipy.special import logit, expit
+from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 
 from .distributions import Discrete
