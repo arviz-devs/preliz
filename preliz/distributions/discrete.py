@@ -10,6 +10,7 @@ from math import ceil
 
 import numpy as np
 from scipy import stats
+from scipy.special import logit, expit
 
 
 from .distributions import Discrete
@@ -86,12 +87,10 @@ class Bernoulli(Discrete):
             self._update(self.p)
 
     def _from_logit_p(self, logit_p):
-        p = np.e**logit_p / (1 + np.e**logit_p)
-        return p
+        return expit(logit_p)
 
     def _to_logit_p(self, p):
-        logit_p = np.log(p / (1 - p))
-        return logit_p
+        return logit(p)
 
     def _get_frozen(self):
         frozen = None
