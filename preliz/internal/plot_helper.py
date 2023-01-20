@@ -312,6 +312,8 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
 
     if fig is None:
         fig, axes = plt.subplots(row_colum, row_colum, figsize=(8, 6), constrained_layout=True)
+        fig.canvas.header_visible = False
+        fig.canvas.footer_visible = False
     else:
         axes = np.array(fig.axes)
 
@@ -359,6 +361,46 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
 
     fig.canvas.draw()
     return fig, axes
+
+
+def plot_pp_mean(pp_samples, selected, references=None, kind="pdf", fig_pp_mean=None):
+    if fig_pp_mean is None:
+        fig_pp_mean, ax_pp_mean = plt.subplots(1, 1, figsize=(8, 2), constrained_layout=True)
+        fig_pp_mean.canvas.header_visible = False
+        fig_pp_mean.canvas.footer_visible = False
+    else:
+        ax_pp_mean = fig_pp_mean.axes[0]
+
+    ax_pp_mean.clear()
+
+    if np.any(selected):
+        sample = pp_samples[selected].ravel()
+    else:
+        sample = pp_samples.ravel()
+
+    for ref in references:
+        ax_pp_mean.axvline(ref, ls="--", color="0.5")
+
+    if kind == "pdf":
+        plot_kde(
+            sample, ax=ax_pp_mean, plot_kwargs={"color": "k", "linestyle": "--"}
+        )  # pylint:disable=no-member
+    elif kind == "hist":
+        bins, *_ = ax_pp_mean.hist(
+            sample, color="k", ls="--", bins="auto", alpha=0.5, density=True
+        )  # pylint:disable=no-member
+        ax_pp_mean.set_ylim(-bins.max() * 0.05, None)
+
+    elif kind == "ecdf":
+        plot_ecdf(
+            sample, ax=ax_pp_mean, plot_kwargs={"color": "k", "linestyle": "--"}
+        )  # pylint:disable=no-member
+
+    plot_pointinterval(sample, ax=ax_pp_mean)
+    ax_pp_mean.set_yticks([])
+    fig_pp_mean.canvas.draw()
+
+    return fig_pp_mean
 
 
 def check_inside_notebook(need_widget=False):
