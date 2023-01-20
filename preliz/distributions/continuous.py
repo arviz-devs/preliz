@@ -1407,38 +1407,38 @@ class Laplace(Continuous):
 
 class Logistic(Continuous):
     r"""
-     Logistic distribution.
+    Logistic distribution.
 
-     The pdf of this distribution is
+    The pdf of this distribution is
 
-     .. math::
+    .. math::
 
-        f(x \mid \mu, s) =
-            \frac{\exp\left(-\frac{x - \mu}{s}\right)}
-            {s \left(1 + \exp\left(-\frac{x - \mu}{s}\right)\right)^2}
+    f(x \mid \mu, s) =
+        \frac{\exp\left(-\frac{x - \mu}{s}\right)}
+        {s \left(1 + \exp\left(-\frac{x - \mu}{s}\right)\right)^2}
 
-     .. plot::
-         :context: close-figs
+    .. plot::
+        :context: close-figs
 
-         import arviz as az
-         from preliz import Logistic
-         az.style.use('arviz-white')
-         mus = [0., 0., -2.]
-         ss = [1., 2., .4]
-         for mu, s in zip(mus, ss):
-             Logistic(mu, s).plot_pdf(support=(-5,5))
+        import arviz as az
+        from preliz import Logistic
+        az.style.use('arviz-white')
+        mus = [0., 0., -2.]
+        ss = [1., 2., .4]
+        for mu, s in zip(mus, ss):
+            Logistic(mu, s).plot_pdf(support=(-5,5))
 
-    ========  ==========================================
+    =========  ==========================================
      Support   :math:`x \in \mathbb{R}`
      Mean      :math:`\mu`
      Variance  :math:`\frac{s^2 \pi^2}{3}`
-     ========  ==========================================
+    =========  ==========================================
 
-     Parameters
-     ----------
-     mu : float
+    Parameters
+    ----------
+    mu : float
         Mean.
-     s : float
+    s : float
         Scale (s > 0).
     """
 
