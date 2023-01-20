@@ -29,6 +29,7 @@ dependencies = [
   "matplotlib>=3.5",
   "nbclient<0.6,>=0.2",
   "ipywidgets",
+  "ipympl",
 ]
 
 [tool.flit.module]
