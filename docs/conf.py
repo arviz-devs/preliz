@@ -55,16 +55,6 @@ extensions = [
 # -- Extension configuration -------------------------------------------------
 nb_execution_mode = "off"
 myst_enable_extensions = ["colon_fence", "deflist"]
-# nb_ipywidgets_js = {
-#    "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js": {
-#       "integrity": "sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=",
-#       "crossorigin": "anonymous"
-#     },
-#     "https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@*/dist/embed-amd.js": {
-#       "data-jupyter-widgets-cdn": "https://cdn.jsdelivr.net/npm/",
-#       "crossorigin": "anonymous"
-#     }
-# }
 
 thebe_config = {
     "always_load": True,
@@ -94,7 +84,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
