@@ -273,34 +273,44 @@ def get_sliders(signature, model):
 
 def plot_decorator(func, iterations, kind_plot):
     def looper(*args, **kwargs):
-        results = []
+        results = [func(*args, **kwargs) for _ in range(iterations)]
+        _, ax = plt.subplots()
+
         alpha = max(0.01, 1 - iterations * 0.009)
-        for _ in range(iterations):
-            result = func(*args, **kwargs)
-            results.append(result)
-            if kind_plot == "hist":
-                plt.hist(
-                    result, alpha=alpha, density=True, bins="auto", color="C0", histtype="step"
-                )
-            elif kind_plot == "kde":
-                plot_kde(result, plot_kwargs={"alpha": alpha})
-            elif kind_plot == "ecdf":
-                plt.plot(
-                    np.sort(result), np.linspace(0, 1, len(result), endpoint=False), color="C0"
-                )
 
         if kind_plot == "hist":
-            plt.hist(
+            if results[0].dtype.kind == "i":
+                bins = np.arange(np.min(results), np.max(results) + 1.5) - 0.5
+                if len(bins) < 30:
+                    ax.set_xticks(bins + 0.5)
+            else:
+                bins = "auto"
+            ax.hist(
+                results,
+                alpha=alpha,
+                density=True,
+                color=["C0"] * iterations,
+                bins=bins,
+                histtype="step",
+            )
+            ax.hist(
                 np.concatenate(results),
                 density=True,
-                bins="auto",
+                bins=bins,
                 color="k",
                 ls="--",
                 histtype="step",
             )
         elif kind_plot == "kde":
+            for result in results:
+                plot_kde(result, plot_kwargs={"alpha": alpha})
             plot_kde(np.concatenate(results), plot_kwargs={"color": "k", "ls": "--"})
         elif kind_plot == "ecdf":
+            plt.plot(
+                np.sort(results, axis=1).T,
+                np.linspace(0, 1, len(results[0]), endpoint=False),
+                color="C0",
+            )
             a = np.concatenate(results)
             plt.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
 
