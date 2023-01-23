@@ -38,7 +38,6 @@ class Bernoulli(Discrete):
         import arviz as az
         from preliz import Bernoulli
         az.style.use('arviz-white')
-        ps = [0, 0.5, 0.8]
         for p in [0, 0.5, 0.8]:
             Bernoulli(p).plot_pdf()
 
@@ -279,6 +278,70 @@ class DiscreteUniform(Discrete):
         lower = np.min(sample)
         upper = np.max(sample)
         self._update(lower, upper)
+
+
+class Geometric(Discrete):
+    R"""
+    Geometric distribution.
+
+    The probability that the first success in a sequence of Bernoulli trials
+    occurs on the x'th trial.
+    The pmf of this distribution is
+
+    .. math::
+        f(x \mid p) = p(1-p)^{x-1}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Geometric
+        az.style.use('arviz-white')
+        for p in [0.1, 0.25, 0.75]:
+            Geometric(p).plot_pdf(support=(1,10))
+
+    ========  =============================
+    Support   :math:`x \in \mathbb{N}_{>0}`
+    Mean      :math:`\dfrac{1}{p}`
+    Variance  :math:`\dfrac{1 - p}{p^2}`
+    ========  =============================
+
+    Parameters
+    ----------
+    p : float
+        Probability of success on an individual trial (0 < p <= 1).
+    """
+
+    def __init__(self, p=None):
+        super().__init__()
+        self.dist = copy(stats.geom)
+        self.support = (eps, np.inf)
+        self._parametrization(p)
+
+    def _parametrization(self, p=None):
+        self.p = p
+        self.param_names = "p"
+        self.params_support = ((eps, 1),)
+        if self.p is not None:
+            self._update(self.p)
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self):
+            frozen = self.dist(self.p)
+        return frozen
+
+    def _update(self, p):
+        self.p = np.float64(p)
+        self.params = (self.p,)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+        p = 1 / mean
+        self._update(p)
+
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
 
 
 class NegativeBinomial(Discrete):

@@ -35,6 +35,7 @@ from preliz.distributions import (
     Bernoulli,
     Binomial,
     DiscreteUniform,
+    Geometric,
     NegativeBinomial,
     Poisson,
 )
@@ -74,6 +75,7 @@ from preliz.distributions import (
         (Bernoulli, (0.5,)),
         (Binomial, (5, 0.5)),
         (DiscreteUniform, (-2, 2)),
+        (Geometric, (0.75,)),
         (NegativeBinomial, (10, 0.5)),
         (Poisson, (4.2,)),
     ],

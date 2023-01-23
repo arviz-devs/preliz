@@ -36,6 +36,7 @@ from preliz.distributions import (
     # Bernoulli, maxent is not useful for Bernoulli distribution as we only have two states
     Binomial,
     DiscreteUniform,
+    Geometric,
     NegativeBinomial,
     Poisson,
 )
@@ -129,6 +130,7 @@ from preliz.distributions import (
         (Binomial(), 3, 9, 0.9, (0, 9), (9, 0.490)),
         (Binomial(n=12), 3, 9, 0.9, (0, 12), (0.612)),
         (DiscreteUniform(), -2, 10, 0.9, (-3, 11), (-2, 10)),
+        (Geometric(), 1, 4, 0.99, (0, np.inf), (0.6837)),
         (NegativeBinomial(), 0, 15, 0.9, (0, np.inf), (7.546, 2.041)),
         (NegativeBinomial(p=0.2), 0, 15, 0.9, (0, np.inf), (1.847)),
         (Poisson(), 0, 3, 0.7, (0, np.inf), (2.763)),

@@ -35,6 +35,7 @@ from preliz.distributions import (
     Bernoulli,
     Binomial,
     DiscreteUniform,
+    Geometric,
     NegativeBinomial,
     Poisson,
 )
@@ -75,9 +76,10 @@ def a_few_poissons():
         (Bernoulli, (0.8,)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
+        (DiscreteUniform, (0, 1)),
+        (Geometric, (0.75,)),
         (NegativeBinomial, (8, 4)),
         (Poisson, (4.5,)),
-        (DiscreteUniform, (0, 1)),
     ],
 )
 def test_moments(distribution, params):
@@ -128,9 +130,10 @@ def test_moments(distribution, params):
         (Bernoulli, (0.4,)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
+        (DiscreteUniform, (0, 1)),
+        (Geometric, (0.5,)),
         (NegativeBinomial, (8, 4)),
         (Poisson, (4.5,)),
-        (DiscreteUniform, (0, 1)),
     ],
 )
 def test_mle(distribution, params):
