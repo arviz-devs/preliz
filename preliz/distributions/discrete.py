@@ -341,7 +341,9 @@ class Geometric(Discrete):
         self._update(p)
 
     def _fit_mle(self, sample):
-        optimize_ml(self, sample)
+        mean = np.mean(sample)
+        p = 1 / mean
+        self._update(p)
 
 
 class NegativeBinomial(Discrete):
