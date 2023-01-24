@@ -102,6 +102,7 @@ init_vals = {
     "Bernoulli": {"p": 0.5},
     "Binomial": {"n": 5, "p": 0.5},
     "DiscreteUniform": {"lower": -2.0, "upper": 2.0},
+    "Geometric": {"p": 0.5},
     "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},
     "Poisson": {"mu": 4.5},
 }
