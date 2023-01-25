@@ -5,42 +5,76 @@ import sys
 
 from IPython import get_ipython
 from ipywidgets import FloatSlider, IntSlider
-from arviz import plot_kde, plot_ecdf
+from arviz import plot_kde, plot_ecdf, hdi
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
-from scipy.stats._distn_infrastructure import rv_frozen
 from scipy.interpolate import interp1d, PchipInterpolator
 
 _log = logging.getLogger("preliz")
 
 
-def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
+def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False, ax=None):
     """
-    By default plot the quantiles [0.05, 0.25, 0.5, 0.75, 0.95]
-    The median as dot and the two interquantiles ranges (0.05-0.95) and (0.25-0.75) as lines.
+    Plot median as a dot and intervals as lines.
+    By defaults the intervals are HDI with 0.5 and 0.94 mass.
 
     Parameters
     ----------
     distribution : preliz distribution or array
-    quantiles : list
-        The number of elements should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
-        defaults to [0.05, 0.25, 0.5, 0.75, 0.95].
+    interval : str
+        Type of interval. Available options are highest density interval `"hdi"` (default),
+        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+    levels : list
+        Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+        For quantiles the number of elements should be 5, 3, 1 or 0
+        (in this last case nothing will be plotted).
     rotated : bool
         Whether to do the plot along the x-axis (default) or on the y-axis
     ax : matplotlib axis
     """
-    if quantiles is None:
-        quantiles = [0.05, 0.25, 0.5, 0.75, 0.95]
+    if interval == "quantiles":
+        if levels is None:
+            levels = [0.05, 0.25, 0.5, 0.75, 0.95]
+        elif len(levels) not in (5, 3, 1, 0):
+            raise ValueError("levels should have 5, 3, 1 or 0 elements")
 
-    if isinstance(distribution, rv_frozen):
-        q_s = distribution.ppf(quantiles).tolist()
+        if isinstance(distribution, (np.ndarray, list, tuple)):
+            q_s = np.quantile(distribution, levels).tolist()
+        else:
+            q_s = distribution.ppf(levels).tolist()
+
     else:
-        q_s = np.quantile(distribution, quantiles).tolist()
+        if levels is None:
+            levels = [0.5, 0.94]
+
+        elif len(levels) not in (2, 1):
+            raise ValueError("levels should have 2 or 1 elements")
+
+        if isinstance(distribution, (np.ndarray, list, tuple)):
+            if interval == "hdi":
+                func = hdi
+            if interval == "eti":
+                func = eti
+
+            q_tmp = np.concatenate([func(distribution, m) for m in levels])
+            median = np.median(distribution)
+        else:
+            if interval == "hdi":
+                func = distribution.hdi
+            if interval == "eti":
+                func = distribution.eti
+
+            q_tmp = np.concatenate([func(mass=m) for m in levels])
+            median = distribution.rv_frozen.median()
+
+        q_s = []
+        if len(levels) == 2:
+            q_s.extend((q_tmp[2], q_tmp[0], median, q_tmp[1], q_tmp[3]))
+        elif len(levels) == 1:
+            q_s.extend((q_tmp[0], median, q_tmp[1]))
 
     q_s_size = len(q_s)
-    if not q_s_size in (5, 3, 1, 0):
-        raise ValueError("quantiles should have 5, 3, 1 or 0 elements")
 
     if rotated:
         if q_s_size == 5:
@@ -59,10 +93,15 @@ def plot_pointinterval(distribution, quantiles=None, rotated=False, ax=None):
             ax.plot(q_s[0], 0, "wo", mec="k")
 
 
-def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsize, ax):
+def eti(distribution, mass):
+    lower = (1 - mass) / 2
+    return np.quantile(distribution, (lower, mass + lower))
+
+
+def plot_pdfpmf(dist, moments, pointinterval, interval, levels, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    if legend:
+    if legend is not None:
         label = repr_to_matplotlib(dist)
 
         if moments is not None:
@@ -97,7 +136,7 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
         ax.plot(x, mass, "o", label=label, color=color)
 
     if pointinterval:
-        plot_pointinterval(dist.rv_frozen, quantiles=quantiles, ax=ax)
+        plot_pointinterval(dist, interval, levels, ax=ax)
 
     if legend == "legend":
         side_legend(ax)
@@ -105,10 +144,10 @@ def plot_pdfpmf(dist, moments, pointinterval, quantiles, support, legend, figsiz
     return ax
 
 
-def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, ax):
+def plot_cdf(dist, moments, pointinterval, interval, levels, support, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
-    if legend:
+    if legend is not None:
         label = repr_to_matplotlib(dist)
 
         if moments is not None:
@@ -126,18 +165,18 @@ def plot_cdf(dist, moments, pointinterval, quantiles, support, legend, figsize, 
     ax.plot(x, cdf, label=label, color=color)
 
     if pointinterval:
-        plot_pointinterval(dist.rv_frozen, quantiles=quantiles, ax=ax)
+        plot_pointinterval(dist, interval, levels, ax=ax)
 
     if legend == "legend":
         side_legend(ax)
     return ax
 
 
-def plot_ppf(dist, moments, pointinterval, quantiles, legend, figsize, ax):
+def plot_ppf(dist, moments, pointinterval, interval, levels, legend, figsize, ax):
     ax = get_ax(ax, figsize)
     color = next(ax._get_lines.prop_cycler)["color"]
 
-    if legend:
+    if legend is not None:
         label = repr_to_matplotlib(dist)
 
         if moments is not None:
@@ -153,7 +192,7 @@ def plot_ppf(dist, moments, pointinterval, quantiles, legend, figsize, ax):
     ax.plot(x, dist.ppf(x), label=label, color=color)
 
     if pointinterval:
-        plot_pointinterval(dist.rv_frozen, quantiles=quantiles, rotated=True, ax=ax)
+        plot_pointinterval(dist, interval, levels, rotated=True, ax=ax)
 
     if legend == "legend":
         side_legend(ax)

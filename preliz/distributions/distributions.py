@@ -210,7 +210,8 @@ class Distribution:
         self,
         moments=None,
         pointinterval=False,
-        quantiles=None,
+        interval="hdi",
+        levels=None,
         support="full",
         legend="legend",
         figsize=None,
@@ -228,16 +229,19 @@ class Distribution:
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
-        quantiles : list
-            Values of the five quantiles to use when ``pointinterval=True`` if None (default)
-            the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
-            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"` (default),
+        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
-            ``"title"`` or not include them ``False``.
+            ``"title"`` or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
@@ -245,7 +249,7 @@ class Distribution:
 
         if valid_scalar_params(self):
             return plot_pdfpmf(
-                self, moments, pointinterval, quantiles, support, legend, figsize, ax
+                self, moments, pointinterval, interval, levels, support, legend, figsize, ax
             )
         else:
             return None
@@ -254,7 +258,8 @@ class Distribution:
         self,
         moments=None,
         pointinterval=False,
-        quantiles=None,
+        interval="hdi",
+        levels=None,
         support="full",
         legend="legend",
         figsize=None,
@@ -272,22 +277,27 @@ class Distribution:
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
-        quantiles : list
-            Values of the five quantiles to use when ``pointinterval=True`` if None (default)
-            the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
-            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"` (default),
+        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
-            ``"title"`` or not include them ``False``.
+            ``"title"`` or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
         """
         if valid_scalar_params(self):
-            return plot_cdf(self, moments, pointinterval, quantiles, support, legend, figsize, ax)
+            return plot_cdf(
+                self, moments, pointinterval, interval, levels, support, legend, figsize, ax
+            )
         else:
             return None
 
@@ -295,7 +305,8 @@ class Distribution:
         self,
         moments=None,
         pointinterval=False,
-        quantiles=None,
+        interval="hdi",
+        levels=None,
         legend="legend",
         figsize=None,
         ax=None,
@@ -312,23 +323,28 @@ class Distribution:
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
-        quantiles : list
-            Values of the five quantiles to use when ``pointinterval=True`` if None (default)
-            the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
-            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"` (default),
+        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
-            ``"title"`` or not include them ``False``.
+            ``"title"`` or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
         """
         if valid_scalar_params(self):
-            return plot_ppf(self, moments, pointinterval, quantiles, legend, figsize, ax)
+            return plot_ppf(self, moments, pointinterval, interval, levels, legend, figsize, ax)
         else:
             return None
 
-    def plot_interactive(self, kind="pdf", fixed_lim="both", pointinterval=True, quantiles=None):
+    def plot_interactive(
+        self, kind="pdf", fixed_lim="both", pointinterval=True, interval="hdi", levels=None
+    ):
         """
         Interactive exploration of distributions parameters
 
@@ -345,10 +361,13 @@ class Distribution:
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
-        quantiles : list
-            Values of the five quantiles to use when ``pointinterval=True`` if None (default)
-            the values ``[0.05, 0.25, 0.5, 0.75, 0.95]`` will be used. The number of elements
-            should be 5, 3, 1 or 0 (in this last case nothing will be plotted).
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"` (default),
+        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
         """
         check_inside_notebook()
 
@@ -381,11 +400,17 @@ class Distribution:
         def plot(**args):
             self.__init__(**args)
             if kind == "pdf":
-                ax = self.plot_pdf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
+                ax = self.plot_pdf(
+                    legend=False, pointinterval=pointinterval, interval=interval, levels=levels
+                )
             elif kind == "cdf":
-                ax = self.plot_cdf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
+                ax = self.plot_cdf(
+                    legend=False, pointinterval=pointinterval, interval=interval, levels=levels
+                )
             elif kind == "ppf":
-                ax = self.plot_ppf(legend=False, pointinterval=pointinterval, quantiles=quantiles)
+                ax = self.plot_ppf(
+                    legend=False, pointinterval=pointinterval, interval=interval, levels=levels
+                )
             if fixed_lim != "auto" and kind != "ppf":
                 ax.set_xlim(*xlim)
             if fixed_lim != "auto" and kind != "cdf":
