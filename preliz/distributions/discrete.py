@@ -159,7 +159,7 @@ class BetaBinomial(Discrete):
         beta > 0.
     """
 
-    def __init__(self, alpha=None, beta=None, n=10):
+    def __init__(self, alpha=None, beta=None, n=None):
         super().__init__()
         self.dist = copy(stats.betabinom)
         self.support = (0, np.inf)
@@ -190,12 +190,12 @@ class BetaBinomial(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        # See https://en.wikipedia.org/wiki/Beta-binomial_distribution
+        # See https://en.wikipedia.org/wiki/Beta-binomial_distribution#Method_of_moments
         n = self.n
         p = mean / n
         rho = ((sigma**2 / (mean * (1 - p))) - 1) / (n - 1)
-        alpha = (p / rho) - p
-        beta = (alpha / p) - alpha
+        alpha = max(0.5, (p / rho) - p)
+        beta =  max(0.5, (alpha / p) - alpha)
         self._update(alpha, beta, n)
 
     def _fit_mle(self, sample):
