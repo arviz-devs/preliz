@@ -190,7 +190,9 @@ class BetaBinomial(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        # See https://en.wikipedia.org/wiki/Beta-binomial_distribution#Method_of_moments
+        # Crude aproximation for n (as in Binomial distribution)
+        # For alpha and beta see:
+        # https://en.wikipedia.org/wiki/Beta-binomial_distribution#Method_of_moments
         n = mean + sigma * 2
         p = mean / n
         rho = ((sigma**2 / (mean * (1 - p))) - 1) / (n - 1)
