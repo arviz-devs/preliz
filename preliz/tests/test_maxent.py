@@ -34,6 +34,7 @@ from preliz.distributions import (
     Wald,
     Weibull,
     # Bernoulli, maxent is not useful for Bernoulli distribution as we only have two states
+    BetaBinomial,
     Binomial,
     DiscreteUniform,
     Geometric,
@@ -126,6 +127,7 @@ from preliz.distributions import (
         (Wald(mu=5), 0, 10, 0.9, (0, np.inf), (7.348)),
         (Weibull(), 0, 10, 0.9, (0, np.inf), (1.411, 5.537)),
         (Weibull(alpha=2), 0, 10, 0.9, (0, np.inf), (6.590)),
+        (BetaBinomial(), 2, 6, 0.6, (0, 10), (1.837, 2.181)),
         # results for binomial are close to the correct result, but still off
         (Binomial(), 3, 9, 0.9, (0, 9), (9, 0.490)),
         (Binomial(n=12), 3, 9, 0.9, (0, 12), (0.612)),
