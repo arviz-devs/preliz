@@ -5,8 +5,6 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
-        args: [--diff, --check]
-
   - repo: https://github.com/PyCQA/pylint
     rev: v2.10.2
     hooks:
