@@ -191,7 +191,7 @@ class BetaBinomial(Discrete):
 
     def _fit_moments(self, mean, sigma):
         # See https://en.wikipedia.org/wiki/Beta-binomial_distribution#Method_of_moments
-        n = self.n
+        n = mean + sigma * 2
         p = mean / n
         rho = ((sigma**2 / (mean * (1 - p))) - 1) / (n - 1)
         alpha = max(0.5, (p / rho) - p)
