@@ -193,7 +193,7 @@ class BetaBinomial(Discrete):
         # Crude aproximation for n (as in Binomial distribution)
         # For alpha and beta see:
         # https://en.wikipedia.org/wiki/Beta-binomial_distribution#Method_of_moments
-        n = np.int64(mean + sigma * 2)
+        n = mean + sigma * 2
         p = mean / n
         rho = ((sigma**2 / (mean * (1 - p))) - 1) / (n - 1)
         alpha = max(0.5, (p / rho) - p)
