@@ -33,6 +33,7 @@ from preliz.distributions import (
     Wald,
     Weibull,
     Bernoulli,
+    BetaBinomial,
     Binomial,
     DiscreteUniform,
     Geometric,
@@ -74,6 +75,7 @@ def a_few_poissons():
         (Wald, (1, 1)),
         (Weibull, (2, 1)),
         (Bernoulli, (0.8,)),
+        (BetaBinomial, (1, 1, 10)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
         (DiscreteUniform, (0, 1)),
@@ -89,7 +91,7 @@ def test_moments(distribution, params):
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
-    if dist.__class__.__name__ in ["Binomial", "Student"]:
+    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "Student"]:
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
@@ -128,6 +130,7 @@ def test_moments(distribution, params):
         (Wald, (1, 1)),
         (Weibull, (2, 1)),
         (Bernoulli, (0.4,)),
+        (BetaBinomial, (2, 2, 10)),
         (Binomial, (2, 0.5)),
         (Binomial, (2, 0.1)),
         (DiscreteUniform, (0, 1)),

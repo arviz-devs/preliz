@@ -100,6 +100,7 @@ init_vals = {
     "Wald": {"mu": 1, "lam": 3.0},
     "Weibull": {"alpha": 5.0, "beta": 2.0},
     "Bernoulli": {"p": 0.5},
+    "BetaBinomial": {"alpha": 2, "beta": 2, "n": 10},
     "Binomial": {"n": 5, "p": 0.5},
     "DiscreteUniform": {"lower": -2.0, "upper": 2.0},
     "Geometric": {"p": 0.5},
