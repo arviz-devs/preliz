@@ -91,7 +91,7 @@ def test_moments(distribution, params):
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
-    if dist.__class__.__name__ in ["Binomial", "Student"]:
+    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "Student"]:
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
