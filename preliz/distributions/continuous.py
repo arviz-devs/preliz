@@ -1811,6 +1811,122 @@ class Pareto(Continuous):
         self._update(alpha, m)
 
 
+class Rice(Continuous):
+    r"""
+    Rice distribution.
+
+    The pdf of this distribution is
+
+    .. math::
+
+        f(x\mid \nu ,\sigma )=
+            {\frac  {x}{\sigma ^{2}}}\exp
+            \left({\frac  {-(x^{2}+\nu ^{2})}
+            {2\sigma ^{2}}}\right)I_{0}\left({\frac  {x\nu }{\sigma ^{2}}}\right)
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import Rice
+        az.style.use('arviz-white')
+        nus = [0., 0., 4.]
+        sigmas = [1., 2., 2.]
+        for nu, sigma in  zip(nus, sigmas):
+            Rice(nu, sigma).plot_pdf(support=(0,10))
+
+    ========  ==============================================================
+    Support   :math:`x \in (0, \infty)`
+    Mean      :math:`\sigma {\sqrt  {\pi /2}}\,\,L_{{1/2}}(-\nu ^{2}/2\sigma ^{2})`
+    Variance  :math:`2\sigma ^{2}+\nu ^{2}-{\frac  {\pi \sigma ^{2}}{2}}L_{{1/2}}^{2}
+                        \left({\frac  {-\nu ^{2}}{2\sigma ^{2}}}\right)`
+    ========  ==============================================================
+
+    Rice distribution has 2 alternative parameterizations. In terms of nu and sigma
+    or b and sigma.
+
+    The link between the two parametrizations is given by
+
+    .. math::
+
+       b = \dfrac{\nu}{\sigma}
+
+    Parameters
+    ----------
+    nu : float
+        Noncentrality parameter.
+    sigma : float
+        Scale parameter.
+    b : float
+        Shape parameter.
+    """
+
+    def __init__(self, nu=None, sigma=None, b=None):
+        super().__init__()
+        self.name = "rice"
+        self.dist = copy(stats.rice)
+        self.support = (0, np.inf)
+        self._parametrization(nu, sigma, b)
+
+    def _parametrization(self, nu=None, sigma=None, b=None):
+        if nu is not None and b is not None:
+            raise ValueError(
+                "Incompatible parametrization. Either use nu and sigma or b and sigma."
+            )
+
+        self.param_names = ("nu", "sigma")
+        self.params_support = ((eps, np.inf), (eps, np.inf))
+
+        if b is not None:
+            self.b = b
+            self.sigma = sigma
+            self.param_names = ("b", "sigma")
+            if (b and sigma) is not None:
+                nu = self._from_b(b, sigma)
+
+        self.nu = nu
+        self.sigma = sigma
+        if self.nu is not None and self.sigma is not None:
+            self._update(self.nu, self.sigma)
+
+    def _from_b(self, b, sigma):
+        nu = b * sigma
+        return nu
+
+    def _to_b(self, nu, sigma):
+        b = nu / sigma
+        return b
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self):
+            b_ = self._to_b(self.nu, self.sigma)
+            frozen = self.dist(b=b_, scale=self.sigma)
+        return frozen
+
+    def _update(self, nu, sigma):
+        self.nu = np.float64(nu)
+        self.sigma = np.float64(sigma)
+        self.b = self._to_b(self.nu, self.sigma)
+
+        if self.param_names[0] == "nu":
+            self.params = (self.nu, self.sigma)
+        elif self.param_names[0] == "b":
+            self.params = (self.b, self.sigma)
+
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        # Assume symmetry
+        nu = mean
+        self._update(nu, sigma)
+
+    def _fit_mle(self, sample, **kwargs):
+        b, _, sigma = self.dist.fit(sample, **kwargs)
+        nu = self._from_b(b, sigma)
+        self._update(nu, sigma)
+
+
 class SkewNormal(Continuous):
     r"""
     SkewNormal distribution.

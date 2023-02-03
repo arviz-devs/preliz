@@ -21,6 +21,7 @@ all_continuous = [
     Moyal,
     Normal,
     Pareto,
+    Rice,
     SkewNormal,
     Student,
     Triangular,

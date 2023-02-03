@@ -91,6 +91,7 @@ init_vals = {
     "Moyal": {"mu": 0.0, "sigma": 1.0},
     "Normal": {"mu": 0.0, "sigma": 1.0},
     "Pareto": {"alpha": 5, "m": 2.0},
+    "Rice": {"nu": 2.0, "sigma": 1.0},
     "SkewNormal": {"mu": 0.0, "sigma": 1, "alpha": 6.0},
     "Student": {"nu": 7, "mu": 0.0, "sigma": 1},
     "Triangular": {"lower": -2, "c": 0.0, "upper": 2.0},

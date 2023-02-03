@@ -24,6 +24,7 @@ from preliz.distributions import (
     Moyal,
     Normal,
     Pareto,
+    Rice,
     SkewNormal,
     Student,
     Triangular,
@@ -66,6 +67,7 @@ def a_few_poissons():
         (Moyal, (1, 2)),
         (Normal, (0, 1)),
         (Pareto, (5, 1)),
+        (Rice, (4, 1)),
         (SkewNormal, (0, 1, 0)),
         (Student, (100, 0, 1)),
         (Triangular, (-2, 3, 7)),
@@ -91,7 +93,7 @@ def test_moments(distribution, params):
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
-    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "Student"]:
+    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "Rice", "Student"]:
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
@@ -119,6 +121,7 @@ def test_moments(distribution, params):
         (Moyal, (0, 2)),
         (Normal, (0, 1)),
         (Pareto, (5, 1)),
+        (Rice, (1, 2)),
         (SkewNormal, (0, 1, 0)),
         (SkewNormal, (0, 1, -1)),
         (Student, (4, 0, 1)),
