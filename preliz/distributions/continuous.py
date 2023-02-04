@@ -1917,9 +1917,8 @@ class Rice(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        # Assume symmetry
-        nu = mean
-        self._update(nu, sigma)
+        sample = np.abs(np.random.normal(mean, sigma, 1000))
+        self._fit_mle(sample)
 
     def _fit_mle(self, sample, **kwargs):
         b, _, sigma = self.dist.fit(sample, **kwargs)
