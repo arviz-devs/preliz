@@ -1917,9 +1917,7 @@ class Rice(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        rng = np.random.default_rng(12345)
-        sample = np.abs(rng.normal(mean, sigma, 1000))
-        self._fit_mle(sample)
+        self._update(mean, sigma)
 
     def _fit_mle(self, sample, **kwargs):
         b, _, sigma = self.dist.fit(sample, **kwargs)
