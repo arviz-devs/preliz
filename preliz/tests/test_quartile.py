@@ -23,6 +23,7 @@ from preliz.distributions import (
     Moyal,
     Normal,
     Pareto,
+    Rice,
     Student,
     Triangular,
     TruncatedNormal,
@@ -61,6 +62,7 @@ from preliz.distributions import (
         (Moyal(), 0.5, 1, 2, (0.620, 0.567)),
         (Normal(), -1, 0, 1, (0, 1.482)),
         (Pareto(), 0.5, 1, 4, (0.541, 0.289)),
+        (Rice(), 2, 4, 6, (0.03566, 3.395)),
         pytest.param(
             Student(),
             -1,
