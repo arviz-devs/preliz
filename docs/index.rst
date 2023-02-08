@@ -1,7 +1,7 @@
 Tools to help you pick a prior 
 ===================================================
 
- **This package is very new and many of its features are experimental, or not yet well tested, or subject to change without notice.**
+ **As any other methods for prior elicitation, this tools should be used under supervision and criteria of the user**
 
 
 |PyPI version|
