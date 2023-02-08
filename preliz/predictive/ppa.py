@@ -56,8 +56,7 @@ def ppa(
     check_inside_notebook(need_widget=True)
 
     _log.info(
-        """Enter at your own risk. """
-        """This is highly experimental code and not recommended for regular use."""
+        """"This is an experimental method under development, use with caution. """
     )
 
     if isinstance(references, (float, int)):
