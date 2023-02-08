@@ -1,7 +1,7 @@
 Tools to help you pick a prior 
 ===================================================
 
- **As any other methods for prior elicitation, this tools should be used under supervision and criteria of the user**
+ **As any other methods for prior elicitation, this tools should be used under supervision and criteria of the user.**
 
 
 |PyPI version|
