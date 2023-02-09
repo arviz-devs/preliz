@@ -55,9 +55,7 @@ def ppa(
     """
     check_inside_notebook(need_widget=True)
 
-    _log.info(
-        """"This is an experimental method under development, use with caution. """
-    )
+    _log.info(""""This is an experimental method under development, use with caution.""")
 
     if isinstance(references, (float, int)):
         references = [references]
