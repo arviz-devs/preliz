@@ -322,14 +322,14 @@ class Categorical(Discrete):
 
     def pdf(self, x):  # pylint: disable=arguments-differ
         x = np.asarray(x)
-        pmf = np.zeros_like(x, dtype=np.float)
+        pmf = np.zeros_like(x, dtype=float)
         valid_categories = np.where((x >= 0) & (x < len(self.p)))[0]
         pmf[valid_categories] = self.p[x[valid_categories]]
         return pmf
 
     def cdf(self, x):  # pylint: disable=arguments-differ
-        x = np.asarray(x, dtype=np.int)
-        cdf = np.ones_like(x, dtype=np.float)
+        x = np.asarray(x, dtype=int)
+        cdf = np.ones_like(x, dtype=float)
         cdf[x < 0] = 0
         valid_categories = np.where((x >= 0) & (x < len(self.p)))[0]
         cdf[valid_categories] = np.cumsum(self.p)[x[valid_categories]]
