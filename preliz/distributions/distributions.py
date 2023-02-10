@@ -14,7 +14,12 @@ from ..internal.plot_helper import (
     get_slider,
     check_inside_notebook,
 )
-from ..internal.distribution_helper import init_vals, valid_scalar_params, hdi_from_pdf
+from ..internal.distribution_helper import (
+    init_vals,
+    valid_scalar_params,
+    valid_distribution,
+    hdi_from_pdf,
+)
 
 
 class Distribution:
@@ -63,6 +68,8 @@ class Distribution:
         mass: float
             Probability mass for the equal-tailed interval. Defaults to 0.94
         """
+        valid_distribution(self)
+
         if valid_scalar_params(self):
             attr = namedtuple(self.__class__.__name__, ["mean", "median", "std", "lower", "upper"])
             mean = float(f"{self.rv_frozen.mean():{fmt}}")
@@ -118,6 +125,8 @@ class Distribution:
         mass: float
             Probability mass in the interval. Defaults to 0.94
         """
+        valid_distribution(self)
+
         if valid_scalar_params(self):
             eti = self.rv_frozen.interval(mass)
             lower_tail = float(f"{eti[0]:{fmt}}")
@@ -137,6 +146,8 @@ class Distribution:
         mass: float
             Probability mass in the interval. Defaults to 0.94
         """
+        valid_distribution(self)
+
         if valid_scalar_params(self):
             hdi = hdi_from_pdf(self, mass)
             lower_tail = float(f"{hdi[0]:{fmt}}")
@@ -392,12 +403,25 @@ class Distribution:
             ylim = fixed_lim[2:]
 
         sliders = {}
-        for name, value, support in zip(self.param_names, self.params, self.params_support):
-            lower, upper = support
+        if self.__class__.__name__ == "Categorical":
+            pointinterval = False
+            name = self.param_names[0]
+            params = self.params[0]
+            names = [f"{name}_{i}" for i in range(len(params))]
+            supports = [(0, 1) for _ in range(len(params))]
 
-            sliders[name] = get_slider(name, value, lower, upper)
+            for name, value, support in zip(names, params, supports):
+                sliders[name] = get_slider(name, value, *support)
+        else:
+            for name, value, support in zip(self.param_names, self.params, self.params_support):
+                sliders[name] = get_slider(name, value, *support)
 
-        def plot(**args):
+        def plot(**args):  # pylint: disable=inconsistent-return-statements
+            if self.__class__.__name__ == "Categorical":
+                values = list(args.values())
+                args = {list(args.keys())[0].split("_")[0]: values}
+                if np.sum(values) > 1:
+                    return None
             self.__init__(**args)
             if kind == "pdf":
                 ax = self.plot_pdf(

@@ -2,6 +2,7 @@ import logging
 import numpy as np
 
 from ..internal.optimization import fit_to_sample
+from ..internal.distribution_helper import valid_distribution
 
 _log = logging.getLogger("preliz")
 
@@ -37,6 +38,9 @@ def mle(
     idx : array with the indexes to sort ``distributions`` from best to worst match
     axes : matplotlib axes
     """
+    for dist in distributions:
+        valid_distribution(dist)
+
     sample = np.array(sample)
     x_min = sample.min()
     x_max = sample.max()

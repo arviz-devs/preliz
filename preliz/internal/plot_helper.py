@@ -9,6 +9,7 @@ from arviz import plot_kde, plot_ecdf, hdi
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
+from matplotlib.ticker import MaxNLocator
 from scipy.interpolate import interp1d, PchipInterpolator
 
 _log = logging.getLogger("preliz")
@@ -159,10 +160,20 @@ def plot_cdf(dist, moments, pointinterval, interval, levels, support, legend, fi
     else:
         label = None
 
-    eps = dist._finite_endpoints(support)
-    x = np.linspace(*eps, 1000)
-    cdf = dist.cdf(x)
-    ax.plot(x, cdf, label=label, color=color)
+    ax.set_ylim(-0.05, 1.05)
+    x = dist.xvals(support)
+
+    if dist.kind == "discrete":
+        lower = x[0]
+        upper = x[-1]
+        x = np.insert(x, [0, len(x)], (lower - 1, upper + 1))
+        cdf = dist.cdf(x)
+        ax.set_xlim(lower - 0.1, upper + 0.1)
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.step(x, cdf, where="post", label=label, color=color)
+    else:
+        cdf = dist.cdf(x)
+        ax.plot(x, cdf, label=label, color=color)
 
     if pointinterval:
         plot_pointinterval(dist, interval, levels, ax=ax)
@@ -190,6 +201,8 @@ def plot_ppf(dist, moments, pointinterval, interval, levels, legend, figsize, ax
 
     x = np.linspace(0, 1, 1000)
     ax.plot(x, dist.ppf(x), label=label, color=color)
+    if dist.kind == "discrete":
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
     if pointinterval:
         plot_pointinterval(dist, interval, levels, rotated=True, ax=ax)

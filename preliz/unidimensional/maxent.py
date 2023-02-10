@@ -1,6 +1,7 @@
 import logging
 
 from ..distributions import Normal
+from ..internal.distribution_helper import valid_distribution
 from ..internal.optimization import relative_error, optimize_max_ent, get_fixed_params
 
 _log = logging.getLogger("preliz")
@@ -71,6 +72,7 @@ def maxent(
         >>> pz.maxent(pz.HalfStudent(nu=4), 0, 12, 0.9)
 
     """
+    valid_distribution(distribution)
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")
 
