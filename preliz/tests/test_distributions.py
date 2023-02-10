@@ -21,6 +21,7 @@ from preliz.distributions import (
     Laplace,
     Logistic,
     LogNormal,
+    LogitNormal,
     Moyal,
     Normal,
     Pareto,
@@ -64,6 +65,7 @@ def a_few_poissons():
         (Laplace, (0, 1)),
         (Logistic, (1, 2)),
         (LogNormal, (0, 0.5)),
+        (LogitNormal, (0, 0.5)),
         (Moyal, (1, 2)),
         (Normal, (0, 1)),
         (Pareto, (5, 1)),
@@ -93,7 +95,7 @@ def test_moments(distribution, params):
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
-    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "Rice", "Student"]:
+    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "LogitNormal", "Rice", "Student"]:
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
@@ -118,6 +120,7 @@ def test_moments(distribution, params):
         (Laplace, (0, 1)),
         (Logistic, (0, 1)),
         (LogNormal, (0, 0.5)),
+        (LogitNormal, (0, 0.5)),
         (Moyal, (0, 2)),
         (Normal, (0, 1)),
         (Pareto, (5, 1)),

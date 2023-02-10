@@ -12,6 +12,7 @@ def hdi_from_pdf(dist, mass=0.95):
         lower_ep, upper_ep = dist._finite_endpoints("full")
         x_vals = np.linspace(lower_ep, upper_ep, 10000)
         pdf = dist.rv_frozen.pdf(x_vals)
+        pdf = pdf[np.isfinite(pdf)]
         pdf = pdf / pdf.sum()
     else:
         x_vals = dist.xvals(support="full")
@@ -98,6 +99,7 @@ init_vals = {
     "Laplace": {"mu": 0.0, "b": 1.0},
     "Logistic": {"mu": 0.0, "s": 1},
     "LogNormal": {"mu": 0.0, "sigma": 0.5},
+    "LogitNormal": {"mu": 0.0, "sigma": 0.5},
     "Moyal": {"mu": 0.0, "sigma": 1.0},
     "Normal": {"mu": 0.0, "sigma": 1.0},
     "Pareto": {"alpha": 5, "m": 2.0},
