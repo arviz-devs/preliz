@@ -10,7 +10,7 @@ from copy import copy
 import numpy as np
 from scipy import stats
 from scipy.special import gamma as gammaf
-from scipy.special import logit, expit
+from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 from ..internal.optimization import optimize_ml
 from ..internal.distribution_helper import garcia_approximation, all_not_none
