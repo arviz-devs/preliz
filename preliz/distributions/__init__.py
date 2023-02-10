@@ -35,6 +35,7 @@ all_discrete = [
     Bernoulli,
     BetaBinomial,
     Binomial,
+    Categorical,
     DiscreteUniform,
     Geometric,
     NegativeBinomial,

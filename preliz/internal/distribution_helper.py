@@ -65,10 +65,20 @@ def valid_scalar_params(self, check_frozen=True):
     if self.kind not in ["discrete", "continuous"]:
         return True
 
-    if all(isinstance(param, (int, float, np.int64)) for param in self.params):
+    if (
+        all(isinstance(param, (int, float, np.int64)) for param in self.params)
+        or self.__class__.__name__ == "Categorical"
+    ):
         return True
 
     raise ValueError("parameters must be integers or floats")
+
+
+def valid_distribution(self):
+    if self.__class__.__name__ != "Categorical":
+        return True
+
+    raise ValueError(f"{self.__class__.__name__} is not supported")
 
 
 init_vals = {
@@ -103,6 +113,7 @@ init_vals = {
     "Bernoulli": {"p": 0.5},
     "BetaBinomial": {"alpha": 2, "beta": 2, "n": 10},
     "Binomial": {"n": 5, "p": 0.5},
+    "Categorical": {"p": [0.5, 0.1, 0.4]},
     "DiscreteUniform": {"lower": -2.0, "upper": 2.0},
     "Geometric": {"p": 0.5},
     "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},

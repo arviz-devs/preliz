@@ -1,6 +1,7 @@
 import logging
 
 from ..distributions import Normal
+from ..internal.distribution_helper import valid_distribution
 from ..internal.optimization import relative_error, optimize_quartile, get_fixed_params
 
 _log = logging.getLogger("preliz")
@@ -70,6 +71,8 @@ def quartile(
         >>> pz.quartile(pz.HalfStudent(nu=7), 2, 9, 12)
 
     """
+    valid_distribution(distribution)
+
     if plot_kwargs is None:
         plot_kwargs = {}
 
