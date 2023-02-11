@@ -749,14 +749,16 @@ class ZeroInflatedPoisson(Discrete):
         import arviz as az
         from preliz import ZeroInflatedPoisson
         az.style.use('arviz-white')
-        for mu in [0.5, 3, 8]:
-            ZeroInflatedPoisson(mu).plot_pdf()
+        psis = [0.7, 0.4]
+        mus = [8, 4]
+        for psi, mu in zip(psis, mus):
+            ZeroInflatedPoisson(psi, mu).plot_pdf()
 
-    ========  ==========================
+    ========  ================================
     Support   :math:`x \in \mathbb{N}_0`
     Mean      :math:`\psi \mu`
-    Variance  :math:`\psi \mu*(1+(1-\psi)*\mu`
-    ========  ==========================
+    Variance  :math:`\psi \mu (1+(1-\psi) \mu`
+    ========  ================================
 
     Parameters
     ----------
@@ -831,8 +833,7 @@ class ZIPoisson(stats.rv_continuous):
         return result
 
     def ppf(self, q, *args, **kwds):
-        # x_vals = np.linspace(0, self.rvs(10000).max(), 1000)
-        x_vals = np.arange(0, 100)
+        x_vals = np.arange(0, self.rvs(10000).max())
         idx = np.searchsorted(self.cdf(x_vals[:-1], *args, **kwds), q)
         return x_vals[idx]
 
