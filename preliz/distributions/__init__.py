@@ -41,6 +41,7 @@ all_discrete = [
     Geometric,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedPoisson,
 ]
 
 

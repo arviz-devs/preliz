@@ -41,6 +41,7 @@ from preliz.distributions import (
     Geometric,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedPoisson,
 )
 
 
@@ -86,6 +87,13 @@ def a_few_poissons():
         (Geometric, (0.75,)),
         (NegativeBinomial, (8, 4)),
         (Poisson, (4.5,)),
+        (
+            ZeroInflatedPoisson,
+            (
+                0.8,
+                4.5,
+            ),
+        ),
     ],
 )
 def test_moments(distribution, params):
@@ -143,6 +151,13 @@ def test_moments(distribution, params):
         (Geometric, (0.5,)),
         (NegativeBinomial, (8, 4)),
         (Poisson, (4.5,)),
+        (
+            ZeroInflatedPoisson,
+            (
+                0.8,
+                4.5,
+            ),
+        ),
     ],
 )
 def test_mle(distribution, params):
