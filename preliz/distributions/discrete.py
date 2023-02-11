@@ -833,9 +833,7 @@ class ZIPoisson(stats.rv_continuous):
         return result
 
     def ppf(self, q, *args, **kwds):
-        x_vals = np.arange(0, self.rvs(10000).max())
-        idx = np.searchsorted(self.cdf(x_vals[:-1], *args, **kwds), q)
-        return x_vals[idx]
+        return np.round((1 - self.psi) + self.psi * stats.poisson(self.mu, *args, **kwds).ppf(q))
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
         # Moments of the LogitNormal are generally defined with numerical methods
