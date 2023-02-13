@@ -42,6 +42,7 @@ from preliz.distributions import (
     Geometric,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedPoisson,
 )
 
 
@@ -143,6 +144,8 @@ from preliz.distributions import (
         (NegativeBinomial(), 0, 15, 0.9, (0, np.inf), (7.546, 2.041)),
         (NegativeBinomial(p=0.2), 0, 15, 0.9, (0, np.inf), (1.847)),
         (Poisson(), 0, 3, 0.7, (0, np.inf), (2.763)),
+        (ZeroInflatedPoisson(), 0, 3, 0.7, (0, np.inf), (1, 2.763)),
+        (ZeroInflatedPoisson(psi=0.8), 0, 3, 0.7, (0, np.inf), (1.898)),
     ],
 )
 def test_maxent(dist, lower, upper, mass, support, result):

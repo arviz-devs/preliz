@@ -38,6 +38,7 @@ from preliz.distributions import (
     Geometric,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedPoisson,
 )
 
 
@@ -87,6 +88,8 @@ from preliz.distributions import (
         (Geometric(), 2, 4, 6, (0.17)),
         (NegativeBinomial(), 3, 5, 10, (7.283, 2.167)),
         (Poisson(), 4, 5, 6, (5.641)),
+        (ZeroInflatedPoisson(), 4, 5, 6, (1, 5.641)),
+        (ZeroInflatedPoisson(psi=0.8), 2, 4, 6, (5.475)),
     ],
 )
 def test_quartile(distribution, q1, q2, q3, result):

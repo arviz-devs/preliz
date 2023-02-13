@@ -41,6 +41,7 @@ from preliz.distributions import (
     Geometric,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedPoisson,
 )
 
 
@@ -84,6 +85,13 @@ from preliz.distributions import (
         (Geometric, (0.75,)),
         (NegativeBinomial, (10, 0.5)),
         (Poisson, (4.2,)),
+        (
+            ZeroInflatedPoisson,
+            (
+                0.8,
+                4.2,
+            ),
+        ),
     ],
 )
 def test_auto_recover(distribution, params):

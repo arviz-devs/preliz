@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=attribute-defined-outside-init
+# pylint: disable=invalid-unary-operand-type
 """
 Discrete probability distributions.
 """
@@ -725,3 +726,135 @@ class Poisson(Discrete):
     def _fit_mle(self, sample):
         mu = np.mean(sample)
         self._update(mu)
+
+
+class ZeroInflatedPoisson(Discrete):
+    R"""
+    Zero-inflated Poisson log-likelihood.
+
+    Often used to model the number of events occurring in a fixed period
+    of time when the times at which events occur are independent.
+    The pmf of this distribution is
+
+    .. math::
+
+        f(x \mid \psi, \mu) = \left\{ \begin{array}{l}
+            (1-\psi) + \psi e^{-\mu}, \text{if } x = 0 \\
+            \psi \frac{e^{-\mu}\mu^x}{x!}, \text{if } x=1,2,3,\ldots
+            \end{array} \right.
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import ZeroInflatedPoisson
+        az.style.use('arviz-white')
+        psis = [0.7, 0.4]
+        mus = [8, 4]
+        for psi, mu in zip(psis, mus):
+            ZeroInflatedPoisson(psi, mu).plot_pdf()
+
+    ========  ================================
+    Support   :math:`x \in \mathbb{N}_0`
+    Mean      :math:`\psi \mu`
+    Variance  :math:`\psi \mu (1+(1-\psi) \mu`
+    ========  ================================
+
+    Parameters
+    ----------
+    psi : float
+        Expected proportion of Poisson variates (0 < psi < 1)
+    mu : float
+        Expected number of occurrences during the given interval
+        (mu >= 0).
+    """
+
+    def __init__(self, psi=None, mu=None):
+        super().__init__()
+        self.psi = psi
+        self.mu = mu
+        self.dist = ZIPoisson
+        self.support = (0, np.inf)
+        self._parametrization(psi, mu)
+
+    def _parametrization(self, psi=None, mu=None):
+        self.psi = psi
+        self.mu = mu
+        self.params = (self.psi, self.mu)
+        self.param_names = ("psi", "mu")
+        self.params_support = ((eps, 1 - eps), (eps, np.inf))
+        if (psi and mu) is not None:
+            self._update(psi, mu)
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self):
+            frozen = self.dist(self.psi, self.mu)
+        return frozen
+
+    def _update(self, psi, mu):
+        self.psi = np.float64(psi)
+        self.mu = np.float64(mu)
+        self.params = (self.psi, self.mu)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        psi = mean**2 / (mean**2 - mean + sigma**2)
+        mean = mean / psi
+        self._update(psi, mean)
+
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
+
+
+class ZIPoisson(stats.rv_continuous):
+    def __init__(self, psi=None, mu=None):
+        super().__init__()
+        self.psi = psi
+        self.mu = mu
+
+    def support(self, *args, **kwd):  # pylint: disable=unused-argument
+        return (0, np.inf)
+
+    def cdf(self, x, *args, **kwds):
+        return (1 - self.psi) + self.psi * stats.poisson(self.mu, *args, **kwds).cdf(x)
+
+    def pmf(self, x, *args, **kwds):
+        x = np.array(x, ndmin=1)
+        result = np.zeros_like(x, dtype=float)
+        result[x == 0] = (1 - self.psi) + self.psi * np.exp(-self.mu)
+        result[x != 0] = self.psi * stats.poisson(self.mu, *args, **kwds).pmf(x[x != 0])
+        return result
+
+    def logpmf(self, x, *args, **kwds):
+        result = np.zeros_like(x, dtype=float)
+        result[x == 0] = np.log(np.exp(-self.mu) * self.psi - self.psi + 1)
+        result[x != 0] = np.log(self.psi) + stats.poisson(self.mu, *args, **kwds).logpmf(x[x != 0])
+        return result
+
+    def ppf(self, q, *args, **kwds):
+        return np.round((1 - self.psi) + self.psi * stats.poisson(self.mu, *args, **kwds).ppf(q))
+
+    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
+        mean = self.psi * self.mu
+        var = self.psi * self.mu * (1 + (1 - self.psi) * self.mu)
+        return (mean, var, np.nan, np.nan)
+
+    def entropy(self):  # pylint: disable=arguments-differ
+        poisson_entropy = stats.poisson.entropy(self.mu)
+        if self.psi < 0.00001:
+            return 0
+        elif self.psi > 0.99999:
+            return poisson_entropy
+        else:
+            # The vriable can be 0 with probability 1-psi or something else with probability psi
+            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+            # The total entropy is the weighted sum of the two entropies
+            return (1 - self.psi) * zero_entropy + self.psi * poisson_entropy
+
+    def rvs(self, size=1):  # pylint: disable=arguments-differ
+        samples = np.zeros(size, dtype=int)
+        non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
+        samples[~non_zero_indices] = 0
+        samples[non_zero_indices] = stats.poisson.rvs(self.mu, size=len(non_zero_indices))
+        return samples

@@ -120,4 +120,5 @@ init_vals = {
     "Geometric": {"p": 0.5},
     "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},
     "Poisson": {"mu": 4.5},
+    "ZeroInflatedPoisson": {"psi": 0.8, "mu": 4.5},
 }
