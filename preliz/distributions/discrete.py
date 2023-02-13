@@ -836,15 +836,21 @@ class ZIPoisson(stats.rv_continuous):
         return np.round((1 - self.psi) + self.psi * stats.poisson(self.mu, *args, **kwds).ppf(q))
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
-        # Moments of the LogitNormal are generally defined with numerical methods
-        # As a placeholder we approximate them by sampling.
         mean = self.psi * self.mu
         var = self.psi * self.mu * (1 + (1 - self.psi) * self.mu)
         return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
-        # This is not the correct entropy, but it should be proportional
-        return stats.poisson(self.mu).entropy() + np.log(self.psi)
+        poisson_entropy = stats.poisson.entropy(self.mu)
+        if self.psi < 0.00001:
+            return 0
+        elif self.psi > 0.99999:
+            return poisson_entropy
+        else:
+            # The vriable can be 0 with probability 1-psi or something else with probability psi
+            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+            # The total entropy is the weighted sum of the two entropies
+            return (1 - self.psi) * zero_entropy + self.psi * poisson_entropy
 
     def rvs(self, size=1):  # pylint: disable=arguments-differ
         samples = np.zeros(size, dtype=int)
