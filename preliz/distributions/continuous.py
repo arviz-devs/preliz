@@ -1657,7 +1657,6 @@ class _LogitNormal(stats.rv_continuous):
         super().__init__()
         self.mu = mu
         self.sigma = sigma
-        # self.dist = stats.t(loc=0, df=self.nu, scale=self.sigma)
 
     def support(self, *args, **kwd):  # pylint: disable=unused-argument
         return (0, 1)
@@ -1666,14 +1665,24 @@ class _LogitNormal(stats.rv_continuous):
         return stats.norm(self.mu, self.sigma, *args, **kwds).cdf(logit(x))
 
     def pdf(self, x, *args, **kwds):
-        return stats.norm(self.mu, self.sigma, *args, **kwds).pdf(logit(x)) / (x * (1 - x))
+        x = np.asarray(x)
+        mask = np.logical_or(x == 0, x == 1)
+        result = np.zeros_like(x, dtype=float)
+        result[~mask] = stats.norm(self.mu, self.sigma, *args, **kwds).pdf(logit(x[~mask])) / (
+            x[~mask] * (1 - x[~mask])
+        )
+        return result
 
     def logpdf(self, x, *args, **kwds):
-        return (
-            stats.norm(self.mu, self.sigma, *args, **kwds).logpdf(logit(x))
-            - np.log(x)
-            - np.log1p(-x)
+        x = np.asarray(x)
+        mask = np.logical_or(x == 0, x == 1)
+        result = np.full_like(x, -np.inf, dtype=float)
+        result[~mask] = (
+            stats.norm(self.mu, self.sigma, *args, **kwds).logpdf(logit(x[~mask]))
+            - np.log(x[~mask])
+            - np.log1p(-x[~mask])
         )
+        return result
 
     def ppf(self, q, *args, **kwds):
         x_vals = np.linspace(0, 1, 1000)
@@ -1681,16 +1690,16 @@ class _LogitNormal(stats.rv_continuous):
         return x_vals[idx]
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
-        # Moments of the LogitNormal are generally defined with numerical methods
-        # As a placeholder we approximate them by sampling.
-        sample = self.rvs(10000)
-        mean = sample.mean()
-        var = sample.var()
+        # https://en.wikipedia.org/wiki/Logit-normal_distribution#Moments
+        norm = stats.norm(self.mu, self.sigma)
+        logistic_inv = expit(norm.ppf(np.linspace(0, 1, 100000)))
+        mean = np.mean(logistic_inv)
+        var = np.var(logistic_inv)
         return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
-        # This is not the correct entropy, but it should be proportional
-        return stats.norm(self.mu, self.sigma).entropy()
+        moments = self._stats()
+        return stats.norm(moments[0], moments[1] ** 0.5).entropy()
 
     def rvs(
         self, size=1, random_state=None
