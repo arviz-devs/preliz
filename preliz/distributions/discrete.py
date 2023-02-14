@@ -15,7 +15,7 @@ from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 
 from .distributions import Discrete
-from ..internal.optimization import optimize_ml
+from ..internal.optimization import optimize_ml, optimize_moments
 from ..internal.distribution_helper import all_not_none
 
 
@@ -199,7 +199,8 @@ class BetaBinomial(Discrete):
         rho = ((sigma**2 / (mean * (1 - p))) - 1) / (n - 1)
         alpha = max(0.5, (p / rho) - p)
         beta = max(0.5, (alpha / p) - alpha)
-        self._update(alpha, beta, n)
+        params = alpha, beta, n
+        optimize_moments(self, mean, sigma, params)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
@@ -274,7 +275,8 @@ class Binomial(Discrete):
         # crude approximation for n and p
         n = mean + sigma * 2
         p = mean / n
-        self._update(n, p)
+        params = n, p
+        optimize_moments(self, mean, sigma, params)
 
     def _fit_mle(self, sample):
         # see https://doi.org/10.1016/j.jspi.2004.02.019 for details

@@ -96,7 +96,7 @@ from preliz.distributions import (
         (Normal(mu=0.5), -1, 1, 0.8, (-np.inf, np.inf), (0.581)),
         (Pareto(), 1, 4, 0.9, (1, np.inf), (1.660, 1)),
         (Pareto(m=2), 1, 4, 0.9, (2, np.inf), (3.321)),
-        (Rice(), 0, 4, 0.7, (0, np.inf), (0.027, 2.577)),
+        (Rice(), 0, 4, 0.7, (0, np.inf), (0.028, 2.577)),
         (Rice(nu=4), 0, 6, 0.9, (0, np.inf), (1.402)),
         (SkewNormal(), -2, 10, 0.9, (-np.inf, np.inf), (3.999, 3.647, 0)),
         (SkewNormal(mu=-1), -2, 10, 0.9, (-np.inf, np.inf), (6.2924, 4.905)),
@@ -138,7 +138,7 @@ from preliz.distributions import (
         (BetaBinomial(n=10), 2, 6, 0.6, (0, 10), (1.837, 2.181)),
         # results for binomial are close to the correct result, but still off
         (Binomial(), 3, 9, 0.9, (0, 9), (9, 0.490)),
-        (Binomial(n=12), 3, 9, 0.9, (0, 12), (0.612)),
+        (Binomial(n=12), 3, 9, 0.9, (0, 12), (0.387)),
         (DiscreteUniform(), -2, 10, 0.9, (-3, 11), (-2, 10)),
         (Geometric(), 1, 4, 0.99, (0, np.inf), (0.6837)),
         (NegativeBinomial(), 0, 15, 0.9, (0, np.inf), (7.546, 2.041)),
