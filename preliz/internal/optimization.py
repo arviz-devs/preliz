@@ -4,6 +4,7 @@ Optimization routines and utilities
 from sys import modules
 import numpy as np
 from scipy.optimize import minimize, least_squares
+from .distribution_helper import init_vals as default_vals
 
 
 def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
@@ -83,6 +84,28 @@ def optimize_cdf(dist, x_vals, ecdf, none_idx, fixed):
     dist._update(*opt["x"])
     loss = opt["cost"]
     return loss
+
+
+def optimize_moments(dist, mean, sigma, params=None):
+    def func(params, dist, mean, sigma):
+        params = get_params(dist, params, none_idx, fixed)
+        dist._parametrization(**params)
+        loss = (dist.rv_frozen.mean() - mean) ** 2 + (dist.rv_frozen.std() - sigma) ** 2
+        return loss
+
+    none_idx, fixed = get_fixed_params(dist)
+
+    if params is not None:
+        dist._update(*params)
+    else:
+        dist._update(**default_vals[dist.__class__.__name__])
+
+    init_vals = np.array(dist.params)[none_idx]
+
+    opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
+    params = get_params(dist, opt["x"], none_idx, fixed)
+    dist._parametrization(**params)
+    return opt
 
 
 def optimize_ml(dist, sample):
