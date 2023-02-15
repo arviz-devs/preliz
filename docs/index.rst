@@ -1,4 +1,4 @@
-Tools to help you pick a prior 
+A tool-box for prior elicitation 
 ===================================================
 
  **As any other methods for prior elicitation, this tools should be used under supervision and criteria of the user.**
