@@ -60,11 +60,11 @@ One of the main goals of PreliZ is to facilitate predictive elicitation, where i
 PreliZ is written in Python 3.8+ and uses the following software packages:
 
 * ArviZ [@kumar:2019]
-* ipympl
-* ipywidgets 
-* Matplotlib
-* NumPy
-* SciPy [@virtanen:2020]
+* ipympl [@jupyter-matplotlib_2019]
+* ipywidgets  [@interactive_Jupyter_widgets]
+* Matplotlib [@Hunter:2007]
+* NumPy [@2020NumPy-Array]
+* SciPy [@2020SciPy-NMeth]
 
 # Acknowledgements
 
