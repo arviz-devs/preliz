@@ -1,7 +1,7 @@
 <img src="https://raw.githubusercontent.com/arviz-devs/preliz/main/docs/logos/PreliZ.png#gh-light-mode-only" width=200></img>
 <img src="https://raw.githubusercontent.com/arviz-devs/preliz/main/docs/logos/PreliZ_white.png#gh-dark-mode-only" width=200></img>
 
-Tools to help you pick a prior.
+A tool-box for prior elicitation.
 
 [![PyPi version](https://badge.fury.io/py/preliz.svg)](https://badge.fury.io/py/preliz)
 [![Build Status](https://github.com/arviz-devs/preliz/actions/workflows/test.yml/badge.svg)](https://github.com/arviz-devs/preliz/actions/workflows/test.yml)
@@ -9,7 +9,7 @@ Tools to help you pick a prior.
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
-**This package is very new and many of its features are experimental, or not yet well tested, or subject to change without notice.**
+**As any other methods for prior elicitation, this tools should be used under supervision and criteria of the user.**
 
 
 ## Documentation
