@@ -1,7 +1,6 @@
-Tools to help you pick a prior 
+A tool-box for prior elicitation 
 ===================================================
 
- **This package is very new and many of its features are experimental, or not yet well tested, or subject to change without notice.**
 
 
 |PyPI version|
