@@ -9,7 +9,6 @@ A tool-box for prior elicitation.
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
-**As any other methods for prior elicitation, this tools should be used under supervision and criteria of the user.**
 
 
 ## Documentation
