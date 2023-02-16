@@ -51,9 +51,11 @@ PreliZ includes a few algorithms for inferring the suitable prior from the user-
 
 ![Figure 2: Roulette method.\label{fig:figure_2}](figures/figure_2.png)
 
-One of the main goals of PreliZ is to facilitate predictive elicitation, where information provided in the space of observable quantities is converted into a valid prior by a suitable learning algorithms, avoiding the need to provide direct information on the model parameters. PreliZ already implements functionality for this. For instance, 'pz.predictive_sliders` (see \autoref{fig:figure_3}) makes it easy to explore how the prior predictive distribution, of an arbitrary probabilistic model, changes with the prior, and `pz.ppa` (see figure XXX) is an experimental prior predictive assistant that computes priors consistent with user-made choice of prior predictive samples. 
+One of the main goals of PreliZ is to facilitate predictive elicitation, where information provided in the space of observable quantities is converted into a valid prior by a suitable learning algorithms, avoiding the need to provide direct information on the model parameters. PreliZ already implements functionality for this. For instance, 'pz.predictive_sliders` (see \autoref{fig:figure_3}) makes it easy to explore how the prior predictive distribution, of an arbitrary probabilistic model, changes with the prior, and `pz.ppa` (see \autoref{fig:figure_4}) is an experimental prior predictive assistant that computes priors consistent with user-made choice of prior predictive samples. 
 
 ![Figure 3: Example of use of predictive_sliders for a simple model.\label{fig:figure_3}](figures/figure_3.png)
+
+![Figure 3: Snapshot of a step of ppa.\label{fig:figure_4}](figures/figure_4.png)
 
 # Software Citations
 
