@@ -36,6 +36,7 @@ from preliz.distributions import (
     BetaBinomial,
     # DiscreteUniform,
     Geometric,
+    HyperGeometric,
     NegativeBinomial,
     Poisson,
     ZeroInflatedPoisson,
@@ -86,6 +87,7 @@ from preliz.distributions import (
         (BetaBinomial(), 2, 5, 8, (1.59, 4.49, 23)),
         # (DiscreteUniform(), -1, 0, 1, (-5, 5)), # the mass is 0.27 instead of 0.5
         (Geometric(), 2, 4, 6, (0.17)),
+        (HyperGeometric(), 2, 3, 4, (75, 15, 15)),
         (NegativeBinomial(), 3, 5, 10, (7.283, 2.167)),
         (Poisson(), 4, 5, 6, (5.641)),
         (ZeroInflatedPoisson(), 4, 5, 6, (1, 5.641)),
