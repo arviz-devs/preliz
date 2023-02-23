@@ -2,6 +2,7 @@
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=invalid-unary-operand-type
+# pylint: disable=invalid-name
 """
 Discrete probability distributions.
 """
@@ -533,6 +534,84 @@ class Geometric(Discrete):
         mean = np.mean(sample)
         p = 1 / mean
         self._update(p)
+
+
+class HyperGeometric(Discrete):
+    R"""
+    Discrete hypergeometric distribution.
+
+    The probability of :math:`x` successes in a sequence of :math:`n` bernoulli
+    trials taken without replacement from a population of :math:`N` objects,
+    containing :math:`k` good (or successful or Type I) objects.
+    The pmf of this distribution is
+
+    .. math:: f(x \mid N, n, k) = \frac{\binom{k}{x}\binom{N-k}{n-x}}{\binom{N}{n}}
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import HyperGeometric
+        az.style.use('arviz-white')
+        N = 50
+        k = 10
+        for n in [20, 25]:
+            HyperGeometric(N, k, n).plot_pdf(support=(1,15))
+
+    ========  =============================
+    Support   :math:`x \in \left[\max(0, n - N + k), \min(k, n)\right]`
+    Mean      :math:`\dfrac{nk}{N}`
+    Variance  :math:`\dfrac{(N-n)nk(N-k)}{(N-1)N^2}`
+    ========  =============================
+
+    Parameters
+    ----------
+    N : int
+        Total size of the population (N > 0)
+    k : int
+        Number of successful individuals in the population (0 <= k <= N)
+    n : int
+        Number of samples drawn from the population (0 <= n <= N)
+    """
+
+    def __init__(self, N=None, k=None, n=None):
+        super().__init__()
+        self.dist = copy(stats.hypergeom)
+        self._parametrization(N, k, n)
+        self.support = (0, np.inf)
+
+    def _parametrization(self, N=None, k=None, n=None):
+        self.N = N
+        self.k = k
+        self.n = n
+        self.param_names = ("N", "k", "n")
+        self.params_support = ((eps, np.inf), (eps, self.N), (eps, self.N))
+        if (self.N and self.k and self.n) is not None:
+            self._update(N, k, n)
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self):
+            frozen = self.dist(M=self.N, N=self.n, n=self.k)
+        return frozen
+
+    def _update(self, N, k, n):
+        self.N = np.int64(N)
+        self.k = np.int64(k)
+        self.n = np.int64(n)
+        self.params = (self.N, self.k, self.n)
+        self.support = (max(0, n - N + k), min(k, n))
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        n = 2 * (mean + sigma * 2)
+        N = (mean * n * (n - mean)) / (n * (mean - sigma**2) - mean**2)
+        k = mean * N / n
+        params = N, k, n
+        optimize_moments(self, mean, sigma, params)
+
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
 
 
 class NegativeBinomial(Discrete):
