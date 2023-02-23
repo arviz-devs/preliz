@@ -43,12 +43,19 @@ from preliz.distributions import (
     Poisson,
     ZeroInflatedNegativeBinomial,
     ZeroInflatedPoisson,
+    Dirichlet,
+    MvNormal,
 )
 
 
 @pytest.fixture(scope="session")
 def a_few_poissons():
     return Poisson(), Poisson([1.0, 2.0]), Poisson(4.5)
+
+
+@pytest.fixture(scope="session")
+def multivariates():
+    return Dirichlet(), Dirichlet([1.0, 2.0, 1.0]), MvNormal(np.zeros(2), np.eye(2))
 
 
 @pytest.mark.parametrize(
@@ -188,7 +195,7 @@ def test_summary_args(fmt, mass):
     assert result.std == 1
 
 
-def test_summary_valid(a_few_poissons):
+def test_summary_univariate_valid(a_few_poissons):
     d_0, d_1, d_2 = a_few_poissons
     with pytest.raises(ValueError):
         d_0.summary()
@@ -200,6 +207,20 @@ def test_summary_valid(a_few_poissons):
     assert result.std == 2.12
     assert result.lower == 1.0
     assert result.upper == 9.0
+
+
+def test_summary_multivariate_valid(multivariates):
+    d_0, d_1, m_0 = multivariates
+    with pytest.raises(ValueError):
+        d_0.summary()
+    result = d_1.summary()
+    assert result.__class__.__name__ == "Dirichlet"
+    assert_almost_equal(result.mean, [0.25, 0.5, 0.25])
+    assert_almost_equal(result.std, [0.193, 0.223, 0.193], decimal=3)
+    result = m_0.summary()
+    assert result.__class__.__name__ == "MvNormal"
+    assert_almost_equal(result.mean, [0, 0])
+    assert_almost_equal(result.std, [1, 1])
 
 
 def test_eti(a_few_poissons):
