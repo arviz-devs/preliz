@@ -155,8 +155,7 @@ def test_maxent(dist, lower, upper, mass, support, result):
 
     assert_almost_equal(dist.support, support, 0.3)
 
-    if (
-        dist.__class__.__name__ not in [
+    if dist.__class__.__name__ not in [
         "DiscreteUniform",
         "HyperGeometric",
     ]:  # optimization fails to converge, but results are reasonable
