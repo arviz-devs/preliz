@@ -39,6 +39,7 @@ from preliz.distributions import (
     Binomial,
     DiscreteUniform,
     Geometric,
+    HyperGeometric,
     NegativeBinomial,
     Poisson,
     ZeroInflatedPoisson,
@@ -83,6 +84,7 @@ from preliz.distributions import (
         (Binomial, (5, 0.5)),
         (DiscreteUniform, (-2, 2)),
         (Geometric, (0.75,)),
+        (HyperGeometric, (50, 20, 10)),
         (NegativeBinomial, (10, 0.5)),
         (Poisson, (4.2,)),
         (
