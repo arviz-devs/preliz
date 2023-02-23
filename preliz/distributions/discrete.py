@@ -606,7 +606,7 @@ class HyperGeometric(Discrete):
     def _fit_moments(self, mean, sigma):
         n = mean + sigma * 4
         k = n
-        N = k*n/mean
+        N = k * n / mean
         params = N, k, n
         optimize_moments(self, mean, sigma, params)
 
