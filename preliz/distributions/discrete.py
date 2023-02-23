@@ -604,9 +604,9 @@ class HyperGeometric(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        n = 2 * (mean + sigma * 2)
-        N = (mean * n * (n - mean)) / (n * (mean - sigma**2) - mean**2)
-        k = mean * N / n
+        n = mean + sigma * 4
+        k = n
+        N = k*n/mean
         params = N, k, n
         optimize_moments(self, mean, sigma, params)
 
