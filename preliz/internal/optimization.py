@@ -90,7 +90,7 @@ def optimize_moments(dist, mean, sigma, params=None):
     def func(params, dist, mean, sigma):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
-        loss = (dist.rv_frozen.mean() - mean) ** 2 + (dist.rv_frozen.std() - sigma) ** 2
+        loss = abs(dist.rv_frozen.mean() - mean) + abs(dist.rv_frozen.std() - sigma)
         return loss
 
     none_idx, fixed = get_fixed_params(dist)
