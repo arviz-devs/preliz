@@ -161,3 +161,7 @@ def test_maxent(dist, lower, upper, mass, support, result):
     ]:  # optimization fails to converge, but results are reasonable
         assert opt.success
     assert_allclose(opt.x, result, atol=0.001)
+
+
+def test_maxent_plot():
+    maxent(Normal(), plot_kwargs={"support": "restricted", "pointinterval": True})
