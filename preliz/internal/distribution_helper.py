@@ -118,6 +118,7 @@ init_vals = {
     "Categorical": {"p": [0.5, 0.1, 0.4]},
     "DiscreteUniform": {"lower": -2.0, "upper": 2.0},
     "Geometric": {"p": 0.5},
+    "HyperGeometric": {"N": 50, "k": 10, "n": 20},
     "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},
     "Poisson": {"mu": 4.5},
     "ZeroInflatedPoisson": {"psi": 0.8, "mu": 4.5},

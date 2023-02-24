@@ -39,6 +39,7 @@ all_discrete = [
     Categorical,
     DiscreteUniform,
     Geometric,
+    HyperGeometric,
     NegativeBinomial,
     Poisson,
     ZeroInflatedPoisson,

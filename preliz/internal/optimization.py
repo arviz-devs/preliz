@@ -102,7 +102,11 @@ def optimize_moments(dist, mean, sigma, params=None):
 
     init_vals = np.array(dist.params)[none_idx]
 
-    opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
+    if dist == "HyperGeometric":
+        opt = minimize(func, x0=init_vals, args=(dist, mean, sigma), method="Powell")
+    else:
+        opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
+
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
     return opt

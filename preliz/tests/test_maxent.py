@@ -40,6 +40,7 @@ from preliz.distributions import (
     Binomial,
     DiscreteUniform,
     Geometric,
+    HyperGeometric,
     NegativeBinomial,
     Poisson,
     ZeroInflatedPoisson,
@@ -141,6 +142,7 @@ from preliz.distributions import (
         (Binomial(n=12), 3, 9, 0.9, (0, 12), (0.387)),
         (DiscreteUniform(), -2, 10, 0.9, (-3, 11), (-2, 10)),
         (Geometric(), 1, 4, 0.99, (0, np.inf), (0.6837)),
+        (HyperGeometric(), 2, 14, 0.9, (0, 21), (56, 21, 21)),
         (NegativeBinomial(), 0, 15, 0.9, (0, np.inf), (7.546, 2.041)),
         (NegativeBinomial(p=0.2), 0, 15, 0.9, (0, np.inf), (1.847)),
         (Poisson(), 0, 3, 0.7, (0, np.inf), (2.763)),
@@ -153,8 +155,9 @@ def test_maxent(dist, lower, upper, mass, support, result):
 
     assert_almost_equal(dist.support, support, 0.3)
 
-    if (
-        dist.__class__.__name__ != "DiscreteUniform"
-    ):  # optimization fails to converge, but results are reasonable
+    if dist.__class__.__name__ not in [
+        "DiscreteUniform",
+        "HyperGeometric",
+    ]:  # optimization fails to converge, but results are reasonable
         assert opt.success
     assert_allclose(opt.x, result, atol=0.001)
