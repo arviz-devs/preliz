@@ -42,6 +42,7 @@ from preliz.distributions import (
     HyperGeometric,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedBinomial,
     ZeroInflatedPoisson,
 )
 
@@ -87,6 +88,7 @@ from preliz.distributions import (
         (HyperGeometric, (50, 20, 10)),
         (NegativeBinomial, (10, 0.5)),
         (Poisson, (4.2,)),
+        (ZeroInflatedBinomial, (0.5, 10, 0.8)),
         (
             ZeroInflatedPoisson,
             (

@@ -42,6 +42,7 @@ all_discrete = [
     HyperGeometric,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedBinomial,
     ZeroInflatedPoisson,
 ]
 
