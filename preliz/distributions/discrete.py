@@ -832,7 +832,7 @@ class ZeroInflatedBinomial(Discrete):
         ps = [0.5, 0.7]
         psis = [0.7, 0.4]
         for n, p, psi in zip(ns, ps, psis):
-            ZeroInflatedBinomial(psi, n, p).plot_pdf()
+            ZeroInflatedBinomial(psi, n, p).plot_pdf(support=(0,25))
 
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`
