@@ -350,7 +350,7 @@ def get_widgets(x_min, x_max, nrows, ncols):
         layout=width_entry_text,
     )
 
-    dist_names = ["Normal", "BetaScaled", "Gamma", "LogNormal", "Student"]
+    dist_names = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
 
     w_distributions = widgets.SelectMultiple(
         options=dist_names, value=dist_names, description="", disabled=False

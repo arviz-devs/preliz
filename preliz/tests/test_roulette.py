@@ -17,7 +17,7 @@ def test_roulette_mock():
     grid = Rectangles(fig, coll, nrows, ncols, ax_grid)
     grid.weights = {0: 2, 1: 6, 2: 10, 3: 10, 4: 7, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1}
     w_repr = "kde"
-    distributions = ["Gamma", "LogNormal", "Student", "BetaScaled", "Normal"]
+    distributions = ["Gamma", "LogNormal", "StudentT", "BetaScaled", "Normal"]
 
     for idx, dist in enumerate(distributions):
         w_distributions = distributions[idx:]

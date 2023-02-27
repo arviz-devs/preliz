@@ -1028,9 +1028,9 @@ class HalfNormal(Continuous):
         self._update(sigma)
 
 
-class HalfStudent(Continuous):
+class HalfStudentT(Continuous):
     r"""
-    HalfStudent Distribution
+    HalfStudentT Distribution
 
     The pdf of this distribution is
 
@@ -1045,12 +1045,12 @@ class HalfStudent(Continuous):
         :context: close-figs
 
         import arviz as az
-        from preliz import HalfStudent
+        from preliz import HalfStudentT
         az.style.use('arviz-white')
         sigmas = [1., 2., 2.]
         nus = [3, 3., 10.]
         for sigma, nu in zip(sigmas, nus):
-            HalfStudent(nu, sigma).plot_pdf(support=(0,10))
+            HalfStudentT(nu, sigma).plot_pdf(support=(0,10))
 
     ========  ==========================================
     Support   :math:`x \in [0, \infty)`
@@ -1065,7 +1065,7 @@ class HalfStudent(Continuous):
                   \text{for } 1 < \nu \le 2\, \text{otherwise undefined}
     ========  ==========================================
 
-    HalfStudent distribution has 2 alternative parameterizations. In terms of nu and
+    HalfStudentT distribution has 2 alternative parameterizations. In terms of nu and
     sigma (standard deviation as nu increases) or nu lam (precision as nu increases).
 
     The link between the 2 alternatives is given by
@@ -1087,7 +1087,7 @@ class HalfStudent(Continuous):
 
     def __init__(self, nu=None, sigma=None, lam=None):
         super().__init__()
-        self.dist = _HalfStudent
+        self.dist = _HalfStudentT
         self.support = (0, np.inf)
         self._parametrization(nu, sigma, lam)
 
@@ -1153,7 +1153,7 @@ class HalfStudent(Continuous):
         optimize_ml(self, sample)
 
 
-class _HalfStudent(stats.rv_continuous):
+class _HalfStudentT(stats.rv_continuous):
     def __init__(self, nu=None, sigma=None):
         super().__init__()
         self.nu = nu
@@ -2183,9 +2183,9 @@ class SkewNormal(Continuous):
         self._update(mu, sigma, alpha)
 
 
-class Student(Continuous):
+class StudentT(Continuous):
     r"""
-    Student's T log-likelihood.
+    StudentT's log-likelihood.
 
     Describes a normal variable whose precision is gamma distributed.
 
@@ -2201,13 +2201,13 @@ class Student(Continuous):
         :context: close-figs
 
         import arviz as az
-        from preliz import Student
+        from preliz import StudentT
         az.style.use('arviz-white')
         nus = [2., 5., 5.]
         mus = [0., 0.,  -4.]
         sigmas = [1., 1., 2.]
         for nu, mu, sigma in zip(nus, mus, sigmas):
-            Student(nu, mu, sigma).plot_pdf(support=(-10,6))
+            StudentT(nu, mu, sigma).plot_pdf(support=(-10,6))
 
     ========  ========================
     Support   :math:`x \in \mathbb{R}`
@@ -2216,7 +2216,7 @@ class Student(Continuous):
               :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
     ========  ========================
 
-    Student's T distribution has 2 alternative parameterizations. In terms of nu, mu and
+    StudentT distribution has 2 alternative parameterizations. In terms of nu, mu and
     sigma (standard deviation as nu increases) or nu, mu and lam (precision as nu increases).
 
     The link between the 2 alternatives is given by

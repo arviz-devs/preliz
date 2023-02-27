@@ -58,7 +58,7 @@ def quartile(
         >>> az.style.use('arviz-white')
         >>> pz.quartile(pz.Gamma(), 3, 6, 8)
 
-    Calculate the HalfStudent T distribution with quartiles 2, 9 and 12
+    Calculate the HalfStudentT T distribution with quartiles 2, 9 and 12
     and a value of nu=7:
 
     .. plot::
@@ -68,7 +68,7 @@ def quartile(
         >>> import arviz as az
         >>> import preliz as pz
         >>> az.style.use('arviz-white')
-        >>> pz.quartile(pz.HalfStudent(nu=7), 2, 9, 12)
+        >>> pz.quartile(pz.HalfStudentT(nu=7), 2, 9, 12)
 
     """
     valid_distribution(distribution)
