@@ -16,7 +16,7 @@ from preliz.distributions import (
     Exponential,
     HalfCauchy,
     HalfNormal,
-    HalfStudent,
+    HalfStudentT,
     InverseGamma,
     Laplace,
     Logistic,
@@ -27,7 +27,7 @@ from preliz.distributions import (
     Pareto,
     Rice,
     SkewNormal,
-    Student,
+    StudentT,
     Triangular,
     TruncatedNormal,
     Uniform,
@@ -61,7 +61,7 @@ def a_few_poissons():
         (Gamma, (1, 0.5)),
         (Gumbel, (1, 2)),
         (HalfNormal, (1,)),
-        (HalfStudent, (100, 1)),
+        (HalfStudentT, (100, 1)),
         (InverseGamma, (3, 1)),
         (Laplace, (0, 1)),
         (Logistic, (1, 2)),
@@ -72,7 +72,7 @@ def a_few_poissons():
         (Pareto, (5, 1)),
         (Rice, (4, 1)),
         (SkewNormal, (0, 1, 0)),
-        (Student, (100, 0, 1)),
+        (StudentT, (100, 0, 1)),
         (Triangular, (-2, 3, 7)),
         (TruncatedNormal, (0, 1, -np.inf, np.inf)),
         (Uniform, (0, 1)),
@@ -103,7 +103,7 @@ def test_moments(distribution, params):
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
-    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "LogitNormal", "Rice", "Student"]:
+    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "LogitNormal", "Rice", "StudentT"]:
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
@@ -123,7 +123,7 @@ def test_moments(distribution, params):
         (Gumbel, (0, 1)),
         (HalfCauchy, (1,)),
         (HalfNormal, (1,)),
-        (HalfStudent, (100, 1)),
+        (HalfStudentT, (100, 1)),
         (InverseGamma, (3, 0.5)),
         (Laplace, (0, 1)),
         (Logistic, (0, 1)),
@@ -135,8 +135,8 @@ def test_moments(distribution, params):
         (Rice, (1, 2)),
         (SkewNormal, (0, 1, 0)),
         (SkewNormal, (0, 1, -1)),
-        (Student, (4, 0, 1)),
-        (Student, (1000, 0, 1)),
+        (StudentT, (4, 0, 1)),
+        (StudentT, (1000, 0, 1)),
         (Triangular, (-3, 0, 5)),
         (TruncatedNormal, (0, 1, -1, 1)),
         (Uniform, (0, 1)),
@@ -172,7 +172,7 @@ def test_mle(distribution, params):
         tol = 1
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
-    if dist.__class__.__name__ == "Student":
+    if dist.__class__.__name__ == "StudentT":
         assert_almost_equal(params[1:], dist_.params[1:], 0)
     else:
         assert_almost_equal(params, dist_.params, 0)
