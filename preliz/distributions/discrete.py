@@ -887,7 +887,7 @@ class ZeroInflatedBinomial(Discrete):
         # crude approximation for n and p (same as Binomial)
         n = mean + sigma * 2
         p = mean / n
-        psi = p
+        psi = 1
         params = psi, n, p
         optimize_moments(self, mean, sigma, params)
 
