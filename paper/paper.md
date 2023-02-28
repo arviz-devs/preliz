@@ -72,6 +72,6 @@ PreliZ is written in Python 3.8+ and uses the following software packages:
 
 We thank our fiscal sponsor NumFOCUS, a nonprofit 501(c)(3) public charity, for their operational and financial support.
 
-This research was supported by National Agency of Scientific and Technological promotion ANPCyT, Grant PICT-02212 (O.A.M.) And National Scientific and Technical Research Council CONICET, Grant PIP-0087 (O.A.M).
+This research was supported by the Academy of Finland Flagship program: Finnish Center for Artificial Intelligence FCAI. The National Agency of Scientific and Technological promotion ANPCyT, Grant PICT-02212 (O.A.M.) And National Scientific and Technical Research Council CONICET, Grant PIP-0087 (O.A.M).
 
 # References
