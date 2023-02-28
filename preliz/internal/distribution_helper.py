@@ -121,5 +121,6 @@ init_vals = {
     "HyperGeometric": {"N": 50, "k": 10, "n": 20},
     "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},
     "Poisson": {"mu": 4.5},
+    "ZeroInflatedBinomial": {"psi": 0.7, "n": 10, "p": 0.5},
     "ZeroInflatedPoisson": {"psi": 0.8, "mu": 4.5},
 }

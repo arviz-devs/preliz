@@ -809,6 +809,92 @@ class Poisson(Discrete):
         self._update(mu)
 
 
+class ZeroInflatedBinomial(Discrete):
+    R"""
+    Zero-inflated Binomial log-likelihood.
+
+    The pmf of this distribution is
+
+    .. math::
+
+        f(x \mid \psi, n, p) = \left\{ \begin{array}{l}
+            (1-\psi) + \psi (1-p)^{n}, \text{if } x = 0 \\
+            \psi {n \choose x} p^x (1-p)^{n-x}, \text{if } x=1,2,3,\ldots,n
+            \end{array} \right.
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import ZeroInflatedBinomial
+        az.style.use('arviz-white')
+        ns = [10, 20]
+        ps = [0.5, 0.7]
+        psis = [0.7, 0.4]
+        for n, p, psi in zip(ns, ps, psis):
+            ZeroInflatedBinomial(psi, n, p).plot_pdf(support=(0,25))
+
+    ========  ==========================
+    Support   :math:`x \in \mathbb{N}_0`
+    Mean      :math:`\psi n p`
+    Variance  :math:`(1-\psi) n p [1 - p(1 - \psi n)].`
+    ========  ==========================
+
+    Parameters
+    ----------
+    psi : float
+        Expected proportion of Binomial variates (0 < psi < 1)
+    n : int
+        Number of Bernoulli trials (n >= 0).
+    p : float
+        Probability of success in each trial (0 < p < 1).
+
+    """
+
+    def __init__(self, psi=None, n=None, p=None):
+        super().__init__()
+        self.psi = psi
+        self.n = n
+        self.p = p
+        self.dist = ZIBinomial
+        self.support = (0, np.inf)
+        self._parametrization(psi, n, p)
+
+    def _parametrization(self, psi=None, n=None, p=None):
+        self.psi = psi
+        self.n = n
+        self.p = p
+        self.params = (self.psi, self.n, self.p)
+        self.param_names = ("psi", "n", "p")
+        self.params_support = ((eps, 1 - eps), (eps, np.inf), (eps, 1 - eps))
+        if (psi and n and p) is not None:
+            self._update(psi, n, p)
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self):
+            frozen = self.dist(self.psi, self.n, self.p)
+        return frozen
+
+    def _update(self, psi, n, p):
+        self.psi = np.float64(psi)
+        self.n = np.int64(n)
+        self.p = np.float64(p)
+        self.params = (self.psi, self.n, self.p)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        # crude approximation for n and p (same as Binomial)
+        n = mean + sigma * 2
+        p = mean / n
+        psi = 0.9
+        params = psi, n, p
+        optimize_moments(self, mean, sigma, params)
+
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
+
+
 class ZeroInflatedPoisson(Discrete):
     R"""
     Zero-inflated Poisson log-likelihood.
@@ -888,6 +974,64 @@ class ZeroInflatedPoisson(Discrete):
         optimize_ml(self, sample)
 
 
+class ZIBinomial(stats.rv_continuous):
+    def __init__(self, psi=None, n=None, p=None):
+        super().__init__()
+        self.psi = psi
+        self.n = n
+        self.p = p
+
+    def support(self, *args, **kwd):  # pylint: disable=unused-argument
+        return (0, np.inf)
+
+    def cdf(self, x, *args, **kwds):
+        return (1 - self.psi) + self.psi * stats.binom(self.n, self.p, *args, **kwds).cdf(x)
+
+    def pmf(self, x, *args, **kwds):
+        x = np.array(x, ndmin=1)
+        result = np.zeros_like(x, dtype=float)
+        result[x == 0] = (1 - self.psi) + self.psi * (1 - self.p) ** self.n
+        result[x != 0] = self.psi * stats.binom(self.n, self.p, *args, **kwds).pmf(x[x != 0])
+        return result
+
+    def logpmf(self, x, *args, **kwds):
+        result = np.zeros_like(x, dtype=float)
+        result[x == 0] = np.log((1 - self.psi) + self.psi * (1 - self.p) ** self.n)
+        result[x != 0] = np.log(self.psi) + stats.binom(self.n, self.p, *args, **kwds).logpmf(
+            x[x != 0]
+        )
+        return result
+
+    def ppf(self, q, *args, **kwds):
+        return np.round(
+            (1 - self.psi) + self.psi * stats.binom(self.n, self.p, *args, **kwds).ppf(q)
+        )
+
+    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
+        mean = self.psi * self.n * self.p
+        var = (1 - self.psi) * self.n * self.p * (1 - self.p * (1 - self.psi * self.n))
+        return (mean, var, np.nan, np.nan)
+
+    def entropy(self):  # pylint: disable=arguments-differ
+        binomial_entropy = stats.binom.entropy(self.n, self.p)
+        if self.psi < 0.00001:
+            return 0
+        elif self.psi > 0.99999:
+            return binomial_entropy
+        else:
+            # The variable can be 0 with probability 1-psi or something else with probability psi
+            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+            # The total entropy is the weighted sum of the two entropies
+            return (1 - self.psi) * zero_entropy + self.psi * binomial_entropy
+
+    def rvs(self, size=1):  # pylint: disable=arguments-differ
+        samples = np.zeros(size, dtype=int)
+        non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
+        samples[~non_zero_indices] = 0
+        samples[non_zero_indices] = stats.binom.rvs(self.n, self.p, size=len(non_zero_indices))
+        return samples
+
+
 class ZIPoisson(stats.rv_continuous):
     def __init__(self, psi=None, mu=None):
         super().__init__()
@@ -928,7 +1072,7 @@ class ZIPoisson(stats.rv_continuous):
         elif self.psi > 0.99999:
             return poisson_entropy
         else:
-            # The vriable can be 0 with probability 1-psi or something else with probability psi
+            # The variable can be 0 with probability 1-psi or something else with probability psi
             zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
             # The total entropy is the weighted sum of the two entropies
             return (1 - self.psi) * zero_entropy + self.psi * poisson_entropy
