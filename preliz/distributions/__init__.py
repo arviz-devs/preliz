@@ -43,6 +43,7 @@ all_discrete = [
     NegativeBinomial,
     Poisson,
     ZeroInflatedBinomial,
+    ZeroInflatedNegativeBinomial,
     ZeroInflatedPoisson,
 ]
 
