@@ -896,7 +896,7 @@ class ZeroInflatedBinomial(Discrete):
 
 class ZeroInflatedNegativeBinomial(Discrete):
     R"""
-    Zero-Inflated Negative binomial log-likelihood.
+    Zero-Inflated Negative binomial distribution.
 
     The Zero-inflated version of the Negative Binomial (NB).
     The NB distribution describes a Poisson random variable
