@@ -740,7 +740,7 @@ class NegativeBinomial(Discrete):
 
 class Poisson(Discrete):
     R"""
-    Poisson log-likelihood.
+    Poisson distribution.
 
     Often used to model the number of events occurring in a fixed period
     of time when the times at which events occur are independent.
@@ -811,7 +811,7 @@ class Poisson(Discrete):
 
 class ZeroInflatedBinomial(Discrete):
     R"""
-    Zero-inflated Binomial log-likelihood.
+    Zero-inflated Binomial distribution.
 
     The pmf of this distribution is
 
@@ -1035,7 +1035,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
 
 class ZeroInflatedPoisson(Discrete):
     R"""
-    Zero-inflated Poisson log-likelihood.
+    Zero-inflated Poisson distribution.
 
     Often used to model the number of events occurring in a fixed period
     of time when the times at which events occur are independent.
