@@ -950,7 +950,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
     psi : float
         Expected proportion of NegativeBinomial variates (0 < psi < 1)
     mu : float
-        Poission distribution parameter (mu > 0).
+        Poisson distribution parameter (mu > 0).
     alpha : float
         Gamma distribution parameter (alpha > 0).
     p : float
