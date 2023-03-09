@@ -43,6 +43,7 @@ from preliz.distributions import (
     NegativeBinomial,
     Poisson,
     ZeroInflatedBinomial,
+    ZeroInflatedNegativeBinomial,
     ZeroInflatedPoisson,
 )
 
@@ -89,6 +90,7 @@ from preliz.distributions import (
         (NegativeBinomial, (10, 0.5)),
         (Poisson, (4.2,)),
         (ZeroInflatedBinomial, (0.5, 10, 0.8)),
+        (ZeroInflatedNegativeBinomial, (0.7, 8, 4)),
         (
             ZeroInflatedPoisson,
             (

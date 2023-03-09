@@ -848,7 +848,6 @@ class ZeroInflatedBinomial(Discrete):
         Number of Bernoulli trials (n >= 0).
     p : float
         Probability of success in each trial (0 < p < 1).
-
     """
 
     def __init__(self, psi=None, n=None, p=None):
@@ -889,6 +888,145 @@ class ZeroInflatedBinomial(Discrete):
         p = mean / n
         psi = 0.9
         params = psi, n, p
+        optimize_moments(self, mean, sigma, params)
+
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
+
+
+class ZeroInflatedNegativeBinomial(Discrete):
+    R"""
+    Zero-Inflated Negative binomial distribution.
+
+    The Zero-inflated version of the Negative Binomial (NB).
+    The NB distribution describes a Poisson random variable
+    whose rate parameter is gamma distributed.
+    The pmf of this distribution is
+
+    .. math::
+
+       f(x \mid \psi, \mu, \alpha) = \left\{
+         \begin{array}{l}
+           (1-\psi) + \psi \left (
+             \frac{\alpha}{\alpha+\mu}
+           \right) ^\alpha, \text{if } x = 0 \\
+           \psi \frac{\Gamma(x+\alpha)}{x! \Gamma(\alpha)} \left (
+             \frac{\alpha}{\mu+\alpha}
+           \right)^\alpha \left(
+             \frac{\mu}{\mu+\alpha}
+           \right)^x, \text{if } x=1,2,3,\ldots
+         \end{array}
+       \right.
+
+    .. plot::
+        :context: close-figs
+
+        import arviz as az
+        from preliz import ZeroInflatedNegativeBinomial
+        az.style.use('arviz-white')
+        psis = [0.7, 0.7]
+        mus = [2, 8]
+        alphas = [2, 4]
+        for psi, mu, alpha in zip(psis, mus, alphas):
+        ZeroInflatedNegativeBinomial(psi, mu=mu, alpha=alpha).plot_pdf(support=(0,25))
+
+    ========  ==========================
+    Support   :math:`x \in \mathbb{N}_0`
+    Mean      :math:`\psi\mu`
+    Var       :math:`\psi\mu +  \left (1 + \frac{\mu}{\alpha} + \frac{1-\psi}{\mu} \right)`
+    ========  ==========================
+
+    The zero inflated negative binomial distribution can be parametrized
+    either in terms of mu and alpha, or in terms of n and p.
+    The link between the parametrizations is given by
+
+    .. math::
+
+        \mu &= \frac{n(1-p)}{p} \\
+        \alpha &= n
+
+    Parameters
+    ----------
+    psi : float
+        Expected proportion of NegativeBinomial variates (0 < psi < 1)
+    mu : float
+        Poisson distribution parameter (mu > 0).
+    alpha : float
+        Gamma distribution parameter (alpha > 0).
+    p : float
+        Alternative probability of success in each trial (0 < p < 1).
+    n : float
+        Alternative number of target success trials (n > 0)
+    """
+
+    def __init__(self, psi=None, mu=None, alpha=None, p=None, n=None):
+        super().__init__()
+        self.psi = psi
+        self.n = n
+        self.p = p
+        self.alpha = alpha
+        self.mu = mu
+        self.dist = ZINegativeBinomial
+        self.support = (0, np.inf)
+        self._parametrization(psi, mu, alpha, p, n)
+
+    def _parametrization(self, psi=None, mu=None, alpha=None, p=None, n=None):
+        if (mu or alpha) is not None and (p or n) is not None:
+            raise ValueError(
+                "Incompatible parametrization. Either use psi, mu and alpha, or psi, p and n."
+            )
+
+        self.psi = psi
+        self.param_names = ("psi", "mu", "alpha")
+        self.params_support = ((eps, 1 - eps), (eps, np.inf), (eps, np.inf))
+
+        if (p or n) is not None:
+            self.p = p
+            self.n = n
+            self.param_names = ("psi", "p", "n")
+            if (p and n) is not None:
+                mu, alpha = self._from_p_n(p, n)
+
+        self.mu = mu
+        self.alpha = alpha
+        self.params = (self.psi, self.mu, self.alpha)
+        if (mu and alpha) is not None:
+            self._update(psi, mu, alpha)
+
+    def _from_p_n(self, p, n):
+        alpha = n
+        mu = n * (1 / p - 1)
+        return mu, alpha
+
+    def _to_p_n(self, mu, alpha):
+        p = alpha / (mu + alpha)
+        n = alpha
+        return p, n
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self):
+            frozen = self.dist(self.psi, self.p, self.n)
+        return frozen
+
+    def _update(self, psi, mu, alpha):
+        self.psi = np.float64(psi)
+        self.mu = np.float64(mu)
+        self.alpha = np.float64(alpha)
+        self.p, self.n = self._to_p_n(self.mu, self.alpha)
+
+        if self.param_names[1] == "mu":
+            self.params = (self.psi, self.mu, self.alpha)
+        elif self.param_names[1] == "p":
+            self.params = (self.psi, self.p, self.n)
+
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        psi = 0.9
+        mu = mean / psi
+        alpha = mean**2 / (sigma**2 - mean)
+        params = psi, mu, alpha
         optimize_moments(self, mean, sigma, params)
 
     def _fit_mle(self, sample):
@@ -1029,6 +1167,65 @@ class ZIBinomial(stats.rv_continuous):
         non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
         samples[~non_zero_indices] = 0
         samples[non_zero_indices] = stats.binom.rvs(self.n, self.p, size=len(non_zero_indices))
+        return samples
+
+
+class ZINegativeBinomial(stats.rv_continuous):
+    def __init__(self, psi=None, p=None, n=None):
+        super().__init__()
+        self.psi = psi
+        self.n = n
+        self.p = p
+        self.mu = self.n * (1 / self.p - 1)
+
+    def support(self, *args, **kwd):  # pylint: disable=unused-argument
+        return (0, np.inf)
+
+    def cdf(self, x, *args, **kwds):
+        return (1 - self.psi) + self.psi * stats.nbinom(self.n, self.p, *args, **kwds).cdf(x)
+
+    def pmf(self, x, *args, **kwds):
+        x = np.array(x, ndmin=1)
+        result = np.zeros_like(x, dtype=float)
+        result[x == 0] = (1 - self.psi) + self.psi * (self.n / (self.n + self.mu)) ** self.n
+        result[x != 0] = self.psi * stats.nbinom(self.n, self.p, *args, **kwds).pmf(x[x != 0])
+        return result
+
+    def logpmf(self, x, *args, **kwds):
+        result = np.zeros_like(x, dtype=float)
+        result[x == 0] = np.log((1 - self.psi) + self.psi * (self.n / (self.n + self.mu)) ** self.n)
+        result[x != 0] = np.log(self.psi) + stats.nbinom(self.n, self.p, *args, **kwds).logpmf(
+            x[x != 0]
+        )
+        return result
+
+    def ppf(self, q, *args, **kwds):
+        return np.round(
+            (1 - self.psi) + self.psi * stats.nbinom(self.n, self.p, *args, **kwds).ppf(q)
+        )
+
+    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
+        mean = self.psi * self.mu
+        var = self.psi * self.mu + (1 + (self.mu / self.n) + ((1 - self.psi) / self.mu))
+        return (mean, var, np.nan, np.nan)
+
+    def entropy(self):  # pylint: disable=arguments-differ
+        negative_binomial_entropy = stats.nbinom.entropy(self.n, self.p)
+        if self.psi < 0.00001:
+            return 0
+        elif self.psi > 0.99999:
+            return negative_binomial_entropy
+        else:
+            # The variable can be 0 with probability 1-psi or something else with probability psi
+            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+            # The total entropy is the weighted sum of the two entropies
+            return (1 - self.psi) * zero_entropy + self.psi * negative_binomial_entropy
+
+    def rvs(self, size=1):  # pylint: disable=arguments-differ
+        samples = np.zeros(size, dtype=int)
+        non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
+        samples[~non_zero_indices] = 0
+        samples[non_zero_indices] = stats.nbinom.rvs(self.n, self.p, size=len(non_zero_indices))
         return samples
 
 
