@@ -456,7 +456,7 @@ class Cauchy(Continuous):
 
 class ChiSquared(Continuous):
     r"""
-    Chi squared  log-likelihood.
+    Chi squared  distribution.
 
     The pdf of this distribution is
 
@@ -1214,7 +1214,7 @@ class _HalfStudentT(stats.rv_continuous):
 
 class InverseGamma(Continuous):
     r"""
-    Inverse gamma log-likelihood, the reciprocal of the gamma distribution.
+    Inverse gamma distribution, the reciprocal of the gamma distribution.
 
     The pdf of this distribution is
 
@@ -1561,7 +1561,7 @@ class LogNormal(Continuous):
 
 class LogitNormal(Continuous):
     r"""
-    Logit-Normal log-likelihood.
+    Logit-Normal distribution.
 
     The pdf of this distribution is
 
@@ -1889,7 +1889,7 @@ class Normal(Continuous):
 
 class Pareto(Continuous):
     r"""
-    Pareto log-likelihood.
+    Pareto distribution.
 
     The pdf of this distribution is
 
@@ -2185,7 +2185,7 @@ class SkewNormal(Continuous):
 
 class StudentT(Continuous):
     r"""
-    StudentT's log-likelihood.
+    StudentT's distribution.
 
     Describes a normal variable whose precision is gamma distributed.
 
@@ -2577,7 +2577,7 @@ class Uniform(Continuous):
 
 class VonMises(Continuous):
     r"""
-    Univariate VonMises log-likelihood.
+    Univariate VonMises distribution.
 
     The pdf of this distribution is
 
