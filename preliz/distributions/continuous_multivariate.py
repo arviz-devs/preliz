@@ -184,7 +184,7 @@ class Dirichlet(Continuous):
         ----------
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
-            plot the median and two interquantiles ranges.
+            plot the median and two interquantile ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
