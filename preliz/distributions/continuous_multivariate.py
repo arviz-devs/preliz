@@ -96,16 +96,16 @@ class Dirichlet(Continuous):
     ):
         """
         Plot the pdf of the marginals or the joint pdf of the simplex.
-        The joint representation is only available for a dirichlet with a alpha of length 3.
+        The joint representation is only available for a dirichlet with an alpha of length 3.
 
         Parameters
         ----------
         marginals : True
-            Defaults to True, plor the marginal distributions, if False plot the joint distribution
+            Defaults to True, plot the marginal distributions, if False plot the joint distribution
             (only valid for an alpha of length 3).
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
-            plot the median and two interquantiles ranges.
+            plot the median and two interquantile ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
@@ -117,7 +117,7 @@ class Dirichlet(Continuous):
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         figsize : tuple
-            Size of the
+            Size of the figure
         ax : matplotlib axis
             Axis to plot on
 
@@ -145,7 +145,7 @@ class Dirichlet(Continuous):
         ----------
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
-            plot the median and two interquantiles ranges.
+            plot the median and two interquantile ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
@@ -236,9 +236,9 @@ class MvNormal(Continuous):
 
     Parameters
     ----------
-    mu : tensor_like of float
+    mu : array of floats
         Vector of means.
-    cov : tensor_like of float, optional
+    cov : array of floats, optional
         Covariance matrix.
     """
 
@@ -285,13 +285,13 @@ class MvNormal(Continuous):
         ax=None,
     ):
         """
-        Plot the  pdf of the marginals or the joint pdf
+        Plot the pdf of the marginals or the joint pdf
         The joint representation is only available for a 2D Multivariate Normal.
 
         Parameters
         ----------
         marginals : True
-            Defaults to True, plor the marginal distributions, if False plot the joint distribution
+            Defaults to True, plot the marginal distributions, if False plot the joint distribution
             (only valid for a bivariate normal).
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
