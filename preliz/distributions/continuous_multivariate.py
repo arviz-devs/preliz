@@ -95,7 +95,7 @@ class Dirichlet(Continuous):
         ax=None,
     ):
         """
-        Plot the  pdf of the marginals or the joint pdf on the simplex.
+        Plot the pdf of the marginals or the joint pdf of the simplex.
         The joint representation is only available for a dirichlet with a alpha of length 3.
 
         Parameters
