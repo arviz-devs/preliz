@@ -1,5 +1,6 @@
 from .continuous import *
 from .discrete import *
+from .continuous_multivariate import *
 
 all_continuous = [
     AsymmetricLaplace,
@@ -47,5 +48,11 @@ all_discrete = [
     ZeroInflatedPoisson,
 ]
 
+all_continuous_multivariate = [Dirichlet, MvNormal]
 
-__all__ = [s.__name__ for s in all_continuous] + [s.__name__ for s in all_discrete]
+
+__all__ = (
+    [s.__name__ for s in all_continuous]
+    + [s.__name__ for s in all_discrete]
+    + [s.__name__ for s in all_continuous_multivariate]
+)
