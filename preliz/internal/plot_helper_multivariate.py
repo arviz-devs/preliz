@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import tri
 from scipy.special import gamma
-import preliz as pz
 from .plot_helper import repr_to_matplotlib
 
 
@@ -118,7 +117,7 @@ def plot_dirichlet(
 
         for a_i, ax in zip(alpha, axes):
             if representation == "pdf":
-                pz.Beta(a_i, a_0 - a_i).plot_pdf(
+                dist.marginal(a_i, a_0 - a_i).plot_pdf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
@@ -127,7 +126,7 @@ def plot_dirichlet(
                     ax=ax,
                 )
             elif representation == "cdf":
-                pz.Beta(a_i, a_0 - a_i).plot_cdf(
+                dist.marginal(a_i, a_0 - a_i).plot_cdf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
@@ -136,7 +135,7 @@ def plot_dirichlet(
                     ax=ax,
                 )
             elif representation == "ppf":
-                pz.Beta(a_i, a_0 - a_i).plot_ppf(
+                dist.marginal(a_i, a_0 - a_i).plot_ppf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
@@ -228,7 +227,7 @@ def plot_mvnormal(
 
         for mu_i, sigma_i, ax in zip(mu, sigma, axes):
             if representation == "pdf":
-                pz.Normal(mu_i, sigma_i).plot_pdf(
+                dist.marginal(mu_i, sigma_i).plot_pdf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
@@ -237,7 +236,7 @@ def plot_mvnormal(
                     ax=ax,
                 )
             elif representation == "cdf":
-                pz.Normal(mu_i, sigma_i).plot_cdf(
+                dist.marginal(mu_i, sigma_i).plot_cdf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
@@ -246,7 +245,7 @@ def plot_mvnormal(
                     ax=ax,
                 )
             elif representation == "ppf":
-                pz.Normal(mu_i, sigma_i).plot_ppf(
+                dist.marginal(mu_i, sigma_i).plot_ppf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,

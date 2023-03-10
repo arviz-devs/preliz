@@ -5,7 +5,7 @@ Parent classes for multivariate families.
 from collections import namedtuple
 
 import numpy as np
-from scipy.special import betainc
+from scipy.special import betainc  # pylint: disable=no-name-in-module
 
 from ..internal.distribution_helper import (
     valid_scalar_params,

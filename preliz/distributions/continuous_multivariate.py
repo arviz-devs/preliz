@@ -11,6 +11,7 @@ import numpy as np
 from scipy import stats
 
 from .distributions_multivariate import Continuous
+from .continuous import Beta, Normal
 from ..internal.distribution_helper import all_not_none
 from ..internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
 
@@ -57,6 +58,7 @@ class Dirichlet(Continuous):
     def __init__(self, alpha=None):
         super().__init__()
         self.dist = copy(stats.dirichlet)
+        self.marginal = Beta
         self.support = (eps, 1 - eps)
         self._parametrization(alpha)
 
@@ -243,6 +245,7 @@ class MvNormal(Continuous):
     def __init__(self, mu=None, cov=None):
         super().__init__()
         self.dist = copy(stats.multivariate_normal)
+        self.marginal = Normal
         self.support = (-np.inf, np.inf)
         self._parametrization(mu, cov)
 
