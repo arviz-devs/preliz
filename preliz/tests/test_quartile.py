@@ -92,7 +92,7 @@ from preliz.distributions import (
         (HyperGeometric(), 2, 3, 4, (75, 15, 15)),
         (NegativeBinomial(), 3, 5, 10, (7.283, 2.167)),
         (Poisson(), 4, 5, 6, (5.641)),
-        (ZeroInflatedBinomial(), 2, 3, 4, (0.993, 9.934, 0.394)),
+        (ZeroInflatedBinomial(), 3, 4, 7, (0.726, 17.001, 0.375)),
         (ZeroInflatedBinomial(psi=0.7), 2, 4, 6, (16, 0.362)),
         (ZeroInflatedNegativeBinomial(), 2, 4, 6, (0.87, 5.24, 17.49)),
         (ZeroInflatedNegativeBinomial(psi=0.9), 2, 4, 6, (5.16, 11.32)),
