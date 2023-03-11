@@ -14,6 +14,7 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.unidimensional
    :members:
 
+
 :mod:`preliz.predictive`
 ======================================
 
@@ -31,4 +32,11 @@ This reference provides detailed documentation for user functions in the current
 ====================================
 
 .. automodule:: preliz.distributions.discrete
+   :members:
+
+
+:mod:`preliz.distributions.continuous_multivariate`
+====================================
+
+.. automodule:: preliz.distributions.continuous_multivariate
    :members:
