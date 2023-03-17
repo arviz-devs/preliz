@@ -2680,27 +2680,66 @@ class Wald(Continuous):
     Variance  :math:`\dfrac{\mu^3}{\lambda}`
     ========  =============================
 
+    Wald distribution has 3 alternative parametrizations. In terms of mu and lam,
+    mu and phi or lam and phi.
+
+    The link between the 3 alternatives is given by
+
+    .. math::
+
+       \phi = \dfrac{\lambda}{\mu}
+
     Parameters
     ----------
     mu : float
         Mean of the distribution (mu > 0).
     lam : float
         Relative precision (lam > 0).
+    phi : float
+        Shape parameter (phi > 0).
     """
 
-    def __init__(self, mu=None, lam=None):
+    def __init__(self, mu=None, lam=None, phi=None):
         super().__init__()
         self.dist = copy(stats.invgauss)
         self.support = (0, np.inf)
-        self._parametrization(mu, lam)
+        self._parametrization(mu, lam, phi)
 
-    def _parametrization(self, mu=None, lam=None):
-        self.mu = mu
-        self.lam = lam
+    def _parametrization(self, mu=None, lam=None, phi=None):
+        if (mu and lam and phi) is not None:
+            raise ValueError(
+                "Incompatible parametrization. Either use mu and lam or mu and phi or lam and phi."
+            )
+
         self.param_names = ("mu", "lam")
         self.params_support = ((eps, np.inf), (eps, np.inf))
-        if (mu and lam) is not None:
-            self._update(mu, lam)
+
+        if phi is not None:
+            self.phi = phi
+            if (mu and phi) is not None:
+                lam = self._from_mu_phi(mu, phi)
+                self.param_names = ("mu", "phi")
+
+            elif (lam and phi) is not None:
+                mu = self._from_lam_phi(lam, phi)
+                self.param_names = ("lam", "phi")
+
+        self.mu = mu
+        self.lam = lam
+        if self.mu is not None and self.lam is not None:
+            self._update(self.mu, self.lam)
+
+    def _from_mu_phi(self, mu, phi):
+        lam = mu * phi
+        return lam
+
+    def _from_lam_phi(self, lam, phi):
+        mu = lam / phi
+        return mu
+
+    def _to_phi(self, mu, lam):
+        phi = lam / mu
+        return phi
 
     def _get_frozen(self):
         frozen = None
@@ -2711,7 +2750,15 @@ class Wald(Continuous):
     def _update(self, mu, lam):
         self.mu = np.float64(mu)
         self.lam = np.float64(lam)
-        self.params = (self.mu, self.lam)
+        self.phi = self._to_phi(mu, lam)
+
+        if self.param_names == ("mu", "lam"):
+            self.params = (self.mu, self.lam)
+        elif self.param_names == ("mu", "phi"):
+            self.params = (self.mu, self.phi)
+        elif self.param_names == ("lam", "phi"):
+            self.params = (self.lam, self.phi)
+
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
