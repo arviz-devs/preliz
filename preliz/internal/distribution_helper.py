@@ -96,6 +96,7 @@ init_vals = {
     "HalfNormal": {"sigma": 1.0},
     "HalfStudentT": {"nu": 7.0, "sigma": 1.0},
     "InverseGamma": {"alpha": 3.0, "beta": 5.0},
+    "Kumaraswamy": {"a": 2.0, "b": 2.0},
     "Laplace": {"mu": 0.0, "b": 1.0},
     "Logistic": {"mu": 0.0, "s": 1},
     "LogNormal": {"mu": 0.0, "sigma": 0.5},

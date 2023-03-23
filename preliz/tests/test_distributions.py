@@ -18,6 +18,7 @@ from preliz.distributions import (
     HalfNormal,
     HalfStudentT,
     InverseGamma,
+    Kumaraswamy,
     Laplace,
     Logistic,
     LogNormal,
@@ -71,6 +72,7 @@ def multivariates():
         (HalfNormal, (1,)),
         (HalfStudentT, (100, 1)),
         (InverseGamma, (3, 1)),
+        (Kumaraswamy, (5, 2)),
         (Laplace, (0, 1)),
         (Logistic, (1, 2)),
         (LogNormal, (0, 0.5)),
@@ -111,7 +113,14 @@ def test_moments(distribution, params):
     dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
 
     tol = 5
-    if dist.__class__.__name__ in ["BetaBinomial", "Binomial", "LogitNormal", "Rice", "StudentT"]:
+    if dist.__class__.__name__ in [
+        "BetaBinomial",
+        "Binomial",
+        "Kumaraswamy",
+        "LogitNormal",
+        "Rice",
+        "StudentT",
+    ]:
         tol = 0
     assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
     assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
@@ -133,6 +142,7 @@ def test_moments(distribution, params):
         (HalfNormal, (1,)),
         (HalfStudentT, (100, 1)),
         (InverseGamma, (3, 0.5)),
+        (Kumaraswamy, (1, 1)),
         (Laplace, (0, 1)),
         (Logistic, (0, 1)),
         (LogNormal, (0, 0.5)),

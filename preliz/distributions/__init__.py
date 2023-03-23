@@ -16,6 +16,7 @@ all_continuous = [
     HalfNormal,
     HalfStudentT,
     InverseGamma,
+    Kumaraswamy,
     Laplace,
     Logistic,
     LogNormal,
