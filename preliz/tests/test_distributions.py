@@ -142,7 +142,7 @@ def test_moments(distribution, params):
         (HalfNormal, (1,)),
         (HalfStudentT, (100, 1)),
         (InverseGamma, (3, 0.5)),
-        (Kumaraswamy, (1, 1)),
+        (Kumaraswamy, (2, 3)),
         (Laplace, (0, 1)),
         (Logistic, (0, 1)),
         (LogNormal, (0, 0.5)),

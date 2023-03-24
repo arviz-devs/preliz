@@ -10,7 +10,7 @@ from copy import copy
 import numpy as np
 from scipy import stats
 from scipy.special import gamma as gammaf
-from scipy.special import beta as betaf
+from scipy.special import beta as betaf  # pylint: disable=no-name-in-module
 from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 from ..internal.optimization import optimize_ml, optimize_moments
@@ -1381,7 +1381,7 @@ class Kumaraswamy(Continuous):
         self.b = b
         self.params = (self.a, self.b)
         self.param_names = ("a", "b")
-        self.params_support = ((0, np.inf), (0, np.inf))
+        self.params_support = ((eps, np.inf), (eps, np.inf))
         if (a and b) is not None:
             self._update(a, b)
 
@@ -1398,13 +1398,10 @@ class Kumaraswamy(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        a = 1 / (1 - mean)
-        b = (1 - mean) / sigma**2
-        self._update(a, b)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample, **kwargs):
-        a, b = self.dist.fit(sample, **kwargs)
-        self._update(a, b)
+        optimize_ml(self, sample, **kwargs)
 
 
 class _Kumaraswamy(stats.rv_continuous):
@@ -1413,39 +1410,41 @@ class _Kumaraswamy(stats.rv_continuous):
         self.a = a
         self.b = b
 
-    def support(self, *args, **kwargs):
+    def support(self, *args, **kwds):  # pylint: disable=unused-argument
         return (0, 1)
 
-    def cdf(self, x, *args, **kwds):
+    def cdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
         return 1 - (1 - x**self.a) ** self.b
 
-    def pdf(self, x, *args, **kwds):
+    def pdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
         return (self.a * self.b * x ** (self.a - 1)) * ((1 - x**self.a) ** (self.b - 1))
 
-    def logpdf(self, x, *args, **kwds):
+    def logpdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
         return (
             np.log(self.a * self.b)
             + (self.a - 1) * np.log(x)
             + (self.b - 1) * np.log(1 - x**self.a)
         )
 
-    def ppf(self, q, *args, **kwds):
+    def ppf(self, q, *args, **kwds):  # pylint: disable=unused-argument
         return (1 - (1 - q) ** (1 / self.b)) ** (1 / self.a)
 
-    def _stats(self, *args, **kwds):
+    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
         mean = self.b * betaf(1 + 1 / self.a, self.b)
         var = self.b * betaf(1 + 2 / self.a, self.b) - self.b * betaf(1 + 2 / self.a, self.b) ** 2
         return (mean, var, np.nan, np.nan)
 
-    def entropy(self, *args, **kwds):
+    def entropy(self, *args, **kwds):  # pylint: disable=unused-argument
+        # https://www.ijicc.net/images/vol12/iss4/12449_Nassir_2020_E_R.pdf
         return (
             (1 - 1 / self.b)
             + (1 - 1 / self.a) * sum(1 / i for i in range(1, int(self.b) + 1))
             - np.log(self.a * self.b)
         )
 
-    def rvs(self, size=None, random_state=None, *args, **kwds):
-        return super().rvs(self.a, self.b, size=size, random_state=random_state)
+    def rvs(self, size=1000):  # pylint: disable=arguments-differ
+        q = np.random.rand(size)
+        return self.ppf(q)
 
 
 class Laplace(Continuous):
@@ -1773,7 +1772,7 @@ class _LogitNormal(stats.rv_continuous):
         self.mu = mu
         self.sigma = sigma
 
-    def support(self, *args, **kwd):  # pylint: disable=unused-argument
+    def support(self, *args, **kwds):  # pylint: disable=unused-argument
         return (0, 1)
 
     def cdf(self, x, *args, **kwds):
