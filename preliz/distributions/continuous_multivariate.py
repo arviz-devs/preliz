@@ -226,7 +226,7 @@ class MvNormal(Continuous):
         mus = [[0., 0], [3, -2], [0., 0], [0., 0]]
         sigmas = [np.eye(2), np.eye(2), np.array([[2, 2], [2, 4]]), np.array([[2, -2], [-2, 4]])]
         for mu, sigma, ax in zip(mus, sigmas, axes.ravel()):
-            pz.MvNormal(mu, sigma).plot_pdf(marginals=False, ax=ax)
+            MvNormal(mu, sigma).plot_pdf(marginals=False, ax=ax)
 
     ========  ==========================
     Support   :math:`x \in \mathbb{R}^k`
@@ -234,27 +234,47 @@ class MvNormal(Continuous):
     Variance  :math:`T^{-1}`
     ========  ==========================
 
+    MvNormal distribution has 2 alternative parameterizations. In terms of the mean and
+    the covariance matrix, or in terms of the mean and the precision matrix.
+
+    The link between the 2 alternatives is given by
+
+    .. math::
+
+        \Tau = \Sigma^{-1}
+
     Parameters
     ----------
     mu : array of floats
         Vector of means.
     cov : array of floats, optional
         Covariance matrix.
+    tau : array of floats, optional
+        Precision matrix.
     """
 
-    def __init__(self, mu=None, cov=None):
+    def __init__(self, mu=None, cov=None, tau=None):
         super().__init__()
         self.dist = copy(stats.multivariate_normal)
         self.marginal = Normal
         self.support = (-np.inf, np.inf)
-        self._parametrization(mu, cov)
+        self._parametrization(mu, cov, tau)
 
-    def _parametrization(self, mu=None, cov=None):
-        self.param_names = ("mu", "cov")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
+    def _parametrization(self, mu=None, cov=None, tau=None):
+        if cov is not None and tau is not None:
+            raise ValueError("Incompatible parametrization. Either use mu and cov, or mu and tau.")
+
+        names = ("mu", "cov")
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+
+        if tau is not None:
+            self.tau = tau
+            cov = np.linalg.inv(tau)
+            names = ("mu", "tau")
 
         self.mu = mu
         self.cov = cov
+        self.param_names = names
         if mu is not None and cov is not None:
             self._update(mu, cov)
 
@@ -267,7 +287,13 @@ class MvNormal(Continuous):
     def _update(self, mu, cov):
         self.mu = np.array(mu, dtype=float)
         self.cov = np.array(cov, dtype=float)
-        self.params = (mu, cov)
+        self.tau = np.linalg.inv(cov)
+
+        if self.param_names[1] == "cov":
+            self.params = (self.mu, self.cov)
+        elif self.param_names[1] == "tau":
+            self.params = (self.mu, self.tau)
+
         self._update_rv_frozen()
         self.rv_frozen.var = lambda: np.diag(self.cov)
 
