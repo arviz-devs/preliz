@@ -13,7 +13,7 @@ from scipy.special import gamma as gammaf
 from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.distribution_helper import garcia_approximation, all_not_none
+from ..internal.distribution_helper import garcia_approximation, all_not_none, any_not_none
 from .distributions import Continuous
 
 eps = np.finfo(float).eps
@@ -91,7 +91,7 @@ class AsymmetricLaplace(Continuous):
         self._parametrization(kappa, mu, b, q)
 
     def _parametrization(self, kappa=None, mu=None, b=None, q=None):
-        if kappa is not None and q is not None:
+        if all_not_none(kappa, q):
             raise ValueError("Incompatible parametrization. Either use kappa or q.")
 
         self.param_names = ("kappa", "mu", "b")
@@ -106,7 +106,7 @@ class AsymmetricLaplace(Continuous):
         self.kappa = kappa
         self.mu = mu
         self.b = b
-        if (kappa and mu and b) is not None:
+        if all_not_none(kappa, mu, b):
             self._update(kappa, mu, b)
 
     def _from_q(self, q):
@@ -119,7 +119,7 @@ class AsymmetricLaplace(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(kappa=self.kappa, loc=self.mu, scale=self.b)
         return frozen
 
@@ -210,9 +210,9 @@ class Beta(Continuous):
 
     def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None, kappa=None):
         if (
-            (alpha or beta) is not None
-            and (mu or sigma or kappa) is not None
-            or (sigma and kappa) is not None
+            any_not_none(alpha, beta)
+            and any_not_none(mu, sigma, kappa)
+            or all_not_none(sigma, kappa)
         ):
             raise ValueError(
                 "Incompatible parametrization. Either use alpha " "and beta, or mu and sigma."
@@ -221,25 +221,25 @@ class Beta(Continuous):
         self.param_names = ("alpha", "beta")
         self.params_support = ((eps, np.inf), (eps, np.inf))
 
-        if (mu or sigma) is not None:
+        if any_not_none(mu, sigma):
             self.mu = mu
             self.sigma = sigma
             self.param_names = ("mu", "sigma")
             self.params_support = ((eps, 1 - eps), (eps, 1 - eps))
-            if (mu and sigma) is not None:
+            if all_not_none(mu, sigma):
                 alpha, beta = self._from_mu_sigma(mu, sigma)
 
-        if (mu or kappa) is not None:
+        if any_not_none(mu, kappa):
             self.mu = mu
             self.kappa = kappa
             self.param_names = ("mu", "kappa")
             self.params_support = ((eps, 1 - eps), (eps, np.inf))
-            if (mu and kappa) is not None:
+            if all_not_none(mu, kappa):
                 alpha, beta = self._from_mu_kappa(mu, kappa)
 
         self.alpha = alpha
         self.beta = beta
-        if (self.alpha and self.beta) is not None:
+        if all_not_none(self.alpha, self.beta):
             self._update(self.alpha, self.beta)
 
     def _from_mu_sigma(self, mu, sigma):
@@ -261,7 +261,7 @@ class Beta(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.alpha, self.beta)
         return frozen
 
@@ -347,12 +347,12 @@ class BetaScaled(Continuous):
     def _parametrization(self, alpha=None, beta=None, lower=None, upper=None):
         self.param_names = ("alpha", "beta", "lower", "upper")
         self.params_support = ((eps, np.inf), (eps, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
-        if (alpha and beta) is not None:
+        if all_not_none(alpha, beta):
             self._update(alpha, beta, lower, upper)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.alpha, self.beta, loc=self.lower, scale=self.upper - self.lower)
         return frozen
 
@@ -429,12 +429,12 @@ class Cauchy(Continuous):
         self.param_names = ("alpha", "beta")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
         self.params = (self.alpha, self.beta)
-        if (alpha and beta) is not None:
+        if all_not_none(alpha, beta):
             self._update(alpha, beta)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.alpha, self.beta)
         return frozen
 
@@ -505,7 +505,7 @@ class ChiSquared(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.nu)
         return frozen
 
@@ -583,12 +583,12 @@ class ExGaussian(Continuous):
         self.param_names = ("mu", "sigma", "nu")
         self.params = (mu, sigma, nu)
         self.params_support = ((-np.inf, np.inf), (eps, np.inf), (eps, np.inf))
-        if (mu and sigma and nu) is not None:
+        if all_not_none(mu, sigma, nu):
             self._update(mu, sigma, nu)
 
     def _get_frozen(self):
         frozen = None
-        if self.nu is not None and self.sigma is not None:
+        if all_not_none(self.nu, self.sigma):
             frozen = self.dist(K=self.nu / self.sigma, loc=self.mu, scale=self.sigma)
         return frozen
 
@@ -657,7 +657,7 @@ class Exponential(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(scale=1 / self.lam)
         return frozen
 
@@ -735,7 +735,7 @@ class Gamma(Continuous):
         self._parametrization(alpha, beta, mu, sigma)
 
     def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None):
-        if (alpha or beta) is not None and (mu or sigma) is not None:
+        if any_not_none(alpha, beta) and any_not_none(mu, sigma):
             raise ValueError(
                 "Incompatible parametrization. Either use alpha and beta or mu and sigma."
             )
@@ -743,16 +743,16 @@ class Gamma(Continuous):
         self.param_names = ("alpha", "beta")
         self.params_support = ((eps, np.inf), (eps, np.inf))
 
-        if (mu or sigma) is not None:
+        if any_not_none(mu, sigma):
             self.mu = mu
             self.sigma = sigma
             self.param_names = ("mu", "sigma")
-            if (mu and sigma) is not None:
+            if all_not_none(mu, sigma):
                 alpha, beta = self._from_mu_sigma(mu, sigma)
 
         self.alpha = alpha
         self.beta = beta
-        if self.alpha is not None and self.beta is not None:
+        if all_not_none(self.alpha, self.beta):
             self._update(self.alpha, self.beta)
 
     def _from_mu_sigma(self, mu, sigma):
@@ -767,7 +767,7 @@ class Gamma(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(a=self.alpha, scale=1 / self.beta)
         return frozen
 
@@ -845,12 +845,12 @@ class Gumbel(Continuous):
         self.params = (self.mu, self.beta)
         self.param_names = ("mu", "beta")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if (self.mu and self.beta) is not None:
+        if all_not_none(self.mu, self.beta):
             self._update(self.mu, self.beta)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(loc=self.mu, scale=self.beta)
         return frozen
 
@@ -918,7 +918,7 @@ class HalfCauchy(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(scale=self.beta)
         return frozen
 
@@ -987,7 +987,7 @@ class HalfNormal(Continuous):
         self._parametrization(sigma, tau)
 
     def _parametrization(self, sigma=None, tau=None):
-        if sigma is not None and tau is not None:
+        if all_not_none(sigma, tau):
             raise ValueError("Incompatible parametrization. Either use sigma or tau.")
 
         self.param_names = ("sigma",)
@@ -1004,7 +1004,7 @@ class HalfNormal(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(scale=self.sigma)
         return frozen
 
@@ -1092,7 +1092,7 @@ class HalfStudentT(Continuous):
         self._parametrization(nu, sigma, lam)
 
     def _parametrization(self, nu=None, sigma=None, lam=None):
-        if sigma is not None and lam is not None:
+        if all_not_none(sigma, lam):
             raise ValueError(
                 "Incompatible parametrization. Either use nu and sigma, or nu and lam."
             )
@@ -1107,12 +1107,12 @@ class HalfStudentT(Continuous):
 
         self.nu = nu
         self.sigma = sigma
-        if self.nu is not None and self.sigma is not None:
+        if all_not_none(self.nu, self.sigma):
             self._update(self.nu, self.sigma)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(nu=self.nu, sigma=self.sigma)
         return frozen
 
@@ -1270,7 +1270,7 @@ class InverseGamma(Continuous):
         self._parametrization(alpha, beta, mu, sigma)
 
     def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None):
-        if (alpha or beta) is not None and (mu or sigma) is not None:
+        if any_not_none(alpha, beta) and any_not_none(mu, sigma):
             raise ValueError(
                 "Incompatible parametrization. Either use alpha and beta or mu and sigma."
             )
@@ -1278,16 +1278,16 @@ class InverseGamma(Continuous):
         self.param_names = ("alpha", "beta")
         self.params_support = ((eps, np.inf), (eps, np.inf))
 
-        if (mu or sigma) is not None:
+        if any_not_none(mu, sigma):
             self.mu = mu
             self.sigma = sigma
             self.param_names = ("mu", "sigma")
-            if (mu and sigma) is not None:
+            if all_not_none(mu, sigma):
                 alpha, beta = self._from_mu_sigma(mu, sigma)
 
         self.alpha = alpha
         self.beta = beta
-        if self.alpha is not None and self.beta is not None:
+        if all_not_none(self.alpha, self.beta):
             self._update(self.alpha, self.beta)
 
     def _from_mu_sigma(self, mu, sigma):
@@ -1308,7 +1308,7 @@ class InverseGamma(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(a=self.alpha, scale=self.beta)
         return frozen
 
@@ -1381,12 +1381,12 @@ class Laplace(Continuous):
         self.params = (self.mu, self.b)
         self.param_names = ("mu", "b")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if (mu and b) is not None:
+        if all_not_none(mu, b):
             self._update(mu, b)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(loc=self.mu, scale=self.b)
         return frozen
 
@@ -1455,12 +1455,12 @@ class Logistic(Continuous):
         self.params = (self.mu, self.s)
         self.param_names = ("mu", "s")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if (self.mu and self.s) is not None:
+        if all_not_none(self.mu, self.s):
             self._update(self.mu, self.s)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(loc=self.mu, scale=self.s)
         return frozen
 
@@ -1534,12 +1534,12 @@ class LogNormal(Continuous):
         self.params = (self.mu, self.sigma)
         self.param_names = ("mu", "sigma")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if (mu and sigma) is not None:
+        if all_not_none(mu, sigma):
             self._update(mu, sigma)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.sigma, scale=np.exp(self.mu))
         return frozen
 
@@ -1605,7 +1605,7 @@ class LogitNormal(Continuous):
         self._parametrization(mu, sigma, tau)
 
     def _parametrization(self, mu=None, sigma=None, tau=None):
-        if sigma is not None and tau is not None:
+        if all_not_none(sigma, tau):
             raise ValueError(
                 "Incompatible parametrization. Either use mu and sigma, or mu and tau."
             )
@@ -1621,12 +1621,12 @@ class LogitNormal(Continuous):
         self.mu = mu
         self.sigma = sigma
         self.param_names = names
-        if mu is not None and sigma is not None:
+        if all_not_none(mu, sigma):
             self._update(mu, sigma)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.mu, self.sigma)
         return frozen
 
@@ -1762,12 +1762,12 @@ class Moyal(Continuous):
         self.params = (self.mu, self.sigma)
         self.param_names = ("mu", "sigma")
         self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if (mu and sigma) is not None:
+        if all_not_none(mu, sigma):
             self._update(self.mu, self.sigma)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(loc=self.mu, scale=self.sigma)
         return frozen
 
@@ -1842,7 +1842,7 @@ class Normal(Continuous):
         self._parametrization(mu, sigma, tau)
 
     def _parametrization(self, mu=None, sigma=None, tau=None):
-        if sigma is not None and tau is not None:
+        if all_not_none(sigma, tau):
             raise ValueError(
                 "Incompatible parametrization. Either use mu and sigma, or mu and tau."
             )
@@ -1858,12 +1858,12 @@ class Normal(Continuous):
         self.mu = mu
         self.sigma = sigma
         self.param_names = names
-        if mu is not None and sigma is not None:
+        if all_not_none(mu, sigma):
             self._update(mu, sigma)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.mu, self.sigma)
         return frozen
 
@@ -1934,12 +1934,12 @@ class Pareto(Continuous):
         self.params = (self.alpha, self.m)
         self.param_names = ("alpha", "m")
         self.params_support = ((eps, np.inf), (eps, np.inf))
-        if (alpha and m) is not None:
+        if all_not_none(alpha, m):
             self._update(alpha, m)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.alpha, scale=self.m)
         return frozen
 
@@ -2018,7 +2018,7 @@ class Rice(Continuous):
         self._parametrization(nu, sigma, b)
 
     def _parametrization(self, nu=None, sigma=None, b=None):
-        if nu is not None and b is not None:
+        if all_not_none(nu, b):
             raise ValueError(
                 "Incompatible parametrization. Either use nu and sigma or b and sigma."
             )
@@ -2030,12 +2030,12 @@ class Rice(Continuous):
             self.b = b
             self.sigma = sigma
             self.param_names = ("b", "sigma")
-            if (b and sigma) is not None:
+            if all_not_none(b, sigma):
                 nu = self._from_b(b, sigma)
 
         self.nu = nu
         self.sigma = sigma
-        if self.nu is not None and self.sigma is not None:
+        if all_not_none(self.nu, self.sigma):
             self._update(self.nu, self.sigma)
 
     def _from_b(self, b, sigma):
@@ -2048,7 +2048,7 @@ class Rice(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             b_ = self._to_b(self.nu, self.sigma)
             frozen = self.dist(b=b_, scale=self.sigma)
         return frozen
@@ -2135,7 +2135,7 @@ class SkewNormal(Continuous):
         self._parametrization(mu, sigma, alpha, tau)
 
     def _parametrization(self, mu=None, sigma=None, alpha=None, tau=None):
-        if sigma is not None and tau is not None:
+        if all_not_none(sigma, tau):
             raise ValueError(
                 "Incompatible parametrization. Either use mu, sigma and alpha,"
                 " or mu, tau and alpha."
@@ -2152,12 +2152,12 @@ class SkewNormal(Continuous):
         self.mu = mu
         self.sigma = sigma
         self.alpha = alpha
-        if self.mu is not None and self.sigma is not None and self.alpha is not None:
+        if all_not_none(self.mu, self.sigma, self.alpha):
             self._update(self.mu, self.sigma, self.alpha)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.alpha, self.mu, self.sigma)
         return frozen
 
@@ -2246,7 +2246,7 @@ class StudentT(Continuous):
         self._parametrization(nu, mu, sigma, lam)
 
     def _parametrization(self, nu=None, mu=None, sigma=None, lam=None):
-        if sigma is not None and lam is not None:
+        if all_not_none(sigma, lam):
             raise ValueError(
                 "Incompatible parametrization. Either use nu, mu and sigma, or nu, mu and lam."
             )
@@ -2263,12 +2263,12 @@ class StudentT(Continuous):
         self.mu = mu
         self.sigma = sigma
 
-        if self.nu is not None and self.mu is not None and self.sigma is not None:
+        if all_not_none(self.nu, self.mu, self.sigma):
             self._update(self.nu, self.mu, self.sigma)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.nu, self.mu, self.sigma)
         return frozen
 
@@ -2362,12 +2362,12 @@ class Triangular(Continuous):
         self.params = (self.lower, self.c, self.upper)
         self.param_names = ("lower", "c", "upper")
         self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
-        if (lower and c and upper) is not None:
+        if all_not_none(lower, c, upper):
             self._update(lower, c, upper)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             scale = self.upper - self.lower
             c_ = (self.c - self.lower) / scale
             frozen = self.dist(c=c_, loc=self.lower, scale=scale)
@@ -2461,12 +2461,12 @@ class TruncatedNormal(Continuous):
         if upper is None:
             self.upper = np.inf
         self.support = (self.lower, self.upper)
-        if (mu and sigma and lower and upper) is not None:
+        if all_not_none(mu, sigma, lower, upper):
             self._update(mu, sigma, lower, upper)
 
     def _get_frozen(self):
         frozen = None
-        if self.mu is not None or self.sigma is not None:
+        if any_not_none(self.mu, self.sigma):
             a, b = (self.lower - self.mu) / self.sigma, (self.upper - self.mu) / self.sigma
             frozen = self.dist(a, b, self.mu, self.sigma)
         return frozen
@@ -2543,7 +2543,7 @@ class Uniform(Continuous):
         if upper is None:
             self.upper = np.inf
         self.support = (self.lower, self.upper)
-        if (lower and upper) is not None:
+        if all_not_none(lower, upper):
             self._update(lower, upper)
             self.dist.a = self.lower
             self.dist.b = self.upper
@@ -2553,7 +2553,7 @@ class Uniform(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.lower, self.upper - self.lower)
         return frozen
 
@@ -2624,12 +2624,12 @@ class VonMises(Continuous):
         self.param_names = ("mu", "kappa")
         self.params_support = ((-np.pi, np.pi), (eps, np.inf))
         self.support = (-np.pi, np.pi)
-        if (mu and kappa) is not None:
+        if all_not_none(mu, kappa):
             self._update(mu, kappa)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(kappa=self.kappa, loc=self.mu)
         return frozen
 
@@ -2699,12 +2699,12 @@ class Wald(Continuous):
         self.lam = lam
         self.param_names = ("mu", "lam")
         self.params_support = ((eps, np.inf), (eps, np.inf))
-        if (mu and lam) is not None:
+        if all_not_none(mu, lam):
             self._update(mu, lam)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.mu / self.lam, scale=self.lam)
         return frozen
 
@@ -2771,12 +2771,12 @@ class Weibull(Continuous):
         self.beta = beta
         self.param_names = ("alpha", "beta")
         self.params_support = ((eps, np.inf), (eps, np.inf))
-        if (alpha and beta) is not None:
+        if all_not_none(alpha, beta):
             self._update(alpha, beta)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.alpha, scale=self.beta)
         return frozen
 

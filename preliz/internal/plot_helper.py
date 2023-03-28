@@ -341,7 +341,7 @@ def plot_decorator(func, iterations, kind_plot):
                 results,
                 alpha=alpha,
                 density=True,
-                color=["C0"] * iterations,
+                color="C0",
                 bins=bins,
                 histtype="step",
             )
