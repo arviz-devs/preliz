@@ -17,7 +17,7 @@ from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
 from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.distribution_helper import all_not_none
+from ..internal.distribution_helper import all_not_none, any_not_none
 
 
 _log = logging.getLogger("preliz")
@@ -72,7 +72,7 @@ class Bernoulli(Discrete):
         self._parametrization(p, logit_p)
 
     def _parametrization(self, p=None, logit_p=None):
-        if p is not None and logit_p is not None:
+        if all_not_none(p, logit_p):
             raise ValueError("Incompatible parametrization. Either use p or logit_p.")
 
         self.param_names = "p"
@@ -95,7 +95,7 @@ class Bernoulli(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.p)
         return frozen
 
@@ -174,12 +174,12 @@ class BetaBinomial(Discrete):
         self.params = (self.alpha, self.beta, self.n)
         self.param_names = ("alpha", "beta", "n")
         self.params_support = ((eps, np.inf), (eps, np.inf), (eps, np.inf))
-        if (alpha and beta) is not None:
+        if all_not_none(alpha, beta):
             self._update(alpha, beta, n)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(n=self.n, a=self.alpha, b=self.beta)
         return frozen
 
@@ -256,12 +256,12 @@ class Binomial(Discrete):
         self.params = (self.n, self.p)
         self.param_names = ("n", "p")
         self.params_support = ((eps, np.inf), (eps, 1 - eps))
-        if (n and p) is not None:
+        if all_not_none(n, p):
             self._update(n, p)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.n, self.p)
         return frozen
 
@@ -344,7 +344,7 @@ class Categorical(Discrete):
         return np.searchsorted(cumsum, q)
 
     def _parametrization(self, p=None, logit_p=None):
-        if p is not None and logit_p is not None:
+        if all_not_none(p, logit_p):
             raise ValueError("Incompatible parametrization. Either use p or logit_p.")
 
         self.param_names = "p"
@@ -368,7 +368,7 @@ class Categorical(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(n=1, p=self.p)
         return frozen
 
@@ -439,7 +439,7 @@ class DiscreteUniform(Discrete):
         self.support = (self.lower, self.upper)
         self.dist.a = self.lower
         self.dist.b = self.upper
-        if (lower and upper) is not None:
+        if all_not_none(lower, upper):
             self._update(lower, upper)
         else:
             self.lower = lower
@@ -447,7 +447,7 @@ class DiscreteUniform(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.lower, self.upper + 1)
         return frozen
 
@@ -517,7 +517,7 @@ class Geometric(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.p)
         return frozen
 
@@ -586,12 +586,12 @@ class HyperGeometric(Discrete):
         self.n = n
         self.param_names = ("N", "k", "n")
         self.params_support = ((eps, np.inf), (eps, self.N), (eps, self.N))
-        if (self.N and self.k and self.n) is not None:
+        if all_not_none(self.N, self.k, self.n):
             self._update(N, k, n)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(M=self.N, N=self.n, n=self.k)
         return frozen
 
@@ -683,22 +683,22 @@ class NegativeBinomial(Discrete):
         self._parametrization(mu, alpha, p, n)
 
     def _parametrization(self, mu=None, alpha=None, p=None, n=None):
-        if (mu or alpha) is not None and (p or n) is not None:
+        if any_not_none(mu, alpha) and any_not_none(p, n):
             raise ValueError("Incompatible parametrization. Either use mu and alpha, or p and n.")
 
         self.param_names = ("mu", "alpha")
         self.params_support = ((eps, np.inf), (eps, np.inf))
 
-        if (p or n) is not None:
+        if any_not_none(p, n):
             self.p = p
             self.n = n
             self.param_names = ("p", "n")
-            if (p and n) is not None:
+            if all_not_none(p, n):
                 mu, alpha = self._from_p_n(p, n)
 
         self.mu = mu
         self.alpha = alpha
-        if (mu and alpha) is not None:
+        if all_not_none(mu, alpha):
             self._update(mu, alpha)
 
     def _from_p_n(self, p, n):
@@ -713,7 +713,7 @@ class NegativeBinomial(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.n, self.p)
         return frozen
 
@@ -787,12 +787,12 @@ class Poisson(Discrete):
         self.params = (self.mu,)
         self.param_names = ("mu",)
         self.params_support = ((eps, np.inf),)
-        if (mu) is not None:
+        if mu is not None:
             self._update(mu)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.mu)
         return frozen
 
@@ -866,12 +866,12 @@ class ZeroInflatedBinomial(Discrete):
         self.params = (self.psi, self.n, self.p)
         self.param_names = ("psi", "n", "p")
         self.params_support = ((eps, 1 - eps), (eps, np.inf), (eps, 1 - eps))
-        if (psi and n and p) is not None:
+        if all_not_none(psi, n, p):
             self._update(psi, n, p)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.psi, self.n, self.p)
         return frozen
 
@@ -971,7 +971,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
         self._parametrization(psi, mu, alpha, p, n)
 
     def _parametrization(self, psi=None, mu=None, alpha=None, p=None, n=None):
-        if (mu or alpha) is not None and (p or n) is not None:
+        if any_not_none(mu, alpha) and any_not_none(p, n):
             raise ValueError(
                 "Incompatible parametrization. Either use psi, mu and alpha, or psi, p and n."
             )
@@ -980,17 +980,17 @@ class ZeroInflatedNegativeBinomial(Discrete):
         self.param_names = ("psi", "mu", "alpha")
         self.params_support = ((eps, 1 - eps), (eps, np.inf), (eps, np.inf))
 
-        if (p or n) is not None:
+        if any_not_none(p, n):
             self.p = p
             self.n = n
             self.param_names = ("psi", "p", "n")
-            if (p and n) is not None:
+            if all_not_none(p, n):
                 mu, alpha = self._from_p_n(p, n)
 
         self.mu = mu
         self.alpha = alpha
         self.params = (self.psi, self.mu, self.alpha)
-        if (mu and alpha) is not None:
+        if all_not_none(mu, alpha):
             self._update(psi, mu, alpha)
 
     def _from_p_n(self, p, n):
@@ -1005,7 +1005,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.psi, self.p, self.n)
         return frozen
 
@@ -1088,12 +1088,12 @@ class ZeroInflatedPoisson(Discrete):
         self.params = (self.psi, self.mu)
         self.param_names = ("psi", "mu")
         self.params_support = ((eps, 1 - eps), (eps, np.inf))
-        if (psi and mu) is not None:
+        if all_not_none(psi, mu):
             self._update(psi, mu)
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.psi, self.mu)
         return frozen
 

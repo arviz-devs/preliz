@@ -50,8 +50,18 @@ def garcia_approximation(mean, sigma):
     return alpha, beta
 
 
-def all_not_none(self):
-    return all(x is not None for x in self.params)
+def all_not_none(*args):
+    for arg in args:
+        if arg is None:
+            return False
+    return True
+
+
+def any_not_none(*args):
+    for arg in args:
+        if arg is not None:
+            return True
+    return False
 
 
 def valid_scalar_params(self, check_frozen=True):
