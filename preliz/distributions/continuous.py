@@ -1387,7 +1387,7 @@ class Kumaraswamy(Continuous):
 
     def _get_frozen(self):
         frozen = None
-        if all_not_none(self):
+        if all_not_none(self.params):
             frozen = self.dist(self.a, self.b)
         return frozen
 
@@ -1442,8 +1442,14 @@ class _Kumaraswamy(stats.rv_continuous):
             - np.log(self.a * self.b)
         )
 
-    def rvs(self, size=1000):  # pylint: disable=arguments-differ
-        q = np.random.rand(size)
+    def rvs(self, size=1, random_state=None):  # pylint: disable=arguments-differ
+        if random_state is None:
+            q = np.random.rand(size)
+        elif isinstance(random_state, int):
+            q = np.random.default_rng(random_state).random(size)
+        else:
+            q = rng.random(size)
+
         return self.ppf(q)
 
 
