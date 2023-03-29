@@ -261,7 +261,7 @@ class MvNormal(Continuous):
         self._parametrization(mu, cov, tau)
 
     def _parametrization(self, mu=None, cov=None, tau=None):
-        if cov is not None and tau is not None:
+        if all_not_none(cov, tau):
             raise ValueError("Incompatible parametrization. Either use mu and cov, or mu and tau.")
 
         names = ("mu", "cov")
