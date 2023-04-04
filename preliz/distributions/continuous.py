@@ -634,24 +634,42 @@ class Exponential(Continuous):
     Variance  :math:`\dfrac{1}{\lambda^2}`
     ========  ============================
 
+    Exponential distribution has 2 alternative parametrizations. In terms of lambda (rate)
+    or in terms of beta (scale).
+
+    The link between the two alternatives is given by:
+
+    .. math::
+
+        \beta = \dfrac{1}{\lambda}
+
     Parameters
     ----------
     lam : float
         Rate or inverse scale (lam > 0).
+    beta : float
+        Scale (beta > 0).
     """
 
-    def __init__(self, lam=None):
+    def __init__(self, lam=None, beta=None):
         super().__init__()
-        self.lam = lam
         self.dist = copy(stats.expon)
         self.support = (0, np.inf)
-        self._parametrization(lam)
+        self._parametrization(lam, beta)
 
-    def _parametrization(self, lam=None):
-        self.lam = lam
-        self.params = (self.lam,)
+    def _parametrization(self, lam=None, beta=None):
+        if all_not_none(lam, beta):
+            raise ValueError("Incompatible parametrization. Either use 'lam' or 'beta'.")
+
         self.param_names = ("lam",)
         self.params_support = ((eps, np.inf),)
+
+        if beta is not None:
+            lam = 1 / beta
+            self.param_names = ("beta",)
+
+        self.lam = lam
+        self.beta = beta
         if self.lam is not None:
             self._update(self.lam)
 
@@ -663,7 +681,13 @@ class Exponential(Continuous):
 
     def _update(self, lam):
         self.lam = np.float64(lam)
-        self.params = (self.lam,)
+        self.beta = 1 / lam
+
+        if self.param_names[0] == "lam":
+            self.params = (self.lam,)
+        elif self.param_names[0] == "beta":
+            self.params = (self.beta,)
+
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
