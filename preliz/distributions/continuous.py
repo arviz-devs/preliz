@@ -1448,7 +1448,7 @@ class _Kumaraswamy(stats.rv_continuous):
         elif isinstance(random_state, int):
             q = np.random.default_rng(random_state).random(size)
         else:
-            q = rng.random(size)
+            q = random_state.random(size)
 
         return self.ppf(q)
 
