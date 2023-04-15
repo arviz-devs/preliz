@@ -3,7 +3,7 @@ from preliz.internal.parser import inspect_source, parse_function_for_pred_slide
 from preliz.internal.plot_helper import get_sliders, plot_decorator
 
 
-def predictive_sliders(fmodel, samples=50, kind_plot="hist"):
+def predictive_sliders(fmodel, samples=50, kind_plot="kde"):
     """
     Create sliders and plot a set of samples returned by a function relating one or more
     PreliZ distributions.
@@ -18,7 +18,7 @@ def predictive_sliders(fmodel, samples=50, kind_plot="hist"):
     samples : int, optional
         The number of samples to draw from the prior predictive distribution (default is 50).
     kind_plot : str, optional
-        The type of plot to display. Defaults to "hist". Options are "hist" (histogram),
+        The type of plot to display. Defaults to "kde". Options are "hist" (histogram),
         "kde" (kernel density estimate), "ecdf" (empirical cumulative distribution function),
         or None (no plot).
     """
