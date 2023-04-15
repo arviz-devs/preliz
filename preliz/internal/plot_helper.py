@@ -356,7 +356,7 @@ def plot_decorator(func, iterations, kind_plot):
             )
         elif kind_plot == "kde":
             for result in results:
-                plt.plot(*_kde_linear(result, grid_len=100), "C0")
+                plt.plot(*_kde_linear(result, grid_len=100), "C0", alpha=alpha)
             plt.plot(*_kde_linear(np.concatenate(results), grid_len=100), "k--")
         elif kind_plot == "ecdf":
             plt.plot(
