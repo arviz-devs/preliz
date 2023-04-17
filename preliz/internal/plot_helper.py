@@ -6,6 +6,7 @@ import sys
 from IPython import get_ipython
 from ipywidgets import FloatSlider, IntSlider
 from arviz import plot_kde, plot_ecdf, hdi
+from arviz.stats.density_utils import _kde_linear
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
@@ -355,8 +356,8 @@ def plot_decorator(func, iterations, kind_plot):
             )
         elif kind_plot == "kde":
             for result in results:
-                plot_kde(result, plot_kwargs={"alpha": alpha})
-            plot_kde(np.concatenate(results), plot_kwargs={"color": "k", "ls": "--"})
+                plt.plot(*_kde_linear(result, grid_len=100), "C0", alpha=alpha)
+            plt.plot(*_kde_linear(np.concatenate(results), grid_len=100), "k--")
         elif kind_plot == "ecdf":
             plt.plot(
                 np.sort(results, axis=1).T,
