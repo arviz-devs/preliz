@@ -473,11 +473,16 @@ class DiscreteUniform(Discrete):
 class DiscreteWeibull(Discrete):
     R"""
     Discrete Weibull distribution.
+
     The pmf of this distribution is
+
     .. math::
+
         f(x \mid q, \beta) = q^{x^{\beta}} - q^{(x+1)^{\beta}}
+
     .. plot::
         :context: close-figs
+
         import arviz as az
         from preliz import DiscreteWeibull
         az.style.use('arviz-white')
@@ -485,11 +490,13 @@ class DiscreteWeibull(Discrete):
         betas = [0.3, 1.3, 3]
         for q, b in zip(qs, betas):
             DiscreteWeibull(q, b).plot_pdf(support=(0,10))
+
     ========  ===============================================
     Support   :math:`x \in \mathbb{N}_0`
     Mean      :math:`\mu = \sum_{x = 1}^{\infty} q^{x^{\beta}}`
     Variance  :math:`2 \sum_{x = 1}^{\infty} x q^{x^{\beta}} - \mu - \mu^2`
     ========  ===============================================
+
     Parameters
     ----------
     q: float
@@ -526,12 +533,9 @@ class DiscreteWeibull(Discrete):
         self.params = (self.q, self.beta)
         self._update_rv_frozen()
 
-    def _fit_moments(self, mean, sigma):
-        x = 1
-        beta = np.log(np.log(1 - mean) / np.log(1 - x * sigma / (2 * mean + mean**2)))
-        q = (1 - mean) ** (1 / x**beta)
-        params = q, beta
-        optimize_moments(self, mean, sigma, params)
+    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+        # not implemented yet
+        pass
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
@@ -555,7 +559,7 @@ class _DiscreteWeibull(stats.rv_continuous):
     def logpmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
         return np.log(self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta))
 
-    def ppf(self, p, *args, **kwds):  # pylint: disable=unused-argument
+    def ppf(self, p, *args, **kwds):  # pylint: disable=arguments-differ unused-argument
         return np.ceil(((np.log(1 - p) / np.log(self.q)) ** (1 / self.beta)) - 1)
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
