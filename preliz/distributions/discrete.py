@@ -470,6 +470,110 @@ class DiscreteUniform(Discrete):
         self._update(lower, upper)
 
 
+class DiscreteWeibull(Discrete):
+    R"""
+    Discrete Weibull distribution.
+    The pmf of this distribution is
+    .. math::
+        f(x \mid q, \beta) = q^{x^{\beta}} - q^{(x+1)^{\beta}}
+    .. plot::
+        :context: close-figs
+        import arviz as az
+        from preliz import DiscreteWeibull
+        az.style.use('arviz-white')
+        qs = [0.1, 0.9, 0.9]
+        betas = [0.3, 1.3, 3]
+        for q, b in zip(qs, betas):
+            DiscreteWeibull(q, b).plot_pdf(support=(0,10))
+    ========  ===============================================
+    Support   :math:`x \in \mathbb{N}_0`
+    Mean      :math:`\mu = \sum_{x = 1}^{\infty} q^{x^{\beta}}`
+    Variance  :math:`2 \sum_{x = 1}^{\infty} x q^{x^{\beta}} - \mu - \mu^2`
+    ========  ===============================================
+    Parameters
+    ----------
+    q: float
+        Probability of success (0 < q < 1)..
+    beta: float
+        Shape parameter (beta > 0).
+    """
+
+    def __init__(self, q=None, beta=None):
+        super().__init__()
+        self.dist = _DiscreteWeibull
+        self.support = (0, np.inf)
+        self._parametrization(q, beta)
+
+    def _parametrization(self, q=None, beta=None):
+        self.q = q
+        self.beta = beta
+        self.params = (self.q, self.beta)
+        self.param_names = ("q", "beta")
+        self.params_support = ((eps, 1), (eps, np.inf))
+        if all_not_none(q, beta):
+            self._update(q, beta)
+
+    def _get_frozen(self):
+        frozen = None
+        if all_not_none(self.params):
+            frozen = self.dist(self.q, self.beta)
+        return frozen
+
+    def _update(self, q, beta):
+        self.q = np.float64(q)
+        self.beta = np.float64(beta)
+        self.support = (0, np.inf)
+        self.params = (self.q, self.beta)
+        self._update_rv_frozen()
+
+    def _fit_moments(self, mean, sigma):
+        x = 1
+        beta = np.log(np.log(1 - mean) / np.log(1 - x * sigma / (2 * mean + mean**2)))
+        q = (1 - mean) ** (1 / x**beta)
+        params = q, beta
+        optimize_moments(self, mean, sigma, params)
+
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
+
+
+class _DiscreteWeibull(stats.rv_continuous):
+    def __init__(self, q=None, beta=None):
+        super().__init__()
+        self.q = q
+        self.beta = beta
+
+    def support(self, *args, **kwds):  # pylint: disable=unused-argument
+        return (0, np.inf)
+
+    def cdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
+        return 1 - self.q ** ((x + 1) ** self.beta)
+
+    def pmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
+        return self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta)
+
+    def logpmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
+        return np.log(self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta))
+
+    def ppf(self, p, *args, **kwds):  # pylint: disable=unused-argument
+        return np.ceil(((np.log(1 - p) / np.log(self.q)) ** (1 / self.beta)) - 1)
+
+    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
+        mean = np.sum(self.q ** (np.arange(1, 1000) ** self.beta))
+        var = (
+            2 * np.sum(np.arange(1, 1000) * self.q ** (np.arange(1, 1000) ** self.beta))
+            - mean
+            - mean**2
+        )
+        return mean, var, None, None
+
+    def entropy(self):  # pylint: disable=arguments-differ
+        return np.log(self.q) / self.beta
+
+    def rvs(self, size=1, random_state=None):  # pylint: disable=arguments-differ
+        return self.ppf(np.random.uniform(size=size), random_state=random_state)
+
+
 class Geometric(Discrete):
     R"""
     Geometric distribution.
