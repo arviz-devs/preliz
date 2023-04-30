@@ -100,9 +100,12 @@ def eti(distribution, mass):
     return np.quantile(distribution, (lower, mass + lower))
 
 
-def plot_pdfpmf(dist, moments, pointinterval, interval, levels, support, legend, figsize, ax):
+def plot_pdfpmf(
+    dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
+):
     ax = get_ax(ax, figsize)
-    color = next(ax._get_lines.prop_cycler)["color"]
+    if color is None:
+        color = next(ax._get_lines.prop_cycler)["color"]
     if legend is not None:
         label = repr_to_matplotlib(dist)
 
@@ -119,7 +122,7 @@ def plot_pdfpmf(dist, moments, pointinterval, interval, levels, support, legend,
     if dist.kind == "continuous":
         density = dist.pdf(x)
         ax.axhline(0, color="0.8", ls="--", zorder=0)
-        ax.plot(x, density, label=label, color=color)
+        ax.plot(x, density, label=label, color=color, alpha=alpha)
         ax.set_yticks([])
     else:
         mass = dist.pdf(x)
@@ -134,8 +137,8 @@ def plot_pdfpmf(dist, moments, pointinterval, interval, levels, support, legend,
         mass_c = np.clip(interp(x_c), np.min(mass), np.max(mass))
 
         ax.axhline(0, color="0.8", ls="--", zorder=0)
-        ax.plot(x_c, mass_c, ls="dotted", color=color)
-        ax.plot(x, mass, "o", label=label, color=color)
+        ax.plot(x_c, mass_c, ls="dotted", color=color, alpha=alpha)
+        ax.plot(x, mass, "o", label=label, color=color, alpha=alpha)
 
     if pointinterval:
         plot_pointinterval(dist, interval, levels, ax=ax)
@@ -146,9 +149,12 @@ def plot_pdfpmf(dist, moments, pointinterval, interval, levels, support, legend,
     return ax
 
 
-def plot_cdf(dist, moments, pointinterval, interval, levels, support, legend, figsize, ax):
+def plot_cdf(
+    dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
+):
     ax = get_ax(ax, figsize)
-    color = next(ax._get_lines.prop_cycler)["color"]
+    if color is None:
+        color = next(ax._get_lines.prop_cycler)["color"]
     if legend is not None:
         label = repr_to_matplotlib(dist)
 
@@ -171,10 +177,10 @@ def plot_cdf(dist, moments, pointinterval, interval, levels, support, legend, fi
         cdf = dist.cdf(x)
         ax.set_xlim(lower - 0.1, upper + 0.1)
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.step(x, cdf, where="post", label=label, color=color)
+        ax.step(x, cdf, where="post", label=label, color=color, alpha=alpha)
     else:
         cdf = dist.cdf(x)
-        ax.plot(x, cdf, label=label, color=color)
+        ax.plot(x, cdf, label=label, color=color, alpha=alpha)
 
     if pointinterval:
         plot_pointinterval(dist, interval, levels, ax=ax)
@@ -184,9 +190,10 @@ def plot_cdf(dist, moments, pointinterval, interval, levels, support, legend, fi
     return ax
 
 
-def plot_ppf(dist, moments, pointinterval, interval, levels, legend, figsize, ax):
+def plot_ppf(dist, moments, pointinterval, interval, levels, legend, color, alpha, figsize, ax):
     ax = get_ax(ax, figsize)
-    color = next(ax._get_lines.prop_cycler)["color"]
+    if color is None:
+        color = next(ax._get_lines.prop_cycler)["color"]
 
     if legend is not None:
         label = repr_to_matplotlib(dist)
@@ -201,7 +208,7 @@ def plot_ppf(dist, moments, pointinterval, interval, levels, legend, figsize, ax
         label = None
 
     x = np.linspace(0, 1, 1000)
-    ax.plot(x, dist.ppf(x), label=label, color=color)
+    ax.plot(x, dist.ppf(x), label=label, color=color, alpha=alpha)
     if dist.kind == "discrete":
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 

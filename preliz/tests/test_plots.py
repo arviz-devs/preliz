@@ -24,6 +24,7 @@ def two_dist():
         {"pointinterval": True, "interval": "quantiles"},
         {"pointinterval": True, "interval": "quantiles", "levels": [0.1, 0.5, 0.9]},
         {"support": "restricted"},
+        {"color": "C1", "alpha": 0.1},
         {"figsize": (4, 4)},
         {"ax": plt.subplots()[1]},
     ],
