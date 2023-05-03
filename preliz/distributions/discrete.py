@@ -561,7 +561,7 @@ class _DiscreteWeibull(stats.rv_continuous):
 
     def ppf(self, p, *args, **kwds):  # pylint: disable=arguments-differ unused-argument
         p = np.array(p)
-        p[p==1] = 0.999999
+        p[p == 1] = 0.999999
         return np.ceil(((np.log(1 - p) / np.log(self.q)) ** (1 / self.beta)) - 1)
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
