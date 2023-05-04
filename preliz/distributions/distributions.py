@@ -225,6 +225,8 @@ class Distribution:
         levels=None,
         support="full",
         legend="legend",
+        color=None,
+        alpha=1,
         figsize=None,
         ax=None,
     ):
@@ -253,6 +255,11 @@ class Distribution:
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
+        color : str
+            Valid matplotlib color. Defaults to None, colors will be selected from the active
+            color cycle.
+        alpha : float
+            Transparency of the line. Defaults to 1 (no transparency).
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
@@ -260,7 +267,17 @@ class Distribution:
 
         if valid_scalar_params(self):
             return plot_pdfpmf(
-                self, moments, pointinterval, interval, levels, support, legend, figsize, ax
+                self,
+                moments,
+                pointinterval,
+                interval,
+                levels,
+                support,
+                legend,
+                color,
+                alpha,
+                figsize,
+                ax,
             )
         else:
             return None
@@ -273,6 +290,8 @@ class Distribution:
         levels=None,
         support="full",
         legend="legend",
+        color=None,
+        alpha=1,
         figsize=None,
         ax=None,
     ):
@@ -298,6 +317,11 @@ class Distribution:
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        color : str
+            Valid matplotlib color. Defaults to None, colors will be selected from the active
+            color cycle.
+        alpha : float
+            Transparency of the line. Defaults to 1 (no transparency).
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
@@ -307,7 +331,17 @@ class Distribution:
         """
         if valid_scalar_params(self):
             return plot_cdf(
-                self, moments, pointinterval, interval, levels, support, legend, figsize, ax
+                self,
+                moments,
+                pointinterval,
+                interval,
+                levels,
+                support,
+                legend,
+                color,
+                alpha,
+                figsize,
+                ax,
             )
         else:
             return None
@@ -319,6 +353,8 @@ class Distribution:
         interval="hdi",
         levels=None,
         legend="legend",
+        color=None,
+        alpha=1,
         figsize=None,
         ax=None,
     ):
@@ -344,12 +380,19 @@ class Distribution:
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
+        color : str
+            Valid matplotlib color. Defaults to None, colors will be selected from the active
+            color cycle.
+        alpha : float
+            Transparency of the line. Defaults to 1 (no transparency).
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
         """
         if valid_scalar_params(self):
-            return plot_ppf(self, moments, pointinterval, interval, levels, legend, figsize, ax)
+            return plot_ppf(
+                self, moments, pointinterval, interval, levels, legend, color, alpha, figsize, ax
+            )
         else:
             return None
 
