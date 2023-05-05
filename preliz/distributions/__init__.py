@@ -40,6 +40,7 @@ all_discrete = [
     Binomial,
     Categorical,
     DiscreteUniform,
+    DiscreteWeibull,
     Geometric,
     HyperGeometric,
     NegativeBinomial,

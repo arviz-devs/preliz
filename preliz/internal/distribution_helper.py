@@ -128,6 +128,7 @@ init_vals = {
     "Binomial": {"n": 5, "p": 0.5},
     "Categorical": {"p": [0.5, 0.1, 0.4]},
     "DiscreteUniform": {"lower": -2.0, "upper": 2.0},
+    "DiscreteWeibull": {"q": 0.9, "beta": 1.3},
     "Geometric": {"p": 0.5},
     "HyperGeometric": {"N": 50, "k": 10, "n": 20},
     "NegativeBinomial": {"mu": 5.0, "alpha": 2.0},
