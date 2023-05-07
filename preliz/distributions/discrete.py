@@ -500,7 +500,7 @@ class DiscreteWeibull(Discrete):
     Parameters
     ----------
     q: float
-        Probability of success (0 < q < 1)..
+        Shape parameter (0 < q < 1).
     beta: float
         Shape parameter (beta > 0).
     """
@@ -533,9 +533,11 @@ class DiscreteWeibull(Discrete):
         self.params = (self.q, self.beta)
         self._update_rv_frozen()
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
-        # not implemented yet
-        pass
+    def _fit_moments(self, mean, sigma):
+        q = np.exp(-mean)
+        beta = 1 / np.log(1 / (1 - q))
+        params = (q, beta)
+        optimize_moments(self, mean, sigma, params)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)

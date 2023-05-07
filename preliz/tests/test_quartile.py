@@ -36,6 +36,7 @@ from preliz.distributions import (
     # Bernoulli, quartile is not useful for Bernoulli distribution as we only have two states
     BetaBinomial,
     # DiscreteUniform,
+    DiscreteWeibull,
     Geometric,
     HyperGeometric,
     NegativeBinomial,
@@ -90,6 +91,7 @@ from preliz.distributions import (
         (Weibull(), 0.5, 1, 2, (1.109, 1.456)),
         (BetaBinomial(), 2, 5, 8, (1.59, 4.49, 23)),
         # (DiscreteUniform(), -1, 0, 1, (-5, 5)), # the mass is 0.27 instead of 0.5
+        (DiscreteWeibull(), 1, 1.5, 2, (0.9, 3.0)),
         (Geometric(), 2, 4, 6, (0.17)),
         (HyperGeometric(), 2, 3, 4, (75, 15, 15)),
         (NegativeBinomial(), 3, 5, 10, (7.283, 2.167)),
