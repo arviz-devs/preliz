@@ -102,10 +102,12 @@ def optimize_moments(dist, mean, sigma, params=None):
 
     init_vals = np.array(dist.params)[none_idx]
 
-    if dist == "HyperGeometric":
-        opt = minimize(func, x0=init_vals, args=(dist, mean, sigma), method="Powell")
-    else:
+    if dist.__class__.__name__ in ["HyperGeometric", "BetaBinomial"]:
         opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
+    else:
+        bounds = np.array(dist.params_support)[none_idx]
+        bounds = list(zip(*bounds))
+        opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma), bounds=bounds)
 
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
