@@ -567,13 +567,10 @@ class _DiscreteWeibull(stats.rv_continuous):
         return np.ceil(((np.log(1 - p) / np.log(self.q)) ** (1 / self.beta)) - 1)
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
-        mean = np.sum(self.q ** (np.arange(1, 1000) ** self.beta))
-        var = (
-            2 * np.sum(np.arange(1, 1000) * self.q ** (np.arange(1, 1000) ** self.beta))
-            - mean
-            - mean**2
-        )
-        return mean, var, None, None
+        x_range = np.arange(1, self.ppf(0.9999) + 1, dtype=int)
+        mean = np.sum(self.q ** (x_range**self.beta))
+        var = 2 * np.sum(x_range * self.q ** (x_range**self.beta)) - mean - mean**2
+        return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
         return np.log(self.q) / self.beta
