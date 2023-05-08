@@ -354,7 +354,13 @@ class Distribution:
             return None
 
     def plot_interactive(
-        self, kind="pdf", fixed_lim="both", pointinterval=True, interval="hdi", levels=None
+        self,
+        kind="pdf",
+        fixed_lim="both",
+        pointinterval=True,
+        interval="hdi",
+        levels=None,
+        figsize=None,
     ):
         """
         Interactive exploration of distributions parameters
@@ -379,6 +385,8 @@ class Distribution:
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
             (in this last case nothing will be plotted).
+        figsize : tuple
+            Size of the figure
         """
         check_inside_notebook()
 
@@ -425,15 +433,27 @@ class Distribution:
             self.__init__(**args)
             if kind == "pdf":
                 ax = self.plot_pdf(
-                    legend=False, pointinterval=pointinterval, interval=interval, levels=levels
+                    legend=False,
+                    pointinterval=pointinterval,
+                    interval=interval,
+                    levels=levels,
+                    figsize=figsize,
                 )
             elif kind == "cdf":
                 ax = self.plot_cdf(
-                    legend=False, pointinterval=pointinterval, interval=interval, levels=levels
+                    legend=False,
+                    pointinterval=pointinterval,
+                    interval=interval,
+                    levels=levels,
+                    figsize=figsize,
                 )
             elif kind == "ppf":
                 ax = self.plot_ppf(
-                    legend=False, pointinterval=pointinterval, interval=interval, levels=levels
+                    legend=False,
+                    pointinterval=pointinterval,
+                    interval=interval,
+                    levels=levels,
+                    figsize=figsize,
                 )
             if fixed_lim != "auto" and kind != "ppf":
                 ax.set_xlim(*xlim)
