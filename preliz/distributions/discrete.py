@@ -534,10 +534,7 @@ class DiscreteWeibull(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        q = np.exp(-mean)
-        beta = 1 / np.log(1 / (1 - q))
-        params = (q, beta)
-        optimize_moments(self, mean, sigma, params)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
