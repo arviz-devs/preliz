@@ -2,6 +2,7 @@
 Parent classes for all families.
 """
 # pylint: disable=no-member
+import warnings
 from collections import namedtuple
 
 from ipywidgets import interactive
@@ -399,11 +400,12 @@ class Distribution:
     def plot_interactive(
         self,
         kind="pdf",
-        fixed_lim="both",
+        xy_lim="both",
         pointinterval=True,
         interval="hdi",
         levels=None,
         figsize=None,
+        fixed_lim=None,
     ):
         """
         Interactive exploration of distributions parameters
@@ -412,7 +414,7 @@ class Distribution:
         ----------
         kind : str:
             Type of plot. Available options are `pdf`, `cdf` and `ppf`.
-        fixed_lim : str or tuple
+        xy_lim : str or tuple
             Set the limits of the x-axis and/or y-axis.
             Defaults to `"both"`, the limits of both axis are fixed.
             Use `"auto"` for automatic rescaling of x-axis and y-axis.
@@ -440,7 +442,14 @@ class Distribution:
 
         self.__init__(**args)
 
-        if fixed_lim == "both":
+        if fixed_lim is not None:
+            warnings.warn(
+                "The 'fixed_lim' parameter will be deprecated. Use 'xy_lim' instead.",
+                FutureWarning,
+            )
+            xy_lim = fixed_lim
+
+        if xy_lim == "both":
             xlim = self._finite_endpoints("full")
             xvals = self.xvals("restricted")
             if kind == "pdf":
@@ -449,9 +458,9 @@ class Distribution:
             elif kind == "ppf":
                 max_ppf = self.ppf(0.999)
                 ylim = (-max_ppf * 0.075, max_ppf * 1.5)
-        elif isinstance(fixed_lim, tuple):
-            xlim = fixed_lim[:2]
-            ylim = fixed_lim[2:]
+        elif isinstance(xy_lim, tuple):
+            xlim = xy_lim[:2]
+            ylim = xy_lim[2:]
 
         sliders = {}
         if self.__class__.__name__ == "Categorical":
@@ -498,9 +507,9 @@ class Distribution:
                     levels=levels,
                     figsize=figsize,
                 )
-            if fixed_lim != "auto" and kind != "ppf":
+            if xy_lim != "auto" and kind != "ppf":
                 ax.set_xlim(*xlim)
-            if fixed_lim != "auto" and kind != "cdf":
+            if xy_lim != "auto" and kind != "cdf":
                 ax.set_ylim(*ylim)
 
         return interactive(plot, **sliders)
