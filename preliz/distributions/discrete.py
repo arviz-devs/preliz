@@ -550,16 +550,18 @@ class _DiscreteWeibull(stats.rv_continuous):
         return (0, np.inf)
 
     def cdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
+        x = np.asarray(x)
         return 1 - self.q ** ((x + 1) ** self.beta)
 
     def pmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
+        x = np.asarray(x)
         return self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta)
 
     def logpmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
         return np.log(self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta))
 
     def ppf(self, p, *args, **kwds):  # pylint: disable=arguments-differ unused-argument
-        p = np.array(p)
+        p = np.asarray(p)
         p[p == 1] = 0.999999
         return np.ceil(((np.log(1 - p) / np.log(self.q)) ** (1 / self.beta)) - 1)
 
