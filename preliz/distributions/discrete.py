@@ -572,7 +572,7 @@ class _DiscreteWeibull(stats.rv_continuous):
         return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
-        return np.log(self.q) / self.beta
+        return self.q / np.log(self.beta)
 
     def rvs(self, size=1, random_state=None):  # pylint: disable=arguments-differ
         return self.ppf(np.random.uniform(size=size), random_state=random_state)
