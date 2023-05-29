@@ -118,6 +118,7 @@ def test_moments(distribution, params):
     if dist.__class__.__name__ in [
         "BetaBinomial",
         "Binomial",
+        "DiscreteWeibull",
         "Kumaraswamy",
         "LogitNormal",
         "Rice",

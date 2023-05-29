@@ -558,15 +558,15 @@ class _DiscreteWeibull(stats.rv_continuous):
         return self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta)
 
     def logpmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
-        return np.log(self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta))
-
+        return np.log(self.pmf(x, *args, **kwds))
+    
     def ppf(self, p, *args, **kwds):  # pylint: disable=arguments-differ unused-argument
         p = np.asarray(p)
         p[p == 1] = 0.999999
         return np.ceil(((np.log(1 - p) / np.log(self.q)) ** (1 / self.beta)) - 1)
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
-        x_range = np.arange(1, self.ppf(0.9999) + 1, dtype=int)
+        x_range =np.arange(1, np.nan_to_num(self._ppf(0.9999), nan=1)+1, dtype=int)
         mean = np.sum(self.q ** (x_range**self.beta))
         var = 2 * np.sum(x_range * self.q ** (x_range**self.beta)) - mean - mean**2
         return (mean, var, np.nan, np.nan)
