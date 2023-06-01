@@ -500,7 +500,7 @@ class DiscreteWeibull(Discrete):
     Parameters
     ----------
     q: float
-        Probability of success (0 < q < 1)..
+        Shape parameter (0 < q < 1).
     beta: float
         Shape parameter (beta > 0).
     """
@@ -533,9 +533,8 @@ class DiscreteWeibull(Discrete):
         self.params = (self.q, self.beta)
         self._update_rv_frozen()
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
-        # not implemented yet
-        pass
+    def _fit_moments(self, mean, sigma):
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
@@ -551,30 +550,29 @@ class _DiscreteWeibull(stats.rv_continuous):
         return (0, np.inf)
 
     def cdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
+        x = np.asarray(x)
         return 1 - self.q ** ((x + 1) ** self.beta)
 
     def pmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
+        x = np.asarray(x)
         return self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta)
 
     def logpmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
-        return np.log(self.q ** (x**self.beta) - self.q ** ((x + 1) ** self.beta))
-
+        return np.log(self.pmf(x, *args, **kwds))
+    
     def ppf(self, p, *args, **kwds):  # pylint: disable=arguments-differ unused-argument
-        p = np.array(p)
+        p = np.asarray(p)
         p[p == 1] = 0.999999
         return np.ceil(((np.log(1 - p) / np.log(self.q)) ** (1 / self.beta)) - 1)
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
-        mean = np.sum(self.q ** (np.arange(1, 1000) ** self.beta))
-        var = (
-            2 * np.sum(np.arange(1, 1000) * self.q ** (np.arange(1, 1000) ** self.beta))
-            - mean
-            - mean**2
-        )
-        return mean, var, None, None
+        x_range =np.arange(1, np.nan_to_num(self._ppf(0.9999), nan=1)+1, dtype=int)
+        mean = np.sum(self.q ** (x_range**self.beta))
+        var = 2 * np.sum(x_range * self.q ** (x_range**self.beta)) - mean - mean**2
+        return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
-        return np.log(self.q) / self.beta
+        return self.q / np.log(self.beta)
 
     def rvs(self, size=1, random_state=None):  # pylint: disable=arguments-differ
         return self.ppf(np.random.uniform(size=size), random_state=random_state)

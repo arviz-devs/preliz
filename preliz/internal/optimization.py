@@ -107,7 +107,10 @@ def optimize_moments(dist, mean, sigma, params=None):
     else:
         bounds = np.array(dist.params_support)[none_idx]
         bounds = list(zip(*bounds))
-        opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma), bounds=bounds)
+        if dist.__class__.__name__ in ["Rice", "DiscreteWeibull"]:
+            opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma), bounds=bounds, loss="soft_l1")
+        else:
+            opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma), bounds=bounds)
 
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
