@@ -151,7 +151,7 @@ def optimize_moments_rice(mean, std_dev):
         def func(theta):
             return np.abs(fpf(theta) - theta)
 
-        theta = minimize(func, x0=1, bounds=[(0, None)]).x
+        theta = minimize(func, x0=fpf(1), bounds=[(0, None)]).x
         xi_theta = xi(theta)
         sigma = std_dev / xi_theta**0.5
         nu = (mean**2 + (xi_theta - 2) * sigma**2) ** 0.5
