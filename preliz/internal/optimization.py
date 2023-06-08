@@ -65,7 +65,6 @@ def optimize_quartile(dist, x_vals, none_idx, fixed):
     init_vals = np.array(dist.params)[none_idx]
     bounds = np.array(dist.params_support)[none_idx]
     bounds = list(zip(*bounds))
-
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals), bounds=bounds)
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
@@ -131,7 +130,7 @@ def optimize_moments_rice(mean, std_dev):
     ratio = mean / std_dev
 
     if ratio < 1.913:  # Rayleigh distribution
-        nu = 0
+        nu = np.finfo(float).eps
         sigma = 0.655 * std_dev
     else:
 
