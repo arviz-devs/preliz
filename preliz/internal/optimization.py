@@ -4,6 +4,7 @@ Optimization routines and utilities
 from sys import modules
 import numpy as np
 from scipy.optimize import minimize, least_squares
+from scipy.special import i0, i1  # pylint: disable=no-name-in-module
 from .distribution_helper import init_vals as default_vals
 
 
@@ -64,7 +65,6 @@ def optimize_quartile(dist, x_vals, none_idx, fixed):
     init_vals = np.array(dist.params)[none_idx]
     bounds = np.array(dist.params_support)[none_idx]
     bounds = list(zip(*bounds))
-
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals), bounds=bounds)
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
@@ -117,6 +117,45 @@ def optimize_moments(dist, mean, sigma, params=None):
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
     return opt
+
+
+def optimize_moments_rice(mean, std_dev):
+    """
+    Moment matching for the Rice distribution
+
+    This function uses the Koay inversion technique, see: https://doi.org/10.1016/j.jmr.2006.01.016
+    and https://en.wikipedia.org/wiki/Rice_distribution
+    """
+
+    ratio = mean / std_dev
+
+    if ratio < 1.913:  # Rayleigh distribution
+        nu = np.finfo(float).eps
+        sigma = 0.655 * std_dev
+    else:
+
+        def xi(theta):
+            return (
+                2
+                + theta**2
+                - np.pi
+                / 8
+                * np.exp(-(theta**2) / 2)
+                * ((2 + theta**2) * i0(theta**2 / 4) + theta**2 * i1(theta**2 / 4)) ** 2
+            )
+
+        def fpf(theta):
+            return (xi(theta) * (1 + ratio**2) - 2) ** 0.5
+
+        def func(theta):
+            return np.abs(fpf(theta) - theta)
+
+        theta = minimize(func, x0=fpf(1), bounds=[(0, None)]).x
+        xi_theta = xi(theta)
+        sigma = std_dev / xi_theta**0.5
+        nu = (mean**2 + (xi_theta - 2) * sigma**2) ** 0.5
+
+    return nu, sigma
 
 
 def optimize_ml(dist, sample):

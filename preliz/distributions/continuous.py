@@ -13,7 +13,7 @@ from scipy.special import gamma as gammaf
 from scipy.special import beta as betaf  # pylint: disable=no-name-in-module
 from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
-from ..internal.optimization import optimize_ml, optimize_moments
+from ..internal.optimization import optimize_ml, optimize_moments, optimize_moments_rice
 from ..internal.distribution_helper import garcia_approximation, all_not_none, any_not_none
 from .distributions import Continuous
 
@@ -2210,8 +2210,8 @@ class Rice(Continuous):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        params = mean, sigma
-        optimize_moments(self, mean, sigma, params)
+        nu, sigma = optimize_moments_rice(mean, sigma)
+        self._update(nu, sigma)
 
     def _fit_mle(self, sample, **kwargs):
         b, _, sigma = self.dist.fit(sample, **kwargs)
