@@ -1230,7 +1230,7 @@ class ZeroInflatedPoisson(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        psi = mean**2 / (mean**2 - mean + sigma**2)
+        psi = min(0.99, max(0.01, mean**2 / (mean**2 - mean + sigma**2)))
         mean = mean / psi
         self._update(psi, mean)
 
