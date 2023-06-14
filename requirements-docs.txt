@@ -3,3 +3,4 @@ myst-nb
 sphinx>=4
 sphinx_thebe
 sphinx-copybutton
+sphinx_tabs
