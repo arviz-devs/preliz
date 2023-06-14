@@ -36,11 +36,24 @@ PreliZ is tested on Python 3.8+.
 Installation
 ============
 
-For the latest release you can do:
+Two dependency bundles are available for the latest release:
 
-.. code-block:: bash
+* ``full``: includes dependencies for all features (interactive and non-interactive)
+* ``non-interactive``: includes dependencies for non-interactive features only.
 
-  pip install preliz
+You can install them with:
+
+.. tabs::
+
+  .. tab:: Full
+    .. code-block:: bash
+
+      pip install "preliz[full]"
+
+  .. tab:: Non-interactive
+    .. code-block:: bash
+
+      pip install "preliz[non-interactive]"
 
 The latest development version can be installed from the main branch using pip:
 

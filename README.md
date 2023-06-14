@@ -19,11 +19,28 @@ The PreliZ documentation can be found in the [official docs](https://preliz.read
 
 ### Last release
 PreliZ is available for installation from [PyPI](https://pypi.org/project/preliz/).
-The latest  version can be installed using pip:
+There are two dependency bundles for the latest version:
 
+* `full`: includes dependencies for all features (interactive and non-interactive)
+* `non-interactive`: includes dependencies for non-interactive features only
+
+And both can be installed using pip:
+
+::::{tab-set}
+:::{tab-item} Full
+
+```bash
+pip install "preliz[full]"
 ```
-pip install preliz
+
+:::
+:::{tab-item} Non-interactive
+
+```bash
+pip install "preliz[non-interactive]"
 ```
+:::
+::::
 
 ### Development
 The latest development version can be installed from the main branch using pip:

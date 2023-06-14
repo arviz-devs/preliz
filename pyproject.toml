@@ -39,7 +39,23 @@ name = "preliz"
 source = "https://github.com/arviz-devs/preliz"
 tracker = "https://github.com/arviz-devs/preliz/issues"
 
-
+[project.optional-dependencies]
+full = [
+  "arviz",
+  "numpy>=1.22",
+  "scipy>=1.9.1",
+  "matplotlib>=3.5",
+  "nbclient<0.6,>=0.2",
+  "ipywidgets",
+  "ipympl",
+  "jupyterlab",
+  "notebook",
+]
+non-interactive = [
+  "arviz",
+  "numpy>=1.22",
+  "scipy>=1.9.1",
+]
 
 [tool.black]
 line-length = 100
