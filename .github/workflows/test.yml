@@ -32,7 +32,7 @@ jobs:
         run: |
           conda install pip
           pip install -r requirements-dev.txt
-          pip install .
+          pip install ".[full]"
           python --version
           conda list
           pip freeze
