@@ -36,11 +36,25 @@ PreliZ is tested on Python 3.8+.
 Installation
 ============
 
-For the latest release you can do:
+For the latest release (base set of dependencies) you can do:
 
 .. code-block:: bash
 
   pip install preliz
+
+To make use of the interactive features, you can install the optional dependencies:
+
+.. tabs::
+
+  .. tab:: JupyterLab
+    .. code-block:: bash
+
+      pip install "preliz[full,lab]"
+
+  .. tab:: Jupyter Notebook
+    .. code-block:: bash
+
+      pip install "preliz[full,notebook]"
 
 The latest development version can be installed from the main branch using pip:
 

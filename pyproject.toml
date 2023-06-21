@@ -24,12 +24,9 @@ dynamic = ["version"]
 description = "The place for all your prior elicitation needs."
 dependencies = [
   "arviz",
+  "matplotlib>=3.5",
   "numpy>=1.22",
   "scipy>=1.9.1",
-  "matplotlib>=3.5",
-  "nbclient<0.6,>=0.2",
-  "ipywidgets",
-  "ipympl",
 ]
 
 [tool.flit.module]
@@ -39,7 +36,14 @@ name = "preliz"
 source = "https://github.com/arviz-devs/preliz"
 tracker = "https://github.com/arviz-devs/preliz/issues"
 
-
+[project.optional-dependencies]
+full = [
+  "nbclient<0.6,>=0.2",
+  "ipywidgets",
+  "ipympl",
+]
+lab = ["jupyterlab"]
+notebook = ["notebook"]
 
 [tool.black]
 line-length = 100

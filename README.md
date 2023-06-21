@@ -19,10 +19,23 @@ The PreliZ documentation can be found in the [official docs](https://preliz.read
 
 ### Last release
 PreliZ is available for installation from [PyPI](https://pypi.org/project/preliz/).
-The latest  version can be installed using pip:
+The latest version (base set of dependencies) can be installed using pip:
 
 ```
 pip install preliz
+```
+To make use of the interactive features, you can install the optional dependencies:
+
+* For JupyterLab:
+
+```
+pip install "preliz[full,lab]"
+```
+
+* For Jupyter Notebook:
+
+```
+pip install "preliz[full,notebook]"
 ```
 
 ### Development
