@@ -73,7 +73,7 @@ We thank our fiscal sponsor NumFOCUS, a nonprofit 501(c)(3) public charity, for 
 
 This research was supported by:
 
-* the Academy of Finland Flagship Programme "Finnish Center for Artificial Intelligence" (FCAI)
+* the Research Council of Finland Flagship Programme "Finnish Center for Artificial Intelligence" (FCAI)
 * the National Agency of Scientific and Technological Promotion (ANPCyT), Grant PICT-02212 (O.A.M.)
 * the National Scientific and Technical Research Council (CONICET), Grant PIP-0087 (O.A.M).
 
