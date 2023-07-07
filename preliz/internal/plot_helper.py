@@ -268,18 +268,11 @@ def get_moments(dist, moments):
 
 
 def get_slider(name, value, lower, upper, continuous_update=True):
-    if np.isfinite(lower):
-        min_v = lower
-    else:
-        min_v = value - 10
-    if np.isfinite(upper):
-        max_v = upper
-    else:
-        max_v = value + 10
+
+    min_v, max_v, step = generate_range(value, lower, upper)
 
     if isinstance(value, float):
         slider_type = FloatSlider
-        step = (max_v - min_v) / 100
     else:
         slider_type = IntSlider
         step = 1
@@ -295,6 +288,24 @@ def get_slider(name, value, lower, upper, continuous_update=True):
     )
 
     return slider
+
+
+def generate_range(value, lower, upper):
+    if value == 0:
+        return -10, 10, 0.1
+
+    power = np.floor(np.log10(abs(value)))
+    order_of_magnitude = 10**power
+    decimal_places = int(-power)
+    std = order_of_magnitude * 10 - order_of_magnitude / 10
+    min_v = round(value - std, decimal_places)
+    max_v = round(value + std, decimal_places)
+
+    min_v = lower if np.isfinite(lower) else min_v
+    max_v = upper if np.isfinite(upper) else max_v
+
+    step = order_of_magnitude / 10
+    return min_v, max_v, step
 
 
 def get_sliders(signature, model):
