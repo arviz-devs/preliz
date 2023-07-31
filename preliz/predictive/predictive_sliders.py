@@ -1,4 +1,7 @@
-from ipywidgets import interactive
+try:
+    from ipywidgets import interactive
+except ImportError:
+    pass
 from preliz.internal.parser import inspect_source, parse_function_for_pred_sliders
 from preliz.internal.plot_helper import get_sliders, plot_decorator
 

@@ -5,7 +5,10 @@ Parent classes for all families.
 import warnings
 from collections import namedtuple
 
-from ipywidgets import interactive
+try:
+    from ipywidgets import interactive
+except ImportError:
+    pass
 import numpy as np
 
 from ..internal.plot_helper import (

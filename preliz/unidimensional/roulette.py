@@ -5,8 +5,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patches
 
-
-import ipywidgets as widgets
+try:
+    import ipywidgets as widgets
+except ImportError:
+    pass
 from ..internal.optimization import fit_to_ecdf, get_distributions
 from ..internal.plot_helper import check_inside_notebook
 

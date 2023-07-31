@@ -4,7 +4,10 @@ import logging
 from random import shuffle
 from sys import modules
 
-import ipywidgets as widgets
+try:
+    import ipywidgets as widgets
+except ImportError:
+    pass
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import KDTree

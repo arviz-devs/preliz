@@ -4,7 +4,11 @@ import traceback
 import sys
 
 from IPython import get_ipython
-from ipywidgets import FloatSlider, IntSlider
+
+try:
+    from ipywidgets import FloatSlider, IntSlider
+except ImportError:
+    pass
 from arviz import plot_kde, plot_ecdf, hdi
 from arviz.stats.density_utils import _kde_linear
 import numpy as np
