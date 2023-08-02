@@ -443,7 +443,7 @@ class Distribution:
         else:
             args = init_vals[self.__class__.__name__]
 
-        super().__init__(**args)
+        self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
 
         if fixed_lim is not None:
             warnings.warn(
@@ -486,7 +486,7 @@ class Distribution:
                 if np.sum(values) > 1:
                     return None
 
-            super().__init__(**args)
+            self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
 
             if kind == "pdf":
                 ax = self.plot_pdf(
