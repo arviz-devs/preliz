@@ -443,7 +443,7 @@ class Distribution:
         else:
             args = init_vals[self.__class__.__name__]
 
-        self.__init__(**args)
+        super().__init__(**args)
 
         if fixed_lim is not None:
             warnings.warn(
@@ -485,7 +485,9 @@ class Distribution:
                 args = {list(args.keys())[0].split("_")[0]: values}
                 if np.sum(values) > 1:
                     return None
-            self.__init__(**args)
+
+            super().__init__(**args)
+
             if kind == "pdf":
                 ax = self.plot_pdf(
                     legend=False,

@@ -241,7 +241,7 @@ def side_legend(ax):
 
 
 def repr_to_matplotlib(distribution):
-    string = distribution.__repr__()
+    string = repr(distribution)
     string = string.replace("\x1b[1m", r"$\bf{")
     string = string.replace("\x1b[0m", "}$")
     return string

@@ -216,7 +216,7 @@ class Beta(Continuous):
             or all_not_none(sigma, kappa)
         ):
             raise ValueError(
-                "Incompatible parametrization. Either use alpha " "and beta, or mu and sigma."
+                "Incompatible parametrization. Either use alpha and beta, or mu and sigma."
             )
 
         self.param_names = ("alpha", "beta")
