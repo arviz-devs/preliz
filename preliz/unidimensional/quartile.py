@@ -98,7 +98,7 @@ def quartile(
 
     if r_error > 0.01:
         _log.info(
-            "The expected masses are 0.25, 0.5, 0.75\n" "The computed ones are: %.2g, %.2g, %.2g",
+            "The expected masses are 0.25, 0.5, 0.75\n The computed ones are: %.2g, %.2g, %.2g",
             *distribution.cdf([q1, q2, q3])
         )
 
