@@ -551,7 +551,7 @@ class _DiscreteWeibull(stats.rv_continuous):
 
     def cdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
         x = np.asarray(x)
-        return 1 - self.q ** ((x + 1) ** self.beta)
+        return np.nan_to_num(1 - self.q ** ((x + 1) ** self.beta))
 
     def pmf(self, x, *args, **kwds):  # pylint: disable=unused-argument
         x = np.asarray(x)
