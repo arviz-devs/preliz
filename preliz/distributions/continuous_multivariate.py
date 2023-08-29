@@ -281,7 +281,7 @@ class MvNormal(Continuous):
     def _get_frozen(self):
         frozen = None
         if all_not_none(self):
-            frozen = self.dist(mean=self.mu, cov=self.cov)
+            frozen = self.dist(mean=self.mu, cov=self.cov, allow_singular=True)
         return frozen
 
     def _update(self, mu, cov):
