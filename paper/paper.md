@@ -31,11 +31,11 @@ bibliography: paper.bib
 
 # Summary
 
-In a Bayesian modeling workflow, a prior distribution can be chosen in different ways as long as it captures the uncertainty about model parameters prior to observing any data. Particularly, prior elicitation refers to the process of transforming the knowledge of a particular domain into well-defined probability distributions. Here we introduce PreliZ, a Python package aimed at helping practitioners choose prior distributions.
+In a Bayesian modeling workflow, a prior distribution can be chosen in different ways as long as it captures the uncertainty about model parameters prior to observing any data. Particularly, prior elicitation refers to the process of transforming the knowledge of a particular domain into well-defined probability distributions. Here we introduce PreliZ, a Python package aimed at helping practitioners to choose prior distributions.
 
 # Statement of need
 
-Specifying useful priors is a central aspect of Bayesian statistics [@gelman:2013; @martin:2021; @martin:2022], yet prior elicitation techniques that would make this step easier and more systematic are not routinely used within practical Bayesian workflows [@mikkola:2021]. Instead, practitioners tipicaly rely on ad hoc procedures based on a mix of their own experience and recommendations available in the literature, which in general has not been systematized [@sarma:2020]. One reason is that current solutions are simply not sufficient for practical data analysis and do not integrate well with probabilistic programming libraries [@mikkola:2021]. PreliZ is a library for prior elicitation that aims to facilitate the task for practitioners by offering a set of tools for the various facets of prior elicitation. It covers a range of methods, from unidimensional prior elicitation on the parameter space to predictive elicitation on the observed space. The goal is to be compatible with probabilistic programming languages in the Python ecosystem like PyMC and PyStan, which involves including the distributions and their parameterization that are supported by these languages.
+Specifying useful priors is a central aspect of Bayesian statistics [@gelman:2013; @martin:2021; @martin:2022], yet prior elicitation techniques that would make this step easier and more systematic are not routinely used within practical Bayesian workflows [@mikkola:2021]. Instead, practitioners typically rely on ad hoc procedures based on a mix of their own experience and recommendations available in the literature, which in general has not been systematized [@sarma:2020]. One reason is that current solutions are simply not sufficient for practical data analysis and do not integrate well with probabilistic programming libraries [@mikkola:2021]. PreliZ is a library for prior elicitation that aims to facilitate the task for practitioners by offering a set of tools for the various facets of prior elicitation. It covers a range of methods, from unidimensional prior elicitation on the parameter space to predictive elicitation on the observed space. The goal is to be compatible with probabilistic programming languages in the Python ecosystem like PyMC and PyStan, which involves including the distributions and their parameterization that are supported by these languages.
 
 # Software API and features
 
@@ -59,7 +59,7 @@ pz.roulette()
 
 ![Roulette method.\label{fig:figure_2}](figures/figure_2.png)
 
-One of the main goals of PreliZ is to facilitate predictive elicitation, where information provided in the space of observable quantities is converted into a valid prior by a suitable learning algorithms, avoiding the need to provide direct information on the model parameters. PreliZ already implements functionality for this. For instance, `pz.predictive_sliders` (see \autoref{fig:figure_3}) makes it easy to explore how the prior predictive distribution of an arbitrary probabilistic model changes with the prior, and `pz.ppa` (see \autoref{fig:figure_4}) is an experimental prior predictive assistant that computes priors consistent with user-made choice of prior predictive samples. 
+One of the main goals of PreliZ is to facilitate predictive elicitation, where information provided in the space of observable quantities is converted into a valid prior by a suitable learning algorithm, avoiding the need to provide direct information on the model parameters. PreliZ already implements functionality for this. For instance, `pz.predictive_sliders` (see \autoref{fig:figure_3}) makes it easy to explore how the prior predictive distribution of an arbitrary probabilistic model changes with the prior.
 
 ```python
 def a_preliz_model(a_mu, a_sigma):
@@ -71,6 +71,8 @@ pz.predictive_sliders(a_preliz_model, samples=50, kind_plot='kde')
 ```
 
 ![Example of use of `pz.predictive_sliders` for a simple model.\label{fig:figure_3}](figures/figure_3.png)
+
+Another function for predictive elicitation is `pz.ppa` (see \autoref{fig:figure_4}). This is an experimental prior predictive assistant that computes priors consistent with user-made choice of prior predictive samples. 
 
 ```python
 def another_preliz_model():
