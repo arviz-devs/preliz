@@ -2,6 +2,8 @@
 Optimization routines and utilities
 """
 from sys import modules
+import warnings
+
 import numpy as np
 from scipy.optimize import minimize, least_squares
 from scipy.special import i0, i1  # pylint: disable=no-name-in-module
@@ -32,7 +34,10 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
     init_vals = np.array(dist.params)[none_idx]
     bounds = np.array(dist.params_support)[none_idx]
 
-    opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message="Values in x were outside bounds")
+        opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
+
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
 
