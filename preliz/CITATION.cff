@@ -1,0 +1,48 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Icazatti
+  given-names: Alejandro
+  orcid: "https://orcid.org/0000-0003-1491-7330"
+- family-names: Abril-Pla
+  given-names: Oriol
+  orcid: "https://orcid.org/0000-0002-1847-9481"
+- family-names: Klami
+  given-names: Arto
+  orcid: "https://orcid.org/0000-0002-7950-1355"
+- family-names: Martin
+  given-names: Osvaldo A
+  orcid: "https://orcid.org/0000-0001-7419-8978"
+contact:
+- family-names: Martin
+  given-names: Osvaldo A
+  orcid: "https://orcid.org/0000-0001-7419-8978"
+doi: 10.5281/zenodo.8368516
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Icazatti
+    given-names: Alejandro
+    orcid: "https://orcid.org/0000-0003-1491-7330"
+  - family-names: Abril-Pla
+    given-names: Oriol
+    orcid: "https://orcid.org/0000-0002-1847-9481"
+  - family-names: Klami
+    given-names: Arto
+    orcid: "https://orcid.org/0000-0002-7950-1355"
+  - family-names: Martin
+    given-names: Osvaldo A
+    orcid: "https://orcid.org/0000-0001-7419-8978"
+  date-published: 2023-09-22
+  doi: 10.21105/joss.05499
+  issn: 2475-9066
+  issue: 89
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 5499
+  title: "PreliZ: A tool-box for prior elicitation"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.05499"
+  volume: 8
+title: "PreliZ: A tool-box for prior elicitation"
