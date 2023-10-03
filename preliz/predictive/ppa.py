@@ -442,7 +442,7 @@ def back_fitting(model, subset, new_families=True):
             if dist.__class__.__name__ in exclude:
                 dist._fit_mle(subset[name])
             else:
-                idx, _ = mle(distributions, subset[name])
+                idx, _ = mle(distributions, subset[name], plot=False)
                 dist = distributions[idx[0]]
             string += f"{name} = {repr_to_matplotlib(dist)}\n"
 
