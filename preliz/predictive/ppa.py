@@ -424,7 +424,7 @@ def select_prior_samples(selected, prior_samples, model):
     return subsample
 
 
-def back_fitting(model, subset):
+def back_fitting(model, subset, new_families=True):
     """
     Use MLE to fit a subset of the prior samples to the marginal prior distributions
     """
@@ -434,16 +434,17 @@ def back_fitting(model, subset):
         dist._fit_mle(subset[name])
         string += f"{name} = {repr_to_matplotlib(dist)}\n"
 
-    string += "\nYour selection is consistent with the priors (new families):\n"
+    if new_families:
+        string += "\nYour selection is consistent with the priors (new families):\n"
 
-    exclude, distributions = get_distributions()
-    for name, dist in model.items():
-        if dist.__class__.__name__ in exclude:
-            dist._fit_mle(subset[name])
-        else:
-            idx, _ = mle(distributions, subset[name])
-            dist = distributions[idx[0]]
-        string += f"{name} = {repr_to_matplotlib(dist)}\n"
+        exclude, distributions = get_distributions()
+        for name, dist in model.items():
+            if dist.__class__.__name__ in exclude:
+                dist._fit_mle(subset[name])
+            else:
+                idx, _ = mle(distributions, subset[name])
+                dist = distributions[idx[0]]
+            string += f"{name} = {repr_to_matplotlib(dist)}\n"
 
     return string
 
