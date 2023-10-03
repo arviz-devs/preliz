@@ -456,7 +456,13 @@ def get_distributions():
         "TruncatedNormal",
         "Uniform",
         "VonMises",
+        "Categorical",
         "DiscreteUniform",
+        "HyperGeometric",
+        "zeroInflatedBinomial",
+        "ZeroInflatedNegativeBinomial",
+        "ZeroInflatedPoisson",
+        "MvNormal",
     ]
     all_distributions = modules["preliz.distributions"].__all__
     distributions = []
