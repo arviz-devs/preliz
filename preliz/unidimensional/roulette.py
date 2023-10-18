@@ -13,7 +13,7 @@ from ..internal.optimization import fit_to_ecdf, get_distributions
 from ..internal.plot_helper import check_inside_notebook
 
 
-def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
+def roulette(x_min=0, x_max=10, nrows=10, ncols=11, figsize=None):
     """
     Prior elicitation for 1D distribution using the roulette method.
 
@@ -28,7 +28,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
     nrows: Optional[int]
         Number of rows for the grid. Defaults to 10.
     ncols: Optional[int]
-        Number of columns for the grid. Defaults to 10.
+        Number of columns for the grid. Defaults to 11.
     figsize: Optional[Tuple[int, int]]
         Figure size. If None it will be defined automatically.
 
@@ -89,7 +89,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
                 w_repr.value,
                 w_x_min.value,
                 w_x_max.value,
-                ncols,
+                w_ncols.value,
                 ax_fit,
             )
 
@@ -112,7 +112,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=10, figsize=None):
                 w_repr.value,
                 w_x_min.value,
                 w_x_max.value,
-                ncols,
+                w_ncols.value,
                 ax_fit,
             ),
         )
@@ -144,13 +144,13 @@ def create_grid(x_min=0, x_max=1, nrows=10, ncols=10, ax=None):
     xx = np.arange(ncols)
     yy = np.arange(nrows)
 
-    if ncols < 10:
+    if ncols < 11:
         num = ncols
     else:
-        num = 10
+        num = 11
 
     ax.set(
-        xticks=np.linspace(0, ncols, num=num),
+        xticks=np.linspace(0, ncols - 1, num=num) + 0.5,
         xticklabels=[f"{i:.1f}" for i in np.linspace(x_min, x_max, num=num)],
     )
 
@@ -239,25 +239,16 @@ def weights_to_ecdf(weights, x_min, x_range, ncols):
     """
     Turn the weights (chips) into the empirical cdf
     """
-    filled_columns = 0
-    x_vals = []
-    ecdf = []
-    cum_sum = 0
+    step = x_range / (ncols - 1)
+    x_vals = [(k + 0.5) * step + x_min for k, v in weights.items() if v != 0]
+    total = sum(weights.values())
+    probabilities = [v / total for v in weights.values() if v != 0]
+    cum_sum = np.cumsum(probabilities)
 
-    values = list(weights.values())
-    mean = np.mean(values)
-    std = np.std(values)
-    total = sum(values)
-    if any(weights.values()):
-        for k, v in weights.items():
-            if v != 0:
-                filled_columns += 1
-            x_val = (k / ncols * x_range) + x_min + ((x_range / ncols))
-            x_vals.append(x_val)
-            cum_sum += v / total
-            ecdf.append(cum_sum)
+    mean = sum(value * prob for value, prob in zip(x_vals, probabilities))
+    std = (sum(prob * (value - mean) ** 2 for value, prob in zip(x_vals, probabilities))) ** 0.5
 
-    return x_vals, ecdf, mean, std, filled_columns
+    return x_vals, cum_sum, mean, std, len(x_vals)
 
 
 def representations(fitted_dist, kind_plot, ax):
