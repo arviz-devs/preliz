@@ -24,7 +24,7 @@ dynamic = ["version"]
 description = "The place for all your prior elicitation needs."
 dependencies = [
   "arviz",
-  "matplotlib<3.8,>=3.5",
+  "matplotlib>=3.5",
   "numpy>=1.22",
   "scipy>=1.9.1",
 ]

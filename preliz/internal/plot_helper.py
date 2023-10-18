@@ -108,8 +108,6 @@ def plot_pdfpmf(
     dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
 ):
     ax = get_ax(ax, figsize)
-    if color is None:
-        color = next(ax._get_lines.prop_cycler)["color"]
     if legend is not None:
         label = repr_to_matplotlib(dist)
 
@@ -157,8 +155,6 @@ def plot_cdf(
     dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
 ):
     ax = get_ax(ax, figsize)
-    if color is None:
-        color = next(ax._get_lines.prop_cycler)["color"]
     if legend is not None:
         label = repr_to_matplotlib(dist)
 
@@ -196,9 +192,6 @@ def plot_cdf(
 
 def plot_ppf(dist, moments, pointinterval, interval, levels, legend, color, alpha, figsize, ax):
     ax = get_ax(ax, figsize)
-    if color is None:
-        color = next(ax._get_lines.prop_cycler)["color"]
-
     if legend is not None:
         label = repr_to_matplotlib(dist)
 
