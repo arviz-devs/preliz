@@ -119,6 +119,8 @@ def test_moments(distribution, params):
         "BetaBinomial",
         "Binomial",
         "DiscreteWeibull",
+        "ExGaussian",
+        "NegativeBinomial",
         "Kumaraswamy",
         "LogitNormal",
         "Rice",

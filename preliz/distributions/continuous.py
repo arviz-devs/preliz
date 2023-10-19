@@ -583,7 +583,8 @@ class ExGaussian(Continuous):
         self.sigma = sigma
         self.param_names = ("mu", "sigma", "nu")
         self.params = (mu, sigma, nu)
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (eps, np.inf))
+        #  if nu is too small we get a non-smooth distribution
+        self.params_support = ((-np.inf, np.inf), (eps, np.inf), (1e-4, np.inf))
         if all_not_none(mu, sigma, nu):
             self._update(mu, sigma, nu)
 
@@ -602,7 +603,7 @@ class ExGaussian(Continuous):
 
     def _fit_moments(self, mean, sigma):
         # Just assume this is a approximately Gaussian
-        self._update(mean, sigma, 1e-6)
+        self._update(mean, sigma, 1e-4)
 
     def _fit_mle(self, sample, **kwargs):
         K, mu, sigma = self.dist.fit(sample, **kwargs)

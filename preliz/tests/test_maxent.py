@@ -75,7 +75,7 @@ from preliz.distributions import (
         (Cauchy(), -1, 1, 0.6, (-np.inf, np.inf), (0, 0.726)),
         (Cauchy(alpha=0.5), -1, 1, 0.6, (-np.inf, np.inf), (0.6000)),
         (ChiSquared(), 2, 7, 0.6, (0, np.inf), (4.002)),
-        (ExGaussian(), 9, 10, 0.8, (-np.inf, np.inf), (9.112, 0.133, 0.495)),
+        (ExGaussian(), 9, 10, 0.8, (-np.inf, np.inf), (9.496, 0.390, 0.003)),
         (ExGaussian(sigma=0.2), 9, 10, 0.8, (-np.inf, np.inf), (9.168, 0.423)),
         (Exponential(), 0, 4, 0.9, (0, np.inf), (0.575)),
         (Gamma(), 0, 10, 0.7, (0, np.inf), (0.868, 0.103)),
