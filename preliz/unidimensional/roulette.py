@@ -300,8 +300,9 @@ def reset_dist_panel(x_min, x_max, ax, yticks):
 def get_widgets(x_min, x_max, nrows, ncols):
 
     width_entry_text = widgets.Layout(width="150px")
+    width_distribution_text = widgets.Layout(width="150px", height="125px")
 
-    w_x_min = widgets.IntText(
+    w_x_min = widgets.FloatText(
         value=x_min,
         step=1,
         description="x_min:",
@@ -309,7 +310,7 @@ def get_widgets(x_min, x_max, nrows, ncols):
         layout=width_entry_text,
     )
 
-    w_x_max = widgets.IntText(
+    w_x_max = widgets.FloatText(
         value=x_max,
         step=1,
         description="x_max:",
@@ -343,10 +344,46 @@ def get_widgets(x_min, x_max, nrows, ncols):
         layout=width_entry_text,
     )
 
-    dist_names = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
+    default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
+
+    dist_names = [
+        "AsymmetricLaplace",
+        "BetaScaled",
+        "ChiSquared",
+        "ExGaussian",
+        "Exponential",
+        "Gamma",
+        "Gumbel",
+        "HalfNormal",
+        "HalfStudentT",
+        "InverseGamma",
+        "Laplace",
+        "LogNormal",
+        "Logistic",
+        # "LogitNormal", # fails if we add chips at x_value= 1
+        "Moyal",
+        "Normal",
+        "Pareto",
+        "Rice",
+        "SkewNormal",
+        "StudentT",
+        "Triangular",
+        "VonMises",
+        "Wald",
+        "Weibull",
+        "BetaBinomial",
+        "DiscreteWeibull",
+        "Geometric",
+        "NegativeBinomial",
+        "Poisson",
+    ]
 
     w_distributions = widgets.SelectMultiple(
-        options=dist_names, value=dist_names, description="", disabled=False
+        options=dist_names,
+        value=default_dist,
+        description="",
+        disabled=False,
+        layout=width_distribution_text,
     )
 
     return w_x_min, w_x_max, w_ncols, w_nrows, w_repr, w_distributions

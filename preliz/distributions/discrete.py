@@ -856,9 +856,7 @@ class NegativeBinomial(Discrete):
         self._update_rv_frozen()
 
     def _fit_moments(self, mean, sigma):
-        mu = mean
-        alpha = mean**2 / (sigma**2 - mean)
-        self._update(mu, alpha)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
@@ -981,7 +979,7 @@ class ZeroInflatedBinomial(Discrete):
         self.psi = psi
         self.n = n
         self.p = p
-        self.dist = ZIBinomial
+        self.dist = _ZIBinomial
         self.support = (0, np.inf)
         self._parametrization(psi, n, p)
 
@@ -1092,7 +1090,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
         self.p = p
         self.alpha = alpha
         self.mu = mu
-        self.dist = ZINegativeBinomial
+        self.dist = _ZINegativeBinomial
         self.support = (0, np.inf)
         self._parametrization(psi, mu, alpha, p, n)
 
@@ -1204,7 +1202,7 @@ class ZeroInflatedPoisson(Discrete):
         super().__init__()
         self.psi = psi
         self.mu = mu
-        self.dist = ZIPoisson
+        self.dist = _ZIPoisson
         self.support = (0, np.inf)
         self._parametrization(psi, mu)
 
@@ -1238,7 +1236,7 @@ class ZeroInflatedPoisson(Discrete):
         optimize_ml(self, sample)
 
 
-class ZIBinomial(stats.rv_continuous):
+class _ZIBinomial(stats.rv_continuous):
     def __init__(self, psi=None, n=None, p=None):
         super().__init__()
         self.psi = psi
@@ -1296,7 +1294,7 @@ class ZIBinomial(stats.rv_continuous):
         return samples
 
 
-class ZINegativeBinomial(stats.rv_continuous):
+class _ZINegativeBinomial(stats.rv_continuous):
     def __init__(self, psi=None, p=None, n=None):
         super().__init__()
         self.psi = psi
@@ -1355,7 +1353,7 @@ class ZINegativeBinomial(stats.rv_continuous):
         return samples
 
 
-class ZIPoisson(stats.rv_continuous):
+class _ZIPoisson(stats.rv_continuous):
     def __init__(self, psi=None, mu=None):
         super().__init__()
         self.psi = psi

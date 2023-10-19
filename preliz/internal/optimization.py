@@ -84,8 +84,10 @@ def optimize_cdf(dist, x_vals, ecdf, none_idx, fixed):
         return loss
 
     init_vals = np.array(dist.params)[none_idx]
+    bounds = np.array(dist.params_support)[none_idx]
+    bounds = list(zip(*bounds))
 
-    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf))
+    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf), bounds=bounds)
     dist._update(*opt["x"])
     loss = opt["cost"]
     return loss
