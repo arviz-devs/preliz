@@ -498,3 +498,20 @@ def check_inside_notebook(need_widget=False):
         tb_as_str = traceback.format_exc()
         # Print only the last line of the traceback, which contains the error message
         print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=sys.stdout)
+
+
+def representations(fitted_dist, kind_plot, ax):
+    if kind_plot == "pdf":
+        fitted_dist.plot_pdf(pointinterval=True, legend="title", ax=ax)
+        ax.set_yticks([])
+
+        for bound in fitted_dist.support:
+            if np.isfinite(bound):
+                ax.plot(bound, 0, "ko")
+
+    elif kind_plot == "cdf":
+        fitted_dist.plot_cdf(pointinterval=True, legend="title", ax=ax)
+
+    elif kind_plot == "ppf":
+        fitted_dist.plot_ppf(pointinterval=True, legend="title", ax=ax)
+        ax.set_xlim(-0.01, 1)
