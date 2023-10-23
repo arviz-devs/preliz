@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass
 from ..internal.optimization import fit_to_ecdf, get_distributions
-from ..internal.plot_helper import check_inside_notebook
+from ..internal.plot_helper import check_inside_notebook, representations
 
 
 def roulette(x_min=0, x_max=10, nrows=10, ncols=11, figsize=None):
@@ -249,23 +249,6 @@ def weights_to_ecdf(weights, x_min, x_range, ncols):
     std = (sum(prob * (value - mean) ** 2 for value, prob in zip(x_vals, probabilities))) ** 0.5
 
     return x_vals, cum_sum, mean, std, len(x_vals)
-
-
-def representations(fitted_dist, kind_plot, ax):
-    if kind_plot == "pdf":
-        fitted_dist.plot_pdf(pointinterval=True, legend="title", ax=ax)
-        ax.set_yticks([])
-
-        for bound in fitted_dist.support:
-            if np.isfinite(bound):
-                ax.plot(bound, 0, "ko")
-
-    elif kind_plot == "cdf":
-        fitted_dist.plot_cdf(pointinterval=True, legend="title", ax=ax)
-
-    elif kind_plot == "ppf":
-        fitted_dist.plot_ppf(pointinterval=True, legend="title", ax=ax)
-        ax.set_xlim(-0.01, 1)
 
 
 def update_grid(canvas, x_min, x_max, nrows, ncols, grid, ax_grid, ax_fit):

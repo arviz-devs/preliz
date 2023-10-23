@@ -249,6 +249,36 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     return fitted
 
 
+def fit_to_quartile(dist_names, q1, q2, q3, extra_pros):
+    error = np.inf
+
+    for distribution in get_distributions(dist_names):
+        if distribution.__class__.__name__ in extra_pros:
+            distribution._parametrization(**extra_pros[distribution.__class__.__name__])
+        if distribution.__class__.__name__ == "BetaScaled":
+            update_bounds_beta_scaled(
+                distribution,
+                extra_pros[distribution.__class__.__name__]["lower"],
+                extra_pros[distribution.__class__.__name__]["upper"],
+            )
+        if distribution._check_endpoints(q1, q3, raise_error=False):
+
+            none_idx, fixed = get_fixed_params(distribution)
+
+            distribution._fit_moments(
+                mean=q2, sigma=(q3 - q1) / 1.35
+            )  # pylint:disable=protected-access
+
+            optimize_quartile(distribution, (q1, q2, q3), none_idx, fixed)
+
+            r_error, _ = relative_error(distribution, q1, q3, 0.5)
+            if r_error < error:
+                fitted_dist = distribution
+                error = r_error
+
+    return fitted_dist
+
+
 def update_bounds_beta_scaled(dist, x_min, x_max):
     dist.lower = x_min
     dist.upper = x_max

@@ -1,3 +1,4 @@
+import re
 import numpy as np
 from scipy.special import gamma
 
@@ -90,6 +91,22 @@ def valid_distribution(self):
         return True
 
     raise ValueError(f"{self.__class__.__name__} is not supported")
+
+
+def process_extra(input_string):
+    pattern = r"(\w+)\((.*?)\)"
+    matches = re.findall(pattern, input_string)
+    result_dict = {}
+    for match in matches:
+        name = match[0]
+        args = match[1].split(",")
+        arg_dict = {}
+        for arg in args:
+            key, value = arg.split("=")
+            arg_dict[key.strip()] = float(value)
+        result_dict[name] = arg_dict
+
+    return result_dict
 
 
 init_vals = {
