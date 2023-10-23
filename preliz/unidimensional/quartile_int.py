@@ -191,7 +191,7 @@ def get_widgets(q1, q2, q3, dist_names=None):
 
     if dist_names is None:
 
-        default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal"]
+        default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
 
         dist_names = [
             "AsymmetricLaplace",

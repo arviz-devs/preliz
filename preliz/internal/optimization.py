@@ -70,6 +70,7 @@ def optimize_quartile(dist, x_vals, none_idx, fixed):
     init_vals = np.array(dist.params)[none_idx]
     bounds = np.array(dist.params_support)[none_idx]
     bounds = list(zip(*bounds))
+
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals), bounds=bounds)
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
@@ -88,7 +89,8 @@ def optimize_cdf(dist, x_vals, ecdf, none_idx, fixed):
     bounds = list(zip(*bounds))
 
     opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf), bounds=bounds)
-    dist._update(*opt["x"])
+    params = get_params(dist, opt["x"], none_idx, fixed)
+    dist._parametrization(**params)
     loss = opt["cost"]
     return loss
 
@@ -203,7 +205,7 @@ def get_distributions(dist_names):
     return dists
 
 
-def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
+def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max, extra_pros):
     """
     Minimize the difference between the cdf and the ecdf over a grid of values
     defined by x_min and x_max
@@ -212,6 +214,8 @@ def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max):
     """
     fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
+        if dist.__class__.__name__ in extra_pros:
+            dist._parametrization(**extra_pros[dist.__class__.__name__])
         if dist.__class__.__name__ == "BetaScaled":
             update_bounds_beta_scaled(dist, x_min, x_max)
 

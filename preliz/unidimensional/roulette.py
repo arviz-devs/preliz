@@ -11,9 +11,10 @@ except ImportError:
     pass
 from ..internal.optimization import fit_to_ecdf, get_distributions
 from ..internal.plot_helper import check_inside_notebook, representations
+from ..internal.distribution_helper import process_extra
 
 
-def roulette(x_min=0, x_max=10, nrows=10, ncols=11, figsize=None):
+def roulette(x_min=0, x_max=10, nrows=10, ncols=11, dist_names=None, figsize=None):
     """
     Prior elicitation for 1D distribution using the roulette method.
 
@@ -29,6 +30,10 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=11, figsize=None):
         Number of rows for the grid. Defaults to 10.
     ncols: Optional[int]
         Number of columns for the grid. Defaults to 11.
+    dist_names: list
+        List of distributions names to be used in the elicitation. If None, almost all 1D
+        distributions available in PreliZ will be used. Some distributions like Uniform or
+        Cauchy are omitted by default.
     figsize: Optional[Tuple[int, int]]
         Figure size. If None it will be defined automatically.
 
@@ -44,8 +49,12 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=11, figsize=None):
 
     check_inside_notebook(need_widget=True)
 
-    w_x_min, w_x_max, w_ncols, w_nrows, w_repr, w_distributions = get_widgets(
-        x_min, x_max, nrows, ncols
+    w_x_min, w_x_max, w_ncols, w_nrows, w_extra, w_repr, w_distributions = get_widgets(
+        x_min,
+        x_max,
+        nrows,
+        ncols,
+        dist_names,
     )
 
     output = widgets.Output()
@@ -90,6 +99,7 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=11, figsize=None):
                 w_x_min.value,
                 w_x_max.value,
                 w_ncols.value,
+                w_extra.value,
                 ax_fit,
             )
 
@@ -113,11 +123,12 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=11, figsize=None):
                 w_x_min.value,
                 w_x_max.value,
                 w_ncols.value,
+                w_extra.value,
                 ax_fit,
             ),
         )
 
-    controls = widgets.VBox([w_x_min, w_x_max, w_nrows, w_ncols])
+    controls = widgets.VBox([w_x_min, w_x_max, w_nrows, w_ncols, w_extra])
 
     display(widgets.HBox([controls, w_repr, w_distributions]))  # pylint:disable=undefined-variable
 
@@ -200,11 +211,12 @@ class Rectangles:
                 self.fig.canvas.draw()
 
 
-def on_leave_fig(canvas, grid, dist_names, kind_plot, x_min, x_max, ncols, ax):
+def on_leave_fig(canvas, grid, dist_names, kind_plot, x_min, x_max, ncols, extra, ax):
     x_min = float(x_min)
     x_max = float(x_max)
     ncols = float(ncols)
     x_range = x_max - x_min
+    extra_pros = process_extra(extra)
 
     x_vals, ecdf, mean, std, filled_columns = weights_to_ecdf(grid.weights, x_min, x_range, ncols)
 
@@ -222,6 +234,7 @@ def on_leave_fig(canvas, grid, dist_names, kind_plot, x_min, x_max, ncols, ax):
                 std,
                 x_min,
                 x_max,
+                extra_pros,
             )
 
             if fitted_dist is None:
@@ -280,9 +293,10 @@ def reset_dist_panel(x_min, x_max, ax, yticks):
     ax.autoscale_view()
 
 
-def get_widgets(x_min, x_max, nrows, ncols):
+def get_widgets(x_min, x_max, nrows, ncols, dist_names):
 
     width_entry_text = widgets.Layout(width="150px")
+    width_repr_text = widgets.Layout(width="250px")
     width_distribution_text = widgets.Layout(width="150px", height="125px")
 
     w_x_min = widgets.FloatText(
@@ -319,6 +333,14 @@ def get_widgets(x_min, x_max, nrows, ncols):
         layout=width_entry_text,
     )
 
+    w_extra = widgets.Textarea(
+        value="",
+        placeholder="Pass extra parameters",
+        description="params:",
+        disabled=False,
+        layout=width_repr_text,
+    )
+
     w_repr = widgets.RadioButtons(
         options=["pdf", "cdf", "ppf"],
         value="pdf",
@@ -327,39 +349,44 @@ def get_widgets(x_min, x_max, nrows, ncols):
         layout=width_entry_text,
     )
 
-    default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
+    if dist_names is None:
 
-    dist_names = [
-        "AsymmetricLaplace",
-        "BetaScaled",
-        "ChiSquared",
-        "ExGaussian",
-        "Exponential",
-        "Gamma",
-        "Gumbel",
-        "HalfNormal",
-        "HalfStudentT",
-        "InverseGamma",
-        "Laplace",
-        "LogNormal",
-        "Logistic",
-        # "LogitNormal", # fails if we add chips at x_value= 1
-        "Moyal",
-        "Normal",
-        "Pareto",
-        "Rice",
-        "SkewNormal",
-        "StudentT",
-        "Triangular",
-        "VonMises",
-        "Wald",
-        "Weibull",
-        "BetaBinomial",
-        "DiscreteWeibull",
-        "Geometric",
-        "NegativeBinomial",
-        "Poisson",
-    ]
+        default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
+
+        dist_names = [
+            "AsymmetricLaplace",
+            "BetaScaled",
+            "ChiSquared",
+            "ExGaussian",
+            "Exponential",
+            "Gamma",
+            "Gumbel",
+            "HalfNormal",
+            "HalfStudentT",
+            "InverseGamma",
+            "Laplace",
+            "LogNormal",
+            "Logistic",
+            # "LogitNormal", # fails if we add chips at x_value= 1
+            "Moyal",
+            "Normal",
+            "Pareto",
+            "Rice",
+            "SkewNormal",
+            "StudentT",
+            "Triangular",
+            "VonMises",
+            "Wald",
+            "Weibull",
+            "BetaBinomial",
+            "DiscreteWeibull",
+            "Geometric",
+            "NegativeBinomial",
+            "Poisson",
+        ]
+
+    else:
+        default_dist = dist_names
 
     w_distributions = widgets.SelectMultiple(
         options=dist_names,
@@ -369,4 +396,4 @@ def get_widgets(x_min, x_max, nrows, ncols):
         layout=width_distribution_text,
     )
 
-    return w_x_min, w_x_max, w_ncols, w_nrows, w_repr, w_distributions
+    return w_x_min, w_x_max, w_ncols, w_nrows, w_extra, w_repr, w_distributions
