@@ -255,12 +255,12 @@ def fit_to_quartile(dist_names, q1, q2, q3, extra_pros):
     for distribution in get_distributions(dist_names):
         if distribution.__class__.__name__ in extra_pros:
             distribution._parametrization(**extra_pros[distribution.__class__.__name__])
-        if distribution.__class__.__name__ == "BetaScaled":
-            update_bounds_beta_scaled(
-                distribution,
-                extra_pros[distribution.__class__.__name__]["lower"],
-                extra_pros[distribution.__class__.__name__]["upper"],
-            )
+            if distribution.__class__.__name__ == "BetaScaled":
+                update_bounds_beta_scaled(
+                    distribution,
+                    extra_pros[distribution.__class__.__name__]["lower"],
+                    extra_pros[distribution.__class__.__name__]["upper"],
+                )
         if distribution._check_endpoints(q1, q3, raise_error=False):
 
             none_idx, fixed = get_fixed_params(distribution)
