@@ -6,7 +6,7 @@ import sys
 from IPython import get_ipython
 
 try:
-    from ipywidgets import FloatSlider, IntSlider
+    from ipywidgets import FloatSlider, IntSlider, FloatText, IntText, Checkbox, ToggleButton
 except ImportError:
     pass
 from arviz import plot_kde, plot_ecdf, hdi
@@ -264,7 +264,7 @@ def get_moments(dist, moments):
     return "\n" + ", ".join(str_m)
 
 
-def get_slider(name, value, lower, upper, continuous_update=True):
+def get_slider(name, value, lower, upper):
 
     min_v, max_v, step = generate_range(value, lower, upper)
 
@@ -281,7 +281,6 @@ def get_slider(name, value, lower, upper, continuous_update=True):
         description=f"{name} ({lower:.0f}, {upper:.0f})",
         value=value,
         style={"description_width": "initial"},
-        continuous_update=continuous_update,
     )
 
     return slider
@@ -305,8 +304,27 @@ def generate_range(value, lower, upper):
     return min_v, max_v, step
 
 
-def get_sliders(signature, model):
-    sliders = {}
+def get_boxes(name, value, lower, upper):
+
+    if isinstance(value, float):
+        text_type = FloatText
+        step = 0.1
+    else:
+        text_type = IntText
+        step = 1
+
+    text = text_type(
+        step=step,
+        description=f"{name} ({lower:.0f}, {upper:.0f})",
+        value=value,
+        style={"description_width": "initial"},
+    )
+
+    return text
+
+
+def get_textboxes(signature, model):
+    textboxes = {}
     for name, param in signature.parameters.items():
         if isinstance(param.default, (int, float)):
             value = float(param.default)
@@ -335,14 +353,57 @@ def get_sliders(signature, model):
         if value is None:
             value = getattr(dist, dist.param_names[idx])
 
-        sliders[name] = get_slider(name, value, lower, upper, continuous_update=False)
-    return sliders
+        textboxes[name] = get_boxes(name, value, lower, upper)
+
+    textboxes["set_xlim"] = Checkbox(
+        value=False, description="set xlim", disabled=False, indent=False
+    )
+
+    textboxes["x_min"] = FloatText(
+        value=-10,
+        step=0.1,
+        description="q1",
+        disabled=False,
+    )
+
+    textboxes["x_max"] = FloatText(
+        value=10,
+        step=0.1,
+        description="q2",
+        disabled=False,
+    )
+
+    textboxes["Resample"] = ToggleButton(
+        value=True,
+        description="Resample",
+        disabled=False,
+        button_style="",
+        tooltip="Resample",
+    )
+
+    return textboxes
 
 
 def plot_decorator(func, iterations, kind_plot):
     def looper(*args, **kwargs):
-        results = [func(*args, **kwargs) for _ in range(iterations)]
+        results = []
+        kwargs.pop("Resample")
+        x_min = kwargs.pop("x_min")
+        x_max = kwargs.pop("x_max")
+        if not kwargs.pop("set_xlim"):
+            x_min = None
+            x_max = None
+            auto = True
+        else:
+            auto = False
+
+        for _ in range(iterations):
+            val = func(*args, **kwargs)
+            if not any(np.isnan(val)):
+                results.append(val)
+
         _, ax = plt.subplots()
+        ax.set_xlim(x_min, x_max, auto=auto)
 
         alpha = max(0.01, 1 - iterations * 0.009)
 
