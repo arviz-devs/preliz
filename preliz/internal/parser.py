@@ -54,7 +54,10 @@ def parse_arguments(lst, regex):
     return result
 
 
-def get_prior_pp_samples(fmodel, draws):
+def get_prior_pp_samples(fmodel, draws, values=None):
+    if values is None:
+        values = []
+
     match = match_return_variables(fmodel)
     if match:
         variables = [var.strip() for var in match.group(1).split(",")]
@@ -63,7 +66,7 @@ def get_prior_pp_samples(fmodel, draws):
     pp_samples_ = []
     prior_samples_ = {name: [] for name in variables[:-1]}
     for _ in range(draws):
-        for name, value in zip(variables, fmodel()):
+        for name, value in zip(variables, fmodel(*values)):
             if name == obs_rv:
                 pp_samples_.append(value)
             else:

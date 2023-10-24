@@ -2,7 +2,6 @@
 
 import logging
 from random import shuffle
-from sys import modules
 
 try:
     import ipywidgets as widgets
@@ -17,12 +16,11 @@ from ..internal.plot_helper import (
     check_inside_notebook,
     plot_pp_samples,
     plot_pp_mean,
-    repr_to_matplotlib,
 )
 from ..internal.parser import inspect_source, parse_function_for_ppa, get_prior_pp_samples
+from ..internal.predictive_helper import back_fitting, select_prior_samples
 from ..distributions.continuous import Normal
 from ..distributions.distributions import Distribution
-from ..unidimensional import mle
 
 _log = logging.getLogger("preliz")
 
@@ -33,12 +31,11 @@ def ppa(
     """
     Prior predictive check assistant.
 
-    This is experimental
+    This is an experimental method under development, use with caution.
 
     Parameters
     ----------
     model : PreliZ model
-        Model associated to ``idata``.
     draws : int
         Number of draws from the prior and prior predictive distribution
     summary : str
@@ -176,7 +173,7 @@ def ppa(
             if len(selected) > 4:
                 subsample = select_prior_samples(selected, prior_samples, model)
 
-                string = back_fitting(model, subsample)
+                string, _ = back_fitting(model, subsample)
 
                 fig.clf()
                 plt.text(0.05, 0.5, string, fontsize=14)
@@ -412,63 +409,3 @@ def collect_more_samples(
         return selected, shown
     else:
         return selected, shown
-
-
-def select_prior_samples(selected, prior_samples, model):
-    """
-    Given a selected set of prior predictive samples pick the corresponding
-    prior samples.
-    """
-    subsample = {rv: prior_samples[rv][selected] for rv in model.keys()}
-
-    return subsample
-
-
-def back_fitting(model, subset, new_families=True):
-    """
-    Use MLE to fit a subset of the prior samples to the marginal prior distributions
-    """
-    string = "Your selection is consistent with the priors (original families):\n"
-
-    for name, dist in model.items():
-        dist._fit_mle(subset[name])
-        string += f"{name} = {repr_to_matplotlib(dist)}\n"
-
-    if new_families:
-        string += "\nYour selection is consistent with the priors (new families):\n"
-
-        exclude, distributions = get_distributions()
-        for name, dist in model.items():
-            if dist.__class__.__name__ in exclude:
-                dist._fit_mle(subset[name])
-            else:
-                idx, _ = mle(distributions, subset[name], plot=False)
-                dist = distributions[idx[0]]
-            string += f"{name} = {repr_to_matplotlib(dist)}\n"
-
-    return string
-
-
-def get_distributions():
-    exclude = [
-        "Beta",
-        "BetaScaled",
-        "Triangular",
-        "TruncatedNormal",
-        "Uniform",
-        "VonMises",
-        "Categorical",
-        "DiscreteUniform",
-        "HyperGeometric",
-        "zeroInflatedBinomial",
-        "ZeroInflatedNegativeBinomial",
-        "ZeroInflatedPoisson",
-        "MvNormal",
-    ]
-    all_distributions = modules["preliz.distributions"].__all__
-    distributions = []
-    for a_dist in all_distributions:
-        dist = getattr(modules["preliz.distributions"], a_dist)()
-        if dist.__class__.__name__ not in exclude:
-            distributions.append(dist)
-    return exclude, distributions
