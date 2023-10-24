@@ -355,25 +355,25 @@ def get_textboxes(signature, model):
 
         textboxes[name] = get_boxes(name, value, lower, upper)
 
-    textboxes["set_xlim"] = Checkbox(
+    textboxes["__set_xlim__"] = Checkbox(
         value=False, description="set xlim", disabled=False, indent=False
     )
 
-    textboxes["x_min"] = FloatText(
+    textboxes["__x_min__"] = FloatText(
         value=-10,
         step=0.1,
-        description="q1",
+        description="x_min",
         disabled=False,
     )
 
-    textboxes["x_max"] = FloatText(
+    textboxes["__x_max__"] = FloatText(
         value=10,
         step=0.1,
-        description="q2",
+        description="x_max",
         disabled=False,
     )
 
-    textboxes["Resample"] = ToggleButton(
+    textboxes["__resample__"] = ToggleButton(
         value=True,
         description="Resample",
         disabled=False,
@@ -387,10 +387,10 @@ def get_textboxes(signature, model):
 def plot_decorator(func, iterations, kind_plot):
     def looper(*args, **kwargs):
         results = []
-        kwargs.pop("Resample")
-        x_min = kwargs.pop("x_min")
-        x_max = kwargs.pop("x_max")
-        if not kwargs.pop("set_xlim"):
+        kwargs.pop("__resample__")
+        x_min = kwargs.pop("__x_min__")
+        x_max = kwargs.pop("__x_max__")
+        if not kwargs.pop("__set_xlim__"):
             x_min = None
             x_max = None
             auto = True

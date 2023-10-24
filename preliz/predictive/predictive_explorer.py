@@ -38,10 +38,9 @@ def predictive_explorer(fmodel, samples=50, kind_plot="ecdf"):
         new_fmodel = plot_decorator(fmodel, samples, kind_plot)
 
     out = interactive_output(new_fmodel, textboxes)
-    default_controls = [textboxes[name] for name in ["set_xlim", "x_min", "x_max", "Resample"]]
-    params_controls = [
-        v for k, v in textboxes.items() if k not in ["set_xlim", "x_min", "x_max", "Resample"]
-    ]
+    default_names = ["__set_xlim__", "__x_min__", "__x_max__", "__resample__"]
+    default_controls = [textboxes[name] for name in default_names]
+    params_controls = [v for k, v in textboxes.items() if k not in default_names]
 
     params_plot = VBox(params_controls + [out])
 
