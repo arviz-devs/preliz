@@ -16,7 +16,7 @@ def inspect_source(fmodel):
     return source, signature
 
 
-def parse_function_for_pred_sliders(source, signature):
+def parse_function_for_pred_textboxes(source, signature):
     model = {}
 
     slidify = list(signature.parameters.keys())
