@@ -1,12 +1,15 @@
-import matplotlib.pyplot as plt
-
 try:
     import ipywidgets as widgets
 except ImportError:
     pass
 
 from preliz.internal.optimization import fit_to_quartile
-from ..internal.plot_helper import check_inside_notebook, representations
+from ..internal.plot_helper import (
+    create_figure,
+    check_inside_notebook,
+    representations,
+    reset_dist_panel,
+)
 from ..internal.distribution_helper import process_extra
 
 
@@ -33,6 +36,10 @@ def quartile_int(q1=1, q2=2, q3=3, dist_names=None, figsize=None):
     Note
     ----
 
+        w_q2.observe(match_distribution_)
+        w_q3.observe(match_distribution_)
+
+        fig.canvas.mpl_connect(
     Use the `params` text box to parametrize distributions, for instance write
     `BetaScaled(lower=-1, upper=10)` to specify the upper and lower bounds of BetaScaled
     distribution. To parametrize more that one distribution use commas for example
@@ -40,6 +47,10 @@ def quartile_int(q1=1, q2=2, q3=3, dist_names=None, figsize=None):
 
     References
     ----------
+        w_q2.observe(match_distribution_)
+        w_q3.observe(match_distribution_)
+
+        fig.canvas.mpl_connect(
     * Morris D.E. et al. (2014) see https://doi.org/10.1016/j.envsoft.2013.10.010
     * See quartile mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
     """
@@ -94,19 +105,6 @@ def quartile_int(q1=1, q2=2, q3=3, dist_names=None, figsize=None):
     display(widgets.HBox([controls, w_repr, w_distributions]))  # pylint:disable=undefined-variable
 
 
-def create_figure(figsize):
-    """
-    Initialize a matplotlib figure with two subplots
-    """
-    fig, axes = plt.subplots(1, 1, figsize=figsize, constrained_layout=True)
-    axes.set_yticks([])
-    fig.canvas.header_visible = False
-    fig.canvas.footer_visible = False
-    fig.canvas.toolbar_position = "right"
-
-    return fig, axes
-
-
 def match_distribution(canvas, dist_names, kind_plot, q1, q2, q3, extra, ax):
     q1 = float(q1)
     q2 = float(q2)
@@ -130,17 +128,6 @@ def match_distribution(canvas, dist_names, kind_plot, q1, q2, q3, extra, ax):
     canvas.draw()
 
     return fitted_dist
-
-
-def reset_dist_panel(ax, yticks):
-    """
-    Clean the distribution subplot
-    """
-    ax.cla()
-    if yticks:
-        ax.set_yticks([])
-    ax.relim()
-    ax.autoscale_view()
 
 
 def get_widgets(q1, q2, q3, dist_names=None):

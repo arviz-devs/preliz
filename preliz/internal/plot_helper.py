@@ -405,45 +405,49 @@ def plot_decorator(func, iterations, kind_plot):
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
 
-        alpha = max(0.01, 1 - iterations * 0.009)
-
-        if kind_plot == "hist":
-            if results[0].dtype.kind == "i":
-                bins = np.arange(np.min(results), np.max(results) + 1.5) - 0.5
-                if len(bins) < 30:
-                    ax.set_xticks(bins + 0.5)
-            else:
-                bins = "auto"
-            ax.hist(
-                results,
-                alpha=alpha,
-                density=True,
-                color=["C0"] * iterations,
-                bins=bins,
-                histtype="step",
-            )
-            ax.hist(
-                np.concatenate(results),
-                density=True,
-                bins=bins,
-                color="k",
-                ls="--",
-                histtype="step",
-            )
-        elif kind_plot == "kde":
-            for result in results:
-                plt.plot(*_kde_linear(result, grid_len=100), "C0", alpha=alpha)
-            plt.plot(*_kde_linear(np.concatenate(results), grid_len=100), "k--")
-        elif kind_plot == "ecdf":
-            plt.plot(
-                np.sort(results, axis=1).T,
-                np.linspace(0, 1, len(results[0]), endpoint=False),
-                color="C0",
-            )
-            a = np.concatenate(results)
-            plt.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
+        plot_repr(results, kind_plot, iterations, ax)
 
     return looper
+
+
+def plot_repr(results, kind_plot, iterations, ax):
+    alpha = max(0.01, 1 - iterations * 0.009)
+
+    if kind_plot == "hist":
+        if results[0].dtype.kind == "i":
+            bins = np.arange(np.min(results), np.max(results) + 1.5) - 0.5
+            if len(bins) < 30:
+                ax.set_xticks(bins + 0.5)
+        else:
+            bins = "auto"
+        ax.hist(
+            results,
+            alpha=alpha,
+            density=True,
+            color=["0.5"] * iterations,
+            bins=bins,
+            histtype="step",
+        )
+        ax.hist(
+            np.concatenate(results),
+            density=True,
+            bins=bins,
+            color="k",
+            ls="--",
+            histtype="step",
+        )
+    elif kind_plot == "kde":
+        for result in results:
+            ax.plot(*_kde_linear(result, grid_len=100), "0.5", alpha=alpha)
+        ax.plot(*_kde_linear(np.concatenate(results), grid_len=100), "k--")
+    elif kind_plot == "ecdf":
+        ax.plot(
+            np.sort(results, axis=1).T,
+            np.linspace(0, 1, len(results[0]), endpoint=False),
+            color="0.5",
+        )
+        a = np.concatenate(results)
+        ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
 
 
 def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=True, fig=None):
@@ -576,3 +580,27 @@ def representations(fitted_dist, kind_plot, ax):
     elif kind_plot == "ppf":
         fitted_dist.plot_ppf(pointinterval=True, legend="title", ax=ax)
         ax.set_xlim(-0.01, 1)
+
+
+def create_figure(figsize):
+    """
+    Initialize a matplotlib figure with one subplot
+    """
+    fig, axes = plt.subplots(1, 1, figsize=figsize, constrained_layout=True)
+    axes.set_yticks([])
+    fig.canvas.header_visible = False
+    fig.canvas.footer_visible = False
+    fig.canvas.toolbar_position = "right"
+
+    return fig, axes
+
+
+def reset_dist_panel(ax, yticks):
+    """
+    Clean the distribution subplot
+    """
+    ax.cla()
+    if yticks:
+        ax.set_yticks([])
+    ax.relim()
+    ax.autoscale_view()
