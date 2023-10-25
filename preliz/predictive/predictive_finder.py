@@ -39,7 +39,7 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
         Number of steps to find the best match. Each step will use the previous match as
         initial guess. If your initial prior predictive distribution is far from the target
         distribution you may need to increase the number of steps. Alternatively, you can
-        click on the subplot or press the `carry on` button many times.
+        click on the figure or press the `carry on` button many times.
     figsize : tuple
         Figure size. If None, the default is (8, 6).
     """
