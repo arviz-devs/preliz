@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-
 try:
     import ipywidgets as widgets
 except ImportError:
@@ -38,6 +36,10 @@ def quartile_int(q1=1, q2=2, q3=3, dist_names=None, figsize=None):
     Note
     ----
 
+        w_q2.observe(match_distribution_)
+        w_q3.observe(match_distribution_)
+
+        fig.canvas.mpl_connect(
     Use the `params` text box to parametrize distributions, for instance write
     `BetaScaled(lower=-1, upper=10)` to specify the upper and lower bounds of BetaScaled
     distribution. To parametrize more that one distribution use commas for example
@@ -45,6 +47,10 @@ def quartile_int(q1=1, q2=2, q3=3, dist_names=None, figsize=None):
 
     References
     ----------
+        w_q2.observe(match_distribution_)
+        w_q3.observe(match_distribution_)
+
+        fig.canvas.mpl_connect(
     * Morris D.E. et al. (2014) see https://doi.org/10.1016/j.envsoft.2013.10.010
     * See quartile mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
     """

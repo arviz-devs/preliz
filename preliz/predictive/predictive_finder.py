@@ -62,7 +62,7 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
 
     plot_pp_samples(pp_samples, draws, target, w_repr.value, fig, ax_fit)
     fig.suptitle(
-        "This is your target distribution\n" "and a sample from the prior predictive distribution"
+        "This is your target distribution\n and a sample from the prior predictive distribution"
     )
 
     output = widgets.Output()
