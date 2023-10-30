@@ -25,9 +25,7 @@ from ..distributions.distributions import Distribution
 _log = logging.getLogger("preliz")
 
 
-def ppa(
-    fmodel, draws=2000, summary="octiles", references=0, boundaries=(-np.inf, np.inf), init=None
-):
+def ppa(fmodel, draws=2000, references=0, boundaries=(-np.inf, np.inf), target=None):
     """
     Prior predictive check assistant.
 
@@ -38,19 +36,15 @@ def ppa(
     model : PreliZ model
     draws : int
         Number of draws from the prior and prior predictive distribution
-    summary : str
-        Summary statistics applied to prior samples in order to define (dis)similarity
-        of distributions. Current options are `octiles`, `hexiles`, `quantiles`,
-        `sort` (sort data) `octi_sum` (robust estimation of first 4 moments from octiles).
     references : int, float, list or tuple
         Value(s) used as reference points representing prior knowledge. For example expected
         values or values that are considered extreme.
     boundaries : tuple
         Hard boundaries (lower, upper). Posterior predictive samples with values outside these
         boundaries will be excluded from the analysis.
-    init : tuple or PreliZ distribtuion
-        Initial distribution. The first shown distributions will be selected to be as close
-        as possible to `init`. Available options are, a PreliZ distribution or a 2-tuple with
+    target : tuple or PreliZ distribtuion
+        Target distribution. The first shown distributions will be selected to be as close
+        as possible to `target`. Available options are, a PreliZ distribution or a 2-tuple with
         the first element representing the mean and the second the standard deviation.
     """
     check_inside_notebook(need_widget=True)
@@ -60,32 +54,8 @@ def ppa(
     if isinstance(references, (float, int)):
         references = [references]
 
-    source, _ = inspect_source(fmodel)
-
-    pp_samples, prior_samples, obs_rv = get_prior_pp_samples(fmodel, draws)
-
-    sample_size = pp_samples.shape[0]
-    model = parse_function_for_ppa(source, obs_rv)
-
-    if init is not None:
-        pp_samples = add_init_dist(init, pp_samples)
-
-    shown = []
-    for idx, sample in enumerate(pp_samples):
-        if np.min(sample) < boundaries[0] or np.max(sample) > boundaries[1]:
-            shown.append(idx)
-
-    shown = set(shown)
-
-    choices = []
-    clicked = []
-    selected = set()
-    collected_distances = {}
-
-    pp_summary, kdt = compute_summaries(pp_samples, summary)
-    pp_samples_idxs, _, shown = initialize_subsamples(pp_summary, shown, sample_size, kdt, init)
-    fig, axes = plot_pp_samples(pp_samples, pp_samples_idxs, references)
-    fig_pp_mean = plot_pp_mean(pp_samples, selected, references)
+    filter_dists = FilterDistribution(fmodel, draws, references, boundaries, target)
+    filter_dists()
 
     output = widgets.Output()
 
@@ -103,30 +73,17 @@ def ppa(
             value=True, description="sharex", disabled=False, indent=False
         )
 
-        def carry_on_(_):
-            carry_on(
-                fig,
-                axes,
-                fig_pp_mean,
-                radio_buttons_kind.value,
-                check_button_sharex.value,
-                references,
-                clicked,
-                pp_samples,
-                pp_summary,
-                choices,
-                selected,
-                collected_distances,
-                shown,
-                sample_size,
-                boundaries,
-                kdt,
-            )
-
-        button_carry_on.on_click(carry_on_)
+        button_carry_on.on_click(
+            lambda event: filter_dists.carry_on(radio_buttons_kind.value, check_button_sharex.value)
+        )
 
         def on_return_prior_(_):
-            on_return_prior(fig, selected, model)
+            on_return_prior(
+                filter_dists.fig,
+                filter_dists.selected,
+                filter_dists.model,
+                filter_dists.prior_samples,
+            )
 
         button_return_prior.on_click(on_return_prior_)
 
@@ -134,21 +91,13 @@ def ppa(
             kind = radio_buttons_kind.value
 
             plot_pp_samples(
-                pp_samples,
-                pp_samples_idxs,
+                filter_dists.pp_samples,
+                filter_dists.pp_samples_idxs,
                 references,
                 kind,
                 check_button_sharex.value,
-                fig,
+                filter_dists.fig,
             )
-
-            # plot_pp_mean(
-            #     pp_samples,
-            #     selected,
-            #     references,
-            #     kind,
-            #     fig_pp_mean,
-            # )
 
         radio_buttons_kind.observe(kind_, names=["value"])
 
@@ -156,24 +105,24 @@ def ppa(
 
         def click(event):
             if event.inaxes is not None:
-                if event.inaxes not in clicked:
-                    clicked.append(event.inaxes)
+                if event.inaxes not in filter_dists.clicked:
+                    filter_dists.clicked.append(event.inaxes)
                 else:
-                    clicked.remove(event.inaxes)
+                    filter_dists.clicked.remove(event.inaxes)
                     plt.setp(event.inaxes.spines.values(), color="k", lw=1)
 
-                for ax in clicked:
+                for ax in filter_dists.clicked:
                     plt.setp(ax.spines.values(), color="C1", lw=3)
-                fig.canvas.draw()
+                filter_dists.fig.canvas.draw()
 
-        def on_return_prior(fig, selected, model):
+        def on_return_prior(fig, selected, model, prior_samples):
 
             selected = list(selected)
 
             if len(selected) > 4:
                 subsample = select_prior_samples(selected, prior_samples, model)
 
-                string, _ = back_fitting(model, subsample)
+                string, _ = back_fitting(model, subsample, new_families=False)
 
                 fig.clf()
                 plt.text(0.05, 0.5, string, fontsize=14)
@@ -185,160 +134,166 @@ def ppa(
 
             fig.canvas.draw()
 
-        fig.canvas.mpl_connect("button_press_event", click)
+        filter_dists.fig.canvas.mpl_connect("button_press_event", click)
 
     controls = widgets.VBox([button_carry_on, button_return_prior])
 
     display(  # pylint:disable=undefined-variable
-        widgets.HBox([controls, radio_buttons_kind, check_button_sharex])
+        widgets.HBox([controls, radio_buttons_kind, check_button_sharex, output])
     )
 
 
-def carry_on(
-    fig,
-    axes,
-    fig_pp_mean,
-    kind,
-    sharex,
-    references,
-    clicked,
-    pp_samples,
-    pp_summary,
-    choices,
-    selected,
-    collected_distances,
-    shown,
-    sample_size,
-    boundaries,
-    kdt,
-):
-    fig.suptitle("")
+class FilterDistribution:  # pylint:disable=too-many-instance-attributes
+    def __init__(self, fmodel, draws, references, boundaries, target):
+        self.fmodel = fmodel
+        self.source, _ = inspect_source(fmodel)
+        self.draws = draws
+        self.references = references
+        self.boundaries = boundaries
+        self.target = target
+        self.pp_samples = None
+        self.prior_samples = None
+        self.pp_samples_idxs = None
+        self.pp_summary = None
+        self.obs_rv = None
+        self.fig = None
+        self.choices = []
+        self.clicked = []
+        self.selected = set()
+        self.collected_distances = {}
+        self.model = None
+        self.shown = None
+        self.distances = None
+        self.fig_pp_mean = None
+        self.axes = None
+        self.kdt = None
 
-    if clicked:
-        choices.extend([int(ax.get_title()) for ax in clicked])
-        shuffle(choices)
-        selected.update(choices)
-        selected, shown = collect_more_samples(
-            selected,
-            collected_distances,
-            shown,
-            pp_summary,
-            pp_samples,
-            sample_size,
-            boundaries,
-            kdt,
+    def __call__(self):
+        self.pp_samples, self.prior_samples, self.obs_rv = get_prior_pp_samples(
+            self.fmodel, self.draws
         )
 
-        for ax in clicked:
-            plt.setp(ax.spines.values(), color="k", lw=1)
-        for ax in axes:
-            ax.cla()
-        for ax in list(clicked):
-            clicked.remove(ax)
+        self.model = parse_function_for_ppa(self.source, self.obs_rv)
 
-    pp_samples_idxs, distances, shown = keep_sampling(pp_summary, choices, shown, sample_size, kdt)
+        if self.target is not None:
+            self.add_target_dist()
 
-    if not pp_samples_idxs:
-        pp_samples_idxs, distances, shown = initialize_subsamples(
-            pp_summary, shown, sample_size, kdt, None
+        self.pp_summary, self.kdt = self.compute_summaries()
+        self.pp_samples_idxs, self.distances, self.shown = self.initialize_subsamples(self.target)
+        self.fig, self.axes = plot_pp_samples(
+            self.pp_samples, self.pp_samples_idxs, self.references
+        )
+        self.fig_pp_mean = plot_pp_mean(self.pp_samples, self.selected, self.references)
+
+    def add_target_dist(self):
+        if isinstance(self.target, tuple):
+            ref_sample = Normal(*self.target).rvs(self.pp_samples.shape[1])
+        elif isinstance(self.target, Distribution):
+            ref_sample = self.target.rvs(self.pp_samples.shape[1])
+
+        self.pp_samples = np.vstack([ref_sample, self.pp_samples])
+
+    def compute_summaries(self):
+        pp_summary = np.quantile(
+            self.pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
+        ).T
+        kdt = KDTree(pp_summary)
+        return pp_summary, kdt
+
+    def initialize_subsamples(self, target):
+        samples = []
+        distances = {}
+        shown = []
+        for idx, sample in enumerate(self.pp_samples):
+            if np.min(sample) < self.boundaries[0] or np.max(sample) > self.boundaries[1]:
+                shown.append(idx)
+
+        shown = set(shown)
+
+        if len(shown) != self.draws:
+            if target is None:
+                new = np.random.choice(list(set(range(0, len(self.pp_summary))) - shown))
+                samples.append(new)
+
+                for _ in range(8):
+                    farthest_neighbor = self.draws
+                    while new in samples or new in shown:
+                        # we search for the farthest_neighbor
+                        _, new = self.kdt.query(
+                            self.pp_summary[samples[-1]], [farthest_neighbor], workers=-1
+                        )
+                        new = new.item()
+                        farthest_neighbor -= 1
+                    # Missing neighbors are indicated with index==sample_size
+                    if new != self.draws:
+                        samples.append(new)
+            else:
+                new = 0
+                samples.append(new)
+
+                for _ in range(9):
+                    nearest_neighbor = 2
+                    while new in samples:
+                        distance, new = self.kdt.query(
+                            self.pp_summary[samples[-1]], [nearest_neighbor], workers=-1
+                        )
+                        new = new.item()
+                        nearest_neighbor += 1
+
+                    if new != self.draws:
+                        samples.append(new)
+                        distances[new] = distance.item()
+
+                samples = samples[1:]
+
+            shown.update(samples)
+
+        return samples, distances, shown
+
+    def carry_on(self, kind, sharex):
+        self.fig.suptitle("")
+
+        if self.clicked:
+            self.choices.extend([int(ax.get_title()) for ax in self.clicked])
+            shuffle(self.choices)
+            self.selected.update(self.choices)
+            self.selected, self.shown = collect_more_samples(
+                self.selected,
+                self.collected_distances,
+                self.shown,
+                self.pp_summary,
+                self.pp_samples,
+                self.draws,
+                self.boundaries,
+                self.kdt,
+            )
+
+            for ax in self.clicked:
+                plt.setp(ax.spines.values(), color="k", lw=1)
+            for ax in self.axes:
+                ax.cla()
+            for ax in list(self.clicked):
+                self.clicked.remove(ax)
+
+        self.pp_samples_idxs, self.distances, self.shown = keep_sampling(
+            self.pp_summary, self.choices, self.shown, self.draws, self.kdt
         )
 
-    collected_distances.update(distances)
-    plot_pp_mean(pp_samples, list(selected), references, kind, fig_pp_mean)
+        if not self.pp_samples_idxs:
+            self.pp_samples_idxs, self.distances, self.shown = self.initialize_subsamples(None)
 
-    if pp_samples_idxs:
-        plot_pp_samples(pp_samples, pp_samples_idxs, references, kind, sharex, fig)
-    else:
-        # Instead of showing this message, we should resample.
-        fig.clf()
-        fig.suptitle("We have seen all the samples", fontsize=16)
-        fig.canvas.draw()
+        self.collected_distances.update(self.distances)
+        plot_pp_mean(self.pp_samples, list(self.selected), self.references, kind, self.fig_pp_mean)
 
-
-def compute_summaries(pp_samples, summary):
-    if summary == "octiles":
-        pp_summary = np.quantile(
-            pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
-        ).T
-    elif summary == "quartiles":
-        pp_summary = np.quantile(
-            pp_samples,
-            [
-                0.25,
-                0.5,
-                0.75,
-            ],
-            axis=1,
-        ).T
-
-    elif summary == "hexiles":
-        pp_summary = np.quantile(pp_samples, [0.25, 0.375, 0.5, 0.625, 0.75], axis=1).T
-    elif summary == "sort":
-        pp_summary = np.sort(pp_samples)
-    elif summary == "octi_sum":
-        suma = np.quantile(pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1).T
-        s_a = suma[:, 3]
-        s_b = suma[:, 5] - suma[:, 1]
-        s_g = (suma[:, 5] + suma[:, 1] - 2 * suma[:, 3]) / s_b
-        s_k = (suma[:, 6] - suma[:, 4] + suma[:, 2] - suma[:, 0]) / s_b
-        pp_summary = np.stack([s_a, s_b, s_g, s_k]).T
-
-    kdt = KDTree(pp_summary)
-    return pp_summary, kdt
-
-
-def add_init_dist(ref_dist, pp_samples):
-    sample_size = pp_samples.shape[1]
-    if isinstance(ref_dist, tuple):
-        ref_sample = Normal(*ref_dist).rvs(sample_size)
-    elif isinstance(ref_dist, Distribution):
-        ref_sample = ref_dist.rvs(sample_size)
-
-    pp_samples = np.vstack([ref_sample, pp_samples])
-    return pp_samples
-
-
-def initialize_subsamples(pp_summary, shown, sample_size, kdt, ref_dist):
-    samples = []
-    distances = {}
-
-    if len(shown) != sample_size:
-        if ref_dist is None:
-            new = np.random.choice(list(set(range(0, len(pp_summary))) - shown))
-            samples.append(new)
-
-            for _ in range(8):
-                farthest_neighbor = sample_size
-                while new in samples or new in shown:
-                    # we search for the farthest_neighbor
-                    _, new = kdt.query(pp_summary[samples[-1]], [farthest_neighbor], workers=-1)
-                    new = new.item()
-                    farthest_neighbor -= 1
-                # Missing neighbors are indicated with index==sample_size
-                if new != sample_size:
-                    samples.append(new)
+        if self.pp_samples_idxs:
+            plot_pp_samples(
+                self.pp_samples, self.pp_samples_idxs, self.references, kind, sharex, self.fig
+            )
         else:
-            new = 0
-            samples.append(new)
-
-            for _ in range(9):
-                nearest_neighbor = 2
-                while new in samples:
-                    distance, new = kdt.query(
-                        pp_summary[samples[-1]], [nearest_neighbor], workers=-1
-                    )
-                    new = new.item()
-                    nearest_neighbor += 1
-
-                if new != sample_size:
-                    samples.append(new)
-                    distances[new] = distance.item()
-
-            samples = samples[1:]
-
-        shown.update(samples)
-
-    return samples, distances, shown
+            # Instead of showing this message, we should resample.
+            self.fig.clf()
+            self.fig.suptitle("We have seen all the samples", fontsize=16)
+            self.fig.canvas.draw()
 
 
 def keep_sampling(pp_summary, choices, shown, sample_size, kdt):
