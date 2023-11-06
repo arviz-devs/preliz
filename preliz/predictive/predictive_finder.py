@@ -9,7 +9,6 @@ try:
 except ImportError:
     pass
 
-
 from ..internal.plot_helper import create_figure, check_inside_notebook, plot_repr, reset_dist_panel
 from ..internal.parser import inspect_source, parse_function_for_ppa, get_prior_pp_samples
 from ..internal.predictive_helper import back_fitting, select_prior_samples
@@ -34,7 +33,7 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
         about the observed random variable. To obtain a target distribution you can use
         other function from Preliz including `roulette`, `quartile_int`, `maxent`, etc.
     draws : int
-        Number of draws from the prior and prior predictive distribution
+        Number of draws from the prior and prior predictive distribution. Defaults to 100
     step : int
         Number of steps to find the best match. Each step will use the previous match as
         initial guess. If your initial prior predictive distribution is far from the target
@@ -55,12 +54,9 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
 
     button_carry_on, button_return_prior, w_repr = get_widgets()
 
-    pp_samples, _, obs_rv = get_prior_pp_samples(fmodel, draws)
+    match_distribution = MatchDistribution(fig, fmodel, target, draws, steps, ax_fit)
 
-    source, _ = inspect_source(fmodel)
-    model = parse_function_for_ppa(source, obs_rv)
-
-    plot_pp_samples(pp_samples, draws, target, w_repr.value, fig, ax_fit)
+    plot_pp_samples(match_distribution.pp_samples, draws, target, w_repr.value, fig, ax_fit)
     fig.suptitle(
         "This is your target distribution\n and a sample from the prior predictive distribution"
     )
@@ -71,13 +67,9 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
 
         def kind_(_):
             kind = w_repr.value
-            plot_pp_samples(pp_samples, draws, target, kind, fig, ax_fit)
+            plot_pp_samples(match_distribution.pp_samples, draws, target, kind, fig, ax_fit)
 
         w_repr.observe(kind_, names=["value"])
-
-        match_distribution = MatchDistribution(
-            fig, w_repr.value, fmodel, model, target, draws, steps, ax_fit
-        )
 
         def on_return_prior_(_):
             on_return_prior(fig, ax_fit)
@@ -98,32 +90,32 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
             fig.canvas.draw()
 
         button_return_prior.on_click(on_return_prior_)
-        button_carry_on.on_click(lambda event: match_distribution())
+        button_carry_on.on_click(lambda event: match_distribution(w_repr.value))
 
-        fig.canvas.mpl_connect("button_release_event", lambda event: match_distribution())
+        fig.canvas.mpl_connect(
+            "button_release_event", lambda event: match_distribution(w_repr.value)
+        )
 
     controls = widgets.VBox([button_carry_on, button_return_prior])
 
-    display(widgets.HBox([controls, w_repr]))  # pylint:disable=undefined-variable
+    display(widgets.HBox([controls, w_repr, output]))  # pylint:disable=undefined-variable
 
 
 class MatchDistribution:  # pylint:disable=too-many-instance-attributes
-    def __init__(self, fig, kind_plot, fmodel, model, target, draws, steps, ax):
+    def __init__(self, fig, fmodel, target, draws, steps, ax):
         self.fig = fig
-        self.kind_plot = kind_plot
         self.fmodel = fmodel
-        self.model = model
         self.target = target
-        self.target_octiles = target.ppf([0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875])
+        self.target_octiles = self.target.ppf([0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875])
         self.draws = draws
         self.steps = steps
         self.ax = ax
-
-        self.pp_samples = None
+        self.pp_samples, _, obs_rv = get_prior_pp_samples(self.fmodel, self.draws)
+        self.model = parse_function_for_ppa(inspect_source(self.fmodel)[0], obs_rv)
         self.values = None
         self.string = None
 
-    def __call__(self):
+    def __call__(self, kind_plot):
         self.fig.texts = []
 
         for _ in range(self.steps):
@@ -138,23 +130,37 @@ class MatchDistribution:  # pylint:disable=too-many-instance-attributes
         self.pp_samples = [self.fmodel(*self.values)[-1] for _ in range(self.draws)]
 
         reset_dist_panel(self.ax, True)
-        plot_repr(self.pp_samples, self.kind_plot, self.draws, self.ax)
+        plot_repr(self.pp_samples, kind_plot, self.draws, self.ax)
 
-        if self.kind_plot == "ecdf":
+        if kind_plot == "ecdf":
             self.target.plot_cdf(color="C0", legend=False, ax=self.ax)
 
-        if self.kind_plot in ["kde", "hist"]:
+        if kind_plot in ["kde", "hist"]:
             self.target.plot_pdf(color="C0", legend=False, ax=self.ax)
 
         self.fig.canvas.draw()
 
 
-def select(prior_sample, pp_sample, draws, target, model):
-    quants = np.stack(
+def select(prior_sample, pp_sample, draws, target_octiles, model):
+    pp_octiles = np.stack(
         [np.quantile(sample, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875]) for sample in pp_sample]
     )
-    w_un = 1 / (np.mean((target - quants) ** 2, 1) ** 0.5)
-    selected = np.random.choice(range(0, draws), p=w_un / w_un.sum(), size=draws, replace=True)
+    pp_octiles_min = pp_octiles.min()
+    pp_octiles_max = pp_octiles.max()
+    target_octiles_min = target_octiles.min()
+    target_octiles_max = target_octiles.max()
+    # target and pp_samples are not overlapping
+    if pp_octiles_max < target_octiles_min or pp_octiles_min > target_octiles_max:
+        prior_sample = {key: value**2 for key, value in prior_sample.items()}
+        selected = range(draws)
+    # target is wider than pp_samples
+    elif pp_octiles_max < target_octiles_max and pp_octiles_min > target_octiles_min:
+        factor = (target_octiles_max - target_octiles_min) / (pp_octiles_max - pp_octiles_min)
+        prior_sample = {key: value * factor for key, value in prior_sample.items()}
+        selected = range(draws)
+    else:
+        w_un = 1 / (np.mean((target_octiles - pp_octiles) ** 2, 1) ** 0.5)
+        selected = systematic(w_un / w_un.sum())
 
     values_to_fit = select_prior_samples(selected, prior_sample, model)
 
@@ -191,3 +197,47 @@ def get_widgets():
     )
 
     return button_carry_on, button_return_prior, w_repr
+
+
+def systematic(normalized_weights):
+    """
+    Systematic resampling.
+
+    Return indices in the range 0, ..., len(normalized_weights)
+
+    Note: adapted from https://github.com/nchopin/particles
+    """
+    lnw = len(normalized_weights)
+    single_uniform = (np.random.random() + np.arange(lnw)) / lnw
+    return inverse_cdf(single_uniform, normalized_weights)
+
+
+def inverse_cdf(single_uniform, normalized_weights):
+    """
+    Inverse CDF algorithm for a finite distribution.
+
+    Parameters
+    ----------
+    single_uniform: npt.NDArray[np.float_]
+        Ordered points in [0,1]
+
+    normalized_weights: npt.NDArray[np.float_])
+        Normalized weights
+
+    Returns
+    -------
+    new_indices: ndarray
+        a vector of indices in range 0, ..., len(normalized_weights)
+
+    Note: adapted from https://github.com/nchopin/particles
+    """
+    idx = 0
+    a_weight = normalized_weights[0]
+    sul = len(single_uniform)
+    new_indices = np.empty(sul, dtype=np.int64)
+    for i in range(sul):
+        while single_uniform[i] > a_weight:
+            idx += 1
+            a_weight += normalized_weights[idx]
+        new_indices[i] = idx
+    return new_indices
