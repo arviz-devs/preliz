@@ -230,7 +230,7 @@ class Beta(Continuous):
             if all_not_none(mu, sigma):
                 alpha, beta = self._from_mu_sigma(mu, sigma)
 
-        if any_not_none(mu, kappa):
+        if any_not_none(mu, kappa) and sigma is None:
             self.mu = mu
             self.kappa = kappa
             self.param_names = ("mu", "kappa")
