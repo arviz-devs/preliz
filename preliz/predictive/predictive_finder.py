@@ -10,13 +10,13 @@ except ImportError:
     pass
 
 from ..internal.plot_helper import create_figure, check_inside_notebook, plot_repr, reset_dist_panel
-from ..internal.parser import inspect_source, parse_function_for_ppa, get_prior_pp_samples
+from ..internal.parser import get_prior_pp_samples, from_bambi, from_preliz
 from ..internal.predictive_helper import back_fitting, select_prior_samples
 
 _log = logging.getLogger("preliz")
 
 
-def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
+def predictive_finder(fmodel, target, draws=100, steps=5, engine="preliz", figsize=None):
     """
     Prior predictive finder.
 
@@ -39,6 +39,8 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
         initial guess. If your initial prior predictive distribution is far from the target
         distribution you may need to increase the number of steps. Alternatively, you can
         click on the figure or press the `carry on` button many times.
+    engine : str
+        Library used to define the model. Either `preliz` or `bambi`. Defaults to `preliz`.
     figsize : tuple
         Figure size. If None, the default is (8, 6).
     """
@@ -54,7 +56,7 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
 
     button_carry_on, button_return_prior, w_repr = get_widgets()
 
-    match_distribution = MatchDistribution(fig, fmodel, target, draws, steps, ax_fit)
+    match_distribution = MatchDistribution(fig, fmodel, target, draws, steps, engine, ax_fit)
 
     plot_pp_samples(match_distribution.pp_samples, draws, target, w_repr.value, fig, ax_fit)
     fig.suptitle(
@@ -102,32 +104,43 @@ def predictive_finder(fmodel, target, draws=100, steps=5, figsize=None):
 
 
 class MatchDistribution:  # pylint:disable=too-many-instance-attributes
-    def __init__(self, fig, fmodel, target, draws, steps, ax):
+    def __init__(self, fig, fmodel, target, draws, steps, engine, ax):
         self.fig = fig
         self.fmodel = fmodel
         self.target = target
         self.target_octiles = self.target.ppf([0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875])
         self.draws = draws
         self.steps = steps
+        self.engine = engine
         self.ax = ax
-        self.pp_samples, _, obs_rv = get_prior_pp_samples(self.fmodel, self.draws)
-        self.model = parse_function_for_ppa(inspect_source(self.fmodel)[0], obs_rv)
         self.values = None
         self.string = None
+
+        if self.engine == "preliz":
+            self.variables, self.model = from_preliz(self.fmodel)
+        elif self.engine == "bambi":
+            self.fmodel, self.variables, self.model = from_bambi(self.fmodel, self.draws)
+
+        self.pp_samples, _ = get_prior_pp_samples(
+            self.fmodel, self.variables, self.draws, self.engine
+        )
 
     def __call__(self, kind_plot):
         self.fig.texts = []
 
         for _ in range(self.steps):
-            pp_samples, prior_samples, _ = get_prior_pp_samples(
-                self.fmodel, self.draws, self.values
+            pp_samples, prior_samples = get_prior_pp_samples(
+                self.fmodel, self.variables, self.draws, self.engine, self.values
             )
             values_to_fit = select(
                 prior_samples, pp_samples, self.draws, self.target_octiles, self.model
             )
             self.string, self.values = back_fitting(self.model, values_to_fit, new_families=False)
 
-        self.pp_samples = [self.fmodel(*self.values)[-1] for _ in range(self.draws)]
+        if self.engine == "preliz":
+            self.pp_samples = [self.fmodel(*self.values)[-1] for _ in range(self.draws)]
+        elif self.engine == "bambi":
+            self.pp_samples = self.fmodel(*self.values)[-1]
 
         reset_dist_panel(self.ax, True)
         plot_repr(self.pp_samples, kind_plot, self.draws, self.ax)
