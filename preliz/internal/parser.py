@@ -111,7 +111,6 @@ def from_bambi(fmodel, draws):
 
         # Find the variables after the return statement
         return_variables = match_return_variables(original_source)
-        print(return_variables)
 
         if return_variables:
             # Build the new source code
