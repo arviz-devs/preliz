@@ -23,7 +23,8 @@ def parse_function_for_pred_textboxes(source, signature):
     slidify = list(signature.parameters.keys())
     regex = r"\b" + r"\b|\b".join(slidify) + r"\b"
 
-    matches = match_preliz_dist(source)
+    all_dist_str = dist_as_str()
+    matches = match_preliz_dist(all_dist_str, source, "preliz")
 
     for match in matches:
         dist_name_str = match.group(2)
@@ -104,35 +105,35 @@ def from_bambi(fmodel, draws):
     # Find the match in the source code
     match = pattern.search(original_source)
 
-    if match:
-        # Extract the indentation and variable name
-        indentation = match.group(1)
-        variable_name = match.group(2)
+    # Extract the indentation and variable name
+    indentation = match.group(1)
+    variable_name = match.group(2)
 
-        # Find the variables after the return statement
-        return_variables = match_return_variables(original_source)
+    # Find the variables after the return statement
+    return_variables = match_return_variables(original_source)
 
-        if return_variables:
-            # Build the new source code
-            new_source = original_source.replace(
-                match.group(0),
-                f"{match.group(0)}"
-                f"{indentation}{variable_name}.build()\n"
-                f"{indentation}variables = [{variable_name}.backend.model.named_vars[v] for v in {return_variables}]\n"
-                f'{indentation}{", ".join(return_variables)} = pm.draw(variables, draws={draws})',
-            )
+    if return_variables:
+        # Build the new source code
+        new_source = original_source.replace(
+            match.group(0),
+            f"{match.group(0)}"
+            f"{indentation}{variable_name}.build()\n"
+            f"{indentation}variables = [{variable_name}.backend.model.named_vars[v] "
+            f"for v in {return_variables}]\n"
+            f'{indentation}{", ".join(return_variables)} = pm.draw(variables, draws={draws})',
+        )
 
-            # Find the priors we want to change
-            all_dist_str = dist_as_str()
-            matches = match_preliz_dist(all_dist_str, new_source, "bambi")
-            # Create a dictionary with the priors
-            model = dict_model(matches, return_variables)
+        # Find the priors we want to change
+        all_dist_str = dist_as_str()
+        matches = match_preliz_dist(all_dist_str, new_source, "bambi")
+        # Create a dictionary with the priors
+        model = dict_model(matches, return_variables)
 
-            # Execute the new source code to redefine the function
-            exec(new_source, module.__dict__)
-            modified_fmodel = getattr(module, fmodel.__name__)
+        # Execute the new source code to redefine the function
+        exec(new_source, module.__dict__)  # pylint: disable=exec-used
+        modified_fmodel = getattr(module, fmodel.__name__)
 
-        return modified_fmodel, return_variables, model
+    return modified_fmodel, return_variables, model
 
 
 def match_preliz_dist(all_dist_str, source, engine):
@@ -146,8 +147,7 @@ def match_preliz_dist(all_dist_str, source, engine):
 
 def match_return_variables(source):
     match = re.search(r"return (\w+(\s*,\s*\w+)*)", source)
-    if match:
-        return [var.strip() for var in match.group(1).split(",")]
+    return [var.strip() for var in match.group(1).split(",")]
 
 
 def dist_as_str():

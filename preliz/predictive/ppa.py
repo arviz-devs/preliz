@@ -149,12 +149,12 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
     def __call__(self):
 
         if self.engine == "preliz":
-            self.variables, self.model = from_preliz(self.fmodel)
+            variables, self.model = from_preliz(self.fmodel)
         elif self.engine == "bambi":
-            self.fmodel, self.variables, self.model = from_bambi(self.fmodel, self.draws)
+            self.fmodel, variables, self.model = from_bambi(self.fmodel, self.draws)
 
         self.pp_samples, self.prior_samples = get_prior_pp_samples(
-            self.fmodel, self.variables, self.draws, self.engine
+            self.fmodel, variables, self.draws, self.engine
         )
 
         if self.target is not None:
