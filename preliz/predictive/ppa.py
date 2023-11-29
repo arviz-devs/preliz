@@ -17,7 +17,7 @@ from ..internal.plot_helper import (
     plot_pp_samples,
     plot_pp_mean,
 )
-from ..internal.parser import inspect_source, parse_function_for_ppa, get_prior_pp_samples
+from ..internal.parser import get_prior_pp_samples, from_preliz, from_bambi
 from ..internal.predictive_helper import back_fitting, select_prior_samples
 from ..distributions.continuous import Normal
 from ..distributions.distributions import Distribution
@@ -25,7 +25,9 @@ from ..distributions.distributions import Distribution
 _log = logging.getLogger("preliz")
 
 
-def ppa(fmodel, draws=2000, references=0, boundaries=(-np.inf, np.inf), target=None):
+def ppa(
+    fmodel, draws=2000, references=0, boundaries=(-np.inf, np.inf), target=None, engine="preliz"
+):
     """
     Prior predictive check assistant.
 
@@ -46,6 +48,8 @@ def ppa(fmodel, draws=2000, references=0, boundaries=(-np.inf, np.inf), target=N
         Target distribution. The first shown distributions will be selected to be as close
         as possible to `target`. Available options are, a PreliZ distribution or a 2-tuple with
         the first element representing the mean and the second the standard deviation.
+    engine : str
+        Library used to define the model. Either `preliz` or `bambi`. Defaults to `preliz`
     """
     check_inside_notebook(need_widget=True)
 
@@ -54,7 +58,7 @@ def ppa(fmodel, draws=2000, references=0, boundaries=(-np.inf, np.inf), target=N
     if isinstance(references, (float, int)):
         references = [references]
 
-    filter_dists = FilterDistribution(fmodel, draws, references, boundaries, target)
+    filter_dists = FilterDistribution(fmodel, draws, references, boundaries, target, engine)
     filter_dists()
 
     output = widgets.Output()
@@ -117,19 +121,19 @@ def ppa(fmodel, draws=2000, references=0, boundaries=(-np.inf, np.inf), target=N
 
 
 class FilterDistribution:  # pylint:disable=too-many-instance-attributes
-    def __init__(self, fmodel, draws, references, boundaries, target):
+    def __init__(self, fmodel, draws, references, boundaries, target, engine):
         self.fmodel = fmodel
         self.source = ""  # string representation of the model
         self.draws = draws
         self.references = references
         self.boundaries = boundaries
         self.target = target
+        self.engine = engine
         self.pp_samples = None  # prior predictive samples
         self.prior_samples = None  # prior samples used for backfitting
         self.display_pp_idxs = None  # indices of the pp_samples to be displayed
         self.pp_octiles = None  # octiles computed from pp_samples
         self.kdt = None  # KDTree used to find similar distributions
-        self.obs_rv = None  # name of the observed random variable
         self.model = None  # parsed model used for backfitting
         self.clicked = []  # axes clicked by the user
         self.choices = []  # indices of the pp_samples selected by the user and not yet used to
@@ -144,11 +148,14 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
 
     def __call__(self):
 
-        self.pp_samples, self.prior_samples, self.obs_rv = get_prior_pp_samples(
-            self.fmodel, self.draws
+        if self.engine == "preliz":
+            variables, self.model = from_preliz(self.fmodel)
+        elif self.engine == "bambi":
+            self.fmodel, variables, self.model = from_bambi(self.fmodel, self.draws)
+
+        self.pp_samples, self.prior_samples = get_prior_pp_samples(
+            self.fmodel, variables, self.draws, self.engine
         )
-        self.source, _ = inspect_source(self.fmodel)
-        self.model = parse_function_for_ppa(self.source, self.obs_rv)
 
         if self.target is not None:
             self.add_target_dist()
