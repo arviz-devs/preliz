@@ -137,6 +137,9 @@ def from_bambi(fmodel, draws):
 
 
 def match_preliz_dist(all_dist_str, source, engine):
+    # remove comments
+    source = re.sub(r"#.*$|^#.*$", "", source, flags=re.MULTILINE)
+
     if engine == "preliz":
         regex = rf"(.*?({all_dist_str}).*?)\(([^()]*(?:\([^()]*\)[^()]*)*)\)"
     if engine == "bambi":
