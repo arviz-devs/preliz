@@ -143,7 +143,7 @@ class MatchDistribution:  # pylint:disable=too-many-instance-attributes
             self.pp_samples = self.fmodel(*self.values)[-1]
 
         reset_dist_panel(self.ax, True)
-        plot_repr(self.pp_samples, kind_plot, self.draws, self.ax)
+        plot_repr(self.pp_samples, kind_plot, None, self.draws, self.ax)
 
         if kind_plot == "ecdf":
             self.target.plot_cdf(color="C0", legend=False, ax=self.ax)
@@ -183,7 +183,7 @@ def select(prior_sample, pp_sample, draws, target_octiles, model):
 def plot_pp_samples(pp_samples, draws, target, kind_plot, fig, ax):
 
     reset_dist_panel(ax, True)
-    plot_repr(pp_samples, kind_plot, draws, ax)
+    plot_repr(pp_samples, kind_plot, None, draws, ax)
 
     if kind_plot == "ecdf":
         target.plot_cdf(color="C0", legend=False, ax=ax)
