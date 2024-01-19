@@ -8,7 +8,7 @@ from preliz.internal.parser import inspect_source, parse_function_for_pred_textb
 from preliz.internal.plot_helper import get_textboxes, plot_decorator
 
 
-def predictive_explorer(fmodel, samples=50, kind_plot="ecdf"):
+def predictive_explorer(fmodel, samples=50, kind_plot="ecdf", references=None):
     """
     Create textboxes and plot a set of samples returned by a function relating one or more
     PreliZ distributions.
@@ -26,6 +26,9 @@ def predictive_explorer(fmodel, samples=50, kind_plot="ecdf"):
         The type of plot to display. Defaults to "kde". Options are "hist" (histogram),
         "kde" (kernel density estimate), "ecdf" (empirical cumulative distribution function),
         or None (no plot).
+    references : int, float, list, tuple or dictionary
+        Value(s) used as reference points representing prior knowledge. For example expected
+        values or values that are considered extreme. Use a dictionary for labeled references.
     """
     source, signature = inspect_source(fmodel)
 
@@ -35,7 +38,7 @@ def predictive_explorer(fmodel, samples=50, kind_plot="ecdf"):
     if kind_plot is None:
         new_fmodel = fmodel
     else:
-        new_fmodel = plot_decorator(fmodel, samples, kind_plot)
+        new_fmodel = plot_decorator(fmodel, samples, kind_plot, references)
 
     out = interactive_output(new_fmodel, textboxes)
     default_names = ["__set_xlim__", "__x_min__", "__x_max__", "__resample__"]

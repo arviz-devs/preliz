@@ -385,7 +385,7 @@ def get_textboxes(signature, model):
     return textboxes
 
 
-def plot_decorator(func, iterations, kind_plot):
+def plot_decorator(func, iterations, kind_plot, references):
     def looper(*args, **kwargs):
         results = []
         kwargs.pop("__resample__")
@@ -406,12 +406,12 @@ def plot_decorator(func, iterations, kind_plot):
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
 
-        plot_repr(results, kind_plot, iterations, ax)
+        plot_repr(results, kind_plot, references, iterations, ax)
 
     return looper
 
 
-def plot_repr(results, kind_plot, iterations, ax):
+def plot_repr(results, kind_plot, references, iterations, ax):
     alpha = max(0.01, 1 - iterations * 0.009)
 
     if kind_plot == "hist":
@@ -449,6 +449,18 @@ def plot_repr(results, kind_plot, iterations, ax):
         )
         a = np.concatenate(results)
         ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
+
+    if references is not None:
+        if isinstance(references, dict):
+            max_value = ax.get_ylim()[1]
+            for label, ref in references.items():
+                ax.text(ref, max_value * 0.2, label, rotation=90, bbox={"color": "w", "alpha": 0.5})
+                ax.axvline(ref, ls="--", color="0.5")
+        else:
+            if isinstance(references, (float, int)):
+                references = [references]
+            for ref in references:
+                ax.axvline(ref, ls="--", color="0.5")
 
 
 def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=True, fig=None):
