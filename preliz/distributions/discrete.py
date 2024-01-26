@@ -1253,7 +1253,7 @@ class _ZIBinomial(stats.rv_continuous):
 
     def pmf(self, x, *args, **kwds):
         if psi_not_valid(self.psi):
-            return np.nan
+            return np.full(len(x), np.nan)
         x = np.array(x, ndmin=1)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = (1 - self.psi) + self.psi * (1 - self.p) ** self.n
@@ -1262,7 +1262,7 @@ class _ZIBinomial(stats.rv_continuous):
 
     def logpmf(self, x, *args, **kwds):
         if psi_not_valid(self.psi):
-            return np.nan
+            return np.full(len(x), np.nan)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = np.log((1 - self.psi) + self.psi * (1 - self.p) ** self.n)
         result[x != 0] = np.log(self.psi) + stats.binom(self.n, self.p, *args, **kwds).logpmf(
@@ -1321,7 +1321,7 @@ class _ZINegativeBinomial(stats.rv_continuous):
 
     def pmf(self, x, *args, **kwds):
         if psi_not_valid(self.psi):
-            return np.nan
+            return np.full(len(x), np.nan)
         x = np.array(x, ndmin=1)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = (1 - self.psi) + self.psi * (self.n / (self.n + self.mu)) ** self.n
@@ -1330,7 +1330,7 @@ class _ZINegativeBinomial(stats.rv_continuous):
 
     def logpmf(self, x, *args, **kwds):
         if psi_not_valid(self.psi):
-            return np.nan
+            return np.full(len(x), np.nan)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = np.log((1 - self.psi) + self.psi * (self.n / (self.n + self.mu)) ** self.n)
         result[x != 0] = np.log(self.psi) + stats.nbinom(self.n, self.p, *args, **kwds).logpmf(
@@ -1387,7 +1387,7 @@ class _ZIPoisson(stats.rv_continuous):
 
     def pmf(self, x, *args, **kwds):
         if psi_not_valid(self.psi):
-            return np.nan
+            return np.full(len(x), np.nan)
         x = np.array(x, ndmin=1)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = (1 - self.psi) + self.psi * np.exp(-self.mu)
@@ -1396,7 +1396,7 @@ class _ZIPoisson(stats.rv_continuous):
 
     def logpmf(self, x, *args, **kwds):
         if psi_not_valid(self.psi):
-            return np.nan
+            return np.full(len(x), np.nan)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = np.log(np.exp(-self.mu) * self.psi - self.psi + 1)
         result[x != 0] = np.log(self.psi) + stats.poisson(self.mu, *args, **kwds).logpmf(x[x != 0])
