@@ -450,17 +450,7 @@ def plot_repr(results, kind_plot, references, iterations, ax):
         a = np.concatenate(results)
         ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
 
-    if references is not None:
-        if isinstance(references, dict):
-            max_value = ax.get_ylim()[1]
-            for label, ref in references.items():
-                ax.text(ref, max_value * 0.2, label, rotation=90, bbox={"color": "w", "alpha": 0.5})
-                ax.axvline(ref, ls="--", color="0.5")
-        else:
-            if isinstance(references, (float, int)):
-                references = [references]
-            for ref in references:
-                ax.axvline(ref, ls="--", color="0.5")
+    plot_references(references, ax)
 
 
 def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=True, fig=None):
@@ -482,8 +472,7 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
 
     for ax, idx in zip(axes, pp_samples_idxs):
         ax.clear()
-        for ref in references:
-            ax.axvline(ref, ls="--", color="0.5")
+        plot_references(references, ax)
         ax.relim()
 
         sample = pp_samples[idx]
@@ -534,8 +523,7 @@ def plot_pp_mean(pp_samples, selected, references=None, kind="pdf", fig_pp_mean=
     else:
         sample = pp_samples.ravel()
 
-    for ref in references:
-        ax_pp_mean.axvline(ref, ls="--", color="0.5")
+    plot_references(references, ax_pp_mean)
 
     if kind == "pdf":
         plot_kde(
@@ -557,6 +545,20 @@ def plot_pp_mean(pp_samples, selected, references=None, kind="pdf", fig_pp_mean=
     fig_pp_mean.canvas.draw()
 
     return fig_pp_mean
+
+
+def plot_references(references, ax):
+    if references is not None:
+        if isinstance(references, dict):
+            max_value = ax.get_ylim()[1]
+            for label, ref in references.items():
+                ax.text(ref, max_value * 0.2, label, rotation=90, bbox={"color": "w", "alpha": 0.5})
+                ax.axvline(ref, ls="--", color="0.5")
+        else:
+            if isinstance(references, (float, int)):
+                references = [references]
+            for ref in references:
+                ax.axvline(ref, ls="--", color="0.5")
 
 
 def check_inside_notebook(need_widget=False):
