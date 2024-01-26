@@ -90,3 +90,47 @@ def test_mvnormal_plot(kwargs):
     a_dist.plot_cdf(**kwargs)
     kwargs.pop("support", None)
     a_dist.plot_ppf(**kwargs)
+
+
+@pytest.fixture
+def sample_ax():
+    return plt.subplot()
+
+
+def test_plot_references(sample_ax):
+    # Test with a dictionary of references
+    references_dict = {"Ref1": 0.5, "Ref2": 1.0, "Ref3": 1.5}
+    pz.internal.plot_helper.plot_references(references_dict, sample_ax)
+
+    lines = sample_ax.lines
+    texts = sample_ax.texts
+
+    assert len(lines) == len(texts) == len(references_dict)
+
+    # Test with a list of references
+    sample_ax.clear()
+    references_list = [0.5, 1.0, 1.5]
+    pz.internal.plot_helper.plot_references(references_list, sample_ax)
+
+    lines = sample_ax.lines
+
+    assert len(lines) == len(references_list)
+
+    # Test with a single reference value
+    sample_ax.clear()
+    reference_single = 0.5
+    pz.internal.plot_helper.plot_references(reference_single, sample_ax)
+
+    lines = sample_ax.lines
+
+    assert len(lines) == 1
+
+    # Test with None input
+    sample_ax.clear()
+    references_none = None
+    pz.internal.plot_helper.plot_references(references_none, sample_ax)
+
+    lines = sample_ax.lines
+    texts = sample_ax.texts
+
+    assert len(lines) == len(texts) == 0
