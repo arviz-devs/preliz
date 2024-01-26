@@ -1247,9 +1247,13 @@ class _ZIBinomial(stats.rv_continuous):
         return (0, np.inf)
 
     def cdf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         return (1 - self.psi) + self.psi * stats.binom(self.n, self.p, *args, **kwds).cdf(x)
 
     def pmf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         x = np.array(x, ndmin=1)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = (1 - self.psi) + self.psi * (1 - self.p) ** self.n
@@ -1257,6 +1261,8 @@ class _ZIBinomial(stats.rv_continuous):
         return result
 
     def logpmf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = np.log((1 - self.psi) + self.psi * (1 - self.p) ** self.n)
         result[x != 0] = np.log(self.psi) + stats.binom(self.n, self.p, *args, **kwds).logpmf(
@@ -1265,28 +1271,31 @@ class _ZIBinomial(stats.rv_continuous):
         return result
 
     def ppf(self, q, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         return np.round(
             (1 - self.psi) + self.psi * stats.binom(self.n, self.p, *args, **kwds).ppf(q)
         )
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
+        if psi_not_valid(self.psi):
+            return (np.nan, np.nan, np.nan, np.nan)
         mean = self.psi * self.n * self.p
         var = (1 - self.psi) * self.n * self.p * (1 - self.p * (1 - self.psi * self.n))
         return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
+        if psi_not_valid(self.psi):
+            return np.nan
         binomial_entropy = stats.binom.entropy(self.n, self.p)
-        if self.psi < 0.00001:
-            return 0
-        elif self.psi > 0.99999:
-            return binomial_entropy
-        else:
-            # The variable can be 0 with probability 1-psi or something else with probability psi
-            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
-            # The total entropy is the weighted sum of the two entropies
-            return (1 - self.psi) * zero_entropy + self.psi * binomial_entropy
+        # The variable can be 0 with probability 1-psi or something else with probability psi
+        zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+        # The total entropy is the weighted sum of the two entropies
+        return (1 - self.psi) * zero_entropy + self.psi * binomial_entropy
 
     def rvs(self, size=1):  # pylint: disable=arguments-differ
+        if psi_not_valid(self.psi):
+            return np.nan
         samples = np.zeros(size, dtype=int)
         non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
         samples[~non_zero_indices] = 0
@@ -1306,9 +1315,13 @@ class _ZINegativeBinomial(stats.rv_continuous):
         return (0, np.inf)
 
     def cdf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         return (1 - self.psi) + self.psi * stats.nbinom(self.n, self.p, *args, **kwds).cdf(x)
 
     def pmf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         x = np.array(x, ndmin=1)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = (1 - self.psi) + self.psi * (self.n / (self.n + self.mu)) ** self.n
@@ -1316,6 +1329,8 @@ class _ZINegativeBinomial(stats.rv_continuous):
         return result
 
     def logpmf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = np.log((1 - self.psi) + self.psi * (self.n / (self.n + self.mu)) ** self.n)
         result[x != 0] = np.log(self.psi) + stats.nbinom(self.n, self.p, *args, **kwds).logpmf(
@@ -1324,28 +1339,31 @@ class _ZINegativeBinomial(stats.rv_continuous):
         return result
 
     def ppf(self, q, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         return np.round(
             (1 - self.psi) + self.psi * stats.nbinom(self.n, self.p, *args, **kwds).ppf(q)
         )
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
+        if psi_not_valid(self.psi):
+            return (np.nan, np.nan, np.nan, np.nan)
         mean = self.psi * self.mu
         var = self.psi * self.mu + (1 + (self.mu / self.n) + ((1 - self.psi) / self.mu))
         return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
+        if psi_not_valid(self.psi):
+            return np.nan
         negative_binomial_entropy = stats.nbinom.entropy(self.n, self.p)
-        if self.psi < 0.00001:
-            return 0
-        elif self.psi > 0.99999:
-            return negative_binomial_entropy
-        else:
-            # The variable can be 0 with probability 1-psi or something else with probability psi
-            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
-            # The total entropy is the weighted sum of the two entropies
-            return (1 - self.psi) * zero_entropy + self.psi * negative_binomial_entropy
+        # The variable can be 0 with probability 1-psi or something else with probability psi
+        zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+        # The total entropy is the weighted sum of the two entropies
+        return (1 - self.psi) * zero_entropy + self.psi * negative_binomial_entropy
 
     def rvs(self, size=1):  # pylint: disable=arguments-differ
+        if psi_not_valid(self.psi):
+            return np.nan
         samples = np.zeros(size, dtype=int)
         non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
         samples[~non_zero_indices] = 0
@@ -1363,9 +1381,13 @@ class _ZIPoisson(stats.rv_continuous):
         return (0, np.inf)
 
     def cdf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         return (1 - self.psi) + self.psi * stats.poisson(self.mu, *args, **kwds).cdf(x)
 
     def pmf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         x = np.array(x, ndmin=1)
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = (1 - self.psi) + self.psi * np.exp(-self.mu)
@@ -1373,34 +1395,43 @@ class _ZIPoisson(stats.rv_continuous):
         return result
 
     def logpmf(self, x, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         result = np.zeros_like(x, dtype=float)
         result[x == 0] = np.log(np.exp(-self.mu) * self.psi - self.psi + 1)
         result[x != 0] = np.log(self.psi) + stats.poisson(self.mu, *args, **kwds).logpmf(x[x != 0])
         return result
 
     def ppf(self, q, *args, **kwds):
+        if psi_not_valid(self.psi):
+            return np.nan
         return np.round((1 - self.psi) + self.psi * stats.poisson(self.mu, *args, **kwds).ppf(q))
 
     def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
+        if psi_not_valid(self.psi):
+            return (np.nan, np.nan, np.nan, np.nan)
         mean = self.psi * self.mu
         var = self.psi * self.mu * (1 + (1 - self.psi) * self.mu)
         return (mean, var, np.nan, np.nan)
 
     def entropy(self):  # pylint: disable=arguments-differ
+        if psi_not_valid(self.psi):
+            return np.nan
         poisson_entropy = stats.poisson.entropy(self.mu)
-        if self.psi < 0.00001:
-            return 0
-        elif self.psi > 0.99999:
-            return poisson_entropy
-        else:
-            # The variable can be 0 with probability 1-psi or something else with probability psi
-            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
-            # The total entropy is the weighted sum of the two entropies
-            return (1 - self.psi) * zero_entropy + self.psi * poisson_entropy
+        # The variable can be 0 with probability 1-psi or something else with probability psi
+        zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+        # The total entropy is the weighted sum of the two entropies
+        return (1 - self.psi) * zero_entropy + self.psi * poisson_entropy
 
     def rvs(self, size=1):  # pylint: disable=arguments-differ
+        if psi_not_valid(self.psi):
+            return np.nan
         samples = np.zeros(size, dtype=int)
         non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
         samples[~non_zero_indices] = 0
         samples[non_zero_indices] = stats.poisson.rvs(self.mu, size=len(non_zero_indices))
         return samples
+
+
+def psi_not_valid(psi):
+    return not (0 < psi < 1)
