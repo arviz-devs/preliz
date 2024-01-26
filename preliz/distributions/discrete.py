@@ -1434,4 +1434,4 @@ class _ZIPoisson(stats.rv_continuous):
 
 
 def psi_not_valid(psi):
-    return not (0 < psi < 1)
+    return not 0 < psi < 1
