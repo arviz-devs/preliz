@@ -16,7 +16,9 @@ from ..internal.predictive_helper import back_fitting, select_prior_samples
 _log = logging.getLogger("preliz")
 
 
-def predictive_finder(fmodel, target, draws=100, steps=5, engine="preliz", figsize=None):
+def predictive_finder(
+    fmodel, target, draws=100, steps=5, references=None, engine="preliz", figsize=None
+):
     """
     Prior predictive finder.
 
@@ -39,6 +41,9 @@ def predictive_finder(fmodel, target, draws=100, steps=5, engine="preliz", figsi
         initial guess. If your initial prior predictive distribution is far from the target
         distribution you may need to increase the number of steps. Alternatively, you can
         click on the figure or press the `carry on` button many times.
+    references : int, float, list, tuple or dictionary
+        Value(s) used as reference points representing prior knowledge. For example expected
+        values or values that are considered extreme. Use a dictionary for labeled references.
     engine : str
         Library used to define the model. Either `preliz` or `bambi`. Defaults to `preliz`.
     figsize : tuple
@@ -58,7 +63,9 @@ def predictive_finder(fmodel, target, draws=100, steps=5, engine="preliz", figsi
 
     match_distribution = MatchDistribution(fig, fmodel, target, draws, steps, engine, ax_fit)
 
-    plot_pp_samples(match_distribution.pp_samples, draws, target, w_repr.value, fig, ax_fit)
+    plot_pp_samples(
+        match_distribution.pp_samples, draws, target, w_repr.value, references, fig, ax_fit
+    )
     fig.suptitle(
         "This is your target distribution\n and a sample from the prior predictive distribution"
     )
@@ -69,7 +76,9 @@ def predictive_finder(fmodel, target, draws=100, steps=5, engine="preliz", figsi
 
         def kind_(_):
             kind = w_repr.value
-            plot_pp_samples(match_distribution.pp_samples, draws, target, kind, fig, ax_fit)
+            plot_pp_samples(
+                match_distribution.pp_samples, draws, target, kind, references, fig, ax_fit
+            )
 
         w_repr.observe(kind_, names=["value"])
 
@@ -180,10 +189,10 @@ def select(prior_sample, pp_sample, draws, target_octiles, model):
     return values_to_fit
 
 
-def plot_pp_samples(pp_samples, draws, target, kind_plot, fig, ax):
+def plot_pp_samples(pp_samples, draws, target, kind_plot, references, fig, ax):
 
     reset_dist_panel(ax, True)
-    plot_repr(pp_samples, kind_plot, None, draws, ax)
+    plot_repr(pp_samples, kind_plot, references, draws, ax)
 
     if kind_plot == "ecdf":
         target.plot_cdf(color="C0", legend=False, ax=ax)
