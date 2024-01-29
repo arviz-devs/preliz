@@ -125,9 +125,7 @@ from preliz.distributions import (
             (-0.807, 6.428),
             (-0.807, 6.428),
         ),
-        # This fails with scipy 1.11.1 if lower or upper are inf
-        # setting to "large" number for now
-        (TruncatedNormal(lower=-100, upper=100), -1, 1, 0.683, (-100, 100), (0, 1)),
+        (TruncatedNormal(lower=-np.inf, upper=np.inf), -1, 1, 0.683, (-np.inf, np.inf), (0, 1)),
         (
             TruncatedNormal(lower=-3, upper=2),
             -1,
