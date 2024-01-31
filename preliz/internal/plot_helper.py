@@ -385,7 +385,7 @@ def get_textboxes(signature, model):
     return textboxes
 
 
-def plot_decorator(func, iterations, kind_plot, references):
+def plot_decorator(func, iterations, kind_plot, references, plot_func):
     def looper(*args, **kwargs):
         results = []
         kwargs.pop("__resample__")
@@ -402,11 +402,15 @@ def plot_decorator(func, iterations, kind_plot, references):
             val = func(*args, **kwargs)
             if not any(np.isnan(val)):
                 results.append(val)
+        results = np.array(results)
 
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
 
-        plot_repr(results, kind_plot, references, iterations, ax)
+        if plot_func is None:
+            plot_repr(results, kind_plot, references, iterations, ax)
+        else:
+            plot_func(results, ax)
 
     return looper
 
