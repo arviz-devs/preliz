@@ -2614,6 +2614,7 @@ class TruncatedNormal(Continuous):
         if any_not_none(self.mu, self.sigma):
             a, b = (self.lower - self.mu) / self.sigma, (self.upper - self.mu) / self.sigma
             frozen = self.dist(a, b, self.mu, self.sigma)
+            frozen.entropy = self._entropy
         return frozen
 
     def _update(self, mu, sigma, lower=None, upper=None):
@@ -2636,6 +2637,25 @@ class TruncatedNormal(Continuous):
         a, b, mu, sigma = self.dist.fit(sample, **kwargs)
         lower, upper = a * sigma + mu, b * sigma + mu
         self._update(mu, sigma, lower, upper)
+
+    def _entropy(self):
+        "Override entropy to handle lower or upper infinite values"
+        norm = stats.norm
+        alpha = (self.lower - self.mu) / self.sigma
+        beta = (self.upper - self.mu) / self.sigma
+        zed = norm.cdf(beta) - norm.cdf(alpha)
+
+        if np.isfinite(alpha):
+            a_pdf = alpha * norm.pdf(alpha)
+        else:
+            a_pdf = 0
+
+        if np.isfinite(beta):
+            b_pdf = beta * norm.pdf(beta)
+        else:
+            b_pdf = 0
+
+        return np.log(4.132731354122493 * zed * self.sigma) + (a_pdf - b_pdf) / (2 * zed)
 
 
 class Uniform(Continuous):
