@@ -1,37 +1,34 @@
 import preliz as pz
 
-def calc_cdf(l1, u1, a, b):
-    dist = pz.Beta(a, b)
-    return dist.cdf(u1) - dist.cdf(l1)
-
-def one_iter(l1, u1, stop_prob=0.99, eps=0.001):
-
-    tau_not = 0
-    mode = (l1 + u1) / 2
-
-    prob = calc_cdf(l1, u1, 1, 1)
+def one_iter(lower, upper, mode, mass=0.99, plot=True):
+    alpha = 1
+    beta = 1
+    dist = pz.Beta(alpha, beta)
+    prob = dist.cdf(upper) - dist.cdf(lower)
     
-    while abs(prob - stop_prob) > eps:
+    tau_not = 0
+    while abs(prob - mass) > 0.005:
 
         tau_not +=  0.1
+        alpha = 1 + mode * tau_not
+        beta = 1 + (1 - mode) * tau_not
 
-        alpha1 = 1 + mode * tau_not
-        alpha2 = 1 + (1 - mode) * tau_not
+        dist._parametrization(alpha, beta)
+        prob = dist.cdf(upper) - dist.cdf(lower)
 
-        prob =  calc_cdf(l1, u1, alpha1, alpha2)
-
-    return alpha1, alpha2, prob
-
-
-
-l1 = 0.25
-l2 = 0.75
-mode = (l1 + l2) / 2
-alpha1, alpha2, cur_prob = one_iter(l1, l2)
+    if plot:
+        dist.plot_pdf()
+    return dist
 
 
-print("alpha1: ", alpha1)
-print("alpha2: ", alpha2)
-print("cur_prob: ", cur_prob)
-pz.Beta(alpha1, alpha2).plot_pdf()
-pz.maxent(pz.Beta(), l1, l2, 0.99);
+
+lower = 0.2
+upper = 0.95
+prob = 0.90
+dist = one_iter(lower, upper,
+                mode=0.8,
+                mass=prob, 
+                
+                )
+dist_ = pz.Beta()
+pz.maxent(dist_, lower, upper, prob);
