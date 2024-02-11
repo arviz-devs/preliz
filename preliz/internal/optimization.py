@@ -335,7 +335,10 @@ def optimize_one_iter(lower, upper, tau_not, mode, dist, mass, prob):
 
     while abs(prob - mass) > 0.005:
 
-        tau_not += 0.1
+        if prob > mass:
+            tau_not -= 0.1
+        else:
+            tau_not += 0.1
         alpha = 1 + mode * tau_not
         beta = 1 + (1 - mode) * tau_not
         dist._parametrization(alpha, beta)

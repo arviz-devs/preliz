@@ -5,7 +5,7 @@ from preliz.internal.optimization import optimize_one_iter
 _log = logging.getLogger("preliz")
 
 
-def one_iter(lower, upper, mode, mass=0.99, plot=True, plot_kwargs={}, ax=None):
+def one_iter(lower, upper, mode, mass=0.99, plot=False, plot_kwargs=None, ax=None):
 
     """ Fits Parameters to a Beta Distribution based on the mode, confidence intervals and mass of the distribution.
 
@@ -19,8 +19,6 @@ def one_iter(lower, upper, mode, mass=0.99, plot=True, plot_kwargs={}, ax=None):
         Mode of the Beta distribution between lower and upper.
     mass : float
         Concentarion of the probabilty mass between lower and upper. Defaults to 0.99.
-    eps : float
-        Tolerance for the mass of the distribution. Defaults to 0.005.
     plot : bool
         Whether to plot the distribution. Defaults to True.
     plot_kwargs : dict
@@ -44,13 +42,17 @@ def one_iter(lower, upper, mode, mass=0.99, plot=True, plot_kwargs={}, ax=None):
     if upper <= lower:
         raise ValueError("upper should be larger than lower")
 
-    alpha = 1
-    beta = 1
-    dist = pz.Beta(alpha, beta)
+    dist = pz.Beta()
+    dist._fit_moments(  # pylint:disable=protected-access
+        mean=(upper + lower) / 2,
+        sigma=((upper - lower) / 6) / mass
+    )
+    tau_a = (dist.alpha - 1) / mode
+    tau_b = (dist.beta - 1) / (1 - mode)
+    tau = (tau_a + tau_b) / 2
     prob = dist.cdf(upper) - dist.cdf(lower)
-    tau_not = 0
 
-    prob, dist = optimize_one_iter(lower, upper, tau_not, mode, dist, mass, prob)
+    prob, dist = optimize_one_iter(lower, upper, tau, mode, dist, mass, prob)
 
     relative_error = abs((prob - mass) / mass * 100)
 
