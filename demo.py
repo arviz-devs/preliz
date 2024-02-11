@@ -1,10 +1,11 @@
 import preliz as pz
 import logging
+from preliz.internal.optimization import optimize_one_iter
 
 _log = logging.getLogger("preliz")
 
 
-def one_iter(lower, upper, mode, mass=0.99, plot=True):
+def one_iter(lower, upper, mode, mass=0.99, plot=True, plot_kwargs={}, ax=None):
 
     """ Fits Parameters to a Beta Distribution based on the mode, confidence intervals and mass of the distribution.
 
@@ -22,6 +23,9 @@ def one_iter(lower, upper, mode, mass=0.99, plot=True):
         Tolerance for the mass of the distribution. Defaults to 0.005.
     plot : bool
         Whether to plot the distribution. Defaults to True.
+    plot_kwargs : dict
+        Dictionary passed to the method ``plot_pdf()`` of ``distribution``.
+    ax : matplotlib axes
 
     Returns
     --------
@@ -44,15 +48,9 @@ def one_iter(lower, upper, mode, mass=0.99, plot=True):
     beta = 1
     dist = pz.Beta(alpha, beta)
     prob = dist.cdf(upper) - dist.cdf(lower)
-    
     tau_not = 0
-    while abs(prob - mass) > 0.005:
 
-        tau_not += 0.1
-        alpha = 1 + mode * tau_not
-        beta = 1 + (1 - mode) * tau_not
-        dist._parametrization(alpha, beta)
-        prob = dist.cdf(upper) - dist.cdf(lower)
+    prob, dist = optimize_one_iter(lower, upper, tau_not, mode, dist, mass, prob)
 
     relative_error = abs((prob - mass) / mass * 100)
 
@@ -62,19 +60,14 @@ def one_iter(lower, upper, mode, mass=0.99, plot=True):
             mass,
             prob,
         )
+
     if plot:
-        dist.plot_pdf()
-    return dist
+        ax = dist.plot_pdf(**plot_kwargs)
+        if plot_kwargs.get("pointinterval"):
+            cid = -4
+        else:
+            cid = -1
+        ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
+    return ax, dist
 
 
-
-lower = 0.2
-upper = 0.95
-prob = 0.90
-dist = one_iter(lower, upper,
-                mode=0.8,
-                mass=prob, 
-                
-                )
-dist_ = pz.Beta()
-pz.maxent(dist_, lower, upper, prob)
