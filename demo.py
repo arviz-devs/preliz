@@ -4,43 +4,38 @@ import logging
 _log = logging.getLogger("preliz")
 
 
-def one_iter(lower, upper, mode, mass=0.99, eps=0.005, plot=True):
+def one_iter(lower, upper, mode, mass=0.99, plot=True):
 
     """ Fits Parameters to a Beta Distribution based on the mode, confidence intervals and mass of the distribution.
 
     Parameters
     -----------
     lower : float
-        Lower end-point between 0 and upper
-
+        Lower end-point between 0 and upper.
     upper : float
-        Upper end-point between lower and 1
-
+        Upper end-point between lower and 1.
     mode : float
-        Mode of the Beta distribution between lower and upper
-
+        Mode of the Beta distribution between lower and upper.
     mass : float
-        Concentarion of the probabilty mass between lower and upper. Defaults to 0.99
-
-
+        Concentarion of the probabilty mass between lower and upper. Defaults to 0.99.
     eps : float
-        Tolerance for the mass of the distribution. Defaults to 0.005
-
+        Tolerance for the mass of the distribution. Defaults to 0.005.
     plot : bool
         Whether to plot the distribution. Defaults to True.
-
 
     Returns
     --------
 
-    dist : Preliz Beta distribution
-
+    dist : Preliz Beta distribution.
         Beta distribution with fitted parameters alpha and beta for the given mass and intervals.
 
     """
 
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")
+
+    if mode < lower or mode > upper:
+        raise ValueError("mode should be between lower and upper")
 
     if upper <= lower:
         raise ValueError("upper should be larger than lower")
@@ -51,7 +46,7 @@ def one_iter(lower, upper, mode, mass=0.99, eps=0.005, plot=True):
     prob = dist.cdf(upper) - dist.cdf(lower)
     
     tau_not = 0
-    while abs(prob - mass) > eps:
+    while abs(prob - mass) > 0.005:
 
         tau_not += 0.1
         alpha = 1 + mode * tau_not
@@ -61,7 +56,7 @@ def one_iter(lower, upper, mode, mass=0.99, eps=0.005, plot=True):
 
     relative_error = abs((prob - mass) / mass * 100)
 
-    if relative_error > eps*100:
+    if relative_error > 0.005*100:
         _log.info(
             " The requested mass is %.3g, but the computed one is %.3g",
             mass,
