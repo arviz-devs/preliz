@@ -206,7 +206,7 @@ def test_mle(distribution, params):
 @pytest.mark.parametrize("fmt", (".2f", ".1g"))
 @pytest.mark.parametrize("mass", (0.5, 0.95))
 def test_summary_args(fmt, mass):
-    result = Normal(0, 1).summary(fmt, mass)
+    result = Normal(0, 1).summary(mass, fmt)
     assert result.mean == 0
     assert result.std == 1
 
