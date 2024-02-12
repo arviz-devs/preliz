@@ -59,20 +59,23 @@ class Distribution:
             self.is_frozen = True
             self.rv_frozen = frozen
 
-    def summary(self, fmt=".2f", mass=0.94):
+    def summary(self, mass=0.94, fmt=".2f"):
         """
         Namedtuple with the mean, median, standard deviation, and lower and upper bounds
         of the equal-tailed interval.
 
         Parameters
         ----------
+        mass: float
+            Probability mass for the equal-tailed interval. Defaults to 0.94
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point.
-        mass: float
-            Probability mass for the equal-tailed interval. Defaults to 0.94
         """
         valid_distribution(self)
+
+        if not isinstance(fmt, str):
+            raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
             attr = namedtuple(self.__class__.__name__, ["mean", "median", "std", "lower", "upper"])
@@ -118,18 +121,21 @@ class Distribution:
         """
         return self.rv_frozen.ppf(q, *args, **kwds)
 
-    def eti(self, fmt=".2f", mass=0.94):
+    def eti(self, mass=0.94, fmt=".2f"):
         """Equal-tailed interval containing `mass`.
 
         Parameters
         ----------
+        mass: float
+            Probability mass in the interval. Defaults to 0.94
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point.
-        mass: float
-            Probability mass in the interval. Defaults to 0.94
         """
         valid_distribution(self)
+
+        if not isinstance(fmt, str):
+            raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
             eti = self.rv_frozen.interval(mass)
@@ -139,18 +145,21 @@ class Distribution:
         else:
             return None
 
-    def hdi(self, fmt=".2f", mass=0.94):
+    def hdi(self, mass=0.94, fmt=".2f"):
         """Highest density interval containing `mass`.
 
         Parameters
         ----------
+        mass: float
+            Probability mass in the interval. Defaults to 0.94
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point.
-        mass: float
-            Probability mass in the interval. Defaults to 0.94
         """
         valid_distribution(self)
+
+        if not isinstance(fmt, str):
+            raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
             hdi = hdi_from_pdf(self, mass)

@@ -3,7 +3,7 @@ import numpy as np
 from scipy.special import gamma
 
 
-def hdi_from_pdf(dist, mass=0.95):
+def hdi_from_pdf(dist, mass=0.94):
     """
     Approximate the HDI by evaluating the pdf.
     This is faster, but potentially less accurate, than directly minimizing the

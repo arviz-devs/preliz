@@ -11,7 +11,7 @@ def maxent(
     distribution=None,
     lower=-1,
     upper=1,
-    mass=0.90,
+    mass=0.94,
     plot=True,
     plot_kwargs=None,
     ax=None,
@@ -30,7 +30,7 @@ def maxent(
     upper: float
         Upper end-point
     mass: float
-        Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.9
+        Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.94
     plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defaults to True.
     plot_kwargs : dict
