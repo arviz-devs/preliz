@@ -32,6 +32,13 @@ def beta_mode(lower, upper, mode, mass=0.90, plot=False, plot_kwargs=None, ax=No
     dist : Preliz Beta distribution.
         Beta distribution with fitted parameters alpha and beta for the given mass and intervals.
 
+    See also
+    --------
+    maxent : maximum entropy distribution with mass in the lower-upper interval.
+
+    References
+    ----------
+    Adapted from  Evans et al. (2017) see https://doi.org/10.3390/e19100564
     """
 
     if not 0 < mass <= 1:
