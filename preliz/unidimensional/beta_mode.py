@@ -1,13 +1,15 @@
-import preliz as pz
 import logging
-from preliz.internal.optimization import optimize_one_iter
+
+from ..distributions import Beta
+from ..internal.optimization import optimize_beta_mode
 
 _log = logging.getLogger("preliz")
 
 
-def one_iter(lower, upper, mode, mass=0.99, plot=False, plot_kwargs=None, ax=None):
+def beta_mode(lower, upper, mode, mass=0.90, plot=False, plot_kwargs=None, ax=None):
 
-    """ Fits Parameters to a Beta Distribution based on the mode, confidence intervals and mass of the distribution.
+    """Fits Parameters to a Beta Distribution based on the mode, confidence intervals
+    and mass of the distribution.
 
     Parameters
     -----------
@@ -18,16 +20,15 @@ def one_iter(lower, upper, mode, mass=0.99, plot=False, plot_kwargs=None, ax=Non
     mode : float
         Mode of the Beta distribution between lower and upper.
     mass : float
-        Concentarion of the probabilty mass between lower and upper. Defaults to 0.99.
+        Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.9
     plot : bool
         Whether to plot the distribution. Defaults to True.
     plot_kwargs : dict
-        Dictionary passed to the method ``plot_pdf()`` of ``distribution``.
+        Dictionary passed to the method ``plot_pdf()``.
     ax : matplotlib axes
 
     Returns
     --------
-
     dist : Preliz Beta distribution.
         Beta distribution with fitted parameters alpha and beta for the given mass and intervals.
 
@@ -42,26 +43,19 @@ def one_iter(lower, upper, mode, mass=0.99, plot=False, plot_kwargs=None, ax=Non
     if upper <= lower:
         raise ValueError("upper should be larger than lower")
 
-    dist = pz.Beta()
+    if plot_kwargs is None:
+        plot_kwargs = {}
+
+    dist = Beta()
     dist._fit_moments(  # pylint:disable=protected-access
-        mean=(upper + lower) / 2,
-        sigma=((upper - lower) / 6) / mass
+        mean=(upper + lower) / 2, sigma=((upper - lower) / 4) / mass
     )
     tau_a = (dist.alpha - 1) / mode
     tau_b = (dist.beta - 1) / (1 - mode)
     tau = (tau_a + tau_b) / 2
     prob = dist.cdf(upper) - dist.cdf(lower)
 
-    prob, dist = optimize_one_iter(lower, upper, tau, mode, dist, mass, prob)
-
-    relative_error = abs((prob - mass) / mass * 100)
-
-    if relative_error > 0.005*100:
-        _log.info(
-            " The requested mass is %.3g, but the computed one is %.3g",
-            mass,
-            prob,
-        )
+    optimize_beta_mode(lower, upper, tau, mode, dist, mass, prob)
 
     if plot:
         ax = dist.plot_pdf(**plot_kwargs)
@@ -70,6 +64,5 @@ def one_iter(lower, upper, mode, mass=0.99, plot=False, plot_kwargs=None, ax=Non
         else:
             cid = -1
         ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
+
     return ax, dist
-
-
