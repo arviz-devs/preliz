@@ -186,6 +186,21 @@ def optimize_ml(dist, sample):
     return opt
 
 
+def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
+
+    while abs(prob - mass) > 0.0001:
+
+        alpha = 1 + mode * tau_not
+        beta = 1 + (1 - mode) * tau_not
+        dist._parametrization(alpha, beta)
+        prob = dist.cdf(upper) - dist.cdf(lower)
+
+        if prob > mass:
+            tau_not -= 0.5 * tau_not
+        else:
+            tau_not += 0.5 * tau_not
+
+
 def relative_error(dist, lower, upper, required_mass):
     if dist.kind == "discrete":
         lower -= 1
