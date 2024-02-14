@@ -50,8 +50,18 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=11, dist_names=None, figsize=Non
 
     check_inside_notebook(need_widget=True)
 
-    (w_x_min, w_x_max, w_ncols, w_nrows, w_extra, w_repr, w_distributions, w_checkbox_cont,
-     w_checkbox_disc, w_checkbox_none) = get_widgets(
+    (
+        w_x_min,
+        w_x_max,
+        w_ncols,
+        w_nrows,
+        w_extra,
+        w_repr,
+        w_distributions,
+        w_checkbox_cont,
+        w_checkbox_disc,
+        w_checkbox_none,
+    ) = get_widgets(
         x_min,
         x_max,
         nrows,
@@ -76,10 +86,10 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=11, dist_names=None, figsize=Non
         grid = Rectangles(fig, coll, nrows, ncols, ax_grid)
 
         def handle_checkbox_change(_):
-            handle_checkbox_widget(w_distributions,
-                                   w_checkbox_cont,
-                                   w_checkbox_disc,
-                                   w_checkbox_none)
+            dist_names = handle_checkbox_widget(
+                w_distributions.options, w_checkbox_cont, w_checkbox_disc, w_checkbox_none
+            )
+            w_distributions.value = dist_names
 
         w_checkbox_none.observe(handle_checkbox_change)
         w_checkbox_cont.observe(handle_checkbox_change)
@@ -142,7 +152,16 @@ def roulette(x_min=0, x_max=10, nrows=10, ncols=11, dist_names=None, figsize=Non
 
     controls = widgets.VBox([w_x_min, w_x_max, w_nrows, w_ncols, w_extra])
     control_distribution = widgets.VBox([w_checkbox_cont, w_checkbox_disc, w_checkbox_none])
-    display(widgets.HBox([controls, w_repr, w_distributions, control_distribution]))  # pylint:disable=undefined-variable
+    display(  # pylint:disable=undefined-variable
+        widgets.HBox(
+            [
+                controls,
+                w_repr,
+                w_distributions,
+                control_distribution,
+            ]
+        )
+    )
 
 
 def create_figure(figsize):
@@ -305,22 +324,23 @@ def reset_dist_panel(x_min, x_max, ax, yticks):
     ax.autoscale_view()
 
 
-def handle_checkbox_widget(w_distributions, w_checkbox_cont, w_checkbox_disc, w_checkbox_none):
+def handle_checkbox_widget(options, w_checkbox_cont, w_checkbox_disc, w_checkbox_none):
     if w_checkbox_none.value:
-        w_distributions.value = []
         w_checkbox_disc.value = False
         w_checkbox_cont.value = False
-        return None
+        return []
     all_cls = []
     if w_checkbox_cont.value:
-        all_cont_str = [dist for dist in
-                        (cls.__name__ for cls in all_continuous if cls.__name__ in w_distributions.options)]
+        all_cont_str = [  # pylint:disable=unnecessary-comprehension
+            dist for dist in (cls.__name__ for cls in all_continuous if cls.__name__ in options)
+        ]
         all_cls += all_cont_str
     if w_checkbox_disc.value:
-        all_dist_str = [dist for dist in
-                        (cls.__name__ for cls in all_discrete if cls.__name__ in w_distributions.options)]
+        all_dist_str = [  # pylint:disable=unnecessary-comprehension
+            dist for dist in (cls.__name__ for cls in all_discrete if cls.__name__ in options)
+        ]
         all_cls += all_dist_str
-    w_distributions.value = all_cls
+    return all_cls
 
 
 def get_widgets(x_min, x_max, nrows, ncols, dist_names):
@@ -436,5 +456,15 @@ def get_widgets(x_min, x_max, nrows, ncols, dist_names):
         value=False, description="None", disabled=False, indent=False
     )
 
-    return (w_x_min, w_x_max, w_ncols, w_nrows, w_extra, w_repr, w_distributions,
-            w_checkbox_cont, w_checkbox_disc, w_checkbox_none)
+    return (
+        w_x_min,
+        w_x_max,
+        w_ncols,
+        w_nrows,
+        w_extra,
+        w_repr,
+        w_distributions,
+        w_checkbox_cont,
+        w_checkbox_disc,
+        w_checkbox_none,
+    )
