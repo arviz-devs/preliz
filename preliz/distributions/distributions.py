@@ -2,7 +2,6 @@
 Parent classes for all families.
 """
 # pylint: disable=no-member
-import warnings
 from collections import namedtuple
 
 try:
@@ -417,7 +416,6 @@ class Distribution:
         interval="hdi",
         levels=None,
         figsize=None,
-        fixed_lim=None,
     ):
         """
         Interactive exploration of distributions parameters
@@ -453,13 +451,6 @@ class Distribution:
             args = init_vals[self.__class__.__name__]
 
         self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
-
-        if fixed_lim is not None:
-            warnings.warn(
-                "The 'fixed_lim' parameter will be deprecated. Use 'xy_lim' instead.",
-                FutureWarning,
-            )
-            xy_lim = fixed_lim
 
         if xy_lim == "both":
             xlim = self._finite_endpoints("full")
