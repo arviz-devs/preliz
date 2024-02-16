@@ -42,8 +42,8 @@ def test_plot_interactive():
         if distribution not in ["Dirichlet", "MvNormal"]:
             dist = getattr(pz.distributions, distribution)
             kind = ["pdf", "cdf", "ppf"][idx % 3]
-            fixed_lim = ["auto", "both"][idx % 2]
-            dist().plot_interactive(kind=kind, fixed_lim=fixed_lim)
+            xy_lim = ["auto", "both"][idx % 2]
+            dist().plot_interactive(kind=kind, xy_lim=xy_lim)
 
 
 @pytest.mark.parametrize(
