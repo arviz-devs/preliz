@@ -33,5 +33,4 @@ def test_invalid_bounds():
 
 
 def test_plot_beta_mode():
-    _, _ = beta_mode(0.25, 0.75, 0.5, 0.9, plot=True,
-                        plot_kwargs={"pointinterval": True})
+    _, _ = beta_mode(0.25, 0.75, 0.5, 0.9, plot=True, plot_kwargs={"pointinterval": True})
