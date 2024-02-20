@@ -44,7 +44,7 @@ def beta_mode(lower, upper, mode, mass=0.94, plot=False, plot_kwargs=None, ax=No
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")
 
-    if mode < lower or mode > upper:
+    if mode <= lower or mode >= upper:
         raise ValueError("mode should be between lower and upper")
 
     if upper <= lower:
