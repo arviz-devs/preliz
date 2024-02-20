@@ -6,7 +6,7 @@ from preliz import beta_mode
 @pytest.mark.parametrize(
     "lower, upper, mode, mass, expected_alpha, expected_beta",
     [
-        (0.25, 0.75, 0.5, 0.9, 6.41, 9.12),  # Example test case
+        (0.25, 0.75, 0.5, 0.9, 4.94, 4.94),  # Example test case
         # Add more test cases here
     ],
 )
@@ -33,5 +33,5 @@ def test_invalid_bounds():
 
 
 def test_plot_beta_mode():
-    _, _ = beta_mode(0, 1, 0.5, 0.9, plot=True,
+    _, _ = beta_mode(0.25, 0.75, 0.5, 0.9, plot=True,
                         plot_kwargs={"pointinterval": True})
