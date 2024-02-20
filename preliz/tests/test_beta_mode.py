@@ -6,7 +6,7 @@ from preliz import beta_mode
 @pytest.mark.parametrize(
     "lower, upper, mode, mass, expected_alpha, expected_beta",
     [
-        (0, 1, 0.5, 0.9, 2.184, 2.184),  # Example test case
+        (0.25, 0.75, 0.5, 0.9, 2.184, 2.184),  # Example test case
         # Add more test cases here
     ],
 )
@@ -18,25 +18,22 @@ def test_beta_mode(lower, upper, mode, mass, expected_alpha, expected_beta):
     assert np.isclose(dist.beta, expected_beta, atol=0.01)
 
 
-# Additional tests for input validation
-
 def test_invalid_mass():
     with pytest.raises(ValueError):
-        beta_mode(0, 1, 0.5, mass=1.1)
+        beta_mode(0.25, 0.75, 0.5, mass=1.1)
 
 
 def test_invalid_mode():
     with pytest.raises(ValueError):
-        beta_mode(0, 1, 1.5)
+        beta_mode(0.25, 0.75, 1.5)
 
 
 def test_invalid_bounds():
     with pytest.raises(ValueError):
-        beta_mode(1, 0, 0.5)
+        beta_mode(0.75, 0.25, 0.5)
 
-#additional tests for plot
 
 def test_plot_beta_mode():
     _, dist = beta_mode(0, 1, 0.5, 0.9, plot=True,
                         plot_kwargs={"pointinterval": True})
-    # Add more assertions as needed
+
