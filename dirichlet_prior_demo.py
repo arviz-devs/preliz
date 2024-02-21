@@ -1,107 +1,60 @@
 from preliz.distributions import Dirichlet
 import numpy as np
-import numpy.random as npr
-
-# set seeds for reproducibility
-npr.seed(0)
 
 
-def prob_approx(num_monte_carlo_samples, tau, lower_bounds):
-
-    # 1. Generate num_monte_carlo_samples samples from the Dirichlet distribution with parameters tau * lower_bounds
-    # 2. Compute the probability that the sample is in the lower_bounds interval
-    # 3. Return the probability
+def prob_approx(tau, lower_bounds, avg_rem_mass):
 
     k = len(lower_bounds)
-    alphas = []
-    sum_lower_bounds = sum(lower_bounds)
-    for i in range(k):
-        x_i = lower_bounds[i] + (1 - sum_lower_bounds) / k
-        alphas.append(1 + tau * x_i)
+    alpha = [1 + tau * (lower_bounds[i] + avg_rem_mass) for i in range(k)]
 
-    alphas = np.array(alphas)
-    samples = npr.dirichlet(alphas, num_monte_carlo_samples)
-    # find the number of samples that satifisfy allthe lower bounds across all dimensions
-    num_satisfy = 0
-    for i in range(num_monte_carlo_samples):
-        if all([samples[i][j] > lower_bounds[j] for j in range(k)]):
-            num_satisfy += 1
-    return num_satisfy / num_monte_carlo_samples
+    return np.mean(Dirichlet(alpha).cdf(lower_bounds)), alpha
 
-
-def find_tau_bound(num_monte_carlo_samples, gamma, lower_bounds):
-
+def find_tau_bound(mass, lower_bounds, avg_rem_mass):
     tau = 1
-
     iter_count = 0
-
-    while prob_approx(num_monte_carlo_samples, tau, lower_bounds) < gamma:
-        tau = tau * 2
+    while prob_approx(tau, lower_bounds, avg_rem_mass)[0] < mass:
+        tau *= 2
         iter_count += 1
 
     return tau / 2, tau, iter_count
 
 
-def find_tau_dir_k(gamma, lower_bounds, max_iter, num_monte_carlo_samples):
+def find_tau_dir_k(mass, mode):
 
-    k = len(lower_bounds)
+    # we should check that the sum of mode sum to 1, otherwise we should normalize it 
+    # and notify the user the new values.
 
-    tau_lower, tau_upper, iter_count = find_tau_bound(num_monte_carlo_samples, gamma, lower_bounds)
+    avg_rem_mass = (1- mass) / len(mode)
+    lower_bounds = np.clip(np.array(mode) - avg_rem_mass, 0, 1)
 
+    tau_lower, tau_upper, iter_count = find_tau_bound(mass, lower_bounds, avg_rem_mass)
     tau = (tau_lower + tau_upper) / 2
+    new_prob, alpha = prob_approx(tau, lower_bounds, avg_rem_mass)
 
-    new_prob = prob_approx(num_monte_carlo_samples, tau, lower_bounds)
-
-    tau_value_list = [tau]
-    prob_value_list = [new_prob]
-
-    while abs(new_prob - gamma) > 0.005:
+    while abs(new_prob - mass) > 0.0005:
         iter_count += 1
 
-        if new_prob > gamma:
+        if new_prob > mass:
             tau_upper = tau
-
         else:
             tau_lower = tau
-
+        
         if tau_upper == tau_lower:
             tau_upper = tau_upper * 2
 
         tau = (tau_lower + tau_upper) / 2
 
-        new_prob = prob_approx(num_monte_carlo_samples, tau, lower_bounds)
+        new_prob, alpha = prob_approx(tau, lower_bounds, avg_rem_mass)
 
-        tau_value_list.append(tau)
-        prob_value_list.append(new_prob)
-
-        if iter_count > max_iter:
-            break
-
-    alphas_list = []
-    x_i_list = []
-
-    for i in range(k):
-        x_i = lower_bounds[i] + (1 - sum(lower_bounds)) / k
-        x_i_list.append(x_i)
-        alphas_list.append(1 + tau * x_i)
-
-    alphas_list = np.array(alphas_list)
-
-    Dirichlet_dist = Dirichlet(alphas_list)
-
-    return Dirichlet_dist, tau, x_i_list, alphas_list
+    return Dirichlet(alpha)
 
 
-# write driver code to test the function
+mode = [0.4, 0.2, 0.2, 0.2]
+mass = 0.90
 
-lower_bounds = [0.2, 0.2, 0.3, 0.2]
-gamma = 0.99
-max_iter = 1000
-num_monte_carlo_samples = 1000
+Dirichlet_dist = find_tau_dir_k(mass, mode)
 
-Dirichlet_dist, tau, x_i_list, alphas_list = find_tau_dir_k(
-    gamma, lower_bounds, max_iter, num_monte_carlo_samples
-)
+alpha = Dirichlet_dist.alpha
+mode = (alpha-1) / (alpha.sum() - len(alpha))
 
-print("Dirichlet distribution with alpha values: ", alphas_list)
-print("Tau value: ", tau)
+alpha, mode
