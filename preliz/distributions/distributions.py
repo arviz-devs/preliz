@@ -1,6 +1,7 @@
 """
 Parent classes for all families.
 """
+
 # pylint: disable=no-member
 from collections import namedtuple
 

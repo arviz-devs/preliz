@@ -3,6 +3,7 @@ PreliZ.
 
 Tools to help you pick a prior
 """
+
 import logging
 
 from matplotlib import rcParams
