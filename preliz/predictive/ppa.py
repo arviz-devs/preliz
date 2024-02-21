@@ -67,7 +67,7 @@ def ppa(
             placeholder="Int, Float or tuple",
             description="references: ",
             disabled=False,
-            layout=widgets.Layout(width="275px"),
+            layout=widgets.Layout(width="230px", margin="0 20px 0 0"),
         )
         button_carry_on = widgets.Button(description="carry on")
         button_return_prior = widgets.Button(description="return prior")
