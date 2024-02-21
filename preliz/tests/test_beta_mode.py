@@ -5,9 +5,7 @@ from preliz import beta_mode
 
 def test_beta_mode():
 
-    test_case = (0.25, 0.75, 0.5, 0.9, 4.94, 4.94)
-
-    lower, upper, mode, mass, expected_alpha, expected_beta = test_case
+    lower, upper, mode, mass, expected_alpha, expected_beta = 0.25, 0.75, 0.5, 0.9, 4.94, 4.94
 
     _, dist = beta_mode(lower, upper, mode, mass)
 
