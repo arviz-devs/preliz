@@ -6,8 +6,7 @@ from ..internal.optimization import optimize_beta_mode
 _log = logging.getLogger("preliz")
 
 
-def beta_mode(lower, upper, mode, mass=0.94, plot=False, plot_kwargs=None, ax=None):
-
+def beta_mode(lower, upper, mode, mass=0.94, plot=True, plot_kwargs=None, ax=None):
     """Fits Parameters to a Beta Distribution based on the mode, confidence intervals
     and mass of the distribution.
 
