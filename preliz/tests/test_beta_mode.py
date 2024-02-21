@@ -3,14 +3,12 @@ import numpy as np
 from preliz import beta_mode
 
 
-@pytest.mark.parametrize(
-    "lower, upper, mode, mass, expected_alpha, expected_beta",
-    [
-        (0.25, 0.75, 0.5, 0.9, 4.94, 4.94),  # Example test case
-        # Add more test cases here
-    ],
-)
-def test_beta_mode(lower, upper, mode, mass, expected_alpha, expected_beta):
+def test_beta_mode():
+
+    test_case = (0.25, 0.75, 0.5, 0.9, 4.94, 4.94)
+
+    lower, upper, mode, mass, expected_alpha, expected_beta = test_case
+
     _, dist = beta_mode(lower, upper, mode, mass)
 
     assert np.isclose(dist.alpha, expected_alpha, atol=0.01)
