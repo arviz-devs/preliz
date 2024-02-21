@@ -64,10 +64,10 @@ def ppa(
     with output:
         references_widget = widgets.Text(
             value=str(references),
-            placeholder='Int, Float or tuple',
-            description='references: ',
+            placeholder="Int, Float or tuple",
+            description="references: ",
             disabled=False,
-            layout=widgets.Layout(width="275px")
+            layout=widgets.Layout(width="275px"),
         )
         button_carry_on = widgets.Button(description="carry on")
         button_return_prior = widgets.Button(description="return prior")
@@ -98,6 +98,7 @@ def ppa(
                 check_button_sharex.value,
                 filter_dists.fig,
             )
+
         references_widget.observe(kind_, names=["value"])
 
         radio_buttons_kind.observe(kind_, names=["value"])
