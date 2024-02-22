@@ -1,46 +1,38 @@
-from preliz.distributions import Dirichlet
-import numpy as np
+from preliz.distributions import Dirichlet, Beta
 
 
-def prob_approx(tau, lower_bounds, avg_rem_mass):
+def prob_approx(tau, lower_bounds, mode):
 
-    k = len(lower_bounds)
-    alpha = np.clip([tau * (lower_bounds[i] - avg_rem_mass) for i in range(k)], 1, None)
+    alpha = [1 + tau * mode_i for mode_i in mode]
 
-    return np.mean(Dirichlet(alpha).cdf(lower_bounds)), alpha
-
-def find_tau_bound(mass, lower_bounds, avg_rem_mass):
-    tau = 1
-    while prob_approx(tau, lower_bounds, avg_rem_mass)[0] < mass:
-        tau *= 2
-
-    return tau / 2, tau
+    a_0 = sum(alpha)
+    mean_cdf = np.mean([Beta(a_i, a_0 - a_i).cdf(lbi) for a_i, mode_i, lbi in zip(alpha, mode, lower_bounds)])
+    return mean_cdf, alpha
 
 
-def find_tau_dir_k(mass, mode):
+def find_tau_dir_k(mass, mode, bound):
 
     # We should check that the sum of mode sums to 1, otherwise we should normalize it
     # and notify the user of the new values.
 
-    avg_rem_mass = (1 - mass) / len(mode)
-    lower_bounds = np.clip(np.array(mode) - (avg_rem_mass / 3), 0, 1)
+    lower_bounds = np.clip(np.array(mode) - bound, 0, 1)
+    target_mass = (1-mass) / 2
 
-    tau_lower, tau_upper = find_tau_bound(mass, lower_bounds, avg_rem_mass)
-    tau = (tau_lower + tau_upper) / 2
-    new_prob, alpha = prob_approx(tau, lower_bounds, avg_rem_mass)
+    # This should go in the docs
+    # I print it here, just for testing
+    print(f"For the marginals {mass*100}% of the mass will be "
+          f"approximately around {np.array(mode)-bound} and {np.array(mode)+bound}")
 
-    while abs(new_prob - mass) > 0.0005:
-        if new_prob > mass:
-            tau_upper = tau
+    tau = 1
+    new_prob, alpha = prob_approx(tau, lower_bounds, mode)
+
+    while abs(new_prob - target_mass) > 0.0001:
+        if new_prob < target_mass:
+            tau -= 0.5 * tau
         else:
-            tau_lower = tau
+            tau += 0.5 * tau
 
-        if tau_upper == tau_lower:
-            tau_upper = tau_upper * 2
-
-        tau = (tau_lower + tau_upper) / 2
-
-        new_prob, alpha = prob_approx(tau, lower_bounds, avg_rem_mass)
+        new_prob, alpha = prob_approx(tau, lower_bounds, mode)
         
     ## We need to compare the requested mode against the computed one
     ## And report the computed one if the difference is "large enough"
@@ -48,12 +40,15 @@ def find_tau_dir_k(mass, mode):
     return Dirichlet(alpha)
 
 
-mode = [0.4, 0.2, 0.2, 0.2]
+mode = [0.4, 0.3, 0.2, 0.1]
 mass = 0.90
+bound = 0.01
 
-Dirichlet_dist = find_tau_dir_k(mass, mode)
+Dirichlet_dist = find_tau_dir_k(mass, mode, bound)
 
 alpha = Dirichlet_dist.alpha
 mode = (alpha-1) / (alpha.sum() - len(alpha))
 
-alpha, mode
+print(alpha, mode, np.sum(alpha))
+Dirichlet_dist.plot_pdf()
+pz.Beta(alpha[0], alpha[1:].sum()).eti(mass, fmt=".3f"), pz.Beta(alpha[-1], alpha[:-1].sum()).eti(mass, fmt=".3f")
