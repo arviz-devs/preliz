@@ -39,9 +39,9 @@ def ppa(
     model : PreliZ model
     draws : int
         Number of draws from the prior and prior predictive distribution
-    references : int, float, list or tuple
+    references : int, float, list, tuple or dictionary
         Value(s) used as reference points representing prior knowledge. For example expected
-        values or values that are considered extreme.
+        values or values that are considered extreme. Use a dictionary for labeled references.
     boundaries : tuple
         Hard boundaries (lower, upper). Posterior predictive samples with values outside these
         boundaries will be excluded from the analysis.
