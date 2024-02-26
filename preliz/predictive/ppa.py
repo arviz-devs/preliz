@@ -1,6 +1,7 @@
 """Prior predictive check assistant."""
 
 import logging
+import ast
 from random import shuffle
 
 try:
@@ -38,9 +39,9 @@ def ppa(
     model : PreliZ model
     draws : int
         Number of draws from the prior and prior predictive distribution
-    references : int, float, list or tuple
+    references : int, float, list, tuple or dictionary
         Value(s) used as reference points representing prior knowledge. For example expected
-        values or values that are considered extreme.
+        values or values that are considered extreme. Use a dictionary for labeled references.
     boundaries : tuple
         Hard boundaries (lower, upper). Posterior predictive samples with values outside these
         boundaries will be excluded from the analysis.
@@ -55,15 +56,19 @@ def ppa(
 
     _log.info(""""This is an experimental method under development, use with caution.""")
 
-    if isinstance(references, (float, int)):
-        references = [references]
-
     filter_dists = FilterDistribution(fmodel, draws, references, boundaries, target, engine)
     filter_dists()
 
     output = widgets.Output()
 
     with output:
+        references_widget = widgets.Text(
+            value=str(references),
+            placeholder="Int, Float or tuple",
+            description="references: ",
+            disabled=False,
+            layout=widgets.Layout(width="230px", margin="0 20px 0 0"),
+        )
         button_carry_on = widgets.Button(description="carry on")
         button_return_prior = widgets.Button(description="return prior")
         radio_buttons_kind = widgets.RadioButtons(
@@ -85,15 +90,16 @@ def ppa(
 
         def kind_(_):
             kind = radio_buttons_kind.value
-
             plot_pp_samples(
                 filter_dists.pp_samples,
                 filter_dists.display_pp_idxs,
-                references,
+                ast.literal_eval(references_widget.value),
                 kind,
                 check_button_sharex.value,
                 filter_dists.fig,
             )
+
+        references_widget.observe(kind_, names=["value"])
 
         radio_buttons_kind.observe(kind_, names=["value"])
 
@@ -114,9 +120,10 @@ def ppa(
         filter_dists.fig.canvas.mpl_connect("button_press_event", click)
 
     controls = widgets.VBox([button_carry_on, button_return_prior])
+    plot_combine = widgets.VBox([radio_buttons_kind, check_button_sharex])
 
     display(  # pylint:disable=undefined-variable
-        widgets.HBox([controls, radio_buttons_kind, check_button_sharex, output])
+        widgets.HBox([references_widget, plot_combine, controls, output])
     )
 
 
