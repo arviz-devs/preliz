@@ -429,7 +429,7 @@ class Distribution:
             Defaults to `"both"`, the limits of both axis are fixed.
             Use `"auto"` for automatic rescaling of x-axis and y-axis.
             Or set them manually by passing a tuple of 4 elements,
-            the first two for x-axis, the last two for x-axis. The tuple can have `None`.
+            the first two for x-axis, the last two for y-axis. The tuple can have `None`.
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
