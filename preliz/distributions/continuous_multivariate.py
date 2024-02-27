@@ -231,7 +231,7 @@ class Dirichlet(Continuous):
             Defaults to `"both"`, the limits of both axes are fixed for all subplots.
             Use `"auto"` for automatic rescaling of x-axis and y-axis.
             Or set them manually by passing a tuple of 4 elements,
-            the first two for x-axis, the last two for x-axis. The tuple can have `None`.
+            the first two for x-axis, the last two for y-axis. The tuple can have `None`.
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False.
             If `True` the default is to plot the median and two inter-quantiles ranges.
@@ -261,8 +261,8 @@ class Dirichlet(Continuous):
         else:
             plot_widgets = {}
         for index, dim in enumerate(self.params[0]):
-            plot_widgets[f"dim-{index + 1}"] = get_slider(
-                f"dim-{index + 1}", dim, *self.params_support[0]
+            plot_widgets[f"alpha-{index + 1}"] = get_slider(
+                f"alpha-{index + 1}", dim, *self.params_support[0]
             )
 
         def plot(**args):
