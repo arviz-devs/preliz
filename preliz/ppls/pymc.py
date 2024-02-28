@@ -11,6 +11,13 @@ from ..internal.optimization import get_distributions
 
 
 def backfitting(prior, p_model, var_info2):  #### we already have a function with this name
+    """
+    Fit the samples from prior into user provided model's prior.
+    from the perspective of ppe "prior" is actually an approximated posterior
+    but from the users perspective is its prior.
+    We need to "backfitted" because we can not use arbitrary samples as priors.
+    We need probability distributions.
+    """
     new_priors = {}
     for key, size_inf in var_info2.items():
         size = size_inf[1]
@@ -33,6 +40,12 @@ def backfitting(prior, p_model, var_info2):  #### we already have a function wit
 
 
 def compile_logp(model):
+    """
+    Compile the log-likelihood function for the model.
+    We need to be able to condition it on parameters or data.
+    Because during the optimization routine we need to change both.
+    Currently this will fail for a prior that depends on other prior.
+    """
     value = pt_vector("value")
     rv_logp = logp(*model.observed_RVs, value)
     rv_logp_fn = compile_pymc([*model.free_RVs, value], rv_logp)
@@ -57,6 +70,9 @@ def get_pymc_to_preliz():
 
 
 def get_guess(model):
+    """
+    Get initial guess for optimization routine.
+    """
     init = []
     for key, value in model.initial_point().items():
         if is_transformed_name(key):
@@ -69,6 +85,11 @@ def get_guess(model):
 
 
 def get_model_information(model):
+    """
+    Get information from the PyMC model.
+    This probably needs a lot of love.
+    We even have a variable named var_info, and another one var_info2!
+    """
     bounds = []
     prior = {}
     p_model = {}
@@ -90,7 +111,9 @@ def get_model_information(model):
             bounds.append(dist.support)
             prior[r_v.name] = []
 
+        # the keys are the name of the (transformed) variable
         var_info[rvs_to_values[r_v].name] = (shape, size)
+        # the keys are the name of the (untransformed) variable
         var_info2[r_v.name] = (shape, size)
 
         p_model[r_v.name] = dist
@@ -101,6 +124,11 @@ def get_model_information(model):
 
 
 def write_pymc_string(new_priors, var_info):
+    """
+    Return a string with the new priors for the PyMC model.
+    So the user can copy and paste, ideally with none to minimal changes.
+    """
+
     header = "with pm.Model() as model:\n"
 
     for key, value in new_priors.items():
@@ -116,6 +144,9 @@ def write_pymc_string(new_priors, var_info):
 
 
 def reshape_params(model, var_info, params):
+    """
+    We flatten the parameters to be able to use them in the optimization routine.
+    """
     size = 0
     value = []
     for var in model.value_vars:

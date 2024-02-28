@@ -229,7 +229,7 @@ def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
 
 
 def optimize_pymc_model(fmodel, target, draws, prior, initial_guess, bounds, var_info):
-    for _ in range(1000):
+    for _ in range(400):
         # can we sample systematically from these and less random?
         # This should be more flexible and allow other targets than just
         # a preliz distribution
@@ -245,6 +245,7 @@ def optimize_pymc_model(fmodel, target, draws, prior, initial_guess, bounds, var
 
         optimal_params = result.x
         initial_guess = optimal_params
+        print(optimal_params)
 
         for key, param in zip(prior.keys(), optimal_params):
             prior[key].append(param)
