@@ -97,14 +97,3 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=No
     return ax, dirichlet_distribution
 
 
-# driver code
-
-mode = [0.4, 0.3, 0.2, 0.1]
-mass = 0.90
-bound = 0.01
-
-Dirichlet_dist = dirichlet_mode(mode, mass, bound)
-
-alpha = Dirichlet_dist[1].alpha
-mode = (alpha - 1) / (alpha.sum() - len(alpha))
-print("Mode", mode)
