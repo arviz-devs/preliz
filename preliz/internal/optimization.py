@@ -197,7 +197,7 @@ def optimize_dirichlet_mode(lower_bounds, mode, tau, new_prob, target_mass, _dis
         for a_i, lbi in zip(alpha, lower_bounds):
             _dist._parametrization(a_i, a_0 - a_i)
             marginal_prob_list.append(_dist.cdf(lbi))
-        # mean_cdf = np.mean([_dist._parametrization(a_i, a_0 - a_i).cdf(lbi) for a_i, lbi in zip(alpha, lower_bounds)])
+
         mean_cdf = np.mean(marginal_prob_list)
         return mean_cdf, alpha
 
