@@ -73,6 +73,26 @@ def test_dirichlet_plot(kwargs):
     "kwargs",
     [
         {},
+        {"xy_lim": "auto"},
+        {"pointinterval": True, "xy_lim": "auto"},
+        {"pointinterval": True, "levels": [0.1, 0.9], "xy_lim": "both"},
+        {"pointinterval": True, "interval": "eti", "levels": [0.9], "xy_lim": (0.3, 0.9, 0.6, 1)},
+        {"pointinterval": True, "interval": "quantiles", "xy_lim": "both"},
+        {"pointinterval": True, "interval": "quantiles", "levels": [0.1, 0.5, 0.9]},
+        {"pointinterval": False, "figsize": (4, 4)},
+    ],
+)
+def test_plot_interactive_dirichlet(kwargs):
+    a_dist = pz.Dirichlet([2, 1, 2])
+    a_dist.plot_interactive(kind="pdf", **kwargs)
+    a_dist.plot_interactive(kind="cdf", **kwargs)
+    a_dist.plot_interactive(kind="ppf", **kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {},
         {"marginals": True},
         {"pointinterval": True},
         {"pointinterval": True, "levels": [0.1, 0.9]},

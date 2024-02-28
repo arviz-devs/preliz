@@ -1050,7 +1050,7 @@ class HalfNormal(Continuous):
         self._update(sigma)
 
     def _fit_mle(self, sample, **kwargs):
-        _, sigma = self.dist.fit(sample, **kwargs)
+        sigma = np.mean(sample**2) ** 0.5
         self._update(sigma)
 
 

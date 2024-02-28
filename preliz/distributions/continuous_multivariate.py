@@ -8,13 +8,18 @@ Continuous multivariate probability distributions.
 from copy import copy
 
 import numpy as np
+
+try:
+    from ipywidgets import interactive, widgets
+except ImportError:
+    pass
 from scipy import stats
 
 from .distributions_multivariate import Continuous
 from .continuous import Beta, Normal
 from ..internal.distribution_helper import all_not_none
 from ..internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
-
+from ..internal.plot_helper import check_inside_notebook, get_slider
 
 eps = np.finfo(float).eps
 
@@ -63,7 +68,7 @@ class Dirichlet(Continuous):
         self._parametrization(alpha)
 
     def _parametrization(self, alpha=None):
-        self.param_names = "alpha"
+        self.param_names = ("alpha",)
         self.params_support = ((eps, np.inf),)
 
         self.alpha = alpha
@@ -204,6 +209,108 @@ class Dirichlet(Continuous):
         return plot_dirichlet(
             self, "ppf", "marginals", pointinterval, interval, levels, None, figsize, ax
         )
+
+    def plot_interactive(
+        self,
+        kind="pdf",
+        xy_lim="both",
+        pointinterval=True,
+        interval="hdi",
+        levels=None,
+        figsize=None,
+    ):
+        """
+        Interactive exploration of parameters
+
+        Parameters
+        ----------
+        kind : str:
+            Type of plot. Available options are `pdf`, `cdf` and `ppf`.
+        xy_lim : str or tuple
+            Set the limits of the x-axis and/or y-axis.
+            Defaults to `"both"`, the limits of both axes are fixed for all subplots.
+            Use `"auto"` for automatic rescaling of x-axis and y-axis.
+            Or set them manually by passing a tuple of 4 elements,
+            the first two for x-axis, the last two for y-axis. The tuple can have `None`.
+        pointinterval : bool
+            Whether to include a plot of the quantiles. Defaults to False.
+            If `True` the default is to plot the median and two inter-quantiles ranges.
+        interval : str
+            Type of interval. Available options are the highest density interval `"hdi"` (default),
+            equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
+        figsize : tuple
+            Size of the figure
+        """
+
+        check_inside_notebook()
+
+        args = dict(zip(self.param_names, self.params))
+        self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
+        if kind == "pdf":
+            w_checkbox_marginals = widgets.Checkbox(
+                value=True,
+                description="marginals",
+                disabled=False,
+                indent=False,
+            )
+            plot_widgets = {"marginals": w_checkbox_marginals}
+        else:
+            plot_widgets = {}
+        for index, dim in enumerate(self.params[0]):
+            plot_widgets[f"alpha-{index + 1}"] = get_slider(
+                f"alpha-{index + 1}", dim, *self.params_support[0]
+            )
+
+        def plot(**args):
+            if kind == "pdf":
+                marginals = args.pop("marginals")
+            params = {"alpha": np.asarray(list(args.values()), dtype=float)}
+            self.__init__(**params)  # pylint: disable=unnecessary-dunder-call
+            if kind == "pdf":
+                plot_dirichlet(
+                    self,
+                    "pdf",
+                    marginals,
+                    pointinterval,
+                    interval,
+                    levels,
+                    "full",
+                    figsize,
+                    None,
+                    xy_lim,
+                )
+            elif kind == "cdf":
+                plot_dirichlet(
+                    self,
+                    "cdf",
+                    "marginals",
+                    pointinterval,
+                    interval,
+                    levels,
+                    "full",
+                    figsize,
+                    None,
+                    xy_lim,
+                )
+            elif kind == "ppf":
+                plot_dirichlet(
+                    self,
+                    "cdf",
+                    "marginals",
+                    pointinterval,
+                    interval,
+                    levels,
+                    None,
+                    figsize,
+                    None,
+                    xy_lim,
+                )
+
+        return interactive(plot, **plot_widgets)
 
 
 class MvNormal(Continuous):
