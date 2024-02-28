@@ -1,54 +1,111 @@
 from preliz.distributions import Dirichlet, Beta
+import preliz as pz
+import numpy as np
+from preliz.internal.optimization import optimize_dirichlet_mode
+import logging
+
+_log = logging.getLogger("preliz")
 
 
-def prob_approx(tau, lower_bounds, mode):
+def prob_approx(tau, lower_bounds, mode, _dist):
 
     alpha = [1 + tau * mode_i for mode_i in mode]
 
     a_0 = sum(alpha)
-    mean_cdf = np.mean([Beta(a_i, a_0 - a_i).cdf(lbi) for a_i, mode_i, lbi in zip(alpha, mode, lower_bounds)])
+    marginal_prob_list = []
+    for a_i, lbi in zip(alpha, lower_bounds):
+        _dist._parametrization(a_i, a_0 - a_i)
+        marginal_prob_list.append(_dist.cdf(lbi))
+    mean_cdf = np.mean(marginal_prob_list)
     return mean_cdf, alpha
 
 
-def find_tau_dir_k(mass, mode, bound):
+def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=None):
+    """
 
-    # We should check that the sum of mode sums to 1, otherwise we should normalize it
-    # and notify the user of the new values.
+    This function returns a Dirichlet distribution that has the specified mass concentrated in the region of
+    mode +- bound.
+
+    Parameters
+    ----------
+
+    mode : list
+        Mode of the Dirichlet distribution.
+
+    mass : float
+        Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.94.
+
+    bound : float
+        Defines upper and lower bounds for the mass as mode+-bound. Defaults to 0.01.
+
+    plot : bool
+        Whether to plot the distribution. Defaults to True.
+
+    plot_kwargs : dict
+        Dictionary passed to the method ``plot_pdf()``.
+
+    ax : matplotlib axes
+
+    Returns
+    -------
+
+    ax : matplotlib axes
+
+    dist : Preliz Dirichlet distribution.
+        Dirichlet distribution with fitted parameters alpha for the given mass and intervals.
+
+    References
+    ----------
+    Adapted from  Evans et al. (2017) see https://doi.org/10.3390/e19100564
+
+    """
+
+    if not 0 < mass <= 1:
+        raise ValueError("mass should be larger than 0 and smaller or equal to 1")
+
+    if not all(i > 0 for i in mode):
+        raise ValueError("mode should be larger than 0")
+
+    if not abs(sum(mode) - 1) < 0.0001:
+        _log.warning("The mode should sum to 1, normalising mode to sum to 1")
+        sum_mode = sum(mode)
+        mode = [i / sum_mode for i in mode]
 
     lower_bounds = np.clip(np.array(mode) - bound, 0, 1)
-    target_mass = (1-mass) / 2
-
-    # This should go in the docs
-    # I print it here, just for testing
-    print(f"For the marginals {mass*100}% of the mass will be "
-          f"approximately around {np.array(mode)-bound} and {np.array(mode)+bound}")
-
+    target_mass = (1 - mass) / 2
     tau = 1
-    new_prob, alpha = prob_approx(tau, lower_bounds, mode)
+    _dist = Beta()
 
-    while abs(new_prob - target_mass) > 0.0001:
-        if new_prob < target_mass:
-            tau -= 0.5 * tau
-        else:
-            tau += 0.5 * tau
+    new_prob, alpha = prob_approx(tau, lower_bounds, mode, _dist)
 
-        new_prob, alpha = prob_approx(tau, lower_bounds, mode)
-        
-    ## We need to compare the requested mode against the computed one
-    ## And report the computed one if the difference is "large enough"
+    new_prob, alpha = optimize_dirichlet_mode(
+        lower_bounds, mode, tau, new_prob, target_mass, _dist, alpha
+    )
 
-    return Dirichlet(alpha)
+    alpha_np = np.array(alpha)
+    calculated_mode = (alpha_np - 1) / (alpha_np.sum() - len(alpha_np))
 
+    if np.linalg.norm(np.array(mode) - calculated_mode) > 0.01:
+        _log.warning(
+            f"The requested mode {mode} is different from the calculated mode {calculated_mode}."
+        )
+
+    dirichlet_distribution = Dirichlet(alpha)
+
+    if plot:
+        ax = dirichlet_distribution.plot_pdf(**plot_kwargs)
+
+    return ax, dirichlet_distribution
+
+
+# driver code
 
 mode = [0.4, 0.3, 0.2, 0.1]
 mass = 0.90
 bound = 0.01
 
-Dirichlet_dist = find_tau_dir_k(mass, mode, bound)
+Dirichlet_dist = dirichlet_mode(mode, mass, bound)
 
-alpha = Dirichlet_dist.alpha
-mode = (alpha-1) / (alpha.sum() - len(alpha))
-
-print(alpha, mode, np.sum(alpha))
-Dirichlet_dist.plot_pdf()
-pz.Beta(alpha[0], alpha[1:].sum()).eti(mass, fmt=".3f"), pz.Beta(alpha[-1], alpha[:-1].sum()).eti(mass, fmt=".3f")
+alpha = Dirichlet_dist[1].alpha
+mode = (alpha - 1) / (alpha.sum() - len(alpha))
+print("Mode", mode)

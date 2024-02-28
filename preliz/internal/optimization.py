@@ -1,6 +1,7 @@
 """
 Optimization routines and utilities
 """
+
 from sys import modules
 import warnings
 
@@ -184,6 +185,32 @@ def optimize_ml(dist, sample):
     dist._update(*opt["x"])
 
     return opt
+
+
+def optimize_dirichlet_mode(lower_bounds, mode, tau, new_prob, target_mass, _dist, alpha):
+
+    def prob_approx(tau, lower_bounds, mode, _dist):
+
+        alpha = [1 + tau * mode_i for mode_i in mode]
+        a_0 = sum(alpha)
+        marginal_prob_list = []
+        for a_i, lbi in zip(alpha, lower_bounds):
+            _dist._parametrization(a_i, a_0 - a_i)
+            marginal_prob_list.append(_dist.cdf(lbi))
+        # mean_cdf = np.mean([_dist._parametrization(a_i, a_0 - a_i).cdf(lbi) for a_i, lbi in zip(alpha, lower_bounds)])
+        mean_cdf = np.mean(marginal_prob_list)
+        return mean_cdf, alpha
+
+    while abs(new_prob - target_mass) > 0.0001:
+
+        if new_prob < target_mass:
+            tau -= 0.5 * tau
+        else:
+            tau += 0.5 * tau
+
+        new_prob, alpha = prob_approx(tau, lower_bounds, mode, _dist)
+
+    return new_prob, alpha
 
 
 def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
