@@ -186,7 +186,7 @@ def optimize_ml(dist, sample):
     return opt
 
 
-def optimize_dirichlet_mode(lower_bounds, mode, tau, new_prob, target_mass, _dist, alpha):
+def optimize_dirichlet_mode(lower_bounds, mode, target_mass, _dist):
 
     def prob_approx(tau, lower_bounds, mode, _dist):
 
@@ -199,6 +199,9 @@ def optimize_dirichlet_mode(lower_bounds, mode, tau, new_prob, target_mass, _dis
 
         mean_cdf = np.mean(marginal_prob_list)
         return mean_cdf, alpha
+
+    tau = 1
+    new_prob, alpha = prob_approx(tau, lower_bounds, mode, _dist)
 
     while abs(new_prob - target_mass) > 0.0001:
 

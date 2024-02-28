@@ -1,23 +1,10 @@
+import logging
 from preliz.distributions import Dirichlet, Beta
-import preliz as pz
 import numpy as np
 from preliz.internal.optimization import optimize_dirichlet_mode
-import logging
+
 
 _log = logging.getLogger("preliz")
-
-
-def prob_approx(tau, lower_bounds, mode, _dist):
-
-    alpha = [1 + tau * mode_i for mode_i in mode]
-
-    a_0 = sum(alpha)
-    marginal_prob_list = []
-    for a_i, lbi in zip(alpha, lower_bounds):
-        _dist._parametrization(a_i, a_0 - a_i)
-        marginal_prob_list.append(_dist.cdf(lbi))
-    mean_cdf = np.mean(marginal_prob_list)
-    return mean_cdf, alpha
 
 
 def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=None):
@@ -73,13 +60,11 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=No
 
     lower_bounds = np.clip(np.array(mode) - bound, 0, 1)
     target_mass = (1 - mass) / 2
-    tau = 1
     _dist = Beta()
 
-    new_prob, alpha = prob_approx(tau, lower_bounds, mode, _dist)
 
     new_prob, alpha = optimize_dirichlet_mode(
-        lower_bounds, mode, tau, new_prob, target_mass, _dist, alpha
+        lower_bounds, mode, target_mass, _dist
     )
 
     alpha_np = np.array(alpha)
@@ -98,14 +83,3 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=No
     return ax, dirichlet_distribution
 
 
-# driver code
-
-mode = [0.4, 0.3, 0.2, 0.1]
-mass = 0.90
-bound = 0.01
-
-Dirichlet_dist = dirichlet_mode(mode, mass, bound)
-
-alpha = Dirichlet_dist[1].alpha
-mode = (alpha - 1) / (alpha.sum() - len(alpha))
-print("Mode", mode)
