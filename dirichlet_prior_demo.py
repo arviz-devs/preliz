@@ -9,9 +9,8 @@ _log = logging.getLogger("preliz")
 
 def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=None):
     """
-
-    This function returns a Dirichlet distribution that has the specified mass concentrated in the region of
-    mode +- bound.
+   This function returns a Dirichlet distribution that has the specified mass concentrated in the
+   region of mode +- bound.
 
     Parameters
     ----------
@@ -54,7 +53,7 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=No
         raise ValueError("mode should be larger than 0")
 
     if not abs(sum(mode) - 1) < 0.0001:
-        _log.warning("The mode should sum to 1, normalising mode to sum to 1")
+        warnings.warn("The mode should sum to 1, normalising mode to sum to 1")
         sum_mode = sum(mode)
         mode = [i / sum_mode for i in mode]
 
