@@ -22,9 +22,8 @@ def prob_approx(tau, lower_bounds, mode, _dist):
 
 def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs={}, ax=None):
     """
-
-    This function returns a Dirichlet distribution that has the specified mass concentrated in the region of
-    mode +- bound.
+   This function returns a Dirichlet distribution that has the specified mass concentrated in the
+   region of mode +- bound.
 
     Parameters
     ----------
