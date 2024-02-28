@@ -1,7 +1,6 @@
 """
 Optimization routines and utilities
 """
-
 from sys import modules
 import warnings
 
