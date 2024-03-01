@@ -112,6 +112,30 @@ def test_mvnormal_plot(kwargs):
     a_dist.plot_ppf(**kwargs)
 
 
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {},
+        {"xy_lim": "auto"},
+        {"pointinterval": True, "xy_lim": "auto"},
+        {"pointinterval": True, "levels": [0.1, 0.9], "xy_lim": "both"},
+        {"pointinterval": True, "interval": "eti", "levels": [0.9], "xy_lim": (0.3, 0.9, None, 1)},
+        {"pointinterval": True, "interval": "quantiles", "xy_lim": "both"},
+        {"pointinterval": True, "interval": "quantiles", "levels": [0.1, 0.5, 0.9]},
+        {"pointinterval": False, "figsize": (4, 4)},
+    ],
+)
+def test_plot_interactive_mvnormal(kwargs):
+    mvnormal_tau = pz.MvNormal(mu=[-1, 2.4], tau=[[1, 0], [1, 1]])
+    mvnormal_cov = pz.MvNormal(mu=[3, -2], cov=[[1, 0], [0, 1]])
+    mvnormal_tau.plot_interactive(kind="pdf", **kwargs)
+    mvnormal_cov.plot_interactive(kind="pdf", **kwargs)
+    mvnormal_tau.plot_interactive(kind="cdf", **kwargs)
+    mvnormal_cov.plot_interactive(kind="cdf", **kwargs)
+    mvnormal_tau.plot_interactive(kind="ppf", **kwargs)
+    mvnormal_cov.plot_interactive(kind="ppf", **kwargs)
+
+
 @pytest.fixture
 def sample_ax():
     return plt.subplot()

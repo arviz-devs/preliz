@@ -222,7 +222,16 @@ def find_hdi_contours(density, hdi_probs):
 
 
 def plot_mvnormal(
-    dist, representation, marginals, pointinterval, interval, levels, support, figsize, axes
+    dist,
+    representation,
+    marginals,
+    pointinterval,
+    interval,
+    levels,
+    support,
+    figsize,
+    axes,
+    xy_lim="auto",
 ):
     """Plot pdf, cdf or ppf of Multivariate Normal distribution."""
 
@@ -232,6 +241,10 @@ def plot_mvnormal(
 
     if figsize is None:
         figsize = (12, 4)
+
+    if isinstance(xy_lim, tuple):
+        xlim = xy_lim[:2]
+        ylim = xy_lim[2:]
 
     if marginals:
         cols, rows = get_cols_rows(dim)
@@ -244,8 +257,18 @@ def plot_mvnormal(
                 ax.remove()
 
         for mu_i, sigma_i, ax in zip(mu, sigma, axes):
+            marginal_dist = dist.marginal(mu_i, sigma_i)
+            if xy_lim == "both":
+                xlim = marginal_dist._finite_endpoints("full")
+                xvals = marginal_dist.xvals("restricted")
+                if representation == "pdf":
+                    max_pdf = np.max(marginal_dist.pdf(xvals))
+                    ylim = (-max_pdf * 0.075, max_pdf * 1.5)
+                elif representation == "ppf":
+                    max_ppf = marginal_dist.ppf(0.999)
+                    ylim = (-max_ppf * 0.075, max_ppf * 1.5)
             if representation == "pdf":
-                dist.marginal(mu_i, sigma_i).plot_pdf(
+                marginal_dist.plot_pdf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
@@ -254,7 +277,7 @@ def plot_mvnormal(
                     ax=ax,
                 )
             elif representation == "cdf":
-                dist.marginal(mu_i, sigma_i).plot_cdf(
+                marginal_dist.plot_cdf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
@@ -263,14 +286,17 @@ def plot_mvnormal(
                     ax=ax,
                 )
             elif representation == "ppf":
-                dist.marginal(mu_i, sigma_i).plot_ppf(
+                marginal_dist.plot_ppf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,
                     legend=False,
                     ax=ax,
                 )
-
+            if xy_lim != "auto" and representation != "ppf":
+                ax.set_xlim(*xlim)
+            if xy_lim != "auto" and representation != "cdf":
+                ax.set_ylim(*ylim)
         fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
 
     else:
