@@ -5,7 +5,6 @@ from preliz.distributions import Dirichlet, Beta
 from preliz.internal.optimization import optimize_dirichlet_mode
 
 
-
 _log = logging.getLogger("preliz")
 
 
@@ -64,8 +63,7 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
 
     if np.any((np.array(mode) - calculated_mode) > 0.01):
         _log.warning(
-            "The requested mode %s is different from the calculated mode %s.",
-            mode, calculated_mode
+            "The requested mode %s is different from the calculated mode %s.", mode, calculated_mode
         )
 
     dirichlet_distribution = Dirichlet(alpha)
