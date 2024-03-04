@@ -73,7 +73,3 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
     return ax, dirichlet_distribution
 
 
-if __name__ == "__main__":
-
-    _, dist = dirichlet_mode([0.22, 0.22, 0.32, 0.22], 0.99, bound=0.02)
-    print(dist)
