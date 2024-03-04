@@ -186,10 +186,34 @@ def optimize_ml(dist, sample):
     return opt
 
 
+def optimize_dirichlet_mode(lower_bounds, mode, target_mass, _dist):
+    def prob_approx(tau, lower_bounds, mode, _dist):
+        alpha = [1 + tau * mode_i for mode_i in mode]
+        a_0 = sum(alpha)
+        marginal_prob_list = []
+        for a_i, lbi in zip(alpha, lower_bounds):
+            _dist._parametrization(a_i, a_0 - a_i)
+            marginal_prob_list.append(_dist.cdf(lbi))
+
+        mean_cdf = np.mean(marginal_prob_list)
+        return mean_cdf, alpha
+
+    tau = 1
+    new_prob, alpha = prob_approx(tau, lower_bounds, mode, _dist)
+
+    while abs(new_prob - target_mass) > 0.0001:
+        if new_prob < target_mass:
+            tau -= 0.5 * tau
+        else:
+            tau += 0.5 * tau
+
+        new_prob, alpha = prob_approx(tau, lower_bounds, mode, _dist)
+
+    return new_prob, alpha
+
+
 def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
-
     while abs(prob - mass) > 0.0001:
-
         alpha = 1 + mode * tau_not
         beta = 1 + (1 - mode) * tau_not
         dist._parametrization(alpha, beta)
@@ -281,7 +305,6 @@ def fit_to_quartile(dist_names, q1, q2, q3, extra_pros):
                     extra_pros[distribution.__class__.__name__]["upper"],
                 )
         if distribution._check_endpoints(q1, q3, raise_error=False):
-
             none_idx, fixed = get_fixed_params(distribution)
 
             distribution._fit_moments(
