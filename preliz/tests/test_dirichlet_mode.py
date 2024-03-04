@@ -3,7 +3,7 @@ import numpy as np
 from preliz import dirichlet_mode
 
 
-def test_beta_mode():
+def test_dirichlet_mode():
     _, dist = dirichlet_mode([0.22, 0.22, 0.32, 0.22], 0.99, bound=0.02)
     for alpha, expected in zip(dist.alpha, [675, 675, 981.37, 675.0]):
         assert np.isclose(alpha, expected, atol=0.01)
