@@ -18,7 +18,7 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
      mode : list
          Mode of the Dirichlet distribution.
      mass : float
-         Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.90.
+         Probability mass between within mode +- bounds. Defaults to 0.90.
      bound : float
          Defines upper and lower bounds for the mass as mode +- bound. Defaults to 0.01.
      plot : bool
