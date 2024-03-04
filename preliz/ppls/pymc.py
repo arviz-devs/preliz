@@ -3,7 +3,8 @@ from sys import modules
 import numpy as np
 
 
-from pytensor.tensor import vector as pt_vector
+from pytensor.tensor import vector, TensorConstant
+
 from pymc import logp, compile_pymc
 from pymc.util import is_transformed_name, get_untransformed_name
 
@@ -20,21 +21,22 @@ def backfitting(prior, p_model, var_info2):  #### we already have a function wit
     """
     new_priors = {}
     for key, size_inf in var_info2.items():
-        size = size_inf[1]
-        if size > 1:
-            params = []
-            for i in range(size):
-                value = prior[f"{key}__{i}"]
+        if not size_inf[2]:
+            size = size_inf[1]
+            if size > 1:
+                params = []
+                for i in range(size):
+                    value = prior[f"{key}__{i}"]
+                    dist = p_model[key]
+                    dist._fit_mle(value)
+                    params.append(dist.params)
+                dist._parametrization(*[np.array(x) for x in zip(*params)])
+            else:
+                value = prior[key]
                 dist = p_model[key]
                 dist._fit_mle(value)
-                params.append(dist.params)
-            dist._parametrization(*[np.array(x) for x in zip(*params)])
-        else:
-            value = prior[key]
-            dist = p_model[key]
-            dist._fit_mle(value)
 
-        new_priors[key] = dist
+            new_priors[key] = dist
 
     return new_priors
 
@@ -46,12 +48,13 @@ def compile_logp(model):
     Because during the optimization routine we need to change both.
     Currently this will fail for a prior that depends on other prior.
     """
-    value = pt_vector("value")
+    value = vector("value")
     rv_logp = logp(*model.observed_RVs, value)
-    rv_logp_fn = compile_pymc([*model.free_RVs, value], rv_logp)
+    rv_logp_fn = compile_pymc([*model.free_RVs, value], rv_logp, on_unused_input="ignore")
+    # rv_logp_fn.trust_input = True
 
-    def fmodel(params, obs, var_info):
-        params = reshape_params(model, var_info, params)
+    def fmodel(params, obs, var_info, dist):
+        params = reshape_params(model, var_info, params, dist)
         y = -rv_logp_fn(*params, obs).sum()
         return y
 
@@ -69,17 +72,23 @@ def get_pymc_to_preliz():
     return pymc_to_preliz
 
 
-def get_guess(model):
+def get_guess(model, free_rvs):
     """
     Get initial guess for optimization routine.
     """
     init = []
-    for key, value in model.initial_point().items():
-        if is_transformed_name(key):
-            un_name = get_untransformed_name(key)
-            value = model.rvs_to_transforms[model.named_vars[un_name]].backward(value).eval()
 
-        init.append(value)
+    free_rvs_names = [rv.name for rv in free_rvs]
+    for key, value in model.initial_point().items():
+
+        if is_transformed_name(key):
+            name = get_untransformed_name(key)
+            value = model.rvs_to_transforms[model.named_vars[name]].backward(value).eval()
+        else:
+            name = key
+
+        if name in free_rvs_names:
+            init.append(value)
 
     return np.concatenate([np.atleast_1d(arr) for arr in init]).flatten()
 
@@ -90,37 +99,54 @@ def get_model_information(model):
     This probably needs a lot of love.
     We even have a variable named var_info, and another one var_info2!
     """
+
     bounds = []
     prior = {}
     p_model = {}
     var_info = {}
     var_info2 = {}
+    free_rvs = []
     pymc_to_preliz = get_pymc_to_preliz()
     rvs_to_values = model.rvs_to_values
+
     for r_v in model.free_RVs:
-        name = r_v.owner.op.name
-        dist = pymc_to_preliz[name]
+        if not non_constant_parents(r_v):
+            free_rvs.append(r_v)
+
+    for r_v in model.free_RVs:
         r_v_eval = r_v.eval()
         size = r_v_eval.size
         shape = r_v_eval.shape
-        if size > 1:
-            for i in range(size):
-                bounds.append(dist.support)
-                prior[f"{r_v.name}__{i}"] = []
+        nc_parents = non_constant_parents(r_v)
+        if nc_parents:
+            idxs = [free_rvs.index(var_) for var_ in nc_parents]
+            # the keys are the name of the (transformed) variable
+            var_info[rvs_to_values[r_v].name] = (shape, size, idxs)
+            # the keys are the name of the (untransformed) variable
+            var_info2[r_v.name] = (shape, size, idxs)
         else:
-            bounds.append(dist.support)
-            prior[r_v.name] = []
+            free_rvs.append(r_v)
+            name = r_v.owner.op.name
+            dist = pymc_to_preliz[name]
 
-        # the keys are the name of the (transformed) variable
-        var_info[rvs_to_values[r_v].name] = (shape, size)
-        # the keys are the name of the (untransformed) variable
-        var_info2[r_v.name] = (shape, size)
+            if size > 1:
+                for i in range(size):
+                    bounds.append(dist.support)
+                    prior[f"{r_v.name}__{i}"] = []
+            else:
+                bounds.append(dist.support)
+                prior[r_v.name] = []
 
-        p_model[r_v.name] = dist
+            # the keys are the name of the (transformed) variable
+            var_info[rvs_to_values[r_v].name] = (shape, size, nc_parents)
+            # the keys are the name of the (untransformed) variable
+            var_info2[r_v.name] = (shape, size, nc_parents)
+
+            p_model[r_v.name] = dist
 
     draws = model.observed_RVs[0].eval().size
 
-    return bounds, prior, p_model, var_info, var_info2, draws
+    return bounds, prior, p_model, var_info, var_info2, draws, free_rvs
 
 
 def write_pymc_string(new_priors, var_info):
@@ -143,15 +169,30 @@ def write_pymc_string(new_priors, var_info):
     return header
 
 
-def reshape_params(model, var_info, params):
+def reshape_params(model, var_info, params, dist):
     """
     We flatten the parameters to be able to use them in the optimization routine.
     """
     size = 0
     value = []
     for var in model.value_vars:
-        shape, new_size = var_info[var.name]
-        var_samples = params[size : size + new_size]
-        value.append(var_samples.reshape(shape))
-        size += new_size
+        shape, new_size, idxs = var_info[var.name]
+        if idxs:
+            dist._parametrization(*params[idxs])
+            value.append(np.repeat(dist.rv_frozen.mean(), new_size))
+            size += new_size
+        else:
+            var_samples = params[size : size + new_size]
+            value.append(var_samples.reshape(shape))
+            size += new_size
+
     return value
+
+
+def non_constant_parents(var_):
+    parents = []
+    for variable in var_.get_parents()[0].inputs[3:]:
+        if not isinstance(variable, TensorConstant):
+            parents.append(variable)
+
+    return parents

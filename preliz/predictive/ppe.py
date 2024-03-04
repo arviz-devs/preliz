@@ -8,6 +8,8 @@ from ..ppls.pymc import (
     write_pymc_string,
 )
 from ..internal.optimization import optimize_pymc_model
+from ..distributions.continuous import Normal
+
 
 _log = logging.getLogger("preliz")
 
@@ -48,11 +50,12 @@ def ppe(model, target):
     # We collect some useful information from the model
     # probably there is a lot to improve here, to make it more robust, clean and
     # flexible
-    bounds, prior, p_model, var_info, var_info2, draws = get_model_information(model)
+    bounds, prior, p_model, var_info, var_info2, draws, free_rvs = get_model_information(model)
+
     # initial guess for optimization routine. This is taken from model.initial_point
     # inside the optimziation routine this is updated to be estimate from the previous
     # step.
-    guess = get_guess(model)
+    guess = get_guess(model, free_rvs)
     # The log_likelihood function. This is the function we want to optimize
     # We can condition it on parameters or data
     # This will not work for prior that depends on other prior,
@@ -64,7 +67,9 @@ def ppe(model, target):
     # so, even when we are optimizing we obtain a distribution of parameters
     # The parameters of the minimize function are based on what we do in kulprit
     # but we can tweak them to make it more robust and/or faster.
-    prior = optimize_pymc_model(fmodel, target, draws, prior, guess, bounds, var_info)
+    dist = Normal(0, 1)
+
+    prior = optimize_pymc_model(fmodel, target, draws, prior, guess, bounds, var_info, dist)
     # we fit the distributions of parameters into the original families
     # in the future we could try to fit to other families
     # and return two model one with the original families and
