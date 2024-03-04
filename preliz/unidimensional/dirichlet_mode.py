@@ -1,15 +1,18 @@
 import logging
+import warnings
+import numpy as np
 from preliz.distributions import Dirichlet, Beta
 from preliz.internal.optimization import optimize_dirichlet_mode
-import numpy as np
-import warnings
+
+
 
 _log = logging.getLogger("preliz")
 
 
 def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=None):
     """
-    Returns a Dirichlet distribution where the marginals have the specified mode and mass and their masses lie within the range mode ± bound.
+    Returns a Dirichlet distribution where the marginals have the specified mode
+    and mass and their masses lie within the range mode ± bound.
 
      Parameters
      ----------
@@ -54,14 +57,15 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
     target_mass = (1 - mass) / 2
     _dist = Beta()
 
-    new_prob, alpha = optimize_dirichlet_mode(lower_bounds, mode, target_mass, _dist)
+    _, alpha = optimize_dirichlet_mode(lower_bounds, mode, target_mass, _dist)
 
     alpha_np = np.array(alpha)
     calculated_mode = (alpha_np - 1) / (alpha_np.sum() - len(alpha_np))
 
     if np.any((np.array(mode) - calculated_mode) > 0.01):
         _log.warning(
-            f"The requested mode {mode} is different from the calculated mode {calculated_mode}."
+            "The requested mode %s is different from the calculated mode %s.",
+            mode, calculated_mode
         )
 
     dirichlet_distribution = Dirichlet(alpha)
