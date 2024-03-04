@@ -59,7 +59,7 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
     alpha_np = np.array(alpha)
     calculated_mode = (alpha_np - 1) / (alpha_np.sum() - len(alpha_np))
 
-    if np.linalg.norm(np.array(mode) - calculated_mode) > 0.01:
+    if np.any((np.array(mode) - calculated_mode) > 0.01):
         _log.warning(
             f"The requested mode {mode} is different from the calculated mode {calculated_mode}."
         )
