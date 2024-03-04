@@ -9,7 +9,7 @@ _log = logging.getLogger("preliz")
 
 def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=None):
     """
-    Returns a Dirichlet distribution where the marginals have the specified mode and mass and their masses lie within the range mode ± bound. 
+    Returns a Dirichlet distribution where the marginals have the specified mode and mass and their masses lie within the range mode ± bound.
 
      Parameters
      ----------
@@ -70,5 +70,3 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
         ax = dirichlet_distribution.plot_pdf(**plot_kwargs, ax=ax)
 
     return ax, dirichlet_distribution
-
-
