@@ -1,13 +1,15 @@
+"""Projective predictive elicitation."""
+
 import logging
 
-from ..ppls.pymc import (
+from preliz.internal.optimization import optimize_pymc_model
+from preliz.ppls.pymc_io import (
     get_model_information,
     get_guess,
     compile_logp,
     backfitting,
     write_pymc_string,
 )
-from ..internal.optimization import optimize_pymc_model
 
 
 _log = logging.getLogger("preliz")

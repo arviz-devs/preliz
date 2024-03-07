@@ -1,17 +1,21 @@
+"""Methods to communicate with PyMC."""
+
+# pylint: disable=protected-access
 from sys import modules
 
 import numpy as np
 
+try:
+    from pytensor.tensor import vector, TensorConstant
+    from pymc import logp, compile_pymc
+    from pymc.util import is_transformed_name, get_untransformed_name
+except ImportError as exc:
+    raise ImportError("You need to have PyMC installed to use this module") from exc
 
-from pytensor.tensor import vector, TensorConstant
-
-from pymc import logp, compile_pymc
-from pymc.util import is_transformed_name, get_untransformed_name
-
-from ..internal.optimization import get_distributions
+from preliz.internal.optimization import get_distributions
 
 
-def backfitting(prior, p_model, var_info2):  #### we already have a function with this name
+def backfitting(prior, p_model, var_info2):
     """
     Fit the samples from prior into user provided model's prior.
     from the perspective of ppe "prior" is actually an approximated posterior
@@ -51,12 +55,11 @@ def compile_logp(model):
     value = vector("value")
     rv_logp = logp(*model.observed_RVs, value)
     rv_logp_fn = compile_pymc([*model.free_RVs, value], rv_logp, on_unused_input="ignore")
-    # rv_logp_fn.trust_input = True
+    rv_logp_fn.trust_input = True
 
     def fmodel(params, obs, var_info, p_model):
         params = reshape_params(model, var_info, p_model, params)
-        y = -rv_logp_fn(*params, obs).sum()
-        return y
+        return -rv_logp_fn(*params, obs).sum()
 
     return fmodel
 
@@ -93,11 +96,12 @@ def get_guess(model, free_rvs):
     return np.concatenate([np.atleast_1d(arr) for arr in init]).flatten()
 
 
-def get_model_information(model):
+def get_model_information(model):  # pylint: disable=too-many-locals
     """
     Get information from the PyMC model.
-    This probably needs a lot of love.
-    We even have a variable named var_info, and another one var_info2!
+
+    This needs some love. We even have a variable named var_info,
+    and another one var_info2!
     """
 
     bounds = []
@@ -194,6 +198,7 @@ def reshape_params(model, var_info, p_model, params):
 
 
 def non_constant_parents(var_):
+    """Find the parents of a variable that are not constant."""
     parents = []
     for variable in var_.get_parents()[0].inputs[3:]:
         if not isinstance(variable, TensorConstant):
