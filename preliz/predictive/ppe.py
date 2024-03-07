@@ -67,9 +67,7 @@ def ppe(model, target):
     # so, even when we are optimizing we obtain a distribution of parameters
     # The parameters of the minimize function are based on what we do in kulprit
     # but we can tweak them to make it more robust and/or faster.
-    dist = Normal(0, 1)
-
-    prior = optimize_pymc_model(fmodel, target, draws, prior, guess, bounds, var_info, dist)
+    prior = optimize_pymc_model(fmodel, target, draws, prior, guess, bounds, var_info, p_model)
     # we fit the distributions of parameters into the original families
     # in the future we could try to fit to other families
     # and return two model one with the original families and

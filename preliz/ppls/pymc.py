@@ -53,8 +53,8 @@ def compile_logp(model):
     rv_logp_fn = compile_pymc([*model.free_RVs, value], rv_logp, on_unused_input="ignore")
     # rv_logp_fn.trust_input = True
 
-    def fmodel(params, obs, var_info, dist):
-        params = reshape_params(model, var_info, params, dist)
+    def fmodel(params, obs, var_info, p_model):
+        params = reshape_params(model, var_info, p_model, params)
         y = -rv_logp_fn(*params, obs).sum()
         return y
 
@@ -118,6 +118,10 @@ def get_model_information(model):
         size = r_v_eval.size
         shape = r_v_eval.shape
         nc_parents = non_constant_parents(r_v)
+
+        name = r_v.owner.op.name
+        dist = pymc_to_preliz[name]
+        p_model[r_v.name] = dist
         if nc_parents:
             idxs = [free_rvs.index(var_) for var_ in nc_parents]
             # the keys are the name of the (transformed) variable
@@ -126,8 +130,6 @@ def get_model_information(model):
             var_info2[r_v.name] = (shape, size, idxs)
         else:
             free_rvs.append(r_v)
-            name = r_v.owner.op.name
-            dist = pymc_to_preliz[name]
 
             if size > 1:
                 for i in range(size):
@@ -141,8 +143,6 @@ def get_model_information(model):
             var_info[rvs_to_values[r_v].name] = (shape, size, nc_parents)
             # the keys are the name of the (untransformed) variable
             var_info2[r_v.name] = (shape, size, nc_parents)
-
-            p_model[r_v.name] = dist
 
     draws = model.observed_RVs[0].eval().size
 
@@ -169,7 +169,7 @@ def write_pymc_string(new_priors, var_info):
     return header
 
 
-def reshape_params(model, var_info, params, dist):
+def reshape_params(model, var_info, p_model, params):
     """
     We flatten the parameters to be able to use them in the optimization routine.
     """
@@ -178,8 +178,9 @@ def reshape_params(model, var_info, params, dist):
     for var in model.value_vars:
         shape, new_size, idxs = var_info[var.name]
         if idxs:
+            dist = p_model[var.name]
             dist._parametrization(*params[idxs])
-            value.append(np.repeat(dist.rv_frozen.mean(), new_size))
+            value.append(np.repeat(dist.mean(), new_size))
             size += new_size
         else:
             var_samples = params[size : size + new_size]
