@@ -17,6 +17,8 @@ from ..internal.optimization import optimize_ml, optimize_moments, optimize_mome
 from ..internal.distribution_helper import garcia_approximation, all_not_none, any_not_none
 from .distributions import Continuous
 from .normal import Normal  # pylint: disable=unused-import
+from .halfnormal import HalfNormal  # pylint: disable=unused-import
+
 
 eps = np.finfo(float).eps
 
@@ -961,98 +963,6 @@ class HalfCauchy(Continuous):
     def _fit_mle(self, sample, **kwargs):
         _, beta = self.dist.fit(sample, **kwargs)
         self._update(beta)
-
-
-class HalfNormal(Continuous):
-    r"""
-    HalfNormal Distribution
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \sigma) =
-           \sqrt{\frac{2}{\pi\sigma^2}}
-           \exp\left(\frac{-x^2}{2\sigma^2}\right)
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import HalfNormal
-        az.style.use('arviz-white')
-        for sigma in [0.4,  2.]:
-            HalfNormal(sigma).plot_pdf(support=(0,5))
-
-    ========  ==========================================
-    Support   :math:`x \in [0, \infty)`
-    Mean      :math:`\dfrac{\sigma \sqrt{2}}{\sqrt{\pi}}`
-    Variance  :math:`\sigma^2\left(1 - \dfrac{2}{\pi}\right)`
-    ========  ==========================================
-
-    HalfNormal distribution has 2 alternative parameterizations. In terms of sigma (standard
-    deviation) or tau (precision).
-
-    The link between the 2 alternatives is given by
-
-    .. math::
-
-        \tau = \frac{1}{\sigma^2}
-
-    Parameters
-    ----------
-    sigma : float
-        Scale parameter :math:`\sigma` (``sigma`` > 0).
-    tau : float
-        Precision :math:`\tau` (``tau`` > 0).
-    """
-
-    def __init__(self, sigma=None, tau=None):
-        super().__init__()
-        self.dist = copy(stats.halfnorm)
-        self.support = (0, np.inf)
-        self._parametrization(sigma, tau)
-
-    def _parametrization(self, sigma=None, tau=None):
-        if all_not_none(sigma, tau):
-            raise ValueError("Incompatible parametrization. Either use sigma or tau.")
-
-        self.param_names = ("sigma",)
-        self.params_support = ((eps, np.inf),)
-
-        if tau is not None:
-            sigma = from_precision(tau)
-            self.param_names = ("tau",)
-
-        self.sigma = sigma
-        self.tau = tau
-        if self.sigma is not None:
-            self._update(self.sigma)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(scale=self.sigma)
-        return frozen
-
-    def _update(self, sigma):
-        self.sigma = np.float64(sigma)
-        self.tau = to_precision(sigma)
-
-        if self.param_names[0] == "sigma":
-            self.params = (self.sigma,)
-        elif self.param_names[0] == "tau":
-            self.params = (self.tau,)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
-        sigma = sigma / (1 - 2 / np.pi) ** 0.5
-        self._update(sigma)
-
-    def _fit_mle(self, sample, **kwargs):
-        sigma = np.mean(sample**2) ** 0.5
-        self._update(sigma)
 
 
 class HalfStudentT(Continuous):
