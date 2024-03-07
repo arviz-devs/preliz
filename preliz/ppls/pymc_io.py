@@ -9,8 +9,8 @@ try:
     from pytensor.tensor import vector, TensorConstant
     from pymc import logp, compile_pymc
     from pymc.util import is_transformed_name, get_untransformed_name
-except ImportError as exc:
-    raise ImportError("You need to have PyMC installed to use this module") from exc
+except ModuleNotFoundError as exc:
+    raise ModuleNotFoundError("You need to have PyMC installed to use this module") from exc
 
 from preliz.internal.optimization import get_distributions
 
