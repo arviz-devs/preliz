@@ -112,7 +112,7 @@ def test_moments(distribution, params):
     dist = distribution(*params)
     dist_ = distribution()
 
-    dist_._fit_moments(dist.rv_frozen.mean(), dist.rv_frozen.std())
+    dist_._fit_moments(dist.mean(), dist.std())
 
     tol = 5
     if dist.__class__.__name__ in [
@@ -127,8 +127,8 @@ def test_moments(distribution, params):
         "StudentT",
     ]:
         tol = 0
-    assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
-    assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
+    assert_almost_equal(dist.mean(), dist_.mean(), tol)
+    assert_almost_equal(dist.std(), dist_.std(), tol)
     assert_almost_equal(params, dist_.params, 0)
 
 
@@ -187,7 +187,7 @@ def test_moments(distribution, params):
 )
 def test_mle(distribution, params):
     dist = distribution(*params)
-    sample = dist.rv_frozen.rvs(20000)
+    sample = dist.rvs(20000)
     dist_ = distribution()
     dist_._fit_mle(sample)
 
@@ -195,8 +195,8 @@ def test_mle(distribution, params):
         tol = 0
     else:
         tol = 1
-    assert_almost_equal(dist.rv_frozen.mean(), dist_.rv_frozen.mean(), tol)
-    assert_almost_equal(dist.rv_frozen.std(), dist_.rv_frozen.std(), tol)
+    assert_almost_equal(dist.mean(), dist_.mean(), tol)
+    assert_almost_equal(dist.std(), dist_.std(), tol)
     if dist.__class__.__name__ == "StudentT":
         assert_almost_equal(params[1:], dist_.params[1:], 0)
     else:

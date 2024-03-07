@@ -24,7 +24,10 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
     def entropy_loss(params, dist):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
-        return -dist.rv_frozen.entropy()
+        if dist.rv_frozen is None:
+            return -dist.entropy()
+        else:
+            return -dist.rv_frozen.entropy()
 
     cons = {
         "type": "eq",
@@ -282,10 +285,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
         if dist._check_endpoints(x_min, x_max, raise_error=False):
             dist._fit_mle(sample)  # pylint:disable=protected-access
             corr = get_penalization(sample_size, dist)
-            if dist.kind == "continuous":
-                loss = -(dist.rv_frozen.logpdf(sample).sum() - corr)
-            else:
-                loss = -(dist.rv_frozen.logpmf(sample).sum() - corr)
+            loss = -(dist.logpdf(sample).sum() - corr)
 
         fitted.update(loss, dist)
 

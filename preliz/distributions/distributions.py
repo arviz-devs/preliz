@@ -78,10 +78,10 @@ class Distribution:
 
         if valid_scalar_params(self):
             attr = namedtuple(self.__class__.__name__, ["mean", "median", "std", "lower", "upper"])
-            mean = float(f"{self.rv_frozen.mean():{fmt}}")
-            median = float(f"{self.rv_frozen.median():{fmt}}")
-            std = float(f"{self.rv_frozen.std():{fmt}}")
-            eti = self.rv_frozen.interval(mass)
+            mean = float(f"{self.mean():{fmt}}")
+            median = float(f"{self.median():{fmt}}")
+            std = float(f"{self.std():{fmt}}")
+            eti = self.eti(mass)
             lower_tail = float(f"{eti[0]:{fmt}}")
             upper_tail = float(f"{eti[1]:{fmt}}")
             return attr(mean, median, std, lower_tail, upper_tail)
@@ -120,6 +120,66 @@ class Distribution:
         """
         return self.rv_frozen.ppf(q, *args, **kwds)
 
+    def mean(self):
+        """Mean of the distribution."""
+        return self.rv_frozen.mean()
+
+    def median(self):
+        """Median of the distribution."""
+        return self.rv_frozen.median()
+
+    def std(self):
+        """Standard deviation of the distribution."""
+        return self.rv_frozen.std()
+
+    def var(self):
+        """Variance of the distribution."""
+        return self.rv_frozen.var()
+
+    def skewness(self):
+        """Skewness of the distribution."""
+        return self.stats(moment="s")
+
+    def kurtois(self):
+        """Kurtosis of the distribution"""
+        return self.stats(moments="k")
+
+    def moments(self, types="mvsk"):
+        """
+        Compute moments of the distribution.
+
+        It can also return the standard deviation
+
+        Parameters
+        ----------
+        types : str
+            The type of moments to compute. Default is 'mvsk'
+            where 'm' = mean, 'v' = variance, 's' = skewness, and 'k' = kurtosis.
+            Valid combinations are any subset of 'mvsk'.
+        """
+        if self.rv_frozen is None:
+            moments = []
+            for m_t in types:
+                if m_t not in "mdvsk":
+                    raise ValueError(
+                        "The input string should only contain the letters "
+                        "'m', 'd', 'v', 's', or 'k'."
+                    )
+                if m_t == "m":
+                    moments.append(self.mean())
+                elif m_t == "d":
+                    moments.append(self.std())
+                elif m_t == "v":
+                    moments.append(self.var())
+                elif m_t == "s":
+                    moments.append(self.skewness())
+                elif m_t == "k":
+                    moments.append(self.kurtosis())
+        else:
+            moments = self.rv_frozen.stats(moments=types)
+
+        return moments
+
     def eti(self, mass=0.94, fmt=".2f"):
         """Equal-tailed interval containing `mass`.
 
@@ -137,9 +197,12 @@ class Distribution:
             raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
-            eti = self.rv_frozen.interval(mass)
-            lower_tail = float(f"{eti[0]:{fmt}}")
-            upper_tail = float(f"{eti[1]:{fmt}}")
+            if self.rv_frozen is None:
+                eti_b = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
+            else:
+                eti_b = self.rv_frozen.interval(mass)
+            lower_tail = float(f"{eti_b[0]:{fmt}}")
+            upper_tail = float(f"{eti_b[1]:{fmt}}")
             return (lower_tail, upper_tail)
         else:
             return None
@@ -563,6 +626,16 @@ class Continuous(Distribution):
         """
         return self.rv_frozen.pdf(x, *args, **kwds)
 
+    def logpdf(self, x, *args, **kwds):
+        """Probability mass function at x.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the pdf
+        """
+        return self.rv_frozen.logpdf(x, *args, **kwds)
+
 
 class Discrete(Distribution):
     """Base class for discrete distributions."""
@@ -588,3 +661,13 @@ class Discrete(Distribution):
             Values on which to evaluate the pdf
         """
         return self.rv_frozen.pmf(x, *args, **kwds)
+
+    def logpdf(self, x, *args, **kwds):
+        """Probability mass function at x.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the pdf
+        """
+        return self.rv_frozen.logpmf(x, *args, **kwds)

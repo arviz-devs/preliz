@@ -3,6 +3,19 @@ import numpy as np
 from scipy.special import gamma
 
 
+eps = np.finfo(float).eps
+
+
+def from_precision(precision):
+    sigma = 1 / precision**0.5
+    return sigma
+
+
+def to_precision(sigma):
+    precision = 1 / sigma**2
+    return precision
+
+
 def hdi_from_pdf(dist, mass=0.94):
     """
     Approximate the HDI by evaluating the pdf.
@@ -12,12 +25,12 @@ def hdi_from_pdf(dist, mass=0.94):
     if dist.kind == "continuous":
         lower_ep, upper_ep = dist._finite_endpoints("full")
         x_vals = np.linspace(lower_ep, upper_ep, 10000)
-        pdf = dist.rv_frozen.pdf(x_vals)
+        pdf = dist.pdf(x_vals)
         pdf = pdf[np.isfinite(pdf)]
         pdf = pdf / pdf.sum()
     else:
         x_vals = dist.xvals(support="full")
-        pdf = dist.rv_frozen.pmf(x_vals)
+        pdf = dist.pdf(x_vals)
 
     sorted_idx = np.argsort(pdf)[::-1]
     mass_cum = 0
