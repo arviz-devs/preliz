@@ -228,6 +228,34 @@ def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
             tau_not += 0.5 * tau_not
 
 
+def optimize_pymc_model(fmodel, target, draws, prior, initial_guess, bounds, var_info, p_model):
+    for _ in range(400):
+        # can we sample systematically from these and less random?
+        # This should be more flexible and allow other targets than just
+        # a preliz distribution
+        obs = target.rvs(draws)
+        result = minimize(
+            fmodel,
+            initial_guess,
+            tol=0.001,
+            method="SLSQP",
+            args=(obs, var_info, p_model),
+            bounds=bounds,
+        )
+
+        optimal_params = result.x
+        initial_guess = optimal_params
+
+        for key, param in zip(prior.keys(), optimal_params):
+            prior[key].append(param)
+
+    # convert to numpy arrays
+    for key, value in prior.items():
+        prior[key] = np.array(value)
+
+    return prior
+
+
 def relative_error(dist, lower, upper, required_mass):
     if dist.kind == "discrete":
         lower -= 1
