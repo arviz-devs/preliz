@@ -2,7 +2,7 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import erf, erfinv  # pylint disable=no-name-in-module
+from scipy.special import erf, erfinv  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
