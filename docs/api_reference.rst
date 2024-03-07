@@ -24,12 +24,11 @@ This reference provides detailed documentation for user functions in the current
 :mod:`preliz.distributions.continuous`
 ======================================
 
-.. automodule:: preliz.distributions.continuous
-   :members:
-
 .. automodule:: preliz.distributions.normal
    :members:
 
+.. automodule:: preliz.distributions.continuous
+   :members:
 
 :mod:`preliz.distributions.discrete`
 ====================================
