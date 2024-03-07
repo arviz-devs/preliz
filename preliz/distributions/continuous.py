@@ -16,7 +16,7 @@ from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 from ..internal.optimization import optimize_ml, optimize_moments, optimize_moments_rice
 from ..internal.distribution_helper import garcia_approximation, all_not_none, any_not_none
 from .distributions import Continuous
-from .normal import Normal as Normal
+from .normal import Normal  # pylint: disable=unused-import
 
 eps = np.finfo(float).eps
 

@@ -162,19 +162,19 @@ class Distribution:
             for m_t in types:
                 if m_t not in "mdvsk":
                     raise ValueError(
-                        "The input string should only contain the letters 'm', 'd', 'v', 's', or 'k'."
+                        "The input string should only contain the letters "
+                        "'m', 'd', 'v', 's', or 'k'."
                     )
-                else:
-                    if m_t == "m":
-                        moments.append(self.mean())
-                    elif m_t == "d":
-                        moments.append(self.std())
-                    elif m_t == "v":
-                        moments.append(self.var())
-                    elif m_t == "s":
-                        moments.append(self.skewness())
-                    elif m_t == "k":
-                        moments.append(self.kurtosis())
+                if m_t == "m":
+                    moments.append(self.mean())
+                elif m_t == "d":
+                    moments.append(self.std())
+                elif m_t == "v":
+                    moments.append(self.var())
+                elif m_t == "s":
+                    moments.append(self.skewness())
+                elif m_t == "k":
+                    moments.append(self.kurtosis())
         else:
             moments = self.rv_frozen.stats(moments=types)
 
@@ -198,8 +198,7 @@ class Distribution:
 
         if valid_scalar_params(self):
             if self.rv_frozen is None:
-                z = [(1 - mass) / 2, 1 - (1 - mass) / 2]
-                eti_b = self.ppf(z)
+                eti_b = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
             else:
                 eti_b = self.rv_frozen.interval(mass)
             lower_tail = float(f"{eti_b[0]:{fmt}}")
