@@ -1,17 +1,20 @@
 import pytest
 from numpy.testing import assert_almost_equal
 import numpy as np
-
-
-from preliz.distributions import Normal
 from scipy import stats
+
+
+from preliz.distributions import Normal, HalfNormal
 
 
 @pytest.mark.parametrize(
     "p_dist, sp_dist, p_params, sp_params",
-    [(Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2})],
+    [
+        (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
+        (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
+    ],
 )
-def test_lala(p_dist, sp_dist, p_params, sp_params):
+def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     preliz_dist = p_dist(**p_params)
     scipy_dist = sp_dist(**sp_params)
 
