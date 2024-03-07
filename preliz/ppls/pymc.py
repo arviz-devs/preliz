@@ -180,7 +180,10 @@ def reshape_params(model, var_info, p_model, params):
         if idxs:
             dist = p_model[var.name]
             dist._parametrization(*params[idxs])
-            value.append(np.repeat(dist.mean(), new_size))
+            if new_size > 1:
+                value.append(np.repeat(dist.mean(), new_size))
+            else:
+                value.append(dist.mean())
             size += new_size
         else:
             var_samples = params[size : size + new_size]

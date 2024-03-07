@@ -8,7 +8,6 @@ from ..ppls.pymc import (
     write_pymc_string,
 )
 from ..internal.optimization import optimize_pymc_model
-from ..distributions.continuous import Normal
 
 
 _log = logging.getLogger("preliz")
@@ -36,42 +35,25 @@ def ppe(model, target):
     Returns
     -------
     prior : a dictionary
-        A dictionary with the "prior" distribution of the model.
-        This is actually the "projected posterior". But we call it "prior" because it is the
-        prior from the perspective of the user.
+        Prior samples approximating the prior distribution that will induce
+        a prior predictive distribution close to ``target``.
     pymc_string : a string
-        This is the PyMC model string with the new priors. This is what the user will want to use.
-        we obtain this by taking the "prior" (the first  output) and fit it to the model's prior families
+        This is the PyMC model string with the new priors.
+        Computed by taking the "prior samples" and fit it into the model's prior families
         using MLE.
     """
-
     _log.info(""""This is an experimental method under development, use with caution.""")
 
-    # We collect some useful information from the model
-    # probably there is a lot to improve here, to make it more robust, clean and
-    # flexible
+    # Get information from PyMC model
     bounds, prior, p_model, var_info, var_info2, draws, free_rvs = get_model_information(model)
-
-    # initial guess for optimization routine. This is taken from model.initial_point
-    # inside the optimziation routine this is updated to be estimate from the previous
-    # step.
+    # Initial point for optimization
     guess = get_guess(model, free_rvs)
-    # The log_likelihood function. This is the function we want to optimize
-    # We can condition it on parameters or data
-    # This will not work for prior that depends on other prior,
-    # the function is "insensitive" to the top prior.
+    # compile PyMC model
     fmodel = compile_logp(model)
-
-    # we optimize the model to fit the target distribution
-    # we actually fit to 500 samples from the target
-    # so, even when we are optimizing we obtain a distribution of parameters
-    # The parameters of the minimize function are based on what we do in kulprit
-    # but we can tweak them to make it more robust and/or faster.
+    # find prior that induce a prior predictive distribution close to target
     prior = optimize_pymc_model(fmodel, target, draws, prior, guess, bounds, var_info, p_model)
-    # we fit the distributions of parameters into the original families
-    # in the future we could try to fit to other families
-    # and return two model one with the original families and
-    # one with suggested new famlies.
+    # Fit the prior into the model's prior
+    # So we can write it as a PyMC model
     new_priors = backfitting(prior, p_model, var_info2)
 
     return prior, write_pymc_string(new_priors, var_info2)
