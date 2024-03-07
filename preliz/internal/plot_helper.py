@@ -72,7 +72,7 @@ def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False,
                 func = distribution.eti
 
             q_tmp = np.concatenate([func(mass=m) for m in levels])
-            median = distribution.rv_frozen.median()
+            median = distribution.median()
 
         q_s = []
         if len(levels) == 2:
