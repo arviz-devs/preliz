@@ -1,5 +1,5 @@
 # pylint: disable=attribute-defined-outside-init
-# arguments-differ
+# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 from scipy.special import erf, erfinv  # pylint disable=no-name-in-module
