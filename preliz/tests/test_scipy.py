@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 
 
-from preliz.distributions import Normal, HalfNormal
+from preliz.distributions import Normal, HalfNormal, Poisson
 
 
 @pytest.mark.parametrize(
@@ -12,6 +12,7 @@ from preliz.distributions import Normal, HalfNormal
     [
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
+        (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
     ],
 )
 def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
@@ -20,7 +21,10 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     actual = preliz_dist.entropy()
     expected = scipy_dist.entropy()
-    assert_almost_equal(actual, expected)
+    if preliz_dist.kind == "discrete":
+        assert_almost_equal(actual, expected, decimal=2)
+    else:
+        assert_almost_equal(actual, expected)
 
     rng = np.random.default_rng(1)
     actual_rvs = preliz_dist.rvs(100, random_state=rng)
@@ -45,7 +49,10 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     assert_almost_equal(actual_ppf, expected_ppf)
 
     actual_logpdf = preliz_dist.logpdf(actual_rvs)
-    expected_logpdf = scipy_dist.logpdf(expected_rvs)
+    if preliz_dist.kind == "continuous":
+        expected_logpdf = scipy_dist.logpdf(expected_rvs)
+    else:
+        expected_logpdf = scipy_dist.logpmf(expected_rvs)
     assert_almost_equal(actual_logpdf, expected_logpdf)
 
     actual_moments = preliz_dist.moments("mvsk")

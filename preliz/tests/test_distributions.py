@@ -259,14 +259,6 @@ def test_hdi(a_few_poissons):
     assert result == (1.0, 8.0)
 
 
-def test_rvs(a_few_poissons):
-    _, d_1, d_2 = a_few_poissons
-    result0 = d_2.rvs()
-    result1 = d_1.rvs()
-    assert isinstance(result0, int)
-    assert len(result1) == 2
-
-
 def test_cdf(a_few_poissons):
     _, d_1, d_2 = a_few_poissons
     result1 = d_1.cdf(1)

@@ -36,6 +36,9 @@ This reference provides detailed documentation for user functions in the current
 :mod:`preliz.distributions.discrete`
 ====================================
 
+.. automodule:: preliz.distributions.poisson
+   :members:
+
 .. automodule:: preliz.distributions.discrete
    :members:
 
