@@ -16,6 +16,7 @@ from scipy.special import logit, expit, gamma  # pylint: disable=no-name-in-modu
 
 
 from .distributions import Discrete
+from .poisson import Poisson  # pylint: disable=unused-import
 from ..internal.optimization import optimize_ml, optimize_moments
 from ..internal.distribution_helper import all_not_none, any_not_none
 
@@ -860,77 +861,6 @@ class NegativeBinomial(Discrete):
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
-
-
-class Poisson(Discrete):
-    R"""
-    Poisson distribution.
-
-    Often used to model the number of events occurring in a fixed period
-    of time when the times at which events occur are independent.
-    The pmf of this distribution is
-
-    .. math:: f(x \mid \mu) = \frac{e^{-\mu}\mu^x}{x!}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Poisson
-        az.style.use('arviz-white')
-        for mu in [0.5, 3, 8]:
-            Poisson(mu).plot_pdf()
-
-    ========  ==========================
-    Support   :math:`x \in \mathbb{N}_0`
-    Mean      :math:`\mu`
-    Variance  :math:`\mu`
-    ========  ==========================
-
-    Parameters
-    ----------
-    mu: float
-        Expected number of occurrences during the given interval
-        (mu >= 0).
-
-    Notes
-    -----
-    The Poisson distribution can be derived as a limiting case of the
-    binomial distribution.
-    """
-
-    def __init__(self, mu=None):
-        super().__init__()
-        self.mu = mu
-        self.dist = copy(stats.poisson)
-        self.support = (0, np.inf)
-        self._parametrization(mu)
-
-    def _parametrization(self, mu=None):
-        self.mu = mu
-        self.params = (self.mu,)
-        self.param_names = ("mu",)
-        self.params_support = ((eps, np.inf),)
-        if mu is not None:
-            self._update(mu)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.mu)
-        return frozen
-
-    def _update(self, mu):
-        self.mu = np.float64(mu)
-        self.params = (self.mu,)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
-        self._update(mean)
-
-    def _fit_mle(self, sample):
-        mu = np.mean(sample)
-        self._update(mu)
 
 
 class ZeroInflatedBinomial(Discrete):

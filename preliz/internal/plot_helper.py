@@ -253,10 +253,7 @@ def get_moments(dist, moments):
     seen = []
     for moment in moments:
         if moment not in seen:
-            if moment == "d":
-                value = dist.rv_frozen.stats("v") ** 0.5
-            else:
-                value = dist.rv_frozen.stats(moment)
+            value = dist.moments(moment)
             if isinstance(value, (np.ndarray, int, float)):
                 str_m.append(f"{names[moment]}={value:.3g}")
 

@@ -36,7 +36,6 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
     }
     init_vals = np.array(dist.params)[none_idx]
     bounds = np.array(dist.params_support)[none_idx]
-
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", message="Values in x were outside bounds")
         opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
