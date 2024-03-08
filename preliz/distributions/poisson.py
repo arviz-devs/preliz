@@ -5,6 +5,7 @@ import numpy as np
 from scipy.special import gammaln, xlogy, pdtr, pdtrik  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
+from ..internal.distribution_helper import eps
 
 
 class Poisson(Discrete):
