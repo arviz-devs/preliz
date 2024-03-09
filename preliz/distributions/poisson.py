@@ -85,7 +85,7 @@ class Poisson(Discrete):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        return _logpdf(x, self.mu)
+        return nb_logpdf(x, self.mu)
 
     def entropy(self):
         if self.mu < 50:
@@ -139,18 +139,21 @@ def nb_cdf(x, mu):
 # @nb.jit
 # pdtr not supported by numba
 def nb_ppf(q, mu):
+    q = np.asarray(q)
     vals = np.ceil(pdtrik(q, mu))
     vals1 = np.maximum(vals - 1, 0)
     temp = pdtr(vals1, mu)
     output = np.where(temp >= q, vals1, vals)
-    output[np.isnan(output)] = np.inf
-    output[output == 0] = -1
+    output[q < 0] = np.nan
+    output[q == 0] = -1
+    output[q == 1] = np.inf
+    output[q > 1] = np.nan
     return output
 
 
 # @nb.njit
 def nb_pdf(x, mu):
-    return np.exp(_logpdf(x, mu))
+    return np.exp(nb_logpdf(x, mu))
 
 
 @nb.njit
@@ -160,6 +163,6 @@ def nb_fit_mle(sample):
 
 # @nb.njit
 # xlogy and gammaln not supported by numba
-def _logpdf(x, mu):
+def nb_logpdf(x, mu):
     x = np.asarray(x)
     return xlogy(x, mu) - gammaln(x + 1) - mu

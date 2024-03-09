@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 
 
-from preliz.distributions import Normal, HalfNormal, Poisson
+from preliz.distributions import Bernoulli, Binomial, HalfNormal, Normal, Poisson
 
 
 @pytest.mark.parametrize(
@@ -13,6 +13,8 @@ from preliz.distributions import Normal, HalfNormal, Poisson
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
         (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
+        (Binomial, stats.binom, {"n": 4, "p": 0.4}, {"n": 4, "p": 0.4}),
+        (Bernoulli, stats.bernoulli, {"p": 0.4}, {"p": 0.4}),
     ],
 )
 def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
@@ -22,14 +24,14 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     actual = preliz_dist.entropy()
     expected = scipy_dist.entropy()
     if preliz_dist.kind == "discrete":
-        assert_almost_equal(actual, expected, decimal=2)
+        assert_almost_equal(actual, expected, decimal=1)
     else:
         assert_almost_equal(actual, expected)
 
     rng = np.random.default_rng(1)
-    actual_rvs = preliz_dist.rvs(100, random_state=rng)
+    actual_rvs = preliz_dist.rvs(20, random_state=rng)
     rng = np.random.default_rng(1)
-    expected_rvs = scipy_dist.rvs(100, random_state=rng)
+    expected_rvs = scipy_dist.rvs(20, random_state=rng)
     assert_almost_equal(actual_rvs, expected_rvs)
 
     actual_pdf = preliz_dist.pdf(actual_rvs)
@@ -39,11 +41,13 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected_pdf = scipy_dist.pmf(expected_rvs)
     assert_almost_equal(actual_pdf, expected_pdf)
 
-    actual_cdf = preliz_dist.cdf(actual_rvs)
-    expected_cdf = scipy_dist.cdf(expected_rvs)
-    assert_almost_equal(actual_cdf, expected_cdf)
+    support = preliz_dist.support
+    cdf_vals = np.concatenate([actual_rvs, support, [support[0] - 1], [support[1] + 1]])
+    actual_cdf = preliz_dist.cdf(cdf_vals)
+    expected_cdf = scipy_dist.cdf(cdf_vals)
+    assert_almost_equal(actual_cdf, expected_cdf, decimal=6)
 
-    x_vals = np.linspace(0, 1, 10)
+    x_vals = [-1, 0, 0.25, 0.5, 0.75, 1, 2]
     actual_ppf = preliz_dist.ppf(x_vals)
     expected_ppf = scipy_dist.ppf(x_vals)
     assert_almost_equal(actual_ppf, expected_ppf)

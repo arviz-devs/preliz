@@ -2,10 +2,11 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import erf, erfinv  # pylint: disable=no-name-in-module
+from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
+from ..internal.special import half_erf
 
 
 class HalfNormal(Continuous):
@@ -106,7 +107,7 @@ class HalfNormal(Continuous):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        return _logpdf(x, self.sigma)
+        return nb_logpdf(x, self.sigma)
 
     def entropy(self):
         return nb_entropy(self.sigma)
@@ -140,18 +141,20 @@ class HalfNormal(Continuous):
         self._update(nb_fit_mle(sample))
 
 
-# @nb.jit
-# erf not supported by numba
+@nb.njit
 def nb_cdf(x, sigma):
     x = np.asarray(x)
-    return erf(x / (sigma * 2**0.5))
+    return half_erf(x / (sigma * 2**0.5))
 
 
 # @nb.jit
 # erfinv not supported by numba
 def nb_ppf(q, sigma):
     q = np.asarray(q)
-    return sigma * 2**0.5 * erfinv(q)
+    output = np.asarray(sigma * 2**0.5 * erfinv(q))
+    output[q < 0] = np.nan
+    output[q > 1] = np.nan
+    return output
 
 
 @nb.njit
@@ -171,7 +174,7 @@ def nb_fit_mle(sample):
 
 
 @nb.njit
-def _logpdf(x, sigma):
+def nb_logpdf(x, sigma):
     x = np.asarray(x)
     return np.where(
         x < 0, -np.inf, np.log(np.sqrt(2 / np.pi)) + np.log(1 / sigma) - 0.5 * ((x / sigma) ** 2)

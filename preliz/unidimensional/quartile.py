@@ -1,5 +1,7 @@
 import logging
 
+import numpy as np
+
 from ..distributions import Normal
 from ..internal.distribution_helper import valid_distribution
 from ..internal.optimization import relative_error, optimize_quartile, get_fixed_params
@@ -99,7 +101,7 @@ def quartile(
     if r_error > 0.01:
         _log.info(
             "The expected masses are 0.25, 0.5, 0.75\n The computed ones are: %.2g, %.2g, %.2g",
-            *distribution.cdf([q1, q2, q3])
+            *distribution.cdf(np.array([q1, q2, q3]))
         )
 
     if plot:
