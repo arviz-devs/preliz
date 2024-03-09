@@ -144,7 +144,6 @@ class HalfNormal(Continuous):
 @nb.njit
 def nb_cdf(x, sigma):
     x = np.asarray(x)
-    print(x)
     return half_erf(x / (sigma * 2**0.5))
 
 
