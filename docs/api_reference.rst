@@ -36,6 +36,12 @@ This reference provides detailed documentation for user functions in the current
 :mod:`preliz.distributions.discrete`
 ====================================
 
+.. automodule:: preliz.distributions.bernoulli
+   :members:
+
+   .. automodule:: preliz.distributions.binomial
+   :members:
+
 .. automodule:: preliz.distributions.poisson
    :members:
 
