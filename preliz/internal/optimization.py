@@ -101,7 +101,7 @@ def optimize_moments(dist, mean, sigma, params=None):
     def func(params, dist, mean, sigma):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
-        loss = abs(dist.rv_frozen.mean() - mean) + abs(dist.rv_frozen.std() - sigma)
+        loss = abs(dist.mean() - mean) + abs(dist.std() - sigma)
         return loss
 
     none_idx, fixed = get_fixed_params(dist)
@@ -172,11 +172,7 @@ def optimize_moments_rice(mean, std_dev):
 def optimize_ml(dist, sample):
     def negll(params, dist, sample):
         dist._update(*params)
-        if dist.kind == "continuous":
-            neg = -dist.rv_frozen.logpdf(sample).sum()
-        else:
-            neg = -dist.rv_frozen.logpmf(sample).sum()
-        return neg
+        return -dist.logpdf(sample).sum()
 
     dist._fit_moments(np.mean(sample), np.std(sample))
     init_vals = dist.params

@@ -8,7 +8,6 @@ Discrete probability distributions.
 """
 from copy import copy
 import logging
-from math import ceil
 
 import numpy as np
 from scipy import stats
@@ -16,6 +15,8 @@ from scipy.special import logit, expit, gamma  # pylint: disable=no-name-in-modu
 
 
 from .distributions import Discrete
+from .bernoulli import Bernoulli  # pylint: disable=unused-import
+from .binomial import Binomial  # pylint: disable=unused-import
 from .poisson import Poisson  # pylint: disable=unused-import
 from ..internal.optimization import optimize_ml, optimize_moments
 from ..internal.distribution_helper import all_not_none, any_not_none
@@ -24,99 +25,6 @@ from ..internal.distribution_helper import all_not_none, any_not_none
 _log = logging.getLogger("preliz")
 
 eps = np.finfo(float).eps
-
-
-class Bernoulli(Discrete):
-    R"""Bernoulli distribution
-
-    The Bernoulli distribution describes the probability of successes (x=1) and failures (x=0).
-    The pmf of this distribution is
-
-    .. math::
-        f(x \mid p) = p^{x} (1-p)^{1-x}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Bernoulli
-        az.style.use('arviz-white')
-        for p in [0, 0.5, 0.8]:
-            Bernoulli(p).plot_pdf()
-
-    ========  ======================
-    Support   :math:`x \in \{0, 1\}`
-    Mean      :math:`p`
-    Variance  :math:`p (1 - p)`
-    ========  ======================
-
-    The Bernoulli distribution has 2 alternative parametrizations. In terms of p or logit_p.
-
-    The link between the 2 alternatives is given by
-
-    .. math::
-
-        logit(p) = ln(\frac{p}{1-p})
-
-    Parameters
-    ----------
-    p : float
-        Probability of success (0 < p < 1).
-    logit_p : float
-        Alternative log odds for the probability of success.
-    """
-
-    def __init__(self, p=None, logit_p=None):
-        super().__init__()
-        self.dist = copy(stats.bernoulli)
-        self.support = (0, 1)
-        self._parametrization(p, logit_p)
-
-    def _parametrization(self, p=None, logit_p=None):
-        if all_not_none(p, logit_p):
-            raise ValueError("Incompatible parametrization. Either use p or logit_p.")
-
-        self.param_names = "p"
-        self.params_support = ((eps, 1),)
-
-        if logit_p is not None:
-            p = self._from_logit_p(logit_p)
-            self.param_names = ("logit_p",)
-
-        self.p = p
-        self.logit_p = logit_p
-        if self.p is not None:
-            self._update(self.p)
-
-    def _from_logit_p(self, logit_p):
-        return expit(logit_p)
-
-    def _to_logit_p(self, p):
-        return logit(p)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.p)
-        return frozen
-
-    def _update(self, p):
-        self.p = np.float64(p)
-        self.logit_p = self._to_logit_p(p)
-
-        if self.param_names[0] == "p":
-            self.params = (self.p,)
-        elif self.param_names[0] == "logit_p":
-            self.params = (self.logit_p,)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
-        p = mean
-        self._update(p)
-
-    def _fit_mle(self, sample):
-        optimize_ml(self, sample)
 
 
 class BetaBinomial(Discrete):
@@ -206,88 +114,6 @@ class BetaBinomial(Discrete):
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
-
-
-class Binomial(Discrete):
-    R"""
-    Binomial distribution.
-
-    The discrete probability distribution of the number of successes
-    in a sequence of n independent yes/no experiments, each of which
-    yields success with probability p.
-
-    The pmf of this distribution is
-
-    .. math:: f(x \mid n, p) = \binom{n}{x} p^x (1-p)^{n-x}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Binomial
-        az.style.use('arviz-white')
-        ns = [5, 10, 10]
-        ps = [0.5, 0.5, 0.7]
-        for n, p in zip(ns, ps):
-            Binomial(n, p).plot_pdf()
-
-    ========  ==========================================
-    Support   :math:`x \in \{0, 1, \ldots, n\}`
-    Mean      :math:`n p`
-    Variance  :math:`n p (1 - p)`
-    ========  ==========================================
-
-    Parameters
-    ----------
-    n : int
-        Number of Bernoulli trials (n >= 0).
-    p : float
-        Probability of success in each trial (0 < p < 1).
-    """
-
-    def __init__(self, n=None, p=None):
-        super().__init__()
-        self.dist = copy(stats.binom)
-        self.support = (0, np.inf)
-        self._parametrization(n, p)
-
-    def _parametrization(self, n=None, p=None):
-        self.n = n
-        self.p = p
-        self.params = (self.n, self.p)
-        self.param_names = ("n", "p")
-        self.params_support = ((eps, np.inf), (eps, 1 - eps))
-        if all_not_none(n, p):
-            self._update(n, p)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.n, self.p)
-        return frozen
-
-    def _update(self, n, p):
-        self.n = np.int64(n)
-        self.p = np.float64(p)
-        self.params = (self.n, self.p)
-        self.support = (0, self.n)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        # crude approximation for n and p
-        n = mean + sigma * 2
-        p = mean / n
-        params = n, p
-        optimize_moments(self, mean, sigma, params)
-
-    def _fit_mle(self, sample):
-        # see https://doi.org/10.1016/j.jspi.2004.02.019 for details
-        x_bar = np.mean(sample)
-        x_std = np.std(sample)
-        x_max = np.max(sample)
-        n = ceil(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
-        p = x_bar / n
-        self._update(n, p)
 
 
 class Categorical(Discrete):
