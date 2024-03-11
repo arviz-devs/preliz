@@ -2,10 +2,11 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import gammaln, xlogy, pdtr, pdtrik  # pylint: disable=no-name-in-module
+from scipy.special import pdtr, pdtrik  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
 from ..internal.distribution_helper import eps
+from ..internal.special import gammaln, xlogy, cdf_bounds, ppf_bounds_disc
 
 
 class Poisson(Discrete):
@@ -67,19 +68,20 @@ class Poisson(Discrete):
         """
         Compute the probability density function (PDF) at a given point x.
         """
-        return nb_pdf(x, self.mu)
+        x = np.asarray(x)
+        return np.exp(nb_logpdf(x, self.mu))
 
     def cdf(self, x):
         """
         Compute the cumulative distribution function (CDF) at a given point x.
         """
-        return nb_cdf(x, self.mu)
+        return nb_cdf(x, self.mu, self.support[0], self.support[1])
 
     def ppf(self, q):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
-        return nb_ppf(q, self.mu)
+        return nb_ppf(q, self.mu, self.support[0], self.support[1])
 
     def logpdf(self, x):
         """
@@ -131,29 +133,20 @@ class Poisson(Discrete):
 
 # @nb.jit
 # pdtr not supported by numba
-def nb_cdf(x, mu):
-    x = np.floor(x)
-    return np.nan_to_num(pdtr(x, mu))
+def nb_cdf(x, mu, lower, upper):
+    prob = pdtr(x, mu)
+    return cdf_bounds(prob, x, lower, upper)
 
 
 # @nb.jit
 # pdtr not supported by numba
-def nb_ppf(q, mu):
+def nb_ppf(q, mu, lower, upper):
     q = np.asarray(q)
     vals = np.ceil(pdtrik(q, mu))
     vals1 = np.maximum(vals - 1, 0)
     temp = pdtr(vals1, mu)
-    output = np.where(temp >= q, vals1, vals)
-    output[q < 0] = np.nan
-    output[q == 0] = -1
-    output[q == 1] = np.inf
-    output[q > 1] = np.nan
-    return output
-
-
-# @nb.njit
-def nb_pdf(x, mu):
-    return np.exp(nb_logpdf(x, mu))
+    x_vals = np.where(temp >= q, vals1, vals)
+    return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
 @nb.njit
@@ -161,8 +154,6 @@ def nb_fit_mle(sample):
     return np.mean(sample)
 
 
-# @nb.njit
-# xlogy and gammaln not supported by numba
+@nb.njit
 def nb_logpdf(x, mu):
-    x = np.asarray(x)
     return xlogy(x, mu) - gammaln(x + 1) - mu

@@ -6,7 +6,7 @@ from scipy.special import erfinv  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import half_erf
+from ..internal.special import half_erf, ppf_bounds_cont
 
 
 class HalfNormal(Continuous):
@@ -89,7 +89,8 @@ class HalfNormal(Continuous):
         """
         Compute the probability density function (PDF) at a given point x.
         """
-        return nb_pdf(x, self.sigma)
+        x = np.asarray(x)
+        return np.exp(nb_logpdf(x, self.sigma))
 
     def cdf(self, x):
         """
@@ -101,7 +102,7 @@ class HalfNormal(Continuous):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
-        return nb_ppf(q, self.sigma)
+        return nb_ppf(q, self.sigma, self.support[0], self.support[1])
 
     def logpdf(self, x):
         """
@@ -149,18 +150,10 @@ def nb_cdf(x, sigma):
 
 # @nb.jit
 # erfinv not supported by numba
-def nb_ppf(q, sigma):
+def nb_ppf(q, sigma, lower, upper):
     q = np.asarray(q)
-    output = np.asarray(sigma * 2**0.5 * erfinv(q))
-    output[q < 0] = np.nan
-    output[q > 1] = np.nan
-    return output
-
-
-@nb.njit
-def nb_pdf(x, sigma):
-    x = np.asarray(x)
-    return np.where(x < 0, 0, np.sqrt(2 / np.pi) * (1 / sigma) * np.exp(-0.5 * (x / sigma) ** 2))
+    x_vals = np.asarray(sigma * 2**0.5 * erfinv(q))
+    return ppf_bounds_cont(x_vals, q, lower, upper)
 
 
 @nb.njit
@@ -173,9 +166,9 @@ def nb_fit_mle(sample):
     return np.mean(sample**2) ** 0.5
 
 
-@nb.njit
+@nb.vectorize(nopython=True)
 def nb_logpdf(x, sigma):
-    x = np.asarray(x)
-    return np.where(
-        x < 0, -np.inf, np.log(np.sqrt(2 / np.pi)) + np.log(1 / sigma) - 0.5 * ((x / sigma) ** 2)
-    )
+    if x < 0:
+        return -np.inf
+    else:
+        return np.log(np.sqrt(2 / np.pi)) + np.log(1 / sigma) - 0.5 * ((x / sigma) ** 2)
