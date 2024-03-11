@@ -24,6 +24,10 @@ This reference provides detailed documentation for user functions in the current
 :mod:`preliz.distributions.continuous`
 ======================================
 
+.. automodule:: preliz.distributions.beta
+   :members:
+
+
 .. automodule:: preliz.distributions.halfnormal
    :members:
 
