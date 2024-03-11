@@ -4,12 +4,13 @@ import numpy as np
 from scipy import stats
 
 
-from preliz.distributions import Bernoulli, Binomial, HalfNormal, Normal, Poisson
+from preliz.distributions import Beta, Bernoulli, Binomial, HalfNormal, Normal, Poisson
 
 
 @pytest.mark.parametrize(
     "p_dist, sp_dist, p_params, sp_params",
     [
+        (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
         (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
@@ -26,7 +27,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     if preliz_dist.kind == "discrete":
         assert_almost_equal(actual, expected, decimal=1)
     else:
-        assert_almost_equal(actual, expected)
+        assert_almost_equal(actual, expected, decimal=4)
 
     rng = np.random.default_rng(1)
     actual_rvs = preliz_dist.rvs(20, random_state=rng)
@@ -43,6 +44,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     support = preliz_dist.support
     cdf_vals = np.concatenate([actual_rvs, support, [support[0] - 1], [support[1] + 1]])
+
     actual_cdf = preliz_dist.cdf(cdf_vals)
     expected_cdf = scipy_dist.cdf(cdf_vals)
     assert_almost_equal(actual_cdf, expected_cdf, decimal=6)

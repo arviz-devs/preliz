@@ -3,6 +3,16 @@ import numba as nb
 import numpy as np
 
 
+@nb.njit
+def betaln(a, b):
+    return gammaln(a) + gammaln(b) - gammaln(a + b)
+
+
+@nb.njit
+def betafunc(a, b):
+    return np.exp(betaln(a, b))
+
+
 @nb.vectorize(nopython=True)
 def half_erf(x):
     """
