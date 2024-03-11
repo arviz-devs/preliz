@@ -81,6 +81,8 @@ def quartile(
     if not q1 < q2 < q3:
         raise ValueError("The order of the quartiles should be q1 < q2 < q3")
 
+    quartiles = np.array([q1, q2, q3])
+
     if distribution is None:
         distribution = Normal()
 
@@ -94,14 +96,14 @@ def quartile(
     # from the quartiles and then use those values for moment matching
     distribution._fit_moments(mean=q2, sigma=(q3 - q1) / 1.35)  # pylint:disable=protected-access
 
-    opt = optimize_quartile(distribution, (q1, q2, q3), none_idx, fixed)
+    opt = optimize_quartile(distribution, quartiles, none_idx, fixed)
 
     r_error, _ = relative_error(distribution, q1, q3, 0.5)
 
     if r_error > 0.01:
         _log.info(
             "The expected masses are 0.25, 0.5, 0.75\n The computed ones are: %.2g, %.2g, %.2g",
-            *distribution.cdf(np.array([q1, q2, q3]))
+            *distribution.cdf(quartiles)
         )
 
     if plot:
@@ -110,5 +112,5 @@ def quartile(
             cid = -4
         else:
             cid = -1
-        ax.plot([q1, q2, q3], [0, 0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
+        ax.plot(quartiles, [0, 0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
     return ax, opt

@@ -2,11 +2,12 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import binom, bdtr, bdtrik  # pylint: disable=no-name-in-module
+from scipy.special import bdtr, bdtrik  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
 from ..internal.optimization import optimize_moments
 from ..internal.distribution_helper import eps, all_not_none
+from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln, mean_and_std
 
 
 class Binomial(Discrete):
@@ -82,25 +83,26 @@ class Binomial(Discrete):
         """
         Compute the probability density function (PDF) at a given point x.
         """
-        return nb_pdf(x, self.n, self.p)
+        x = np.asarray(x)
+        return np.exp(nb_logpdf(self.n, x, self.p))
 
     def cdf(self, x):
         """
         Compute the cumulative distribution function (CDF) at a given point x.
         """
-        return nb_cdf(x, self.n, self.p)
+        return nb_cdf(x, self.n, self.p, self.support[0], self.support[1])
 
     def ppf(self, q):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
-        return nb_ppf(q, self.n, self.p)
+        return nb_ppf(q, self.n, self.p, self.support[0], self.support[1])
 
     def logpdf(self, x):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        return nb_logpdf(x, self.n, self.p)
+        return nb_logpdf(self.n, x, self.p)
 
     def entropy(self):
         return nb_entropy(self.n, self.p)
@@ -140,34 +142,27 @@ class Binomial(Discrete):
 
 # @nb.jit
 # bdtr not supported by numba
-def nb_cdf(x, n, p):
+def nb_cdf(x, n, p, lower, upper):
     x = np.asarray(x)
-    output = np.asarray(bdtr(x, n, p))
-    output[x < 0] = 0
-    output[x > n] = 1
-    return output
+    prob = np.asarray(bdtr(x, n, p))
+    return cdf_bounds(prob, x, lower, upper)
 
 
 # @nb.jit
-def nb_ppf(q, n, p):
+def nb_ppf(q, n, p, lower, upper):
     q = np.asarray(q)
-    output = np.ceil(bdtrik(q, n, p))
-    output[q == 0.0] = -1
-    return output
+    x_vals = np.ceil(bdtrik(q, n, p))
+    return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
-# @nb.njit
-# binom not supported by numba
-def nb_pdf(x, n, p):
-    x = np.asarray(x)
-    return binom(n, x) * p**x * (1 - p) ** (n - x)
-
-
-# @nb.njit
-# xlogy and gammaln not supported by numba
-def nb_logpdf(x, n, p):
-    x = np.asarray(x)
-    return np.log(binom(n, x)) + x * np.log(p) + (n - x) * np.log(1 - p)
+@nb.njit
+def nb_logpdf(n, y, p):
+    return (
+        gammaln(n + 1)
+        - (gammaln(y + 1) + gammaln(n - y + 1))
+        + y * np.log(p)
+        + (n - y) * np.log1p(-p)
+    )
 
 
 @nb.njit
@@ -178,8 +173,7 @@ def nb_entropy(n, p):
 @nb.njit
 def nb_fit_mle(sample):
     # see https://doi.org/10.1016/j.jspi.2004.02.019 for details
-    x_bar = np.mean(sample)
-    x_std = np.std(sample)
+    x_bar, x_std = mean_and_std(sample)
     x_max = np.max(sample)
     n = np.ceil(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
     p = x_bar / n

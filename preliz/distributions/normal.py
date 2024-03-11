@@ -6,6 +6,7 @@ from scipy.special import erf, erfinv  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
+from ..internal.special import mean_and_std
 
 
 class Normal(Continuous):
@@ -176,7 +177,7 @@ def nb_entropy(sigma):
 
 @nb.njit
 def nb_fit_mle(sample):
-    return np.mean(sample), np.std(sample)
+    return mean_and_std(sample)
 
 
 @nb.njit
