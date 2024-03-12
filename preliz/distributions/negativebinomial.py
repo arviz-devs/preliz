@@ -134,6 +134,7 @@ class NegativeBinomial(Discrete):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
+        q = np.asarray(q)
         return nb_ppf(q, self.n, self.p, self.support[0], self.support[1])
 
     def logpdf(self, x):
@@ -172,7 +173,7 @@ class NegativeBinomial(Discrete):
         random_state = np.random.default_rng(random_state)
         return random_state.negative_binomial(self.n, self.p, size=size)
 
-    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma=None):
         optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
@@ -180,7 +181,7 @@ class NegativeBinomial(Discrete):
 
 
 # @nb.jit
-# bdtr not supported by numba
+# betainc not supported by numba
 def nb_cdf(x, n, p, lower, upper):
     prob = betainc(n, x + 1, p)
     return cdf_bounds(prob, x, lower, upper)
@@ -189,7 +190,6 @@ def nb_cdf(x, n, p, lower, upper):
 # @nb.jit
 # bdtrik not supported by numba
 def nb_ppf(q, n, p, lower, upper):
-    q = np.asarray(q)
     x_vals = np.ceil(nbdtrik(q, n, p))
     return ppf_bounds_disc(x_vals, q, lower, upper)
 
