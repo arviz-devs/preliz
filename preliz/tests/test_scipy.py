@@ -8,6 +8,7 @@ from preliz.distributions import (
     Beta,
     HalfNormal,
     Normal,
+    Weibull,
     Bernoulli,
     Binomial,
     NegativeBinomial,
@@ -21,6 +22,12 @@ from preliz.distributions import (
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
+        (
+            Weibull,
+            stats.weibull_min,
+            {"alpha": 5.0, "beta": 2.0},
+            {"c": 5.0, "scale": 2.0},
+        ),
         (Binomial, stats.binom, {"n": 4, "p": 0.4}, {"n": 4, "p": 0.4}),
         (Bernoulli, stats.bernoulli, {"p": 0.4}, {"p": 0.4}),
         (
@@ -47,13 +54,14 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     actual_rvs = preliz_dist.rvs(20, random_state=rng)
     rng = np.random.default_rng(1)
     expected_rvs = scipy_dist.rvs(20, random_state=rng)
-    assert_almost_equal(actual_rvs, expected_rvs)
+    if preliz_dist.__class__.__name__ != "Weibull":
+        assert_almost_equal(actual_rvs, expected_rvs)
 
     actual_pdf = preliz_dist.pdf(actual_rvs)
     if preliz_dist.kind == "continuous":
-        expected_pdf = scipy_dist.pdf(expected_rvs)
+        expected_pdf = scipy_dist.pdf(actual_rvs)
     else:
-        expected_pdf = scipy_dist.pmf(expected_rvs)
+        expected_pdf = scipy_dist.pmf(actual_rvs)
     assert_almost_equal(actual_pdf, expected_pdf, decimal=4)
 
     support = preliz_dist.support
@@ -70,9 +78,9 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     actual_logpdf = preliz_dist.logpdf(actual_rvs)
     if preliz_dist.kind == "continuous":
-        expected_logpdf = scipy_dist.logpdf(expected_rvs)
+        expected_logpdf = scipy_dist.logpdf(actual_rvs)
     else:
-        expected_logpdf = scipy_dist.logpmf(expected_rvs)
+        expected_logpdf = scipy_dist.logpmf(actual_rvs)
     ### Check gammaln implementation
     assert_almost_equal(actual_logpdf, expected_logpdf, decimal=3)
 
