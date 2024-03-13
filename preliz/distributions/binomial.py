@@ -104,6 +104,12 @@ class Binomial(Discrete):
         """
         return nb_logpdf(self.n, x, self.p)
 
+    def _neg_logpdf(self, x):
+        """
+        Compute the neg log_pdf sum for the array x.
+        """
+        return nb_neg_logpdf(self.n, x, self.p)
+
     def entropy(self):
         return nb_entropy(self.n, self.p)
 
@@ -156,16 +162,6 @@ def nb_ppf(q, n, p, lower, upper):
 
 
 @nb.njit
-def nb_logpdf(n, y, p):
-    return (
-        gammaln(n + 1)
-        - (gammaln(y + 1) + gammaln(n - y + 1))
-        + y * np.log(p)
-        + (n - y) * np.log1p(-p)
-    )
-
-
-@nb.njit
 def nb_entropy(n, p):
     return 0.5 * np.log(2 * np.pi * np.e * n * p * (1 - p))
 
@@ -178,3 +174,18 @@ def nb_fit_mle(sample):
     n = np.ceil(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
     p = x_bar / n
     return n, p
+
+
+@nb.njit
+def nb_logpdf(n, y, p):
+    return (
+        gammaln(n + 1)
+        - (gammaln(y + 1) + gammaln(n - y + 1))
+        + y * np.log(p)
+        + (n - y) * np.log1p(-p)
+    )
+
+
+@nb.njit
+def nb_neg_logpdf(n, y, p):
+    return -(nb_logpdf(n, y, p)).sum()

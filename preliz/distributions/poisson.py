@@ -89,6 +89,12 @@ class Poisson(Discrete):
         """
         return nb_logpdf(x, self.mu)
 
+    def _neg_logpdf(self, x):
+        """
+        Compute the neg log_pdf sum for the array x.
+        """
+        return nb_neg_logpdf(x, self.mu)
+
     def entropy(self):
         if self.mu < 50:
             x = np.arange(0, self.ppf(0.9999) + 1, dtype=int)
@@ -157,3 +163,8 @@ def nb_fit_mle(sample):
 @nb.njit
 def nb_logpdf(x, mu):
     return xlogy(x, mu) - gammaln(x + 1) - mu
+
+
+@nb.njit
+def nb_neg_logpdf(x, mu):
+    return -(nb_logpdf(x, mu)).sum()

@@ -116,7 +116,13 @@ class Normal(Continuous):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        return _logpdf(x, self.mu, self.sigma)
+        return nb_logpdf(x, self.mu, self.sigma)
+
+    def _neg_logpdf(self, x):
+        """
+        Compute the neg log_pdf sum for the array x.
+        """
+        return nb_neg_logpdf(x, self.mu, self.sigma)
 
     def entropy(self):
         return nb_entropy(self.sigma)
@@ -181,6 +187,10 @@ def nb_fit_mle(sample):
 
 
 @nb.njit
-def _logpdf(x, mu, sigma):
-    x = np.asarray(x)
+def nb_logpdf(x, mu, sigma):
     return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
+
+
+@nb.njit
+def nb_neg_logpdf(x, mu, sigma):
+    return -(nb_logpdf(x, mu, sigma)).sum()

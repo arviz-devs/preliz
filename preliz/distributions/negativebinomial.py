@@ -143,6 +143,12 @@ class NegativeBinomial(Discrete):
         """
         return nb_logpdf(x, self.n, self.p)
 
+    def _neg_logpdf(self, x):
+        """
+        Compute the neg log_pdf sum for the array x.
+        """
+        return nb_neg_logpdf(x, self.n, self.p)
+
     def entropy(self):
         if self.mu < 50 and self.alpha < 50:
             x = np.arange(0, self.ppf(0.9999) + 1, dtype=int)
@@ -197,3 +203,8 @@ def nb_ppf(q, n, p, lower, upper):
 @nb.njit
 def nb_logpdf(y, n, p):
     return gammaln(y + n) - gammaln(n) - gammaln(y + 1) + xlogy(n, p) + xlogy(y, 1 - p)
+
+
+@nb.njit
+def nb_neg_logpdf(y, n, p):
+    return -(nb_logpdf(y, n, p)).sum()
