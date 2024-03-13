@@ -81,8 +81,11 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected_logpdf = scipy_dist.logpdf(actual_rvs)
     else:
         expected_logpdf = scipy_dist.logpmf(actual_rvs)
-    ### Check gammaln implementation
-    assert_almost_equal(actual_logpdf, expected_logpdf, decimal=3)
+    assert_almost_equal(actual_logpdf, expected_logpdf)
+
+    actual_neg_logpdf = preliz_dist._neg_logpdf(actual_rvs)
+    expected_neg_logpdf = -expected_logpdf.sum()
+    assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)
 
     actual_moments = preliz_dist.moments("mvsk")
     expected_moments = scipy_dist.stats("mvsk")

@@ -110,6 +110,12 @@ class HalfNormal(Continuous):
         """
         return nb_logpdf(x, self.sigma)
 
+    def _neg_logpdf(self, x):
+        """
+        Compute the neg log_pdf sum for the array x.
+        """
+        return nb_neg_logpdf(x, self.sigma)
+
     def entropy(self):
         return nb_entropy(self.sigma)
 
@@ -172,3 +178,8 @@ def nb_logpdf(x, sigma):
         return -np.inf
     else:
         return np.log(np.sqrt(2 / np.pi)) + np.log(1 / sigma) - 0.5 * ((x / sigma) ** 2)
+
+
+@nb.njit
+def nb_neg_logpdf(x, sigma):
+    return -(nb_logpdf(x, sigma)).sum()

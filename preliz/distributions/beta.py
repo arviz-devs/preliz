@@ -161,6 +161,12 @@ class Beta(Continuous):
         """
         return nb_logpdf(x, self.alpha, self.beta)
 
+    def _neg_logpdf(self, x):
+        """
+        Compute the neg log_pdf sum for the array x.
+        """
+        return nb_neg_logpdf(x, self.alpha, self.beta)
+
     def entropy(self):
         return nb_entropy(self.alpha, self.beta)
 
@@ -242,3 +248,8 @@ def nb_entropy(alpha, beta):
 def nb_logpdf(x, alpha, beta):
     beta_ = gammaln(alpha) + gammaln(beta) - gammaln(alpha + beta)
     return (alpha - 1) * np.log(x) + (beta - 1) * np.log(1 - x) - beta_
+
+
+@nb.njit
+def nb_neg_logpdf(x, alpha, beta):
+    return -(nb_logpdf(x, alpha, beta)).sum()

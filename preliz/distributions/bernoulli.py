@@ -122,6 +122,12 @@ class Bernoulli(Discrete):
         x = np.asarray(x)
         return nb_logpdf(x, self.p)
 
+    def _neg_logpdf(self, x):
+        """
+        Compute the neg log_pdf sum for the array x.
+        """
+        return nb_neg_logpdf(x, self.p)
+
     def entropy(self):
         return nb_entropy(self.p)
 
@@ -182,6 +188,12 @@ def nb_pdf(x, p):
         return 0.0
 
 
+@nb.njit
+def nb_entropy(p):
+    q = 1 - p
+    return -q * np.log(q) - p * np.log(p)
+
+
 @nb.vectorize(nopython=True)
 def nb_logpdf(x, p):
     if x == 1:
@@ -193,6 +205,5 @@ def nb_logpdf(x, p):
 
 
 @nb.njit
-def nb_entropy(p):
-    q = 1 - p
-    return -q * np.log(q) - p * np.log(p)
+def nb_neg_logpdf(x, p):
+    return -(nb_logpdf(x, p)).sum()
