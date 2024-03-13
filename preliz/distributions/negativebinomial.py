@@ -155,7 +155,7 @@ class NegativeBinomial(Discrete):
         return self.mu
 
     def median(self):
-        return 42
+        return self.ppf(0.5)
 
     def var(self):
         return self.mu**2 / self.alpha + self.mu
