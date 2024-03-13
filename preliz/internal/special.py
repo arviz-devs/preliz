@@ -91,7 +91,7 @@ def xlogy(x, y):
 def cdf_bounds(prob, x, lower, upper):
     if x < lower:
         return 0
-    elif x > upper:
+    elif x >= upper:
         return 1
     else:
         return prob

@@ -4,7 +4,15 @@ import numpy as np
 from scipy import stats
 
 
-from preliz.distributions import Beta, Bernoulli, Binomial, HalfNormal, Normal, Poisson
+from preliz.distributions import (
+    Beta,
+    HalfNormal,
+    Normal,
+    Bernoulli,
+    Binomial,
+    NegativeBinomial,
+    Poisson,
+)
 
 
 @pytest.mark.parametrize(
@@ -13,9 +21,15 @@ from preliz.distributions import Beta, Bernoulli, Binomial, HalfNormal, Normal, 
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
-        (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
         (Binomial, stats.binom, {"n": 4, "p": 0.4}, {"n": 4, "p": 0.4}),
         (Bernoulli, stats.bernoulli, {"p": 0.4}, {"p": 0.4}),
+        (
+            NegativeBinomial,
+            stats.nbinom,
+            {"mu": 3.5, "alpha": 2.1},
+            {"n": 2.1, "p": 2.1 / (3.5 + 2.1)},
+        ),
+        (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
     ],
 )
 def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
