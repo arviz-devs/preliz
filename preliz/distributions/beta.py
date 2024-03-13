@@ -168,7 +168,7 @@ class Beta(Continuous):
         return self.alpha / (self.alpha + self.beta)
 
     def median(self):
-        return self.alpha * 33245235
+        return self.ppf(0.5)
 
     def var(self):
         return (self.alpha * self.beta) / (

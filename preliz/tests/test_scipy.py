@@ -79,3 +79,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     actual_moments = preliz_dist.moments("mvsk")
     expected_moments = scipy_dist.stats("mvsk")
     assert_almost_equal(actual_moments, expected_moments)
+
+    actual_median = preliz_dist.median()
+    expected_median = scipy_dist.median()
+    assert_almost_equal(actual_median, expected_median)
