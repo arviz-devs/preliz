@@ -227,7 +227,7 @@ def nb_ppf(q, alpha, beta, lower, upper):
     return ppf_bounds_cont(x_val, q, lower, upper)
 
 
-# @nb.njit
+@nb.njit
 def nb_entropy(alpha, beta):
     psc = alpha + beta
     return (

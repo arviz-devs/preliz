@@ -14,11 +14,12 @@ from scipy.special import beta as betaf  # pylint: disable=no-name-in-module
 from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 from ..internal.optimization import optimize_ml, optimize_moments, optimize_moments_rice
-from ..internal.distribution_helper import garcia_approximation, all_not_none, any_not_none
+from ..internal.distribution_helper import all_not_none, any_not_none
 from .distributions import Continuous
 from .beta import Beta  # pylint: disable=unused-import
 from .normal import Normal  # pylint: disable=unused-import
 from .halfnormal import HalfNormal  # pylint: disable=unused-import
+from .weibull import Weibull  # pylint: disable=unused-import
 
 
 eps = np.finfo(float).eps
@@ -2601,75 +2602,3 @@ class Wald(Continuous):
     def _fit_mle(self, sample, **kwargs):
         mu, _, lam = self.dist.fit(sample, **kwargs)
         self._update(mu * lam, lam)
-
-
-class Weibull(Continuous):
-    r"""
-    Weibull distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \alpha, \beta) =
-           \frac{\alpha x^{\alpha - 1}
-           \exp(-(\frac{x}{\beta})^{\alpha})}{\beta^\alpha}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Weibull
-        az.style.use('arviz-white')
-        alphas = [1., 2, 5.]
-        betas = [1., 1., 2.]
-        for a, b in zip(alphas, betas):
-            Weibull(a, b).plot_pdf(support=(0,5))
-
-    ========  ====================================================
-    Support   :math:`x \in [0, \infty)`
-    Mean      :math:`\beta \Gamma(1 + \frac{1}{\alpha})`
-    Variance  :math:`\beta^2 \Gamma(1 + \frac{2}{\alpha} - \mu^2/\beta^2)`
-    ========  ====================================================
-
-    Parameters
-    ----------
-    alpha : float
-        Shape parameter (alpha > 0).
-    beta : float
-        Scale parameter (beta > 0).
-    """
-
-    def __init__(self, alpha=None, beta=None):
-        super().__init__()
-        self.dist = copy(stats.weibull_min)
-        self.support = (0, np.inf)
-        self._parametrization(alpha, beta)
-
-    def _parametrization(self, alpha=None, beta=None):
-        self.alpha = alpha
-        self.beta = beta
-        self.param_names = ("alpha", "beta")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
-        if all_not_none(alpha, beta):
-            self._update(alpha, beta)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.alpha, scale=self.beta)
-        return frozen
-
-    def _update(self, alpha, beta):
-        self.alpha = np.float64(alpha)
-        self.beta = np.float64(beta)
-        self.params = (self.alpha, self.beta)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        alpha, beta = garcia_approximation(mean, sigma)
-        self._update(alpha, beta)
-
-    def _fit_mle(self, sample, **kwargs):
-        alpha, _, beta = self.dist.fit(sample, **kwargs)
-        self._update(alpha, beta)
