@@ -13,7 +13,7 @@ def betafunc(a, b):
     return np.exp(betaln(a, b))
 
 
-@nb.jit
+@nb.njit
 def garcia_approximation(mean, sigma):
     """
     Approximate method of moments for Weibull distribution, provides good results for values of

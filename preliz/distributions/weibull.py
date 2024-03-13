@@ -147,13 +147,13 @@ class Weibull(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.jit
+@nb.njit
 def nb_cdf(x, alpha, beta, lower, upper):
     prob = 1 - np.exp(-((x / beta) ** alpha))
     return cdf_bounds(prob, x, lower, upper)
 
 
-@nb.jit
+@nb.njit
 def nb_ppf(q, alpha, beta, lower, upper):
     x_val = beta * (-np.log(1 - q)) ** (1 / alpha)
     return ppf_bounds_cont(x_val, q, lower, upper)
