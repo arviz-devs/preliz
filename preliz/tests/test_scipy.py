@@ -13,6 +13,7 @@ from preliz.distributions import (
     Binomial,
     NegativeBinomial,
     Poisson,
+    Exponential,
 )
 
 
@@ -37,6 +38,7 @@ from preliz.distributions import (
             {"n": 2.1, "p": 2.1 / (3.5 + 2.1)},
         ),
         (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
+        (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
     ],
 )
 def test_match_scipy(p_dist, sp_dist, p_params, sp_params):

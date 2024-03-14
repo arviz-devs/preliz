@@ -17,6 +17,7 @@ from ..internal.optimization import optimize_ml, optimize_moments, optimize_mome
 from ..internal.distribution_helper import all_not_none, any_not_none
 from .distributions import Continuous
 from .beta import Beta  # pylint: disable=unused-import
+from .exponential import Exponential  # pylint: disable=unused-import
 from .normal import Normal  # pylint: disable=unused-import
 from .halfnormal import HalfNormal  # pylint: disable=unused-import
 from .weibull import Weibull  # pylint: disable=unused-import
@@ -469,97 +470,6 @@ class ExGaussian(Continuous):
     def _fit_mle(self, sample, **kwargs):
         K, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, K * sigma)
-
-
-class Exponential(Continuous):
-    r"""
-    Exponential Distribution
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \lambda) = \lambda \exp\left\{ -\lambda x \right\}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Exponential
-        az.style.use('arviz-white')
-        for lam in [0.5,  2.]:
-            Exponential(lam).plot_pdf(support=(0,5))
-
-
-    ========  ============================
-    Support   :math:`x \in [0, \infty)`
-    Mean      :math:`\dfrac{1}{\lambda}`
-    Variance  :math:`\dfrac{1}{\lambda^2}`
-    ========  ============================
-
-    Exponential distribution has 2 alternative parametrizations. In terms of lambda (rate)
-    or in terms of beta (scale).
-
-    The link between the two alternatives is given by:
-
-    .. math::
-
-        \beta = \dfrac{1}{\lambda}
-
-    Parameters
-    ----------
-    lam : float
-        Rate or inverse scale (lam > 0).
-    beta : float
-        Scale (beta > 0).
-    """
-
-    def __init__(self, lam=None, beta=None):
-        super().__init__()
-        self.dist = copy(stats.expon)
-        self.support = (0, np.inf)
-        self._parametrization(lam, beta)
-
-    def _parametrization(self, lam=None, beta=None):
-        if all_not_none(lam, beta):
-            raise ValueError("Incompatible parametrization. Either use 'lam' or 'beta'.")
-
-        self.param_names = ("lam",)
-        self.params_support = ((eps, np.inf),)
-
-        if beta is not None:
-            lam = 1 / beta
-            self.param_names = ("beta",)
-
-        self.lam = lam
-        self.beta = beta
-        if self.lam is not None:
-            self._update(self.lam)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(scale=1 / self.lam)
-        return frozen
-
-    def _update(self, lam):
-        self.lam = np.float64(lam)
-        self.beta = 1 / lam
-
-        if self.param_names[0] == "lam":
-            self.params = (self.lam,)
-        elif self.param_names[0] == "beta":
-            self.params = (self.beta,)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
-        lam = 1 / mean
-        self._update(lam)
-
-    def _fit_mle(self, sample, **kwargs):
-        _, lam = self.dist.fit(sample, **kwargs)
-        self._update(1 / lam)
 
 
 class Gamma(Continuous):
