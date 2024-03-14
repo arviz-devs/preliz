@@ -5,7 +5,7 @@ import numba as nb
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import mean_and_std
+from ..internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class Exponential(Continuous):
@@ -88,7 +88,7 @@ class Exponential(Continuous):
         Compute the probability density function (PDF) at a given point x.
         """
         x = np.asarray(x)
-        return nb_pdf(x, self.lam)
+        return np.exp(nb_logpdf(x, self.lam))
 
     def cdf(self, x):
         """
@@ -108,7 +108,6 @@ class Exponential(Continuous):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        x = np.asarray(x)
         return nb_logpdf(x, self.lam)
 
     def _neg_logpdf(self, x):
@@ -121,7 +120,7 @@ class Exponential(Continuous):
         return nb_entropy(self.beta)
 
     def median(self):
-        return self.ppf(0.5)
+        return np.log(2) * self.beta
 
     def mean(self):
         return self.beta
@@ -147,35 +146,32 @@ class Exponential(Continuous):
         self._update(lam)
 
     def _fit_mle(self, sample, **kwargs):
-        mean, _ = mean_and_std(sample)
+        mean = mean_sample(sample)
         self._update(1 / mean)
-
-
-@nb.njit
-def nb_pdf(x, lam):
-    x_lam = x * lam
-    return np.where(x < 0, 0, lam * np.exp(-x_lam))
 
 
 @nb.njit
 def nb_cdf(x, lam):
     x_lam = lam * x
-    return np.where(x < 0, 0, 1 - np.exp(-x_lam))
+    return cdf_bounds(1 - np.exp(-x_lam), x, 0, np.inf)
 
 
 @nb.njit
 def nb_ppf(q, beta):
-    return np.where((0 <= q) & (q <= 1), -beta * np.log(1 - q), np.nan)
+    return ppf_bounds_cont(-beta * np.log(1 - q), q, 0, np.inf)
 
 
-@nb.njit
+@nb.vectorize(nopython=True)
 def nb_logpdf(x, lam):
-    return np.where(x < 0, -np.inf, np.log(lam) - lam * x)
+    if x < 0:
+        return -np.inf
+    else:
+        return np.log(lam) - lam * x
 
 
 @nb.njit
 def nb_neg_logpdf(x, lam):
-    return (-np.log(lam) + lam * x).sum()
+    return (-nb_logpdf(x, lam)).sum()
 
 
 @nb.njit
@@ -184,5 +180,5 @@ def nb_entropy(beta):
 
 
 @nb.njit
-def nb_fit_mle(sample):
-    return mean_and_std(sample)
+def mean_sample(sample):
+    return np.mean(sample)

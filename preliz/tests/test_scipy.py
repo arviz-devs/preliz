@@ -6,6 +6,7 @@ from scipy import stats
 
 from preliz.distributions import (
     Beta,
+    Exponential,
     HalfNormal,
     Normal,
     Weibull,
@@ -13,7 +14,6 @@ from preliz.distributions import (
     Binomial,
     NegativeBinomial,
     Poisson,
-    Exponential,
 )
 
 
