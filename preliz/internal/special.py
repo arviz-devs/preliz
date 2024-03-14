@@ -189,3 +189,8 @@ def mean_and_std(data):
     std = (sum_sq_diff / n) ** 0.5
 
     return mean, std
+
+
+@nb.njit
+def mean_sample(sample):
+    return np.mean(sample)

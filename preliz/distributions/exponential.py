@@ -5,7 +5,7 @@ import numba as nb
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont
+from ..internal.special import cdf_bounds, ppf_bounds_cont, mean_sample
 
 
 class Exponential(Continuous):
@@ -177,8 +177,3 @@ def nb_neg_logpdf(x, lam):
 @nb.njit
 def nb_entropy(beta):
     return 1 + np.log(beta)
-
-
-@nb.njit
-def mean_sample(sample):
-    return np.mean(sample)
