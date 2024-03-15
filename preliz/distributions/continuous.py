@@ -20,6 +20,7 @@ from .beta import Beta  # pylint: disable=unused-import
 from .exponential import Exponential  # pylint: disable=unused-import
 from .normal import Normal  # pylint: disable=unused-import
 from .halfnormal import HalfNormal  # pylint: disable=unused-import
+from .laplace import Laplace  # pylint: disable=unused-import
 from .weibull import Weibull  # pylint: disable=unused-import
 
 
@@ -1155,79 +1156,6 @@ class _Kumaraswamy(stats.rv_continuous):
             q = random_state.random(size)
 
         return self.ppf(q)
-
-
-class Laplace(Continuous):
-    r"""
-    Laplace distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \mu, b) =
-           \frac{1}{2b} \exp \left\{ - \frac{|x - \mu|}{b} \right\}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Laplace
-        az.style.use('arviz-white')
-        mus = [0., 0., 0., -5.]
-        bs = [1., 2., 4., 4.]
-        for mu, b in zip(mus, bs):
-            Laplace(mu, b).plot_pdf(support=(-10,10))
-
-    ========  ========================
-    Support   :math:`x \in \mathbb{R}`
-    Mean      :math:`\mu`
-    Variance  :math:`2 b^2`
-    ========  ========================
-
-    Parameters
-    ----------
-    mu : float
-        Location parameter.
-    b : float
-        Scale parameter (b > 0).
-    """
-
-    def __init__(self, mu=None, b=None):
-        super().__init__()
-        self.dist = copy(stats.laplace)
-        self.support = (-np.inf, np.inf)
-        self._parametrization(mu, b)
-
-    def _parametrization(self, mu=None, b=None):
-        self.mu = mu
-        self.b = b
-        self.params = (self.mu, self.b)
-        self.param_names = ("mu", "b")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if all_not_none(mu, b):
-            self._update(mu, b)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(loc=self.mu, scale=self.b)
-        return frozen
-
-    def _update(self, mu, b):
-        self.mu = np.float64(mu)
-        self.b = np.float64(b)
-        self.params = (self.mu, self.b)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        mu = mean
-        b = (sigma / 2) * (2**0.5)
-        self._update(mu, b)
-
-    def _fit_mle(self, sample, **kwargs):
-        mu, b = self.dist.fit(sample, **kwargs)
-        self._update(mu, b)
 
 
 class Logistic(Continuous):

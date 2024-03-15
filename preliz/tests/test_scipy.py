@@ -8,6 +8,7 @@ from preliz.distributions import (
     Beta,
     Exponential,
     HalfNormal,
+    Laplace,
     Normal,
     Weibull,
     Bernoulli,
@@ -39,6 +40,7 @@ from preliz.distributions import (
         ),
         (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
         (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
+        (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
     ],
 )
 def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
