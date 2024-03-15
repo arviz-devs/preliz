@@ -69,7 +69,7 @@ class Laplace(Continuous):
         Compute the probability density function (PDF) at a given point x.
         """
         x = np.asarray(x)
-        return nb_pdf(x, self.mu, self.b)
+        return np.exp(nb_logpdf(x, self.mu, self.b))
 
     def cdf(self, x):
         """
@@ -89,7 +89,7 @@ class Laplace(Continuous):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        return np.log(nb_pdf(x, self.mu, self.b))
+        return nb_logpdf(x, self.mu, self.b)
 
     def _neg_logpdf(self, x):
         """
@@ -131,12 +131,6 @@ class Laplace(Continuous):
         self._update(mu, b)
 
 
-@nb.njit
-def nb_pdf(x, mu, b):
-    x = (x - mu) / b
-    return (0.5 * np.exp(-np.abs(x))) / b
-
-
 @nb.vectorize(nopython=True)
 def nb_cdf(x, mu, b):
     x = (x - mu) / b
@@ -155,8 +149,14 @@ def nb_ppf(q, mu, b):
 
 
 @nb.njit
+def nb_logpdf(x, mu, b):
+    x = (x - mu) / b
+    return np.log(0.5) - np.abs(x) - np.log(b)
+
+
+@nb.njit
 def nb_neg_logpdf(x, mu, b):
-    return (-np.log(nb_pdf(x, mu, b))).sum()
+    return (-nb_logpdf(x, mu, b)).sum()
 
 
 @nb.njit
