@@ -298,7 +298,7 @@ class Distribution:
         pointinterval=False,
         interval="hdi",
         levels=None,
-        support="full",
+        support="restricted",
         legend="legend",
         color=None,
         alpha=1,
@@ -363,7 +363,7 @@ class Distribution:
         pointinterval=False,
         interval="hdi",
         levels=None,
-        support="full",
+        support="restricted",
         legend="legend",
         color=None,
         alpha=1,
@@ -590,17 +590,23 @@ class Continuous(Distribution):
         super().__init__()
         self.kind = "continuous"
 
-    def xvals(self, support):
+    def xvals(self, support, n_points=1000):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
 
         Parameters
         ----------
         support : str
-            Available options are "full" or "restricted".
+            Available options are `full` or `restricted`. If `full` the values will cover the entire
+            support of the distribution, if finite, or the quantiles 0.0001 or 0.9999, if infinite.
+            If `restricted` the values will cover the quantile 0.0001 to 0.9999.
+        n_points : int
+            Number of values to return. The returned values may be fewer than `n_points` if
+            the actual number of discrete values in the support of the distribution is smaller than
+            `n_points`.
         """
         lower_ep, upper_ep = self._finite_endpoints(support)
-        x_vals = np.linspace(lower_ep, upper_ep, 1000)
+        x_vals = np.linspace(lower_ep, upper_ep, n_points)
         return x_vals
 
     def _fit_mle(self, sample, **kwargs):
@@ -644,12 +650,27 @@ class Discrete(Distribution):
         super().__init__()
         self.kind = "discrete"
 
-    def xvals(self, support):
+    def xvals(self, support, n_points=200):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
+
+        Parameters
+        ----------
+        support : str
+            Available options are `full` or `restricted`. If `full` the values will cover the entire
+            support of the distribution, if finite, or the quantiles 0.0001 or 0.9999, if infinite.
+            If `restricted` the values will cover the quantile 0.0001 to 0.9999.
+        n_points : int
+            Number of values to return. The returned values may be fewer than `n_points` if
+            the actual number of discrete values in the support of the distribution is smaller than
+            `n_points`.
         """
         lower_ep, upper_ep = self._finite_endpoints(support)
-        x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
+        range_x = upper_ep - lower_ep
+        if range_x <= n_points:
+            x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
+        else:
+            x_vals = np.linspace(lower_ep, upper_ep + 1, n_points, dtype=int)
         return x_vals
 
     def pdf(self, x, *args, **kwds):
