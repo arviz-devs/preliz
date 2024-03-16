@@ -150,12 +150,9 @@ class NegativeBinomial(Discrete):
         return nb_neg_logpdf(x, self.n, self.p)
 
     def entropy(self):
-        if self.mu < 50 and self.alpha < 50:
-            x = np.arange(0, self.ppf(0.9999) + 1, dtype=int)
-            logpdf = self.logpdf(x)
-            return -np.sum(np.exp(logpdf) * logpdf)
-        else:
-            return 0.5 * (np.log(2 * np.pi * np.e * self.var()))
+        x = self.xvals("full", 5000)
+        logpdf = self.logpdf(x)
+        return -np.sum(np.exp(logpdf) * logpdf)
 
     def mean(self):
         return self.mu
