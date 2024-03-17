@@ -15,6 +15,7 @@ from preliz.distributions import (
     Binomial,
     NegativeBinomial,
     Poisson,
+    ZeroInflatedNegativeBinomial,
 )
 
 
@@ -22,8 +23,10 @@ from preliz.distributions import (
     "p_dist, sp_dist, p_params, sp_params",
     [
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
-        (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
+        (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
+        (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
+        (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (
             Weibull,
             stats.weibull_min,
@@ -39,8 +42,12 @@ from preliz.distributions import (
             {"n": 2.1, "p": 2.1 / (3.5 + 2.1)},
         ),
         (Poisson, stats.poisson, {"mu": 3.5}, {"mu": 3.5}),
-        (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
-        (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
+        (
+            ZeroInflatedNegativeBinomial,  # not in scipy
+            stats.nbinom,
+            {"psi": 1, "mu": 3.5, "alpha": 2.1},
+            {"n": 2.1, "p": 2.1 / (3.5 + 2.1)},
+        ),
     ],
 )
 def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
@@ -91,10 +98,16 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     expected_neg_logpdf = -expected_logpdf.sum()
     assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)
 
-    actual_moments = preliz_dist.moments("mvsk")
-    expected_moments = scipy_dist.stats("mvsk")
-    assert_almost_equal(actual_moments, expected_moments)
+    if preliz_dist.__class__.__name__ not in ["ZeroInflatedNegativeBinomial"]:
+        actual_median = preliz_dist.median()
+        expected_median = scipy_dist.median()
+        assert_almost_equal(actual_median, expected_median)
 
-    actual_median = preliz_dist.median()
-    expected_median = scipy_dist.median()
-    assert_almost_equal(actual_median, expected_median)
+        actual_moments = preliz_dist.moments("mvsk")
+        expected_moments = scipy_dist.stats("mvsk")
+
+    else:
+        actual_moments = preliz_dist.moments("mv")
+        expected_moments = scipy_dist.stats("mv")
+
+    assert_almost_equal(actual_moments, expected_moments)
