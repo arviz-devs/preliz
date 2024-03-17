@@ -96,17 +96,9 @@ class Poisson(Discrete):
         return nb_neg_logpdf(x, self.mu)
 
     def entropy(self):
-        if self.mu < 50:
-            x = np.arange(0, self.ppf(0.9999) + 1, dtype=int)
-            logpdf = self.logpdf(x)
-            return -np.sum(np.exp(logpdf) * logpdf)
-        else:
-            return (
-                0.5 * np.log(2 * np.pi * np.e * self.mu)
-                - 1 / (12 * self.mu)
-                - 1 / (24 * self.mu**2)
-                - 19 / (360 * self.mu**3)
-            )
+        x = np.arange(0, self.ppf(0.9999) + 1, dtype=int)
+        logpdf = self.logpdf(x)
+        return -np.sum(np.exp(logpdf) * logpdf)
 
     def mean(self):
         return self.mu

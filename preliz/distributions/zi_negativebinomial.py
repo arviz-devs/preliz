@@ -200,11 +200,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
         return samples
 
     def _fit_moments(self, mean, sigma):
-        psi = 0.9
-        mu = mean / psi
-        alpha = mean**2 / (sigma**2 - mean)
-        params = psi, mu, alpha
-        optimize_moments(self, mean, sigma, params)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)

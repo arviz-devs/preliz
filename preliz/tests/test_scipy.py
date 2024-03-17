@@ -16,6 +16,7 @@ from preliz.distributions import (
     NegativeBinomial,
     Poisson,
     ZeroInflatedNegativeBinomial,
+    ZeroInflatedPoisson,
 )
 
 
@@ -47,6 +48,12 @@ from preliz.distributions import (
             stats.nbinom,
             {"psi": 1, "mu": 3.5, "alpha": 2.1},
             {"n": 2.1, "p": 2.1 / (3.5 + 2.1)},
+        ),
+        (
+            ZeroInflatedPoisson,  # not in scipy
+            stats.poisson,
+            {"psi": 1, "mu": 3.5},
+            {"mu": 3.5},
         ),
     ],
 )
@@ -98,7 +105,10 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     expected_neg_logpdf = -expected_logpdf.sum()
     assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)
 
-    if preliz_dist.__class__.__name__ not in ["ZeroInflatedNegativeBinomial"]:
+    if preliz_dist.__class__.__name__ not in [
+        "ZeroInflatedNegativeBinomial",
+        "ZeroInflatedPoisson",
+    ]:
         actual_moments = preliz_dist.moments("mvsk")
         expected_moments = scipy_dist.stats("mvsk")
     else:
