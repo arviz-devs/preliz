@@ -99,15 +99,14 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)
 
     if preliz_dist.__class__.__name__ not in ["ZeroInflatedNegativeBinomial"]:
-        actual_median = preliz_dist.median()
-        expected_median = scipy_dist.median()
-        assert_almost_equal(actual_median, expected_median)
-
         actual_moments = preliz_dist.moments("mvsk")
         expected_moments = scipy_dist.stats("mvsk")
-
     else:
         actual_moments = preliz_dist.moments("mv")
         expected_moments = scipy_dist.stats("mv")
 
     assert_almost_equal(actual_moments, expected_moments)
+
+    actual_median = preliz_dist.median()
+    expected_median = scipy_dist.median()
+    assert_almost_equal(actual_median, expected_median)

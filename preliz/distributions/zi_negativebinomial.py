@@ -170,8 +170,8 @@ class ZeroInflatedNegativeBinomial(Discrete):
         return self.psi * self.mu
 
     def median(self):
-        # implement median
-        return np.nan
+        # missing explicit expression
+        return self.ppf(0.5)
 
     def var(self):
         var_nb = self.mu**2 / self.alpha + self.mu
