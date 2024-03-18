@@ -128,19 +128,22 @@ def plot_pdfpmf(
         ax.set_yticks([])
     else:
         mass = dist.pdf(x)
-        eps = np.clip(dist._finite_endpoints(support), *dist.support)
-        x_c = np.linspace(*eps, 1000)
-
-        if len(x) > 2:
-            interp = PchipInterpolator(x, mass)
+        x_c = np.linspace(x[0], x[-1], 1000)
+        # if new distribution, directly compute pdf at non-integer values
+        if dist.rv_frozen is None:
+            mass_c = np.clip(dist.pdf(x_c), np.min(mass), np.max(mass))
+        # if old, interpolate
         else:
-            interp = interp1d(x, mass)
+            if len(x) > 2:
+                interp = PchipInterpolator(x, mass)
+            else:
+                interp = interp1d(x, mass)
 
-        mass_c = np.clip(interp(x_c), np.min(mass), np.max(mass))
+            mass_c = np.clip(interp(x_c), np.min(mass), np.max(mass))
 
         ax.axhline(0, color="0.8", ls="--", zorder=0)
-        ax.plot(x_c, mass_c, ls="dotted", color=color, alpha=alpha)
-        ax.plot(x, mass, "o", label=label, color=color, alpha=alpha)
+        p = ax.plot(x_c, mass_c, ls="dotted", color=color, alpha=alpha)
+        ax.plot(x, mass, "o", label=label, color=p[0].get_color(), alpha=alpha)
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
     if pointinterval:

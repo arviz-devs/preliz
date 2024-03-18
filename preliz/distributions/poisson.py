@@ -24,7 +24,7 @@ class Poisson(Discrete):
 
         import arviz as az
         from preliz import Poisson
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         for mu in [0.5, 3, 8]:
             Poisson(mu).plot_pdf()
 

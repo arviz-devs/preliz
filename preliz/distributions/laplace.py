@@ -24,7 +24,7 @@ class Laplace(Continuous):
 
         import arviz as az
         from preliz import Laplace
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0., 0., 0., -5.]
         bs = [1., 2., 4., 4.]
         for mu, b in zip(mus, bs):

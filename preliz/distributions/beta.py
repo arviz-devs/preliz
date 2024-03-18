@@ -26,11 +26,12 @@ class Beta(Continuous):
 
         import arviz as az
         from preliz import Beta
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [.5, 5., 2.]
         betas = [.5, 5., 5.]
         for alpha, beta in zip(alphas, betas):
-            Beta(alpha, beta).plot_pdf()
+            ax = Beta(alpha, beta).plot_pdf()
+        ax.set_ylim(0, 5)
 
     ========  ==============================================================
     Support   :math:`x \in (0, 1)`

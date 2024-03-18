@@ -32,7 +32,7 @@ class Weibull(Continuous):
 
         import arviz as az
         from preliz import Weibull
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [1., 2, 5.]
         betas = [1., 1., 2.]
         for a, b in zip(alphas, betas):
