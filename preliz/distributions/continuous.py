@@ -58,7 +58,7 @@ class AsymmetricLaplace(Continuous):
 
         import arviz as az
         from preliz import AsymmetricLaplace
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         kappas = [1., 2., .5]
         mus = [0., 0., 3.]
         bs = [1., 1., 1.]
@@ -172,7 +172,7 @@ class BetaScaled(Continuous):
 
         import arviz as az
         from preliz import BetaScaled
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [2, 2]
         betas = [2, 5]
         lowers = [-0.5, -1]
@@ -261,7 +261,7 @@ class Cauchy(Continuous):
 
         import arviz as az
         from preliz import Cauchy
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [0., 0., -2.]
         betas = [.5, 1., 1.]
         for alpha, beta in zip(alphas, betas):
@@ -334,7 +334,7 @@ class ChiSquared(Continuous):
 
         import arviz as az
         from preliz import ChiSquared
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         nus = [1., 3., 9.]
         for nu in nus:
                 ax = ChiSquared(nu).plot_pdf(support=(0,20))
@@ -411,7 +411,7 @@ class ExGaussian(Continuous):
 
         import arviz as az
         from preliz import ExGaussian
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0., 0., -3.]
         sigmas = [1., 3., 1.]
         nus = [1., 1., 4.]
@@ -492,7 +492,7 @@ class Gamma(Continuous):
 
         import arviz as az
         from preliz import Gamma
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [1., 3., 7.5]
         betas = [.5, 1., 1.]
         for alpha, beta in zip(alphas, betas):
@@ -611,7 +611,7 @@ class Gumbel(Continuous):
 
         import arviz as az
         from preliz import Gumbel
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0., 4., -1.]
         betas = [1., 2., 4.]
         for mu, beta in zip(mus, betas):
@@ -684,7 +684,7 @@ class HalfCauchy(Continuous):
 
         import arviz as az
         from preliz import HalfCauchy
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         for beta in [.5, 1., 2.]:
             HalfCauchy(beta).plot_pdf(support=(0,5))
 
@@ -752,7 +752,7 @@ class HalfStudentT(Continuous):
 
         import arviz as az
         from preliz import HalfStudentT
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         sigmas = [1., 2., 2.]
         nus = [3, 3., 10.]
         for sigma, nu in zip(sigmas, nus):
@@ -935,7 +935,7 @@ class InverseGamma(Continuous):
 
         import arviz as az
         from preliz import InverseGamma
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [1., 2., 3.]
         betas = [1., 1., .5]
         for alpha, beta in zip(alphas, betas):
@@ -1054,7 +1054,7 @@ class Kumaraswamy(Continuous):
 
         import arviz as az
         from preliz import Kumaraswamy
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         a_s = [.5, 5., 1., 2., 2.]
         b_s = [.5, 1., 3., 2., 5.]
         for a, b in zip(a_s, b_s):
@@ -1175,7 +1175,7 @@ class Logistic(Continuous):
 
         import arviz as az
         from preliz import Logistic
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0., 0., -2.]
         ss = [1., 2., .4]
         for mu, s in zip(mus, ss):
@@ -1254,7 +1254,7 @@ class LogNormal(Continuous):
 
         import arviz as az
         from preliz import LogNormal
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [ 0., 0.]
         sigmas = [.5, 1.]
         for mu, sigma in zip(mus, sigmas):
@@ -1328,7 +1328,7 @@ class LogitNormal(Continuous):
 
         import arviz as az
         from preliz import LogitNormal
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0., 0., 0., 1.]
         sigmas = [0.3, 1., 2., 1.]
         for mu, sigma in zip(mus, sigmas):
@@ -1481,7 +1481,7 @@ class Moyal(Continuous):
 
         import arviz as az
         from preliz import Moyal
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [-1., 0., 4.]
         sigmas = [2., 1., 4.]
         for mu, sigma in zip(mus, sigmas):
@@ -1554,7 +1554,7 @@ class Pareto(Continuous):
 
         import arviz as az
         from preliz import Pareto
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [1., 5., 5.]
         ms = [1., 1., 2.]
         for alpha, m in zip(alphas, ms):
@@ -1630,7 +1630,7 @@ class Rice(Continuous):
 
         import arviz as az
         from preliz import Rice
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         nus = [0., 0., 4.]
         sigmas = [1., 2., 2.]
         for nu, sigma in  zip(nus, sigmas):
@@ -1733,19 +1733,19 @@ class SkewNormal(Continuous):
 
     The pdf of this distribution is
 
-        .. math::
+    .. math::
 
         f(x \mid \mu, \tau, \alpha) =
         2 \Phi((x-\mu)\sqrt{\tau}\alpha) \phi(x,\mu,\tau)
 
-        .. plot::
-            :context: close-figs
+    .. plot::
+        :context: close-figs
 
-            import arviz as az
-            from preliz import SkewNormal
-            az.style.use('arviz-white')
-            for alpha in [-6, 0, 6]:
-                SkewNormal(mu=0, sigma=1, alpha=alpha).plot_pdf()
+        import arviz as az
+        from preliz import SkewNormal
+        az.style.use('arviz-doc')
+        for alpha in [-6, 0, 6]:
+            SkewNormal(mu=0, sigma=1, alpha=alpha).plot_pdf()
 
     ========  ==========================================
     Support   :math:`x \in \mathbb{R}`
@@ -1854,7 +1854,7 @@ class StudentT(Continuous):
 
         import arviz as az
         from preliz import StudentT
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         nus = [2., 5., 5.]
         mus = [0., 0.,  -4.]
         sigmas = [1., 1., 2.]
@@ -1976,7 +1976,7 @@ class Triangular(Continuous):
 
         import arviz as az
         from preliz import Triangular
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         lowers = [0., -1, 2]
         cs = [2., 0., 6.5]
         uppers = [4., 1, 8]
@@ -2063,7 +2063,7 @@ class TruncatedNormal(Continuous):
 
         import arviz as az
         from preliz import TruncatedNormal
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0.,  0., 0.]
         sigmas = [3.,5.,7.]
         lowers = [-3, -5, -5]
@@ -2178,7 +2178,7 @@ class Uniform(Continuous):
 
         import arviz as az
         from preliz import Uniform
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         ls = [1, -2]
         us = [6, 2]
         for l, u in zip(ls, us):
@@ -2265,7 +2265,7 @@ class VonMises(Continuous):
 
         import arviz as az
         from preliz import VonMises
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0., 0., 0.,  -2.5]
         kappas = [.01, 0.5, 4., 2.]
         for mu, kappa in zip(mus, kappas):
@@ -2340,7 +2340,7 @@ class Wald(Continuous):
 
         import arviz as az
         from preliz import Wald
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [1., 1.]
         lams = [1., 3.]
         for mu, lam in zip(mus, lams):

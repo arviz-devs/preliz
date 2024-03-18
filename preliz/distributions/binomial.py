@@ -27,7 +27,7 @@ class Binomial(Discrete):
 
         import arviz as az
         from preliz import Binomial
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         ns = [5, 10, 10]
         ps = [0.5, 0.5, 0.7]
         for n, p in zip(ns, ps):

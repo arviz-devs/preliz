@@ -24,13 +24,12 @@ class NegativeBinomial(Discrete):
            \binom{x + \alpha - 1}{x}
            (\alpha/(\mu+\alpha))^\alpha (\mu/(\mu+\alpha))^x
 
-
     .. plot::
         :context: close-figs
 
         import arviz as az
         from preliz import NegativeBinomial
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [1, 2, 8]
         alphas = [0.9, 2, 4]
         for mu, alpha in zip(mus, alphas):

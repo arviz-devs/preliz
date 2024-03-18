@@ -39,12 +39,12 @@ class ZeroInflatedNegativeBinomial(Discrete):
 
         import arviz as az
         from preliz import ZeroInflatedNegativeBinomial
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         psis = [0.7, 0.7]
         mus = [2, 8]
         alphas = [2, 4]
         for psi, mu, alpha in zip(psis, mus, alphas):
-        ZeroInflatedNegativeBinomial(psi, mu=mu, alpha=alpha).plot_pdf(support=(0,25))
+            ZeroInflatedNegativeBinomial(psi, mu=mu, alpha=alpha).plot_pdf(support=(0,25))
 
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`

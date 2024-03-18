@@ -23,7 +23,7 @@ class Exponential(Continuous):
 
         import arviz as az
         from preliz import Exponential
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         for lam in [0.5,  2.]:
             Exponential(lam).plot_pdf(support=(0,5))
 
