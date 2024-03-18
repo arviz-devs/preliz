@@ -1733,19 +1733,19 @@ class SkewNormal(Continuous):
 
     The pdf of this distribution is
 
-        .. math::
+    .. math::
 
         f(x \mid \mu, \tau, \alpha) =
         2 \Phi((x-\mu)\sqrt{\tau}\alpha) \phi(x,\mu,\tau)
 
-        .. plot::
-            :context: close-figs
+    .. plot::
+        :context: close-figs
 
-            import arviz as az
-            from preliz import SkewNormal
-            az.style.use('arviz-doc')
-            for alpha in [-6, 0, 6]:
-                SkewNormal(mu=0, sigma=1, alpha=alpha).plot_pdf()
+        import arviz as az
+        from preliz import SkewNormal
+        az.style.use('arviz-doc')
+        for alpha in [-6, 0, 6]:
+            SkewNormal(mu=0, sigma=1, alpha=alpha).plot_pdf()
 
     ========  ==========================================
     Support   :math:`x \in \mathbb{R}`

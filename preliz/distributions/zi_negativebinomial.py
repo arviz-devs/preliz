@@ -44,7 +44,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
         mus = [2, 8]
         alphas = [2, 4]
         for psi, mu, alpha in zip(psis, mus, alphas):
-        ZeroInflatedNegativeBinomial(psi, mu=mu, alpha=alpha).plot_pdf(support=(0,25))
+            ZeroInflatedNegativeBinomial(psi, mu=mu, alpha=alpha).plot_pdf(support=(0,25))
 
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`
