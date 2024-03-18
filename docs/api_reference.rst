@@ -60,6 +60,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.negativebinomial
    :members:
 
+.. automodule:: preliz.distributions.zi_binomial
+   :members:
+
 .. automodule:: preliz.distributions.zi_negativebinomial
    :members:
 
