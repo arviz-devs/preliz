@@ -23,7 +23,7 @@ class Bernoulli(Discrete):
 
         import arviz as az
         from preliz import Bernoulli
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         for p in [0, 0.5, 0.8]:
             Bernoulli(p).plot_pdf()
 

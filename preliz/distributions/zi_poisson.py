@@ -30,7 +30,7 @@ class ZeroInflatedPoisson(Discrete):
 
         import arviz as az
         from preliz import ZeroInflatedPoisson
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         psis = [0.7, 0.4]
         mus = [8, 4]
         for psi, mu in zip(psis, mus):

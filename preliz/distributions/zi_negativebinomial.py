@@ -39,7 +39,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
 
         import arviz as az
         from preliz import ZeroInflatedNegativeBinomial
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         psis = [0.7, 0.7]
         mus = [2, 8]
         alphas = [2, 4]

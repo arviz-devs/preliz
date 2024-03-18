@@ -26,7 +26,7 @@ class Normal(Continuous):
 
         import arviz as az
         from preliz import Normal
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         mus = [0., 0., -2.]
         sigmas = [1, 0.5, 1]
         for mu, sigma in zip(mus, sigmas):

@@ -51,7 +51,7 @@ class BetaBinomial(Discrete):
 
         import arviz as az
         from preliz import BetaBinomial
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         alphas = [0.5, 1, 2.3]
         betas = [0.5, 1, 2]
         n = 10
@@ -133,7 +133,7 @@ class Categorical(Discrete):
 
         import arviz as az
         from preliz import Categorical
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         ps = [[0.1, 0.6, 0.3], [0.3, 0.1, 0.1, 0.5]]
         for p in ps:
             Categorical(p).plot_pdf()
@@ -231,7 +231,7 @@ class DiscreteUniform(Discrete):
 
         import arviz as az
         from preliz import DiscreteUniform
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         ls = [1, -2]
         us = [6, 2]
         for l, u in zip(ls, us):
@@ -316,7 +316,7 @@ class DiscreteWeibull(Discrete):
 
         import arviz as az
         from preliz import DiscreteWeibull
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         qs = [0.1, 0.9, 0.9]
         betas = [0.3, 1.3, 3]
         for q, b in zip(qs, betas):
@@ -443,7 +443,7 @@ class Geometric(Discrete):
 
         import arviz as az
         from preliz import Geometric
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         for p in [0.1, 0.25, 0.75]:
             Geometric(p).plot_pdf(support=(1,10))
 
@@ -509,7 +509,7 @@ class HyperGeometric(Discrete):
 
         import arviz as az
         from preliz import HyperGeometric
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         N = 50
         k = 10
         for n in [20, 25]:
@@ -589,7 +589,7 @@ class ZeroInflatedBinomial(Discrete):
 
         import arviz as az
         from preliz import ZeroInflatedBinomial
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         ns = [10, 20]
         ps = [0.5, 0.7]
         psis = [0.7, 0.4]
