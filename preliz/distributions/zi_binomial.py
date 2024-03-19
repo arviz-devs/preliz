@@ -180,6 +180,8 @@ def nb_ppf(q, psi, n, p, lower, upper):
 def nb_logpdf(psi, n, y, p):
     if y == 0:
         return np.log((1 - psi) + psi * (1 - p) ** n)
+    if y > n:
+        return 0
     else:
         return (
             np.log(psi)
