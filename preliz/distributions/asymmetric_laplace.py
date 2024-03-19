@@ -9,7 +9,7 @@ from ..internal.distribution_helper import all_not_none, eps
 
 class AsymmetricLaplace(Continuous):
     r"""
-    Asymmetric-Laplace dstribution.
+    Asymmetric-Laplace distribution.
 
     The pdf of this distribution is
 
