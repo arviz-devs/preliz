@@ -5,6 +5,7 @@ from scipy import stats
 
 
 from preliz.distributions import (
+    AsymmetricLaplace,
     Beta,
     Exponential,
     HalfNormal,
@@ -24,6 +25,12 @@ from preliz.distributions import (
 @pytest.mark.parametrize(
     "p_dist, sp_dist, p_params, sp_params",
     [
+        (
+            AsymmetricLaplace,
+            stats.laplace_asymmetric,
+            {"mu": 2.5, "b": 3.5, "kappa": 0.7},
+            {"loc": 2.5, "scale": 3.5, "kappa": 0.7},
+        ),
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
         (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),

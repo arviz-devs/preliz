@@ -16,6 +16,7 @@ from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 from ..internal.optimization import optimize_ml, optimize_moments, optimize_moments_rice
 from ..internal.distribution_helper import all_not_none, any_not_none
 from .distributions import Continuous
+from .asymmetric_laplace import AsymmetricLaplace  # pylint: disable=unused-import
 from .beta import Beta  # pylint: disable=unused-import
 from .exponential import Exponential  # pylint: disable=unused-import
 from .normal import Normal  # pylint: disable=unused-import
@@ -35,124 +36,6 @@ def from_precision(precision):
 def to_precision(sigma):
     precision = 1 / sigma**2
     return precision
-
-
-class AsymmetricLaplace(Continuous):
-    r"""
-    Asymmetric-Laplace dstribution.
-
-    The pdf of this distribution is
-
-    .. math::
-        {f(x|\\b,\kappa,\mu) =
-            \left({\frac{\\b}{\kappa + 1/\kappa}}\right)\,e^{-(x-\mu)\\b\,s\kappa ^{s}}}
-
-    where
-
-    .. math::
-
-        s = sgn(x-\mu)
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import AsymmetricLaplace
-        az.style.use('arviz-doc')
-        kappas = [1., 2., .5]
-        mus = [0., 0., 3.]
-        bs = [1., 1., 1.]
-        for kappa, mu, b in zip(kappas, mus, bs):
-            AsymmetricLaplace(kappa, mu, b).plot_pdf(support=(-10,10))
-
-    ========  ========================
-    Support   :math:`x \in \mathbb{R}`
-    Mean      :math:`\mu-\frac{\\\kappa-1/\kappa}b`
-    Variance  :math:`\frac{1+\kappa^{4}}{b^2\kappa^2 }`
-    ========  ========================
-
-    AsymmetricLaplace distribution has 2 alternative parametrizations. In terms of kappa,
-    mu and b or q, mu and b.
-
-    The link between the 2 alternatives is given by
-
-    .. math::
-
-       \kappa = \sqrt(\frac{q}{1-q})
-
-    Parameters
-    ----------
-    kappa : float
-        Symmetry parameter (kappa > 0).
-    mu : float
-        Location parameter.
-    b : float
-        Scale parameter (b > 0).
-    q : float
-        Symmetry parameter (0 < q < 1).
-    """
-
-    def __init__(self, kappa=None, mu=None, b=None, q=None):
-        super().__init__()
-        self.dist = copy(stats.laplace_asymmetric)
-        self.support = (-np.inf, np.inf)
-        self._parametrization(kappa, mu, b, q)
-
-    def _parametrization(self, kappa=None, mu=None, b=None, q=None):
-        if all_not_none(kappa, q):
-            raise ValueError("Incompatible parametrization. Either use kappa or q.")
-
-        self.param_names = ("kappa", "mu", "b")
-        self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
-
-        if q is not None:
-            self.q = q
-            kappa = self._from_q(q)
-            self.param_names = ("q", "mu", "b")
-            self.params_support = ((eps, 1 - eps), (-np.inf, np.inf), (eps, np.inf))
-
-        self.kappa = kappa
-        self.mu = mu
-        self.b = b
-        if all_not_none(kappa, mu, b):
-            self._update(kappa, mu, b)
-
-    def _from_q(self, q):
-        kappa = (q / (1 - q)) ** 0.5
-        return kappa
-
-    def _to_q(self, kappa):
-        q = kappa**2 / (1 + kappa**2)
-        return q
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(kappa=self.kappa, loc=self.mu, scale=self.b)
-        return frozen
-
-    def _update(self, kappa, mu, b):
-        self.kappa = np.float64(kappa)
-        self.mu = np.float64(mu)
-        self.b = np.float64(b)
-        self.q = self._to_q(self.kappa)
-
-        if self.param_names[0] == "kappa":
-            self.params = (self.kappa, self.mu, self.b)
-        elif self.param_names[0] == "q":
-            self.params = (self.q, self.mu, self.b)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        # Assume symmetry
-        mu = mean
-        b = (sigma / 2) * (2**0.5)
-        self._update(1, mu, b)
-
-    def _fit_mle(self, sample, **kwargs):
-        kappa, mu, b = self.dist.fit(sample, **kwargs)
-        self._update(kappa, mu, b)
 
 
 class BetaScaled(Continuous):
