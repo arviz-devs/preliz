@@ -167,9 +167,10 @@ class AsymmetricLaplace(Continuous):
 
     def rvs(self, size=1, random_state=None):
         random_state = np.random.default_rng(random_state)
-        random_samples = random_state.uniform(size=size)
-        # Returning ppf of random samples
-        return self.ppf(random_samples)
+        random_samples = random_state.uniform(
+            -self.kappa, 1 / self.kappa, size  # pylint: disable=invalid-unary-operand-type
+        )
+        return nb_rvs(random_samples, self.mu, self.b, self.kappa)
 
     def _fit_moments(self, mean, sigma):
         # Assume symmetry
@@ -218,6 +219,12 @@ def nb_logpdf(x, mu, b, kappa):
 @nb.njit
 def nb_neg_logpdf(x, mu, b, kappa):
     return (-nb_logpdf(x, mu, b, kappa)).sum()
+
+
+@nb.njit
+def nb_rvs(random_samples, mu, b, kappa):
+    sgn = np.sign(random_samples)
+    return mu - (1 / (1 / b * sgn * kappa**sgn)) * np.log(1 - random_samples * sgn * kappa**sgn)
 
 
 @nb.njit
