@@ -148,12 +148,7 @@ class ZeroInflatedBinomial(Discrete):
         return samples
 
     def _fit_moments(self, mean, sigma):
-        # crude approximation for n and p (same as Binomial)
-        n = mean + sigma * 2
-        p = mean / n
-        psi = 0.9
-        params = psi, n, p
-        optimize_moments(self, mean, sigma, params)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
@@ -181,7 +176,7 @@ def nb_logpdf(psi, n, y, p):
     if y == 0:
         return np.log((1 - psi) + psi * (1 - p) ** n)
     if y > n:
-        return 0
+        return -np.inf
     else:
         return (
             np.log(psi)
