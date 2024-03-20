@@ -153,8 +153,8 @@ from preliz.distributions import (
         (NegativeBinomial(), 0, 15, 0.9, (0, np.inf), (7.573, 2.077)),
         (NegativeBinomial(p=0.2), 0, 15, 0.9, (0, np.inf), (1.848)),
         (Poisson(), 0, 3, 0.7, (0, np.inf), (2.763)),
-        (ZeroInflatedBinomial(), 1, 10, 0.9, (0, 10), (0.901, 10, 0.493)),
-        (ZeroInflatedBinomial(psi=0.7), 1, 10, 0.7, (0, 11), (11, 0.5)),
+        (ZeroInflatedBinomial(), 1, 10, 0.9, (0, 10), (0.902, 9.0, 0.485)),
+        (ZeroInflatedBinomial(psi=0.7), 1, 10, 0.7, (0, 11), (10, 0.897)),
         (ZeroInflatedNegativeBinomial(), 2, 15, 0.8, (0, np.inf), (1.0, 9.862, 3.429)),
         (ZeroInflatedNegativeBinomial(psi=0.9), 2, 15, 0.8, (0, np.inf), (9.013, 6.307)),
         (ZeroInflatedPoisson(), 0, 3, 0.7, (0, np.inf), (0.8445, 3.010)),
@@ -164,7 +164,7 @@ from preliz.distributions import (
 def test_maxent(dist, lower, upper, mass, support, result):
     _, opt = maxent(dist, lower, upper, mass)
 
-    assert_almost_equal(dist.support, support, 0.3)
+    assert_almost_equal(dist.support, support, 0)
 
     if dist.__class__.__name__ not in [
         "DiscreteUniform",
