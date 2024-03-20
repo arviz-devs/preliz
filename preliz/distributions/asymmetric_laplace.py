@@ -151,13 +151,10 @@ class AsymmetricLaplace(Continuous):
         return self.mu - np.log((1 + self.kappa**2) / 2) / (self.kappa / self.b)
 
     def mean(self):
-        kap_inv = 1 / self.kappa
-        kappa_dif = kap_inv - self.kappa
-        return kappa_dif * self.b + self.mu
+        return (1 / self.kappa - self.kappa) * self.b + self.mu
 
     def var(self):
-        kap_inv = 1 / self.kappa
-        return (kap_inv**2 + self.kappa**2) * self.b**2
+        return ((1 / self.kappa) ** 2 + self.kappa**2) * self.b**2
 
     def std(self):
         return self.var() ** 0.5
