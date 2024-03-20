@@ -1,6 +1,5 @@
-from IPython.display import display
-
 try:
+    from IPython.display import display
     from ipywidgets import VBox, HBox, interactive_output
 except ImportError:
     pass
