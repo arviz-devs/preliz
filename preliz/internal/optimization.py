@@ -3,6 +3,7 @@ Optimization routines and utilities
 """
 from sys import modules
 import warnings
+from copy import copy
 
 import numpy as np
 from scipy.optimize import minimize, least_squares
@@ -109,7 +110,13 @@ def optimize_moments(dist, mean, sigma, params=None):
     if params is not None:
         dist._update(*params)
     else:
-        dist._update(**default_vals[dist.__class__.__name__])
+        name = dist.__class__.__name__
+        if name == "Truncated":
+            vals = copy(default_vals["Truncated"])
+            vals.update(default_vals[dist.dist.__class__.__name__])
+            dist._parametrization(**vals)
+        else:
+            dist._update(**default_vals[name])
 
     init_vals = np.array(dist.params)[none_idx]
 

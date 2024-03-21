@@ -143,4 +143,5 @@ init_vals = {
     "ZeroInflatedBinomial": {"psi": 0.7, "n": 10, "p": 0.5},
     "ZeroInflatedNegativeBinomial": {"psi": 0.7, "mu": 5, "alpha": 8},
     "ZeroInflatedPoisson": {"psi": 0.8, "mu": 4.5},
+    "Truncated": {"lower": -10, "upper": 10},
 }
