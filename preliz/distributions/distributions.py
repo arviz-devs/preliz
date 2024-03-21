@@ -3,6 +3,7 @@ Parent classes for all families.
 """
 # pylint: disable=no-member
 from collections import namedtuple
+from copy import copy
 
 try:
     from ipywidgets import interactive
@@ -513,9 +514,14 @@ class Distribution:
         if valid_scalar_params(self, check_frozen=False):
             args = dict(zip(self.param_names, self.params))
         else:
-            args = init_vals[self.__class__.__name__]
-
-        self._parametrization(**args)
+            name = self.__class__.__name__
+            if name == "Truncated":
+                vals = copy(init_vals["Truncated"])
+                vals.update(init_vals[self.dist.__class__.__name__])
+                self._parametrization(**vals)
+            else:
+                args = init_vals[self.__class__.__name__]
+                self._parametrization(**args)
 
         if xy_lim == "both":
             xlim = self._finite_endpoints("full")
