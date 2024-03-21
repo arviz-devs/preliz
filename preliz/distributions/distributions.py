@@ -515,7 +515,7 @@ class Distribution:
         else:
             args = init_vals[self.__class__.__name__]
 
-        self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
+        self._parametrization(**args)
 
         if xy_lim == "both":
             xlim = self._finite_endpoints("full")
@@ -551,7 +551,7 @@ class Distribution:
                 if np.sum(values) > 1:
                     return None
 
-            self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
+            self._parametrization(**args)
 
             if kind == "pdf":
                 ax = self.plot_pdf(
@@ -714,7 +714,9 @@ class TruncatedCensored(Distribution):
             raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
-            attr = namedtuple(self.__class__.__name__, ["median", "lower", "upper"])
+            attr = namedtuple(
+                "Truncated" + self.dist.__class__.__name__, ["median", "lower", "upper"]
+            )
             median = float(f"{self.median():{fmt}}")
             eti = self.eti(mass)
             lower_tail = float(f"{eti[0]:{fmt}}")

@@ -44,6 +44,9 @@ def test_plot_interactive():
             kind = ["pdf", "cdf", "ppf"][idx % 3]
             xy_lim = ["auto", "both"][idx % 2]
             dist().plot_interactive(kind=kind, xy_lim=xy_lim)
+        if distribution == "Truncated":
+            dist = getattr(pz.distributions, distribution)
+            dist(pz.Normal(0, 2), -1, 1).plot_interactive(kind="pdf", xy_lim="both")
 
 
 @pytest.mark.parametrize(

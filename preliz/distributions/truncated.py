@@ -28,21 +28,34 @@ class Truncated(TruncatedCensored):
         Upper (right) truncation point. Use np.inf for no truncation.
     """
 
-    def __init__(self, dist, lower, upper):
+    def __init__(self, dist, lower, upper, **kwargs):
         self.dist = dist
         super().__init__()
+        if not kwargs:
+            kwargs = dict(zip(self.dist.param_names, self.dist.params))
+
+        self._parametrization(lower, upper, **kwargs)
+
+    def _parametrization(self, lower, upper, **kwargs):
+        dist_params = []
+        for key, value in kwargs.items():
+            dist_params.append(value)
+            setattr(self, key, value)
+
+        self.dist._parametrization(**kwargs)
         if self.kind == "discrete":
             self.lower = lower - 1
         else:
             self.lower = lower
         self.upper = upper
-        self.is_frozen = True
-        self.params = (*self.dist.params, self.lower, self.upper)
+        self.params = (*dist_params, self.lower, self.upper)
         self.param_names = (*self.dist.param_names, "lower", "upper")
         self.support = (
             max(self.dist.support[0], self.lower),
             min(self.dist.support[1], self.upper),
         )
+        self.params_support = (*self.dist.params_support, self.dist.support, self.dist.support)
+        self.is_frozen = True
 
     def rvs(self, size=1, random_state=None):
         random_state = np.random.default_rng(random_state)
