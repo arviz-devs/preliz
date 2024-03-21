@@ -9,6 +9,8 @@ class Truncated(TruncatedCensored):
     r"""
     Truncated distribution
 
+    This is not a distribution per se, but a modifier of univariate distributions.
+
     The pdf of a Truncated distribution is
 
     .. math::
@@ -118,7 +120,7 @@ class Truncated(TruncatedCensored):
 
     def entropy(self):
         """
-        This is the entropy of the untruncated distribution
+        This is the entropy of the UNtruncated distribution
         """
         if self.dist.rv_frozen is None:
             return self.dist.entropy()

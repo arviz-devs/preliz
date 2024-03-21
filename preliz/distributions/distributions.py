@@ -758,28 +758,28 @@ class TruncatedCensored(Distribution):
             return discrete_xvals(lower_ep, upper_ep, n_points)
 
     def mean(self):
-        """Mean of the distribution."""
+        """Mean of the distribution. Not implemented."""
         return NotImplemented
 
     def std(self):
-        """Standard deviation of the distribution."""
+        """Standard deviation of the distribution. Not implemented."""
         return NotImplemented
 
     def var(self):
-        """Variance of the distribution."""
+        """Variance of the distribution. Not implemented."""
         return NotImplemented
 
     def skewness(self):
-        """Skewness of the distribution."""
+        """Skewness of the distribution. Not implemented."""
         return NotImplemented
 
     def kurtois(self):
-        """Kurtosis of the distribution"""
+        """Kurtosis of the distribution. Not implemented."""
         return NotImplemented
 
     def moments(self, types="mvsk"):
         """
-        Compute moments of the distribution.
+        Compute moments of the distribution. Not implemented.
         """
         return NotImplemented
 
