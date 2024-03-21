@@ -601,13 +601,10 @@ class Continuous(Distribution):
             support of the distribution, if finite, or the quantiles 0.0001 or 0.9999, if infinite.
             If `restricted` the values will cover the quantile 0.0001 to 0.9999.
         n_points : int
-            Number of values to return. The returned values may be fewer than `n_points` if
-            the actual number of discrete values in the support of the distribution is smaller than
-            `n_points`.
+            Number of values to return.
         """
         lower_ep, upper_ep = self._finite_endpoints(support)
-        x_vals = np.linspace(lower_ep, upper_ep, n_points)
-        return x_vals
+        return continuous_xvals(lower_ep, upper_ep, n_points)
 
     def _fit_mle(self, sample, **kwargs):
         """
@@ -666,12 +663,7 @@ class Discrete(Distribution):
             `n_points`.
         """
         lower_ep, upper_ep = self._finite_endpoints(support)
-        range_x = upper_ep - lower_ep
-        if range_x <= n_points:
-            x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
-        else:
-            x_vals = np.linspace(lower_ep, upper_ep + 1, n_points, dtype=int)
-        return x_vals
+        return discrete_xvals(lower_ep, upper_ep, n_points)
 
     def pdf(self, x, *args, **kwds):
         """Probability mass function at x.
@@ -692,3 +684,104 @@ class Discrete(Distribution):
             Values on which to evaluate the pdf
         """
         return self.rv_frozen.logpmf(x, *args, **kwds)
+
+
+class TruncatedCensored(Distribution):
+    """Base class for discrete distributions."""
+
+    def __init__(self):
+        super().__init__()
+        self.kind = self.dist.kind
+
+    def summary(self, mass=0.94, fmt=".2f"):
+        """
+        Namedtuple with the median and lower and upper bounds of the equal-tailed
+        interval.
+
+        Parameters
+        ----------
+        mass: float
+            Probability mass for the equal-tailed interval. Defaults to 0.94
+        fmt : str
+            fmt used to represent results using f-string fmt for floats. Default to ".2f"
+            i.e. 2 digits after the decimal point.
+        """
+        valid_distribution(self)
+
+        if not isinstance(fmt, str):
+            raise ValueError("Invalid format string.")
+
+        if valid_scalar_params(self):
+            attr = namedtuple(self.__class__.__name__, ["median", "lower", "upper"])
+            median = float(f"{self.median():{fmt}}")
+            eti = self.eti(mass)
+            lower_tail = float(f"{eti[0]:{fmt}}")
+            upper_tail = float(f"{eti[1]:{fmt}}")
+            return attr(median, lower_tail, upper_tail)
+        else:
+            return None
+
+    def xvals(self, support, n_points=None):
+        """Provide x values in the support of the distribution. This is useful for example when
+        plotting.
+
+        Parameters
+        ----------
+        support : str
+            Available options are `full` or `restricted`. If `full` the values will cover the entire
+            support of the distribution, if finite, or the quantiles 0.0001 or 0.9999, if infinite.
+            If `restricted` the values will cover the quantile 0.0001 to 0.9999.
+        n_points : int
+            Number of values to return. For discrete distributions the returned values may be fewer
+            than `n_points` if the actual number of discrete values in the support of the
+            distribution is smaller than `n_points`.
+        """
+        lower_ep, upper_ep = self._finite_endpoints(support)
+
+        if self.kind == "continuous":
+            if n_points is None:
+                n_points = 1000
+            return continuous_xvals(lower_ep, upper_ep, n_points)
+        else:
+            if n_points is None:
+                n_points = 200
+            return discrete_xvals(lower_ep, upper_ep, n_points)
+
+    def mean(self):
+        """Mean of the distribution."""
+        return NotImplemented
+
+    def std(self):
+        """Standard deviation of the distribution."""
+        return NotImplemented
+
+    def var(self):
+        """Variance of the distribution."""
+        return NotImplemented
+
+    def skewness(self):
+        """Skewness of the distribution."""
+        return NotImplemented
+
+    def kurtois(self):
+        """Kurtosis of the distribution"""
+        return NotImplemented
+
+    def moments(self, types="mvsk"):
+        """
+        Compute moments of the distribution.
+        """
+        return NotImplemented
+
+
+def continuous_xvals(lower_ep, upper_ep, n_points):
+    return np.linspace(lower_ep, upper_ep, n_points)
+
+
+def discrete_xvals(lower_ep, upper_ep, n_points):
+    range_x = upper_ep - lower_ep
+    if range_x <= n_points:
+        x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
+    else:
+        x_vals = np.linspace(lower_ep, upper_ep + 1, n_points, dtype=int)
+    return x_vals
