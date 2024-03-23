@@ -143,7 +143,7 @@ class Distribution:
         """Skewness of the distribution."""
         return self.stats(moment="s")
 
-    def kurtois(self):
+    def kurtosis(self):
         """Kurtosis of the distribution"""
         return self.stats(moments="k")
 
@@ -773,7 +773,7 @@ class TruncatedCensored(Distribution):
         """Skewness of the distribution. Not implemented."""
         return NotImplemented
 
-    def kurtois(self):
+    def kurtosis(self):
         """Kurtosis of the distribution. Not implemented."""
         return NotImplemented
 
