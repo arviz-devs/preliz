@@ -123,10 +123,27 @@ def plot_pdfpmf(
 
     x = dist.xvals(support)
     if dist.kind == "continuous":
+        if dist.__class__.__name__ == "Censored":
+            lower, upper = dist.support
+            disc_vals = [None, None]
+            if np.min(x) <= lower:
+                disc_vals[0] = dist.dist.pdf(lower) * 1.5
+                disc_vals[1] = dist.dist.pdf(upper) * 1.5
+
+            x = x[x != dist.support[0]]
+            x = x[x != dist.support[1]]
+
         density = dist.pdf(x)
         ax.axhline(0, color="0.8", ls="--", zorder=0)
-        ax.plot(x, density, label=label, color=color, alpha=alpha)
+        p = ax.plot(x, density, label=label, color=color, alpha=alpha)
         ax.set_yticks([])
+
+        if dist.__class__.__name__ == "Censored":
+            if disc_vals[0] is not None:
+                ax.vlines(lower, 0, disc_vals[0], ls="--", color=p[0].get_color(), alpha=alpha)
+            if disc_vals[1] is not None:
+                ax.vlines(upper, 0, disc_vals[1], ls="--", color=p[0].get_color(), alpha=alpha)
+
     else:
         mass = dist.pdf(x)
         x_c = np.linspace(x[0], x[-1], 1000)

@@ -515,7 +515,7 @@ class Distribution:
             args = dict(zip(self.param_names, self.params))
         else:
             name = self.__class__.__name__
-            if name == "Truncated":
+            if name in ["Truncated", "Censored"]:
                 vals = copy(init_vals["Truncated"])
                 vals.update(init_vals[self.dist.__class__.__name__])
                 self._parametrization(**vals)

@@ -85,5 +85,8 @@ This reference provides detailed documentation for user functions in the current
 :mod:`preliz.distributions`
 ====================================
 
+.. automodule:: preliz.distributions.censored
+   :members:
+
 .. automodule:: preliz.distributions.truncated
    :members:

@@ -2,6 +2,7 @@ from .continuous import *
 from .discrete import *
 from .continuous_multivariate import *
 from .truncated import Truncated
+from .censored import Censored
 
 all_continuous = [
     AsymmetricLaplace,
@@ -59,4 +60,5 @@ __all__ = (
     + [s.__name__ for s in all_discrete]
     + [s.__name__ for s in all_continuous_multivariate]
     + [Truncated.__name__]
+    + [Censored.__name__]
 )
