@@ -7,11 +7,11 @@ from preliz.internal.distribution_helper import all_not_none
 
 class Censored(TruncatedCensored):
     r"""
-    Truncated distribution
+    Censored distribution
 
     This is not a distribution per se, but a modifier of univariate distributions.
 
-    The pdf of a Truncated distribution is
+    The pdf of a Censored distribution is
 
     .. math::
 
@@ -27,7 +27,7 @@ class Censored(TruncatedCensored):
         :context: close-figs
 
         import arviz as az
-        from preliz import Gamma, Censored
+        from preliz import Normal, Censored
         az.style.use('arviz-doc')
         Censored(Normal(0, 1), -1, 1).plot_pdf(support=(-4, 4))
         Normal(0, 1).plot_pdf(alpha=0.5)
