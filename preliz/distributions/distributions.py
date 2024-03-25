@@ -42,6 +42,8 @@ class Distribution:
         name = self.__class__.__name__
         if name == "Truncated":
             name += self.dist.__class__.__name__
+        elif name == "Censored":
+            name += self.dist.__class__.__name__
         if self.is_frozen:
             bolded_name = "\033[1m" + name + "\033[0m"
 
@@ -80,7 +82,12 @@ class Distribution:
             raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
-            attr = namedtuple(self.__class__.__name__, ["mean", "median", "std", "lower", "upper"])
+            name = self.__class__.__name__
+            if name == "Truncated":
+                name = "Truncated" + self.dist.__class__.__name__
+            elif name == "Censored":
+                name = "Censored" + self.dist.__class__.__name__
+            attr = namedtuple(name, ["mean", "median", "std", "lower", "upper"])
             mean = float(f"{self.mean():{fmt}}")
             median = float(f"{self.median():{fmt}}")
             std = float(f"{self.std():{fmt}}")
@@ -701,36 +708,6 @@ class TruncatedCensored(Distribution):
         super().__init__()
         self.kind = self.dist.kind
 
-    def summary(self, mass=0.94, fmt=".2f"):
-        """
-        Namedtuple with the median and lower and upper bounds of the equal-tailed
-        interval.
-
-        Parameters
-        ----------
-        mass: float
-            Probability mass for the equal-tailed interval. Defaults to 0.94
-        fmt : str
-            fmt used to represent results using f-string fmt for floats. Default to ".2f"
-            i.e. 2 digits after the decimal point.
-        """
-        valid_distribution(self)
-
-        if not isinstance(fmt, str):
-            raise ValueError("Invalid format string.")
-
-        if valid_scalar_params(self):
-            attr = namedtuple(
-                "Truncated" + self.dist.__class__.__name__, ["median", "lower", "upper"]
-            )
-            median = float(f"{self.median():{fmt}}")
-            eti = self.eti(mass)
-            lower_tail = float(f"{eti[0]:{fmt}}")
-            upper_tail = float(f"{eti[1]:{fmt}}")
-            return attr(median, lower_tail, upper_tail)
-        else:
-            return None
-
     def xvals(self, support, n_points=None):
         """Provide x values in the support of the distribution. This is useful for example when
         plotting.
@@ -757,30 +734,12 @@ class TruncatedCensored(Distribution):
                 n_points = 200
             return discrete_xvals(lower_ep, upper_ep, n_points)
 
-    def mean(self):
-        """Mean of the distribution. Not implemented."""
-        return NotImplemented
-
-    def std(self):
-        """Standard deviation of the distribution. Not implemented."""
-        return NotImplemented
-
-    def var(self):
-        """Variance of the distribution. Not implemented."""
-        return NotImplemented
-
     def skewness(self):
         """Skewness of the distribution. Not implemented."""
         return NotImplemented
 
     def kurtosis(self):
         """Kurtosis of the distribution. Not implemented."""
-        return NotImplemented
-
-    def moments(self, types="mvsk"):
-        """
-        Compute moments of the distribution. Not implemented.
-        """
         return NotImplemented
 
 
