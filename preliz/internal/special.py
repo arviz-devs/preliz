@@ -140,6 +140,22 @@ def xlogy(x, y):
 
 
 @nb.vectorize(nopython=True)
+def xlogx(x):
+    if x == 0:
+        return 0.0
+    else:
+        return x * np.log(x)
+
+
+@nb.vectorize(nopython=True)
+def xprody(x, y):
+    if np.isinf(x):
+        return 0
+    else:
+        return x * y
+
+
+@nb.vectorize(nopython=True)
 def cdf_bounds(prob, x, lower, upper):
     if x < lower:
         return 0
