@@ -4,7 +4,7 @@ import numpy as np
 from preliz.distributions.distributions import TruncatedCensored
 from preliz.internal.distribution_helper import all_not_none
 from preliz.internal.special import xlogx, xprody
-from preliz.distributions import Truncated
+from preliz.distributions.truncated import Truncated
 
 
 class Censored(TruncatedCensored):
