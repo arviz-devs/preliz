@@ -41,3 +41,23 @@ def test_truncated():
     actual_median = custom_truncnorm_dist.median()
     expected_median = genera_truncnorm_dist.median()
     assert_almost_equal(actual_median, expected_median)
+
+    actual_mean = custom_truncnorm_dist.mean()
+    expected_mean = genera_truncnorm_dist.mean()
+    assert_almost_equal(actual_mean, expected_mean, decimal=2)
+
+    actual_var = custom_truncnorm_dist.var()
+    expected_var = genera_truncnorm_dist.var()
+    assert_almost_equal(actual_var, expected_var, decimal=2)
+
+    actual_skew = custom_truncnorm_dist.skewness()
+    expected_skew = genera_truncnorm_dist.rv_frozen.stats("s")
+    assert_almost_equal(actual_skew, expected_skew, decimal=2)
+
+    actual_kurt = custom_truncnorm_dist.kurtosis()
+    expected_kurt = genera_truncnorm_dist.rv_frozen.stats("k")
+    assert_almost_equal(actual_kurt, expected_kurt, decimal=1)
+
+    actual_entropy = custom_truncnorm_dist.entropy()
+    expected_entropy = genera_truncnorm_dist._entropy()
+    assert_almost_equal(actual_entropy, expected_entropy, decimal=2)

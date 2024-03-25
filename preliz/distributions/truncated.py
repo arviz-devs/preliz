@@ -11,7 +11,8 @@ class Truncated(TruncatedCensored):
 
     This is not a distribution per se, but a modifier of univariate distributions.
 
-    The pdf of a Truncated distribution is
+    Given a base distribution with cumulative distribution function (CDF) and
+    probability density mass/function (PDF). The pdf of a Truncated distribution is:
 
     .. math::
 
@@ -40,13 +41,6 @@ class Truncated(TruncatedCensored):
         Lower (left) truncation point. Use np.inf for no truncation.
     upper: float or int
         Upper (right) truncation point. Use np.inf for no truncation.
-
-    Note
-    ----
-
-    Some methods like mean or variance are not available truncated distributions.
-    Functions like maxent or quantile are experimental when applied to  truncated
-    distributions and may not work as expected.
     """
 
     def __init__(self, dist, lower=None, upper=None, **kwargs):
@@ -88,8 +82,47 @@ class Truncated(TruncatedCensored):
         )
         self.params_support = (*self.dist.params_support, self.dist.support, self.dist.support)
 
+    def mean(self):
+        x_values = self.xvals("full")
+        pdf = self.pdf(x_values)
+        if self.kind == "discrete":
+            return np.sum(x_values * pdf)
+        else:
+            return np.trapz(x_values * pdf, x_values)
+
     def median(self):
         return self.ppf(0.5)
+
+    def var(self):
+        x_values = self.xvals("full")
+        pdf = self.pdf(x_values)
+        if self.kind == "discrete":
+            return np.sum((x_values - self.mean()) ** 2 * pdf)
+        else:
+            return np.trapz((x_values - self.mean()) ** 2 * pdf, x_values)
+
+    def std(self):
+        return self.var() ** 0.5
+
+    def skewness(self):
+        mean = self.mean()
+        std = self.std()
+        x_values = self.xvals("full")
+        pdf = self.pdf(x_values)
+        if self.kind == "discrete":
+            return np.sum(((x_values - mean) / std) ** 3 * pdf)
+        else:
+            return np.trapz(((x_values - mean) / std) ** 3 * pdf, x_values)
+
+    def kurtosis(self):
+        mean = self.mean()
+        std = self.std()
+        x_values = self.xvals("full")
+        pdf = self.pdf(x_values)
+        if self.kind == "discrete":
+            return np.sum(((x_values - mean) / std) ** 4 * pdf) - 3
+        else:
+            return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
 
     def rvs(self, size=1, random_state=None):
         random_state = np.random.default_rng(random_state)
@@ -119,13 +152,12 @@ class Truncated(TruncatedCensored):
         return np.where((x < self.lower) | (x > self.upper), -np.inf, vals)
 
     def entropy(self):
-        """
-        This is the entropy of the UNtruncated distribution
-        """
-        if self.dist.rv_frozen is None:
-            return self.dist.entropy()
+        x_values = self.xvals("restricted")
+        logpdf = self.logpdf(x_values)
+        if self.kind == "discrete":
+            return -np.sum(np.exp(logpdf) * logpdf)
         else:
-            return self.dist.rv_frozen.entropy()
+            return -np.trapz(np.exp(logpdf) * logpdf, x_values)
 
     def _neg_logpdf(self, x):
         return -self.logpdf(x).sum()
