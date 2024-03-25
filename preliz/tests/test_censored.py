@@ -16,7 +16,7 @@ def test_censored(dist, lower, upper):
     cen_dist = Censored(dist, lower, upper)
     cen_dist_inf = Censored(dist, -np.inf, np.inf)
 
-    x_vals = cen_dist.rvs(10000, random_state=1)
+    x_vals = cen_dist.rvs(100000, random_state=1)
     assert_almost_equal(x_vals.mean(), dist.mean(), decimal=1)
     assert_almost_equal(np.mean(x_vals == lower), dist.cdf(lower), decimal=2)
     if dist.kind == "discrete":
@@ -31,6 +31,20 @@ def test_censored(dist, lower, upper):
     assert_almost_equal(dist.cdf(x_inside), cen_dist.cdf(x_inside))
 
     assert_almost_equal(cen_dist.median(), dist.median())
+    assert_almost_equal(x_vals.mean(), cen_dist.mean(), decimal=1)
+    assert_almost_equal(x_vals.var(), cen_dist.var(), decimal=1)
+
+    actual_mean = dist.mean()
+    expected_mean = cen_dist_inf.mean()
+    assert_almost_equal(actual_mean, expected_mean, decimal=2)
+
+    actual_var = dist.var()
+    expected_var = cen_dist_inf.var()
+    assert_almost_equal(actual_var, expected_var, decimal=2)
+
+    actual_entropy = dist.entropy()
+    expected_entropy = cen_dist_inf.entropy()
+    assert_almost_equal(actual_entropy, expected_entropy, decimal=1)
 
     c_l, c_u = cen_dist.hdi()
     d_l, d_u = dist.hdi()
