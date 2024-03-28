@@ -107,7 +107,9 @@ class Censored(TruncatedCensored):
             p_low = self.dist.cdf(self.lower)
         p_up = 1 - self.dist.cdf(self.upper)
         p_int = 1 - (p_low + p_up)
-        var_trunc = Truncated(self.dist, self.lower, self.upper).var()
+        trunc = Truncated(self.dist, self.lower, self.upper)
+        mean_trunc = trunc.mean()
+        var_trunc = trunc.var() + (mean_trunc - mean) ** 2
         return (
             xprody((self.lower - mean) ** 2, p_low)
             + var_trunc * p_int
@@ -126,7 +128,11 @@ class Censored(TruncatedCensored):
             p_low = self.dist.cdf(self.lower)
         p_up = 1 - self.dist.cdf(self.upper)
         p_int = 1 - (p_low + p_up)
-        skew_trunc = Truncated(self.dist, self.lower, self.upper).skewness()
+        trunc = Truncated(self.dist, self.lower, self.upper)
+        mean_trunc = trunc.mean()
+        std_trunc = trunc.std()
+
+        skew_trunc = trunc.skewness() + ((mean_trunc - mean) / std_trunc) ** 3
         return (
             xprody(((self.lower - mean) / std) ** 3, p_low)
             + skew_trunc * p_int
@@ -142,7 +148,11 @@ class Censored(TruncatedCensored):
             p_low = self.dist.cdf(self.lower)
         p_up = 1 - self.dist.cdf(self.upper)
         p_int = 1 - (p_low + p_up)
-        kurt_trunc = Truncated(self.dist, self.lower, self.upper).kurtosis() + 3
+        trunc = Truncated(self.dist, self.lower, self.upper)
+        mean_trunc = trunc.mean()
+        std_trunc = trunc.std()
+
+        kurt_trunc = trunc.kurtosis() + 3 + ((mean_trunc - mean) / std_trunc) ** 4
         return (
             xprody(((self.lower - mean) / std) ** 4, p_low)
             + kurt_trunc * p_int

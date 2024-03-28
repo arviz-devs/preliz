@@ -1,6 +1,7 @@
 import pytest
 from numpy.testing import assert_almost_equal
 import numpy as np
+from scipy.stats import skew, kurtosis
 
 from preliz.distributions import Censored, Normal, Poisson
 
@@ -16,8 +17,7 @@ def test_censored(dist, lower, upper):
     cen_dist = Censored(dist, lower, upper)
     cen_dist_inf = Censored(dist, -np.inf, np.inf)
 
-    x_vals = cen_dist.rvs(100000, random_state=1)
-    assert_almost_equal(x_vals.mean(), dist.mean(), decimal=1)
+    x_vals = cen_dist.rvs(1000000, random_state=1)
     assert_almost_equal(np.mean(x_vals == lower), dist.cdf(lower), decimal=2)
     if dist.kind == "discrete":
         assert_almost_equal(np.mean(x_vals == upper), 1 - dist.cdf(upper - 1), decimal=2)
@@ -33,6 +33,8 @@ def test_censored(dist, lower, upper):
     assert_almost_equal(cen_dist.median(), dist.median())
     assert_almost_equal(x_vals.mean(), cen_dist.mean(), decimal=1)
     assert_almost_equal(x_vals.var(), cen_dist.var(), decimal=1)
+    assert_almost_equal(skew(x_vals), cen_dist.skewness(), decimal=0)
+    assert_almost_equal(kurtosis(x_vals), cen_dist.kurtosis(), decimal=0)
 
     actual_mean = dist.mean()
     expected_mean = cen_dist_inf.mean()
