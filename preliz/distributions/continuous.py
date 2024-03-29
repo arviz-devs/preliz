@@ -2,6 +2,7 @@
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=invalid-name
 # pylint: disable=attribute-defined-outside-init
+# pylint: disable=unused-import
 """
 Continuous probability distributions.
 """
@@ -16,13 +17,14 @@ from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 from ..internal.optimization import optimize_ml, optimize_moments, optimize_moments_rice
 from ..internal.distribution_helper import all_not_none, any_not_none
 from .distributions import Continuous
-from .asymmetric_laplace import AsymmetricLaplace  # pylint: disable=unused-import
-from .beta import Beta  # pylint: disable=unused-import
-from .exponential import Exponential  # pylint: disable=unused-import
-from .normal import Normal  # pylint: disable=unused-import
-from .halfnormal import HalfNormal  # pylint: disable=unused-import
-from .laplace import Laplace  # pylint: disable=unused-import
-from .weibull import Weibull  # pylint: disable=unused-import
+from .asymmetric_laplace import AsymmetricLaplace
+from .beta import Beta
+from .exponential import Exponential
+from .normal import Normal
+from .halfnormal import HalfNormal
+from .laplace import Laplace
+from .vonmises import VonMises
+from .weibull import Weibull
 
 
 eps = np.finfo(float).eps
@@ -2128,80 +2130,6 @@ class Uniform(Continuous):
         lower = np.min(sample)
         upper = np.max(sample)
         self._update(lower, upper)
-
-
-class VonMises(Continuous):
-    r"""
-    Univariate VonMises distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-        f(x \mid \mu, \kappa) =
-            \frac{e^{\kappa\cos(x-\mu)}}{2\pi I_0(\kappa)}
-
-    where :math:`I_0` is the modified Bessel function of order 0.
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import VonMises
-        az.style.use('arviz-doc')
-        mus = [0., 0., 0.,  -2.5]
-        kappas = [.01, 0.5, 4., 2.]
-        for mu, kappa in zip(mus, kappas):
-            VonMises(mu, kappa).plot_pdf(support=(-np.pi,np.pi))
-
-    ========  ==========================================
-    Support   :math:`x \in [-\pi, \pi]`
-    Mean      :math:`\mu`
-    Variance  :math:`1-\frac{I_1(\kappa)}{I_0(\kappa)}`
-    ========  ==========================================
-
-    Parameters
-    ----------
-    mu : float
-        Mean.
-    kappa : float
-        Concentration (:math:`\frac{1}{\kappa}` is analogous to :math:`\sigma^2`).
-    """
-
-    def __init__(self, mu=None, kappa=None):
-        super().__init__()
-        self.dist = copy(stats.vonmises)
-        self._parametrization(mu, kappa)
-
-    def _parametrization(self, mu=None, kappa=None):
-        self.mu = mu
-        self.kappa = kappa
-        self.param_names = ("mu", "kappa")
-        self.params_support = ((-np.pi, np.pi), (eps, np.inf))
-        self.support = (-np.pi, np.pi)
-        if all_not_none(mu, kappa):
-            self._update(mu, kappa)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(kappa=self.kappa, loc=self.mu)
-        return frozen
-
-    def _update(self, mu, kappa):
-        self.mu = np.float64(mu)
-        self.kappa = np.float64(kappa)
-        self.params = (self.mu, self.kappa)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        mu = mean
-        kappa = 1 / sigma**2
-        self._update(mu, kappa)
-
-    def _fit_mle(self, sample, **kwargs):
-        kappa, mu, _ = self.dist.fit(sample, **kwargs)
-        self._update(mu, kappa)
 
 
 class Wald(Continuous):

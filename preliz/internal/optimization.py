@@ -6,8 +6,8 @@ import warnings
 from copy import copy
 
 import numpy as np
-from scipy.optimize import minimize, least_squares
-from scipy.special import i0, i1  # pylint: disable=no-name-in-module
+from scipy.optimize import minimize, least_squares, root_scalar
+from scipy.special import i0, i1, i0e, i1e  # pylint: disable=no-name-in-module
 from .distribution_helper import init_vals as default_vals
 
 
@@ -397,3 +397,19 @@ def get_fixed_params(distribution):
         else:
             fixed.append(value)
     return none_idx, fixed
+
+
+def find_kappa(data, mu):
+    ere = np.mean(np.cos(mu - data))
+
+    if ere > 0:
+
+        def solve_for_kappa(kappa):
+            return i1e(kappa) / i0e(kappa) - ere
+
+        root_res = root_scalar(
+            solve_for_kappa, method="brentq", bracket=(np.finfo(float).tiny, 1e16)
+        )
+        return root_res.root
+    else:
+        return np.finfo(float).tiny
