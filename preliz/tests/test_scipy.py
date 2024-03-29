@@ -11,6 +11,7 @@ from preliz.distributions import (
     HalfNormal,
     Laplace,
     Normal,
+    VonMises,
     Weibull,
     Bernoulli,
     Binomial,
@@ -36,6 +37,7 @@ from preliz.distributions import (
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
         (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
+        (VonMises, stats.vonmises, {"mu": 0, "kappa": 10}, {"loc": 0, "kappa": 10}),
         (
             Weibull,
             stats.weibull_min,
@@ -75,12 +77,15 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     preliz_dist = p_dist(**p_params)
     scipy_dist = sp_dist(**sp_params)
 
-    actual = preliz_dist.entropy()
-    expected = scipy_dist.entropy()
-    if preliz_dist.kind == "discrete":
-        assert_almost_equal(actual, expected, decimal=1)
-    else:
-        assert_almost_equal(actual, expected, decimal=4)
+    if preliz_dist.__class__.__name__ != "VonMises":
+        # for the VonMises we used the differential entropy definition.
+        # SciPy uses a different one
+        actual = preliz_dist.entropy()
+        expected = scipy_dist.entropy()
+        if preliz_dist.kind == "discrete":
+            assert_almost_equal(actual, expected, decimal=1)
+        else:
+            assert_almost_equal(actual, expected, decimal=4)
 
     rng = np.random.default_rng(1)
     actual_rvs = preliz_dist.rvs(20, random_state=rng)
@@ -123,9 +128,18 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         "ZeroInflatedBinomial",
         "ZeroInflatedNegativeBinomial",
         "ZeroInflatedPoisson",
+        "VonMises",
     ]:
         actual_moments = preliz_dist.moments("mvsk")
         expected_moments = scipy_dist.stats("mvsk")
+    elif preliz_dist.__class__.__name__ == "VonMises":
+        # We use the circular variance definition for the variance
+        assert_almost_equal(preliz_dist.var(), stats.circvar(preliz_dist.rvs(1000)), decimal=1)
+        # And we adopt the convention of setting the skewness and kurtosis to 0 in
+        # analogy with the Normal distribution
+        actual_moments = preliz_dist.moments("m")
+        expected_moments = scipy_dist.stats("m")
+
     else:
         actual_moments = preliz_dist.moments("mv")
         expected_moments = scipy_dist.stats("mv")
