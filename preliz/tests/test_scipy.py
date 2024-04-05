@@ -10,6 +10,7 @@ from preliz.distributions import (
     Exponential,
     HalfNormal,
     HalfStudentT,
+    InverseGamma,
     Laplace,
     Normal,
     StudentT,
@@ -43,6 +44,7 @@ from preliz.distributions import (
             {"nu": 100, "sigma": 2},
             {"loc": 0, "scale": 2},
         ),  # not in scipy
+        (InverseGamma, stats.invgamma, {"alpha": 5, "beta": 2}, {"a": 5, "scale": 2}),
         (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (StudentT, stats.t, {"nu": 5, "mu": 0, "sigma": 2}, {"df": 5, "loc": 0, "scale": 2}),
@@ -103,7 +105,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     actual_rvs = preliz_dist.rvs(20, random_state=rng)
     rng = np.random.default_rng(1)
     expected_rvs = scipy_dist.rvs(20, random_state=rng)
-    if preliz_name not in ["HalfStudentT", "Weibull"]:
+    if preliz_name not in ["HalfStudentT", "Weibull", "InverseGamma"]:
         assert_almost_equal(actual_rvs, expected_rvs)
 
     actual_pdf = preliz_dist.pdf(actual_rvs)

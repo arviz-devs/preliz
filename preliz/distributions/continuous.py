@@ -10,7 +10,6 @@ from copy import copy
 
 import numpy as np
 from scipy import stats
-from scipy.special import gamma as gammaf
 from scipy.special import beta as betaf  # pylint: disable=no-name-in-module
 from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
@@ -20,6 +19,7 @@ from .distributions import Continuous
 from .asymmetric_laplace import AsymmetricLaplace
 from .beta import Beta
 from .exponential import Exponential
+from .inversegamma import InverseGamma
 from .normal import Normal
 from .halfnormal import HalfNormal
 from .halfstudentt import HalfStudentT
@@ -619,127 +619,6 @@ class HalfCauchy(Continuous):
     def _fit_mle(self, sample, **kwargs):
         _, beta = self.dist.fit(sample, **kwargs)
         self._update(beta)
-
-
-class InverseGamma(Continuous):
-    r"""
-    Inverse gamma distribution, the reciprocal of the gamma distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \alpha, \beta) =
-           \frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{-\alpha - 1}
-           \exp\left(\frac{-\beta}{x}\right)
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import InverseGamma
-        az.style.use('arviz-doc')
-        alphas = [1., 2., 3.]
-        betas = [1., 1., .5]
-        for alpha, beta in zip(alphas, betas):
-            InverseGamma(alpha, beta).plot_pdf(support=(0, 3))
-
-    ========  ===============================
-    Support   :math:`x \in (0, \infty)`
-    Mean      :math:`\dfrac{\beta}{\alpha-1}` for :math:`\alpha > 1`
-    Variance  :math:`\dfrac{\beta^2}{(\alpha-1)^2(\alpha - 2)}` for :math:`\alpha > 2`
-    ========  ===============================
-
-    Inverse gamma distribution has 2 alternative parameterizations. In terms of alpha and
-    beta or mu (mean) and sigma (standard deviation).
-
-    The link between the 2 alternatives is given by
-
-    .. math::
-
-       \alpha &= \frac{\mu^2}{\sigma^2} + 2 \\
-       \beta  &= \frac{\mu^3}{\sigma^2} + \mu
-
-    Parameters
-    ----------
-    alpha : float
-        Shape parameter (alpha > 0).
-    beta : float
-        Scale parameter (beta > 0).
-    mu : float
-        Mean (mu > 0).
-    sigma : float
-        Standard deviation (sigma > 0)
-    """
-
-    def __init__(self, alpha=None, beta=None, mu=None, sigma=None):
-        super().__init__()
-        self.dist = copy(stats.invgamma)
-        self.support = (0, np.inf)
-        self._parametrization(alpha, beta, mu, sigma)
-
-    def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None):
-        if any_not_none(alpha, beta) and any_not_none(mu, sigma):
-            raise ValueError(
-                "Incompatible parametrization. Either use alpha and beta or mu and sigma."
-            )
-
-        self.param_names = ("alpha", "beta")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
-
-        if any_not_none(mu, sigma):
-            self.mu = mu
-            self.sigma = sigma
-            self.param_names = ("mu", "sigma")
-            if all_not_none(mu, sigma):
-                alpha, beta = self._from_mu_sigma(mu, sigma)
-
-        self.alpha = alpha
-        self.beta = beta
-        if all_not_none(self.alpha, self.beta):
-            self._update(self.alpha, self.beta)
-
-    def _from_mu_sigma(self, mu, sigma):
-        alpha = mu**2 / sigma**2 + 2
-        beta = mu**3 / sigma**2 + mu
-        return alpha, beta
-
-    def _to_mu_sigma(self, alpha, beta):
-        if alpha > 1:
-            mu = beta / (alpha - 1)
-        else:
-            mu = None
-        if alpha > 2:
-            sigma = beta / ((alpha - 1) * (alpha - 2) ** 0.5)
-        else:
-            sigma = None
-        return mu, sigma
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(a=self.alpha, scale=self.beta)
-        return frozen
-
-    def _update(self, alpha, beta):
-        self.alpha = np.float64(alpha)
-        self.beta = np.float64(beta)
-        self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
-
-        if self.param_names[0] == "alpha":
-            self.params = (self.alpha, self.beta)
-        elif self.param_names[1] == "sigma":
-            self.params = (self.mu, self.sigma)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        alpha, beta = self._from_mu_sigma(mean, sigma)
-        self._update(alpha, beta)
-
-    def _fit_mle(self, sample, **kwargs):
-        alpha, _, beta = self.dist.fit(sample, **kwargs)
-        self._update(alpha, beta)
 
 
 class Kumaraswamy(Continuous):

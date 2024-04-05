@@ -39,6 +39,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.halfstudentt
    :members:
 
+.. automodule:: preliz.distributions.inversegamma
+   :members:
+
 .. automodule:: preliz.distributions.laplace
    :members:
 
