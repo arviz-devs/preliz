@@ -124,7 +124,7 @@ class Truncated(TruncatedCensored):
         else:
             return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return self.ppf(random_state.uniform(size=size))
 

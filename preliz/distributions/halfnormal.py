@@ -137,7 +137,7 @@ class HalfNormal(Continuous):
     def kurtosis(self):
         return 0.8691773036059736
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return np.abs(random_state.normal(0, self.sigma, size))
 

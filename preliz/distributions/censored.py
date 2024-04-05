@@ -159,7 +159,7 @@ class Censored(TruncatedCensored):
             + xprody(((self.upper - mean) / std) ** 4, p_up)
         ) - 3
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         return np.clip(self.dist.rvs(size, random_state), self.lower, self.upper)
 
     def pdf(self, x):

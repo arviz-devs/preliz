@@ -165,7 +165,7 @@ class AsymmetricLaplace(Continuous):
     def kurtosis(self):
         return 6.0 * (1 + np.power(self.kappa, 8)) / np.power(1 + np.power(self.kappa, 4), 2)
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         random_samples = random_state.uniform(
             -self.kappa, 1 / self.kappa, size  # pylint: disable=invalid-unary-operand-type

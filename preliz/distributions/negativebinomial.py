@@ -171,7 +171,7 @@ class NegativeBinomial(Discrete):
     def kurtosis(self):
         return 6 / self.n + self.p**2 / ((1 - self.p) * self.n)
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return random_state.negative_binomial(self.n, self.p, size=size)
 
