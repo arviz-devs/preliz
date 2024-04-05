@@ -444,7 +444,7 @@ def plot_repr(results, kind_plot, references, iterations, ax):
         else:
             bins = "auto"
         ax.hist(
-            results,
+            results.T,
             alpha=alpha,
             density=True,
             color=["0.5"] * iterations,
