@@ -131,7 +131,7 @@ class Binomial(Discrete):
     def kurtosis(self):
         return (1 - 6 * self.p * self._q) / (self.n * self.p * self._q)
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return random_state.binomial(self.n, self.p, size=size)
 

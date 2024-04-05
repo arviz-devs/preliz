@@ -194,7 +194,7 @@ class StudentT(Continuous):
         else:
             return np.nan
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         if self.nu > 1e10:
             return Normal(self.mu, self.sigma).rvs(size=size, random_state=random_state)
         else:

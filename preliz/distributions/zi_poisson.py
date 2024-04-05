@@ -146,7 +146,7 @@ class ZeroInflatedPoisson(Discrete):
     def kurtosis(self):
         return np.nan
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         samples = np.zeros(size, dtype=int)
         non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]

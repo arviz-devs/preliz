@@ -203,7 +203,7 @@ class Beta(Continuous):
             / (prod * (psc + 2) * (psc + 3))
         )
 
-    def rvs(self, size=1, random_state=None):
+    def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return random_state.beta(self.alpha, self.beta, size)
 
