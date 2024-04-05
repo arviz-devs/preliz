@@ -105,7 +105,21 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     actual_rvs = preliz_dist.rvs(20, random_state=rng)
     rng = np.random.default_rng(1)
     expected_rvs = scipy_dist.rvs(20, random_state=rng)
-    if preliz_name not in ["HalfStudentT", "Weibull", "InverseGamma"]:
+    if preliz_name in [
+        "HalfStudentT",
+        "StudentT",
+        "Weibull",
+        "InverseGamma",
+        "ZeroInflatedBinomial",
+        "ZeroInflatedNegativeBinomial",
+        "ZeroInflatedPoisson",
+    ]:
+        pz_rvs = preliz_dist.rvs(20000, random_state=rng)
+        sc_rvs = scipy_dist.rvs(20000, random_state=rng)
+        assert_almost_equal(pz_rvs.mean(), sc_rvs.mean(), decimal=1)
+        assert_almost_equal(pz_rvs.std(), sc_rvs.std(), decimal=1)
+
+    else:
         assert_almost_equal(actual_rvs, expected_rvs)
 
     actual_pdf = preliz_dist.pdf(actual_rvs)

@@ -76,7 +76,7 @@ class HalfNormal(Continuous):
 
     def _update(self, sigma):
         self.sigma = np.float64(sigma)
-        self.tau = to_precision(sigma)
+        self.tau = to_precision(self.sigma)
 
         if self.param_names[0] == "sigma":
             self.params = (self.sigma,)
