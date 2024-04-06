@@ -74,7 +74,7 @@ class Exponential(Continuous):
 
     def _update(self, lam):
         self.lam = np.float64(lam)
-        self.beta = 1 / lam
+        self.beta = 1 / self.lam
 
         if self.param_names[0] == "lam":
             self.params = (self.lam,)

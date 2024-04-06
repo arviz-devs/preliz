@@ -89,8 +89,8 @@ class InverseGamma(Continuous):
             self._update(self.alpha, self.beta)
 
     def _update(self, alpha, beta):
-        self.alpha = alpha
-        self.beta = beta
+        self.alpha = np.float64(alpha)
+        self.beta = np.float64(beta)
         self.mu = _to_mu(self.alpha, self.beta)
         self.sigma = _to_sigma(self.alpha, self.beta)
 
@@ -199,8 +199,6 @@ def nb_neg_logpdf(x, alpha, beta):
 
 
 def _from_mu_sigma(mu, sigma):
-    mu = np.asarray(mu)
-    sigma = np.asarray(sigma)
     alpha = mu**2 / sigma**2 + 2
     beta = mu**3 / sigma**2 + mu
     return alpha, beta

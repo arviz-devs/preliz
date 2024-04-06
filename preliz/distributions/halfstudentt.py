@@ -94,7 +94,7 @@ class HalfStudentT(Continuous):
     def _update(self, nu, sigma):
         self.nu = np.float64(nu)
         self.sigma = np.float64(sigma)
-        self.lam = to_precision(sigma)
+        self.lam = to_precision(self.sigma)
 
         if self.param_names[1] == "sigma":
             self.params = (self.nu, self.sigma)

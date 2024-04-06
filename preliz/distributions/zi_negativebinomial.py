@@ -190,14 +190,9 @@ class ZeroInflatedNegativeBinomial(Discrete):
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-
-        samples = np.zeros(size, dtype=int)
-        non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
-        samples[~non_zero_indices] = 0
-        samples[non_zero_indices] = random_state.negative_binomial(
-            self.n, self.p, size=len(non_zero_indices)
-        )
-        return samples
+        zeros = random_state.uniform(size=size) > (1 - self.psi)
+        nbinomial = random_state.negative_binomial(self.n, self.p, size=size)
+        return zeros * nbinomial
 
     def _fit_moments(self, mean, sigma):
         optimize_moments(self, mean, sigma)

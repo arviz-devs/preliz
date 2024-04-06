@@ -110,53 +110,35 @@ class StudentT(Continuous):
         """
         Compute the probability density function (PDF) at a given point x.
         """
-        if self.nu > 1e10:
-            return Normal(self.mu, self.sigma).pdf(x)
-        else:
-            x = np.asarray(x)
-            return np.exp(self.logpdf(x))
+        x = np.asarray(x)
+        return np.exp(self.logpdf(x))
 
     def cdf(self, x):
         """
         Compute the cumulative distribution function (CDF) at a given point x.
         """
-        if self.nu > 1e10:
-            return Normal(self.mu, self.sigma).cdf(x)
-        else:
-            return nb_cdf(x, self.nu, self.mu, self.sigma)
+        return nb_cdf(x, self.nu, self.mu, self.sigma)
 
     def ppf(self, q):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
-        if self.nu > 1e10:
-            return Normal(self.mu, self.sigma).ppf(q)
-        else:
-            return nb_ppf(q, self.nu, self.mu, self.sigma)
+        return nb_ppf(q, self.nu, self.mu, self.sigma)
 
     def logpdf(self, x):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        if self.nu > 1e10:
-            return Normal(self.mu, self.sigma).logpdf(x)
-        else:
-            return nb_logpdf(x, self.nu, self.mu, self.sigma)
+        return nb_logpdf(x, self.nu, self.mu, self.sigma)
 
     def _neg_logpdf(self, x):
         """
         Compute the neg log_pdf sum for the array x.
         """
-        if self.nu > 1e10:
-            return Normal(self.mu, self.sigma)._neg_logpdf(x)
-        else:
-            return nb_neg_logpdf(x, self.nu, self.mu, self.sigma)
+        return nb_neg_logpdf(x, self.nu, self.mu, self.sigma)
 
     def entropy(self):
-        if self.nu > 1e10:
-            return Normal(self.mu, self.sigma).entropy()
-        else:
-            return nb_entropy(self.nu, self.sigma)
+        return nb_entropy(self.nu, self.sigma)
 
     def mean(self):
         return self.mu
@@ -195,11 +177,12 @@ class StudentT(Continuous):
             return np.nan
 
     def rvs(self, size=None, random_state=None):
-        if self.nu > 1e10:
-            return Normal(self.mu, self.sigma).rvs(size=size, random_state=random_state)
-        else:
-            random_state = np.random.default_rng(random_state)
-            return random_state.standard_t(self.nu, size) * self.sigma
+        random_state = np.random.default_rng(random_state)
+        return np.where(
+            self.nu > 1e10,
+            Normal(self.mu, self.sigma).rvs(size, random_state),
+            random_state.standard_t(self.nu, size) * self.sigma + self.mu,
+        )
 
     def _fit_moments(self, mean, sigma):
         # if nu is smaller than 2 the variance is not defined,
@@ -222,7 +205,8 @@ def nb_cdf(x, nu, mu, sigma):
     x = np.asarray(x)
     x = (x - mu) / sigma
     factor = 0.5 * betainc(0.5 * nu, 0.5, nu / (x**2 + nu))
-    return np.where(x < 0, factor, 1 - factor)
+    x_vals = np.where(x < 0, factor, 1 - factor)
+    return np.where(nu > 1e10, Normal(mu, sigma).cdf(x), x_vals)
 
 
 def nb_ppf(p, nu, mu, sigma):
@@ -230,26 +214,33 @@ def nb_ppf(p, nu, mu, sigma):
     q = np.where(p < 0.5, p, 1 - p)
     x = betaincinv(0.5 * nu, 0.5, 2 * q)
     x = np.where(p < 0.5, -np.sqrt(nu * (1 - x) / x), np.sqrt(nu * (1 - x) / x))
-    return ppf_bounds_cont(mu + sigma * x, p, -np.inf, np.inf)
+    vals = np.where(nu > 1e10, Normal(mu, sigma).ppf(p), mu + sigma * x)
+    return ppf_bounds_cont(vals, p, -np.inf, np.inf)
 
 
-@nb.njit
+@nb.vectorize(nopython=True)
 def nb_entropy(nu, sigma):
-    return (
-        np.log(sigma)
-        + 0.5 * (nu + 1) * (digamma(0.5 * (nu + 1)) - digamma(0.5 * nu))
-        + np.log(np.sqrt(nu) * betafunc(0.5 * nu, 0.5))
-    )
+    if nu > 1e10:
+        return 0.5 * (np.log(2 * np.pi * np.e * sigma**2))
+    else:
+        return (
+            np.log(sigma)
+            + 0.5 * (nu + 1) * (digamma(0.5 * (nu + 1)) - digamma(0.5 * nu))
+            + np.log(np.sqrt(nu) * betafunc(0.5 * nu, 0.5))
+        )
 
 
-@nb.njit
+@nb.vectorize(nopython=True)
 def nb_logpdf(x, nu, mu, sigma):
-    return (
-        gammaln((nu + 1) / 2)
-        - gammaln(nu / 2)
-        - 0.5 * np.log(nu * np.pi * sigma**2)
-        - 0.5 * (nu + 1) * np.log(1 + ((x - mu) / sigma) ** 2 / nu)
-    )
+    if nu > 1e10:
+        return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
+    else:
+        return (
+            gammaln((nu + 1) / 2)
+            - gammaln(nu / 2)
+            - 0.5 * np.log(nu * np.pi * sigma**2)
+            - 0.5 * (nu + 1) * np.log(1 + ((x - mu) / sigma) ** 2 / nu)
+        )
 
 
 @nb.njit

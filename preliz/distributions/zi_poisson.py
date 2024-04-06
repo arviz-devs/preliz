@@ -148,11 +148,9 @@ class ZeroInflatedPoisson(Discrete):
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        samples = np.zeros(size, dtype=int)
-        non_zero_indices = np.where(np.random.uniform(size=size) < (self.psi))[0]
-        samples[~non_zero_indices] = 0
-        samples[non_zero_indices] = random_state.poisson(self.mu, size=len(non_zero_indices))
-        return samples
+        zeros = random_state.uniform(size=size) > (1 - self.psi)
+        poisson = random_state.poisson(self.mu, size=size)
+        return zeros * poisson
 
 
 # @nb.jit
