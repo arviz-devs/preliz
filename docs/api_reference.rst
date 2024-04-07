@@ -54,6 +54,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.vonmises
    :members:
 
+.. automodule:: preliz.distributions.wald
+   :members:
+
 .. automodule:: preliz.distributions.weibull
    :members:
 

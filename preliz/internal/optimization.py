@@ -413,3 +413,42 @@ def find_kappa(data, mu):
         return root_res.root
     else:
         return np.finfo(float).tiny
+
+
+def find_ppf(dist, q):
+    """
+    Function to find the percent point function (ppf) given the
+    cumulative distribution function (cdf).
+
+    Parameters
+    ----------
+
+    dist : preliz distribution
+        The distribution for which to find the ppf.
+    q : float or list-like
+        The required quantile(s) for which to find the ppf.
+    """
+
+    def objective(x, dist, q):
+        return np.sum((dist.cdf(x) - q) ** 2)
+
+    q = np.asarray(q)
+    initial_guess, bounds = initialize_ppf(dist, q)
+    opt = minimize(objective, x0=initial_guess, method="Powell", bounds=bounds, args=(dist, q))
+
+    return opt["x"]
+
+
+def initialize_ppf(dist, q):
+    # Calculate k using the formula for Chebyshev's inequality
+    q = np.clip(q, 0.1, 0.9)
+    k = np.sqrt(1 / (1 - q))
+
+    k = np.where(q < 0.5, -k, k)
+
+    initial_guess = dist.mean() + k * dist.std()
+    lower, upper = dist.support
+    np.where(initial_guess < lower, lower, np.where(initial_guess > upper, upper, initial_guess))
+    bounds = [(lower, upper)]
+
+    return initial_guess, bounds
