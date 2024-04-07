@@ -15,6 +15,7 @@ from preliz.distributions import (
     Normal,
     StudentT,
     VonMises,
+    Wald,
     Weibull,
     Bernoulli,
     Binomial,
@@ -49,6 +50,7 @@ from preliz.distributions import (
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (StudentT, stats.t, {"nu": 5, "mu": 0, "sigma": 2}, {"df": 5, "loc": 0, "scale": 2}),
         (VonMises, stats.vonmises, {"mu": 0, "kappa": 10}, {"loc": 0, "kappa": 10}),
+        (Wald, stats.invgauss, {"mu": 2, "lam": 10}, {"mu": 2 / 10, "scale": 10}),
         (
             Weibull,
             stats.weibull_min,
@@ -147,7 +149,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     x_vals = [-1, 0, 0.25, 0.5, 0.75, 1, 2]
     actual_ppf = preliz_dist.ppf(x_vals)
     expected_ppf = scipy_dist.ppf(x_vals)
-    if preliz_name == "HalfStudentT":
+    if preliz_name in ["HalfStudentT", "Wald"]:
         assert_almost_equal(actual_ppf, expected_ppf, decimal=2)
     else:
         assert_almost_equal(actual_ppf, expected_ppf)
