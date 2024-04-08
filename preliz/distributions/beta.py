@@ -40,16 +40,16 @@ class Beta(Continuous):
     ========  ==============================================================
 
     Beta distribution has 3 alternative parameterizations. In terms of alpha and
-    beta, mean and sigma (standard deviation) or mean and kappa (concentration).
+    beta, mean and sigma (standard deviation) or mean and nu (concentration).
 
     The link between the 3 alternatives is given by
 
     .. math::
 
-       \alpha &= \mu \kappa \\
-       \beta  &= (1 - \mu) \kappa
+       \alpha &= \mu \nu \\
+       \beta  &= (1 - \mu) \nu
 
-       \text{where } \kappa = \frac{\mu(1-\mu)}{\sigma^2} - 1
+       \text{where } \nu = \frac{\mu(1-\mu)}{\sigma^2} - 1
 
 
     Parameters
@@ -62,21 +62,17 @@ class Beta(Continuous):
         mean (0 < ``mu`` < 1).
     sigma : float
         standard deviation (``sigma`` < sqrt(``mu`` * (1 - ``mu``))).
-    kappa : float
+    nu : float
         concentration > 0
     """
 
-    def __init__(self, alpha=None, beta=None, mu=None, sigma=None, kappa=None):
+    def __init__(self, alpha=None, beta=None, mu=None, sigma=None, nu=None):
         super().__init__()
         self.support = (0, 1)
-        self._parametrization(alpha, beta, mu, sigma, kappa)
+        self._parametrization(alpha, beta, mu, sigma, nu)
 
-    def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None, kappa=None):
-        if (
-            any_not_none(alpha, beta)
-            and any_not_none(mu, sigma, kappa)
-            or all_not_none(sigma, kappa)
-        ):
+    def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None, nu=None):
+        if any_not_none(alpha, beta) and any_not_none(mu, sigma, nu) or all_not_none(sigma, nu):
             raise ValueError(
                 "Incompatible parametrization. Either use alpha and beta, or mu and sigma."
             )
@@ -92,13 +88,13 @@ class Beta(Continuous):
             if all_not_none(mu, sigma):
                 alpha, beta = self._from_mu_sigma(mu, sigma)
 
-        if any_not_none(mu, kappa) and sigma is None:
+        if any_not_none(mu, nu) and sigma is None:
             self.mu = mu
-            self.kappa = kappa
-            self.param_names = ("mu", "kappa")
+            self.nu = nu
+            self.param_names = ("mu", "nu")
             self.params_support = ((eps, 1 - eps), (eps, np.inf))
-            if all_not_none(mu, kappa):
-                alpha, beta = self._from_mu_kappa(mu, kappa)
+            if all_not_none(mu, nu):
+                alpha, beta = self._from_mu_nu(mu, nu)
 
         self.alpha = alpha
         self.beta = beta
@@ -106,14 +102,14 @@ class Beta(Continuous):
             self._update(self.alpha, self.beta)
 
     def _from_mu_sigma(self, mu, sigma):
-        kappa = mu * (1 - mu) / sigma**2 - 1
-        alpha = mu * kappa
-        beta = (1 - mu) * kappa
+        nu = mu * (1 - mu) / sigma**2 - 1
+        alpha = mu * nu
+        beta = (1 - mu) * nu
         return alpha, beta
 
-    def _from_mu_kappa(self, mu, kappa):
-        alpha = mu * kappa
-        beta = (1 - mu) * kappa
+    def _from_mu_nu(self, mu, nu):
+        alpha = mu * nu
+        beta = (1 - mu) * nu
         return alpha, beta
 
     def _to_mu_sigma(self, alpha, beta):
@@ -126,14 +122,14 @@ class Beta(Continuous):
         self.alpha = np.float64(alpha)
         self.beta = np.float64(beta)
         self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
-        self.kappa = self.mu * (1 - self.mu) / self.sigma**2 - 1
+        self.nu = self.mu * (1 - self.mu) / self.sigma**2 - 1
 
         if self.param_names[0] == "alpha":
             self.params = (self.alpha, self.beta)
         elif self.param_names[1] == "sigma":
             self.params = (self.mu, self.sigma)
-        elif self.param_names[1] == "kappa":
-            self.params = (self.mu, self.kappa)
+        elif self.param_names[1] == "nu":
+            self.params = (self.mu, self.nu)
 
         self.is_frozen = True
 
