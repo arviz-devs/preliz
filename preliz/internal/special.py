@@ -1,4 +1,5 @@
 # pylint: disable=invalid-name
+# pylint: disable=no-else-raise
 import numba as nb
 import numpy as np
 
@@ -212,9 +213,7 @@ def betainc(a, b, x):
         raise ValueError("Third argument must be between 0 and 1.")
     elif a == 1 and b == 1:
         return x
-    elif a == 0:
-        return np.nan
-    elif b == 0:
+    elif a == 0 or b == 0:
         return np.nan
     elif x == 0:
         return 0
@@ -243,6 +242,13 @@ def betainc_un(a, b, x):
 
 @nb.vectorize(nopython=True, cache=True)
 def betaincinv(a, b, p):
+    """
+    Returns the inverse of incomplete beta function
+
+    Note:
+    -----
+    Adapted from Andreas Madsen's mathfn library
+    """
     if p < 0 or p > 1:
         raise ValueError("Third argument must be between 0 and 1.")
     elif a == 1 and b == 1:
@@ -251,10 +257,6 @@ def betaincinv(a, b, p):
         return 1
     elif p == 0:
         return 0
-    elif a == 0:
-        return 0
-    elif b == 0:
-        return 1
     else:
         EPS = 1e-8
         a1 = a - 1
@@ -293,7 +295,7 @@ def betaincinv(a, b, p):
         afac = -betaln(a, b)
 
         for j in range(10):
-            if x == 0 or x == 1:
+            if x in (0, 1):
                 return x
 
             err = betainc(a, b, x) - p
@@ -330,9 +332,9 @@ def garcia_approximation(mean, sigma):
     for idx, k in enumerate(ks):
         poly += k * z**idx
 
-    alpha = 1 / (z * (1 + (1 - z) ** 2 * poly))
-    beta = 1 / (gamma(1 + 1 / alpha) / (mean))
-    return alpha, beta
+    alpha_p = 1 / (z * (1 + (1 - z) ** 2 * poly))
+    beta_p = 1 / (gamma(1 + 1 / alpha_p) / (mean))
+    return alpha_p, beta_p
 
 
 @nb.vectorize(nopython=True, cache=True)
