@@ -2,11 +2,19 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import betainc, betaincinv  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import digamma, gamma, gammaln, betafunc, cdf_bounds, ppf_bounds_cont
+from ..internal.special import (
+    digamma,
+    gamma,
+    gammaln,
+    beta,
+    betainc,
+    betaincinv,
+    cdf_bounds,
+    ppf_bounds_cont,
+)
 from ..internal.optimization import optimize_ml
 
 
@@ -114,12 +122,14 @@ class HalfStudentT(Continuous):
         """
         Compute the cumulative distribution function (CDF) at a given point x.
         """
+        x = np.asarray(x)
         return nb_cdf(x, self.nu, self.sigma)
 
     def ppf(self, q):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
+        q = np.asarray(q)
         return nb_ppf(q, self.nu, self.sigma)
 
     def logpdf(self, x):
@@ -204,14 +214,15 @@ class HalfStudentT(Continuous):
         optimize_ml(self, sample)
 
 
+@nb.njit(cache=True)
 def nb_cdf(x, nu, sigma):
-    x = np.asarray(x) / sigma
+    x = x / sigma
     factor = 0.5 * betainc(0.5 * nu, 0.5, nu / (x**2 + nu))
     return cdf_bounds(np.where(x < 0, factor, 1 - factor) * 2 - 1, x, 0, np.inf)
 
 
+@nb.njit(cache=True)
 def nb_ppf(p, nu, sigma):
-    p = np.asarray(p)
     p_factor = (p + 1) / 2
     inv_factor = np.where(
         p_factor < 0.5,
@@ -221,17 +232,17 @@ def nb_ppf(p, nu, sigma):
     return ppf_bounds_cont(inv_factor * sigma, p, 0, np.inf)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(nu, sigma):
     return (
         np.log(sigma)
         + 0.5 * (nu + 1) * (digamma(0.5 * (nu + 1)) - digamma(0.5 * nu))
-        + np.log(np.sqrt(nu) * betafunc(0.5 * nu, 0.5))
+        + np.log(np.sqrt(nu) * beta(0.5 * nu, 0.5))
         - np.log(2)
     )
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(x, nu, sigma):
     return (
         gammaln((nu + 1) / 2)
@@ -242,6 +253,6 @@ def nb_logpdf(x, nu, sigma):
     )
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, nu, sigma):
     return -(nb_logpdf(x, nu, sigma)).sum()

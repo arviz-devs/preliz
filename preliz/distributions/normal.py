@@ -6,7 +6,7 @@ from scipy.special import erf, erfinv  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import mean_and_std
+from ..internal.special import erf, erfinv, mean_and_std, ppf_bounds_cont
 
 
 class Normal(Continuous):
@@ -104,12 +104,14 @@ class Normal(Continuous):
         """
         Compute the cumulative distribution function (CDF) at a given point x.
         """
+        x = np.asarray(x)
         return nb_cdf(x, self.mu, self.sigma)
 
     def ppf(self, q):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
+        q = np.asarray(q)
         return nb_ppf(q, self.mu, self.sigma)
 
     def logpdf(self, x):
@@ -156,41 +158,37 @@ class Normal(Continuous):
         self._update(*nb_fit_mle(sample))
 
 
-# @nb.jit
-# erf not supported by numba
+@nb.njit(cache=True)
 def nb_cdf(x, mu, sigma):
-    x = np.asarray(x)
     return 0.5 * (1 + erf((x - mu) / (sigma * 2**0.5)))
 
 
-# @nb.jit
-# erfinv not supported by numba
+@nb.njit(cache=True)
 def nb_ppf(q, mu, sigma):
-    q = np.asarray(q)
-    return mu + sigma * 2**0.5 * erfinv(2 * q - 1)
+    return ppf_bounds_cont(mu + sigma * 2**0.5 * erfinv(2 * q - 1), q, -np.inf, np.inf)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_pdf(x, mu, sigma):
     x = np.asarray(x)
     return 1 / np.sqrt(2 * np.pi * sigma**2) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(sigma):
     return 0.5 * (np.log(2 * np.pi * np.e * sigma**2))
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_fit_mle(sample):
     return mean_and_std(sample)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(x, mu, sigma):
     return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, mu, sigma):
     return -(nb_logpdf(x, mu, sigma)).sum()

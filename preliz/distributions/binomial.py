@@ -161,12 +161,12 @@ def nb_ppf(q, n, p, lower, upper):
     return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(n, p):
     return 0.5 * np.log(2 * np.pi * np.e * n * p * (1 - p))
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_fit_mle(sample):
     # see https://doi.org/10.1016/j.jspi.2004.02.019 for details
     x_bar, x_std = mean_and_std(sample)
@@ -176,7 +176,7 @@ def nb_fit_mle(sample):
     return n, p
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(n, y, p):
     return (
         gammaln(n + 1)
@@ -186,6 +186,6 @@ def nb_logpdf(n, y, p):
     )
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(n, y, p):
     return -(nb_logpdf(n, y, p)).sum()

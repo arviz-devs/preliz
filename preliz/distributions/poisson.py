@@ -147,16 +147,16 @@ def nb_ppf(q, mu, lower, upper):
     return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_fit_mle(sample):
     return np.mean(sample)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(x, mu):
     return xlogy(x, mu) - gammaln(x + 1) - mu
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, mu):
     return -(nb_logpdf(x, mu)).sum()
