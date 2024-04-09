@@ -256,7 +256,7 @@ def betaincinv(a, b, p):
     elif p == 1:
         return 1
     elif p == 0:
-        return 0
+        return np.nan
     else:
         EPS = 1e-8
         a1 = a - 1

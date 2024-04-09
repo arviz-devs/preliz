@@ -39,6 +39,8 @@ def test_betaincinv():
     x = np.linspace(0, 1, 100)
     a = np.linspace(0, 10, 100)
     b = np.linspace(0, 10, 100)
+    # in scipy < 1.12 this matches to at least 1e-7
+    # in scipy >= 1.12 this matches to 1e-5
     assert_almost_equal(sc_special.betaincinv(a, b, x), pz_special.betaincinv(a, b, x))
 
 
