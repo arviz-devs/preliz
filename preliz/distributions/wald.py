@@ -200,7 +200,7 @@ def nb_entropy(mu, lam):
     )
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, mu, lam):
     if x > 0:
         return (
@@ -210,6 +210,6 @@ def nb_logpdf(x, mu, lam):
         return np.inf
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, mu, lam):
     return -(nb_logpdf(x, mu, lam)).sum()

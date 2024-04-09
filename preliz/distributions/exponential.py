@@ -150,18 +150,18 @@ class Exponential(Continuous):
         self._update(1 / mean)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_cdf(x, lam):
     x_lam = lam * x
     return cdf_bounds(1 - np.exp(-x_lam), x, 0, np.inf)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_ppf(q, beta):
     return ppf_bounds_cont(-beta * np.log(1 - q), q, 0, np.inf)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, lam):
     if x < 0:
         return -np.inf
@@ -169,11 +169,11 @@ def nb_logpdf(x, lam):
         return np.log(lam) - lam * x
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, lam):
     return (-nb_logpdf(x, lam)).sum()
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(beta):
     return 1 + np.log(beta)

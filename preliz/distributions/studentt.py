@@ -2,12 +2,20 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import betainc, betaincinv  # pylint: disable=no-name-in-module
 
 from preliz.distributions.normal import Normal
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import digamma, gammaln, betafunc, ppf_bounds_cont
+from ..internal.special import (
+    beta,
+    betainc,
+    betaincinv,
+    digamma,
+    gammaln,
+    erf,
+    erfinv,
+    ppf_bounds_cont,
+)
 from ..internal.optimization import optimize_ml
 
 
@@ -117,12 +125,14 @@ class StudentT(Continuous):
         """
         Compute the cumulative distribution function (CDF) at a given point x.
         """
+        x = np.asarray(x)
         return nb_cdf(x, self.nu, self.mu, self.sigma)
 
     def ppf(self, q):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
+        q = np.asarray(q)
         return nb_ppf(q, self.nu, self.mu, self.sigma)
 
     def logpdf(self, x):
@@ -201,24 +211,24 @@ class StudentT(Continuous):
         optimize_ml(self, sample)
 
 
+@nb.njit(cache=True)
 def nb_cdf(x, nu, mu, sigma):
-    x = np.asarray(x)
     x = (x - mu) / sigma
     factor = 0.5 * betainc(0.5 * nu, 0.5, nu / (x**2 + nu))
     x_vals = np.where(x < 0, factor, 1 - factor)
-    return np.where(nu > 1e10, Normal(mu, sigma).cdf(x), x_vals)
+    return np.where(nu > 1e10, 0.5 * (1 + erf((x - mu) / (sigma * 2**0.5))), x_vals)
 
 
+@nb.njit(cache=True)
 def nb_ppf(p, nu, mu, sigma):
-    p = np.asarray(p)
     q = np.where(p < 0.5, p, 1 - p)
     x = betaincinv(0.5 * nu, 0.5, 2 * q)
     x = np.where(p < 0.5, -np.sqrt(nu * (1 - x) / x), np.sqrt(nu * (1 - x) / x))
-    vals = np.where(nu > 1e10, Normal(mu, sigma).ppf(p), mu + sigma * x)
+    vals = np.where(nu > 1e10, mu + sigma * 2**0.5 * erfinv(2 * p - 1), mu + sigma * x)
     return ppf_bounds_cont(vals, p, -np.inf, np.inf)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_entropy(nu, sigma):
     if nu > 1e10:
         return 0.5 * (np.log(2 * np.pi * np.e * sigma**2))
@@ -226,11 +236,11 @@ def nb_entropy(nu, sigma):
         return (
             np.log(sigma)
             + 0.5 * (nu + 1) * (digamma(0.5 * (nu + 1)) - digamma(0.5 * nu))
-            + np.log(np.sqrt(nu) * betafunc(0.5 * nu, 0.5))
+            + np.log(np.sqrt(nu) * beta(0.5 * nu, 0.5))
         )
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, nu, mu, sigma):
     if nu > 1e10:
         return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
@@ -243,6 +253,6 @@ def nb_logpdf(x, nu, mu, sigma):
         )
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, nu, mu, sigma):
     return -(nb_logpdf(x, nu, mu, sigma)).sum()

@@ -183,7 +183,7 @@ class AsymmetricLaplace(Continuous):
         self._update(kappa, mu, b)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_cdf(x, mu, b, kappa):
     x = (x - mu) / b
     kap_inv = 1 / kappa
@@ -193,7 +193,7 @@ def nb_cdf(x, mu, b, kappa):
     return np.exp(x * kap_inv) * (kappa / kap_kapinv)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_ppf(q, mu, b, kappa):
     kap_inv = 1 / kappa
     kap_kapinv = kappa + kap_inv
@@ -204,7 +204,7 @@ def nb_ppf(q, mu, b, kappa):
     return q_ppf * b + mu
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, mu, b, kappa):
     x = (x - mu) / b
     kap_inv = 1 / kappa
@@ -216,23 +216,23 @@ def nb_logpdf(x, mu, b, kappa):
     return ald_x - np.log(b)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, mu, b, kappa):
     return (-nb_logpdf(x, mu, b, kappa)).sum()
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_rvs(random_samples, mu, b, kappa):
     sgn = np.sign(random_samples)
     return mu - (1 / (1 / b * sgn * kappa**sgn)) * np.log(1 - random_samples * sgn * kappa**sgn)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(b, kappa):
     return 1 + np.log(kappa + 1 / kappa) + np.log(b)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_fit_mle(sample):
     new_mu = np.median(sample)
     new_b = np.mean(np.abs(sample - new_mu))

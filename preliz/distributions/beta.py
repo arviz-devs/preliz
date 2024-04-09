@@ -2,12 +2,20 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import betainc, betaincinv  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, any_not_none, all_not_none
 from ..internal.optimization import optimize_ml
-from ..internal.special import betaln, digamma, gammaln, cdf_bounds, ppf_bounds_cont, mean_and_std
+from ..internal.special import (
+    betaln,
+    betainc,
+    betaincinv,
+    digamma,
+    gammaln,
+    cdf_bounds,
+    ppf_bounds_cont,
+    mean_and_std,
+)
 
 
 class Beta(Continuous):
@@ -144,12 +152,14 @@ class Beta(Continuous):
         """
         Compute the cumulative distribution function (CDF) at a given point x.
         """
+        x = np.asarray(x)
         return nb_cdf(x, self.alpha, self.beta, self.support[0], self.support[1])
 
     def ppf(self, q):
         """
         Compute the percent point function (PPF) at a given probability q.
         """
+        q = np.asarray(q)
         return nb_ppf(q, self.alpha, self.beta, self.support[0], self.support[1])
 
     def logpdf(self, x):
@@ -215,22 +225,19 @@ class Beta(Continuous):
         optimize_ml(self, sample)
 
 
-# @nb.jit
-# betainc not supported by numba
+@nb.njit(cache=True)
 def nb_cdf(x, alpha, beta, lower, upper):
     prob = betainc(alpha, beta, x)
     return cdf_bounds(prob, x, lower, upper)
 
 
-# @nb.jit
-# betaincinv not supported by numba
+@nb.njit(cache=True)
 def nb_ppf(q, alpha, beta, lower, upper):
-    q = np.asarray(q)
     x_val = betaincinv(alpha, beta, q)
     return ppf_bounds_cont(x_val, q, lower, upper)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(alpha, beta):
     psc = alpha + beta
     return (
@@ -241,12 +248,12 @@ def nb_entropy(alpha, beta):
     )
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(x, alpha, beta):
     beta_ = gammaln(alpha) + gammaln(beta) - gammaln(alpha + beta)
     return (alpha - 1) * np.log(x) + (beta - 1) * np.log(1 - x) - beta_
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, alpha, beta):
     return -(nb_logpdf(x, alpha, beta)).sum()

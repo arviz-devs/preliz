@@ -2,12 +2,12 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import betainc, nbdtrik  # pylint: disable=no-name-in-module
+from scipy.special import nbdtrik  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
 from ..internal.distribution_helper import eps, any_not_none, all_not_none
 from ..internal.optimization import optimize_moments, optimize_ml
-from ..internal.special import gammaln, xlogy, cdf_bounds, ppf_bounds_disc
+from ..internal.special import betainc, gammaln, xlogy, cdf_bounds, ppf_bounds_disc
 
 
 class ZeroInflatedNegativeBinomial(Discrete):
@@ -201,8 +201,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
         optimize_ml(self, sample)
 
 
-# @nb.jit
-# betainc not supported by numba
+@nb.njit(cache=True)
 def nb_cdf(x, psi, n, p, lower, upper):
     nb_prob = betainc(n, x + 1, p)
     prob = (1 - psi) + psi * nb_prob
@@ -217,7 +216,7 @@ def nb_ppf(q, psi, n, p, lower, upper):
     return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(y, psi, n, p, mu):
     if y == 0:
         return np.log((1 - psi) + psi * (n / (n + mu)) ** n)
@@ -232,6 +231,6 @@ def nb_logpdf(y, psi, n, p, mu):
         )
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(y, psi, n, p, mu):
     return -(nb_logpdf(y, psi, n, p, mu)).sum()

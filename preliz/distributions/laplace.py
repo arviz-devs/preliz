@@ -131,7 +131,7 @@ class Laplace(Continuous):
         self._update(mu, b)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_cdf(x, mu, b):
     x = (x - mu) / b
     if x > 0:
@@ -139,7 +139,7 @@ def nb_cdf(x, mu, b):
     return 0.5 * np.exp(x)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_ppf(q, mu, b):
     if q > 0.5:
         q = -np.log(2 * (1 - q))
@@ -148,23 +148,23 @@ def nb_ppf(q, mu, b):
     return q * b + mu
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(x, mu, b):
     x = (x - mu) / b
     return np.log(0.5) - np.abs(x) - np.log(b)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, mu, b):
     return (-nb_logpdf(x, mu, b)).sum()
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(b):
     return np.log(2) + 1 + np.log(b)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_fit_mle(sample):
     median = np.median(sample)
     scale = np.sum(np.abs(sample - median)) / len(sample)

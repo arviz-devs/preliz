@@ -183,17 +183,17 @@ def nb_ppf(q, alpha, beta, lower, upper):
     return ppf_bounds_cont(x_val, q, lower, upper)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(alpha, beta):
     return alpha + gammaln(alpha) - (1 + alpha) * digamma(alpha) + np.log(beta)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(x, alpha, beta):
     return alpha * np.log(beta) - gammaln(alpha) - (alpha + 1) * np.log(x) - beta / x
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, alpha, beta):
     return -(nb_logpdf(x, alpha, beta)).sum()
 
@@ -204,7 +204,7 @@ def _from_mu_sigma(mu, sigma):
     return alpha, beta
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def _to_mu(alpha, beta):
     if alpha > 1:
         return beta / (alpha - 1)
@@ -212,7 +212,7 @@ def _to_mu(alpha, beta):
         return np.nan
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def _to_sigma(alpha, beta):
     if alpha > 2:
         return beta / ((alpha - 1) * (alpha - 2) ** 0.5)

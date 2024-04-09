@@ -166,7 +166,7 @@ def nb_ppf(q, psi, n, p, lower, upper):
     return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(psi, n, y, p):
     if y == 0:
         return np.log((1 - psi) + psi * (1 - p) ** n)
@@ -182,6 +182,6 @@ def nb_logpdf(psi, n, y, p):
         )
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(psi, n, y, p):
     return -(nb_logpdf(psi, n, y, p)).sum()

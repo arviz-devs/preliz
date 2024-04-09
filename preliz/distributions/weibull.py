@@ -153,29 +153,29 @@ class Weibull(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_cdf(x, alpha, beta, lower, upper):
     prob = 1 - np.exp(-((x / beta) ** alpha))
     return cdf_bounds(prob, x, lower, upper)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_ppf(q, alpha, beta, lower, upper):
     x_val = beta * (-np.log(1 - q)) ** (1 / alpha)
     return ppf_bounds_cont(x_val, q, lower, upper)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(alpha, beta):
     return np.euler_gamma * (1 - 1 / alpha) + np.log(beta / alpha) + 1
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(x, alpha, beta):
     x_b = x / beta
     return np.log(alpha / beta) + (alpha - 1) * np.log(x_b) - x_b**alpha
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, alpha, beta):
     return -(nb_logpdf(x, alpha, beta)).sum()

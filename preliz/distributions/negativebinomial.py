@@ -2,12 +2,12 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import betainc, nbdtrik  # pylint: disable=no-name-in-module
+from scipy.special import nbdtrik  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
 from ..internal.distribution_helper import eps, any_not_none, all_not_none
 from ..internal.optimization import optimize_moments, optimize_ml
-from ..internal.special import gammaln, xlogy, cdf_bounds, ppf_bounds_disc
+from ..internal.special import betainc, gammaln, xlogy, cdf_bounds, ppf_bounds_disc
 
 
 class NegativeBinomial(Discrete):
@@ -182,8 +182,7 @@ class NegativeBinomial(Discrete):
         optimize_ml(self, sample)
 
 
-# @nb.jit
-# betainc not supported by numba
+@nb.njit(cache=True)
 def nb_cdf(x, n, p, lower, upper):
     prob = betainc(n, x + 1, p)
     return cdf_bounds(prob, x, lower, upper)
@@ -196,11 +195,11 @@ def nb_ppf(q, n, p, lower, upper):
     return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_logpdf(y, n, p):
     return gammaln(y + n) - gammaln(n) - gammaln(y + 1) + xlogy(n, p) + xlogy(y, 1 - p)
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(y, n, p):
     return -(nb_logpdf(y, n, p)).sum()

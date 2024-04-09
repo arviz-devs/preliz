@@ -154,7 +154,7 @@ class Bernoulli(Discrete):
         return random_state.binomial(1, self.p, size=size)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_cdf(x, p):
     if x < 0:
         return 0
@@ -164,7 +164,7 @@ def nb_cdf(x, p):
         return 1
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_ppf(q, p):
     if q < 0:
         return np.nan
@@ -178,7 +178,7 @@ def nb_ppf(q, p):
         return 1
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_pdf(x, p):
     if x == 1:
         return p
@@ -188,13 +188,13 @@ def nb_pdf(x, p):
         return 0.0
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_entropy(p):
     q = 1 - p
     return -q * np.log(q) - p * np.log(p)
 
 
-@nb.vectorize(nopython=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, p):
     if x == 1:
         return np.log(p)
@@ -204,6 +204,6 @@ def nb_logpdf(x, p):
         return -np.inf
 
 
-@nb.njit
+@nb.njit(cache=True)
 def nb_neg_logpdf(x, p):
     return -(nb_logpdf(x, p)).sum()
