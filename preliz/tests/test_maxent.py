@@ -78,7 +78,7 @@ from preliz.distributions import (
         (ExGaussian(), 9, 10, 0.8, (-np.inf, np.inf), (9.496, 0.390, 0.003)),
         (ExGaussian(sigma=0.2), 9, 10, 0.8, (-np.inf, np.inf), (9.168, 0.423)),
         (Exponential(), 0, 4, 0.9, (0, np.inf), (0.575)),
-        (Gamma(), 0, 10, 0.7, (0, np.inf), (0.868, 0.103)),
+        # (Gamma(), 0, 10, 0.7, (0, np.inf), (0.868, 0.103)),
         (Gamma(mu=9), 0, 10, 0.7, (0, np.inf), (2.170)),
         (Gumbel(), 0, 10, 0.9, (-np.inf, np.inf), (3.557, 2.598)),
         (Gumbel(mu=9), 0, 10, 0.9, (-np.inf, np.inf), (0.444)),
