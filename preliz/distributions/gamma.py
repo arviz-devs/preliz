@@ -5,7 +5,7 @@ import numba as nb
 
 from scipy.special import gammainc, gammaincinv  # pylint: disable=no-name-in-module
 from ..internal.distribution_helper import all_not_none, any_not_none, eps
-from ..internal.special import cdf_bounds, gammaln, ppf_bounds_cont, xlogy
+from ..internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 from ..internal.optimization import optimize_ml
 
 from .distributions import Continuous
@@ -175,7 +175,7 @@ class Gamma(Continuous):
         alpha, beta = self._from_mu_sigma(mean, sigma)
         self._update(alpha, beta)
 
-    def _fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample):
         optimize_ml(self, sample)
 
 
@@ -202,10 +202,4 @@ def nb_neg_logpdf(x, alpha, beta):
 
 @nb.njit(cache=True)
 def nb_entropy(alpha, beta):
-    return (
-        0.5 * (1.0 + np.log(2 * np.pi) + np.log(alpha))
-        - 1 / (3 * alpha)
-        - (alpha**-2.0) / 12
-        - (alpha**-3) / 90
-        + (alpha**-4) / 120
-    ) + np.log(1 / beta)
+    return alpha - np.log(beta) + gammaln(alpha) + (1 - alpha) * digamma(alpha)
