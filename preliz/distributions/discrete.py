@@ -13,6 +13,7 @@ from scipy import stats
 from scipy.special import logit, expit, gamma  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
+from .discrete_uniform import DiscreteUniform  # pylint: disable=unused-import
 from .bernoulli import Bernoulli  # pylint: disable=unused-import
 from .binomial import Binomial  # pylint: disable=unused-import
 from .poisson import Poisson  # pylint: disable=unused-import
@@ -213,89 +214,6 @@ class Categorical(Discrete):
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
-
-
-class DiscreteUniform(Discrete):
-    R"""
-    Discrete Uniform distribution.
-
-    The pmf of this distribution is
-
-    .. math:: f(x \mid lower, upper) = \frac{1}{upper-lower+1}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import DiscreteUniform
-        az.style.use('arviz-doc')
-        ls = [1, -2]
-        us = [6, 2]
-        for l, u in zip(ls, us):
-            ax = DiscreteUniform(l, u).plot_pdf()
-            ax.set_ylim(0, 0.25)
-
-    ========  ===============================================
-    Support   :math:`x \in {lower, lower + 1, \ldots, upper}`
-    Mean      :math:`\dfrac{lower + upper}{2}`
-    Variance  :math:`\dfrac{(upper - lower + 1)^2 - 1}{12}`
-    ========  ===============================================
-
-    Parameters
-    ----------
-    lower: int
-        Lower limit.
-    upper: int
-        Upper limit (upper > lower).
-    """
-
-    def __init__(self, lower=None, upper=None):
-        super().__init__()
-        self.dist = copy(stats.randint)
-        self._parametrization(lower, upper)
-
-    def _parametrization(self, lower=None, upper=None):
-        self.lower = lower
-        self.upper = upper
-        self.params = (self.lower, self.upper)
-        self.param_names = ("lower", "upper")
-        self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
-        if lower is None:
-            self.lower = -np.inf
-        if upper is None:
-            self.upper = np.inf
-        self.support = (self.lower, self.upper)
-        self.dist.a = self.lower
-        self.dist.b = self.upper
-        if all_not_none(lower, upper):
-            self._update(lower, upper)
-        else:
-            self.lower = lower
-            self.upper = upper
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.lower, self.upper + 1)
-        return frozen
-
-    def _update(self, lower, upper):
-        self.lower = np.floor(lower)
-        self.upper = np.ceil(upper)
-        self.params = (self.lower, self.upper)
-        self.support = (self.lower, self.upper)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        spr = (12 * sigma**2 + 1) ** 0.5
-        lower = 0.5 * (2 * mean - spr + 1)
-        upper = 0.5 * (2 * mean + spr - 1)
-        self._update(lower, upper)
-
-    def _fit_mle(self, sample):
-        lower = np.min(sample)
-        upper = np.max(sample)
-        self._update(lower, upper)
 
 
 class DiscreteWeibull(Discrete):

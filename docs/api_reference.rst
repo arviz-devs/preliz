@@ -54,6 +54,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.studentt
    :members:
 
+.. automodule:: preliz.distributions.uniform
+   :members:
+
 .. automodule:: preliz.distributions.vonmises
    :members:
 
@@ -72,7 +75,10 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.bernoulli
    :members:
 
-   .. automodule:: preliz.distributions.binomial
+.. automodule:: preliz.distributions.binomial
+   :members:
+
+.. automodule:: preliz.distributions.discreteuniform
    :members:
 
 .. automodule:: preliz.distributions.poisson
