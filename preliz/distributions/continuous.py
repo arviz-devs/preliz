@@ -26,6 +26,7 @@ from .halfnormal import HalfNormal
 from .halfstudentt import HalfStudentT
 from .laplace import Laplace
 from .studentt import StudentT
+from .uniform import Uniform
 from .vonmises import VonMises
 from .wald import Wald
 from .weibull import Weibull
@@ -1510,85 +1511,3 @@ class TruncatedNormal(Continuous):
             b_pdf = 0
 
         return np.log(4.132731354122493 * zed * self.sigma) + (a_pdf - b_pdf) / (2 * zed)
-
-
-class Uniform(Continuous):
-    r"""
-    Uniform distribution.
-
-    The pdf of this distribution is
-
-    .. math:: f(x \mid lower, upper) = \frac{1}{upper-lower}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Uniform
-        az.style.use('arviz-doc')
-        ls = [1, -2]
-        us = [6, 2]
-        for l, u in zip(ls, us):
-            ax = Uniform(l, u).plot_pdf()
-        ax.set_ylim(0, 0.3)
-
-    ========  =====================================
-    Support   :math:`x \in [lower, upper]`
-    Mean      :math:`\dfrac{lower + upper}{2}`
-    Variance  :math:`\dfrac{(upper - lower)^2}{12}`
-    ========  =====================================
-
-    Parameters
-    ----------
-    lower: float
-        Lower limit.
-    upper: float
-        Upper limit (upper > lower).
-    """
-
-    def __init__(self, lower=None, upper=None):
-        super().__init__()
-        self.dist = copy(stats.uniform)
-        self._parametrization(lower, upper)
-
-    def _parametrization(self, lower=None, upper=None):
-        self.lower = lower
-        self.upper = upper
-        self.params = (self.lower, self.upper)
-        self.param_names = ("lower", "upper")
-        self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf))
-        if lower is None:
-            self.lower = -np.inf
-        if upper is None:
-            self.upper = np.inf
-        self.support = (self.lower, self.upper)
-        if all_not_none(lower, upper):
-            self._update(lower, upper)
-            self.dist.a = self.lower
-            self.dist.b = self.upper
-        else:
-            self.lower = lower
-            self.upper = upper
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.lower, self.upper - self.lower)
-        return frozen
-
-    def _update(self, lower, upper):
-        self.lower = np.float64(lower)
-        self.upper = np.float64(upper)
-        self.params = (self.lower, self.upper)
-        self.support = (self.lower, self.upper)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        lower = mean - 1.73205 * sigma
-        upper = mean + 1.73205 * sigma
-        self._update(lower, upper)
-
-    def _fit_mle(self, sample, **kwargs):
-        lower = np.min(sample)
-        upper = np.max(sample)
-        self._update(lower, upper)
