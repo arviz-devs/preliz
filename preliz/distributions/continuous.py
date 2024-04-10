@@ -19,6 +19,7 @@ from .distributions import Continuous
 from .asymmetric_laplace import AsymmetricLaplace
 from .beta import Beta
 from .exponential import Exponential
+from .gamma import Gamma
 from .inversegamma import InverseGamma
 from .normal import Normal
 from .halfnormal import HalfNormal
@@ -359,123 +360,6 @@ class ExGaussian(Continuous):
     def _fit_mle(self, sample, **kwargs):
         K, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, K * sigma)
-
-
-class Gamma(Continuous):
-    r"""
-    Gamma distribution.
-
-    Represents the sum of alpha exponentially distributed random variables,
-    each of which has rate beta.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \alpha, \beta) =
-           \frac{\beta^{\alpha}x^{\alpha-1}e^{-\beta x}}{\Gamma(\alpha)}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Gamma
-        az.style.use('arviz-doc')
-        alphas = [1., 3., 7.5]
-        betas = [.5, 1., 1.]
-        for alpha, beta in zip(alphas, betas):
-            Gamma(alpha, beta).plot_pdf()
-
-    ========  ===============================
-    Support   :math:`x \in (0, \infty)`
-    Mean      :math:`\dfrac{\alpha}{\beta}`
-    Variance  :math:`\dfrac{\alpha}{\beta^2}`
-    ========  ===============================
-
-    Gamma distribution has 2 alternative parameterizations. In terms of alpha and
-    beta or mu (mean) and sigma (standard deviation).
-
-    The link between the 2 alternatives is given by
-
-    .. math::
-
-       \alpha &= \frac{\mu^2}{\sigma^2} \\
-       \beta  &= \frac{\mu}{\sigma^2}
-
-    Parameters
-    ----------
-    alpha : float
-        Shape parameter (alpha > 0).
-    beta : float
-        Rate parameter (beta > 0).
-    mu : float
-        Mean (mu > 0).
-    sigma : float
-        Standard deviation (sigma > 0)
-    """
-
-    def __init__(self, alpha=None, beta=None, mu=None, sigma=None):
-        super().__init__()
-        self.dist = copy(stats.gamma)
-        self.support = (0, np.inf)
-        self._parametrization(alpha, beta, mu, sigma)
-
-    def _parametrization(self, alpha=None, beta=None, mu=None, sigma=None):
-        if any_not_none(alpha, beta) and any_not_none(mu, sigma):
-            raise ValueError(
-                "Incompatible parametrization. Either use alpha and beta or mu and sigma."
-            )
-
-        self.param_names = ("alpha", "beta")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
-
-        if any_not_none(mu, sigma):
-            self.mu = mu
-            self.sigma = sigma
-            self.param_names = ("mu", "sigma")
-            if all_not_none(mu, sigma):
-                alpha, beta = self._from_mu_sigma(mu, sigma)
-
-        self.alpha = alpha
-        self.beta = beta
-        if all_not_none(self.alpha, self.beta):
-            self._update(self.alpha, self.beta)
-
-    def _from_mu_sigma(self, mu, sigma):
-        alpha = mu**2 / sigma**2
-        beta = mu / sigma**2
-        return alpha, beta
-
-    def _to_mu_sigma(self, alpha, beta):
-        mu = alpha / beta
-        sigma = alpha**0.5 / beta
-        return mu, sigma
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(a=self.alpha, scale=1 / self.beta)
-        return frozen
-
-    def _update(self, alpha, beta):
-        self.alpha = np.float64(alpha)
-        self.beta = np.float64(beta)
-        self.mu, self.sigma = self._to_mu_sigma(self.alpha, self.beta)
-
-        if self.param_names[0] == "alpha":
-            self.params = (self.alpha, self.beta)
-        elif self.param_names[1] == "sigma":
-            self.params = (self.mu, self.sigma)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        alpha, beta = self._from_mu_sigma(mean, sigma)
-        self._update(alpha, beta)
-
-    def _fit_mle(self, sample, **kwargs):
-        alpha, _, beta = self.dist.fit(sample, **kwargs)
-        self._update(alpha, 1 / beta)
 
 
 class Gumbel(Continuous):

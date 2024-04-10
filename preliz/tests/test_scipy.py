@@ -8,6 +8,7 @@ from preliz.distributions import (
     AsymmetricLaplace,
     Beta,
     Exponential,
+    Gamma,
     HalfNormal,
     HalfStudentT,
     InverseGamma,
@@ -38,6 +39,7 @@ from preliz.distributions import (
         ),
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
         (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
+        (Gamma, stats.gamma, {"alpha": 2, "beta": 1 / 3}, {"a": 2, "scale": 3}),
         (HalfNormal, stats.halfnorm, {"sigma": 2}, {"scale": 2}),
         (
             HalfStudentT,

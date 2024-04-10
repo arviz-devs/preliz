@@ -33,6 +33,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.exponential
    :members:
 
+.. automodule:: preliz.distributions.gamma
+   :members:
+
 .. automodule:: preliz.distributions.halfnormal
    :members:
 
