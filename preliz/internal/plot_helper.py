@@ -149,7 +149,7 @@ def plot_pdfpmf(
 
         if dist.__class__.__name__ in ["Categorical", "Bernoulli"]:
             p = ax.plot(x, mass, "o", label=label, color=color, alpha=alpha)
-            ax.vlines(x, 0, mass, ls="dotted", label=label, color=p[0].get_color(), alpha=alpha)
+            ax.vlines(x, 0, mass, ls="dotted", color=p[0].get_color(), alpha=alpha)
         else:
             x_c = np.linspace(x[0], x[-1], 1000)
             # if new distribution, directly compute pdf at non-integer values
