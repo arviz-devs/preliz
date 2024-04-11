@@ -47,8 +47,7 @@ def mle(
 
     fitted = fit_to_sample(distributions, sample, x_min, x_max)
 
-    if plot > len(distributions):
-        plot = len(distributions)
+    plot = min(plot, len(distributions))
 
     idx = np.argsort(fitted.losses)
 
