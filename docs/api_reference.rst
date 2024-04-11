@@ -78,6 +78,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.binomial
    :members:
 
+.. automodule:: preliz.distributions.categorical
+   :members:
+
 .. automodule:: preliz.distributions.discreteuniform
    :members:
 
