@@ -10,12 +10,13 @@ from copy import copy
 
 import numpy as np
 from scipy import stats
-from scipy.special import logit, expit, gamma  # pylint: disable=no-name-in-module
+from scipy.special import gamma  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
-from .discrete_uniform import DiscreteUniform  # pylint: disable=unused-import
 from .bernoulli import Bernoulli  # pylint: disable=unused-import
 from .binomial import Binomial  # pylint: disable=unused-import
+from .categorical import Categorical  # pylint: disable=unused-import
+from .discrete_uniform import DiscreteUniform  # pylint: disable=unused-import
 from .poisson import Poisson  # pylint: disable=unused-import
 from .negativebinomial import NegativeBinomial  # pylint: disable=unused-import
 from .zi_binomial import ZeroInflatedBinomial  # pylint: disable=unused-import
@@ -113,104 +114,6 @@ class BetaBinomial(Discrete):
         beta = max(0.5, (alpha / p) - alpha)
         params = alpha, beta, n
         optimize_moments(self, mean, sigma, params)
-
-    def _fit_mle(self, sample):
-        optimize_ml(self, sample)
-
-
-class Categorical(Discrete):
-    R"""
-    Categorical distribution.
-
-    The most general discrete distribution. The pmf of this distribution is
-
-    .. math:: f(x \mid p) = p_x
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Categorical
-        az.style.use('arviz-doc')
-        ps = [[0.1, 0.6, 0.3], [0.3, 0.1, 0.1, 0.5]]
-        for p in ps:
-            Categorical(p).plot_pdf()
-
-    ========  ===================================
-    Support   :math:`x \in \{0, 1, \ldots, |p|-1\}`
-    ========  ===================================
-
-    Parameters
-    ----------
-    p : array of floats
-        p > 0 and the elements of p must sum to 1.
-    logit_p : float
-        Alternative log odds for the probability of success.
-    """
-
-    def __init__(self, p=None, logit_p=None):
-        super().__init__()
-        self.dist = copy(stats.multinomial)
-        self._parametrization(p, logit_p)
-
-    def pdf(self, x):  # pylint: disable=arguments-differ
-        x = np.asarray(x)
-        pmf = np.zeros_like(x, dtype=float)
-        valid_categories = np.where((x >= 0) & (x < len(self.p)))[0]
-        pmf[valid_categories] = self.p[x[valid_categories]]
-        return pmf
-
-    def cdf(self, x):  # pylint: disable=arguments-differ
-        x = np.asarray(x, dtype=int)
-        cdf = np.ones_like(x, dtype=float)
-        cdf[x < 0] = 0
-        valid_categories = np.where((x >= 0) & (x < len(self.p)))[0]
-        cdf[valid_categories] = np.cumsum(self.p)[x[valid_categories]]
-        return cdf
-
-    def ppf(self, q):  # pylint: disable=arguments-differ
-        cumsum = np.cumsum(self.p)
-        return np.searchsorted(cumsum, q)
-
-    def _parametrization(self, p=None, logit_p=None):
-        if all_not_none(p, logit_p):
-            raise ValueError("Incompatible parametrization. Either use p or logit_p.")
-
-        self.param_names = "p"
-        self.params_support = ((eps, np.inf),)
-
-        if logit_p is not None:
-            p = self._from_logit_p(logit_p)
-            self.param_names = ("logit_p",)
-
-        self.p = p
-        self.logit_p = logit_p
-        if self.p is not None:
-            self.support = (0, len(p) - 1)
-            self._update(self.p)
-
-    def _from_logit_p(self, logit_p):
-        return expit(logit_p)
-
-    def _to_logit_p(self, p):
-        return logit(p)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(n=1, p=self.p)
-        return frozen
-
-    def _update(self, p):
-        self.p = np.array(p)
-        self.logit_p = self._to_logit_p(p)
-
-        if self.param_names[0] == "p":
-            self.params = (self.p,)
-        elif self.param_names[0] == "logit_p":
-            self.params = (self.logit_p,)
-
-        self._update_rv_frozen()
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
