@@ -124,9 +124,8 @@ class Logistic(Continuous):
         return random_state.logistic(self.mu, self.s, size)
 
     def _fit_moments(self, mean, sigma):
-        mu = mean
         s = (3 * sigma**2 / np.pi**2) ** 0.5
-        self._update(mu, s)
+        self._update(mean, s)
 
     def _fit_mle(self, sample, **kwargs):
         optimize_ml(self, sample)
@@ -138,16 +137,6 @@ def nb_cdf(x, mu, s):
 
 
 @nb.njit(cache=True)
-def nb_logpdf(x, mu, s):
-    return -np.log(s) - 2 * np.log(1 + np.exp(-(x - mu) / s)) - (x - mu) / s
-
-
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, s):
-    return -(nb_logpdf(x, mu, s)).sum()
-
-
-@nb.njit(cache=True)
 def nb_ppf(q, mu, s):
     return mu + s * np.log(q / (1 - q))
 
@@ -155,3 +144,13 @@ def nb_ppf(q, mu, s):
 @nb.njit(cache=True)
 def nb_entropy(s):
     return np.log(s) + 2
+
+
+@nb.njit(cache=True)
+def nb_logpdf(x, mu, s):
+    return -np.log(s) - 2 * np.log(1 + np.exp(-(x - mu) / s)) - (x - mu) / s
+
+
+@nb.njit(cache=True)
+def nb_neg_logpdf(x, mu, s):
+    return -(nb_logpdf(x, mu, s)).sum()
