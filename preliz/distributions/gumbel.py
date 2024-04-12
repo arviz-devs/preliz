@@ -66,12 +66,6 @@ class Gumbel(Continuous):
         if all_not_none(self.mu, self.beta):
             self._update(self.mu, self.beta)
 
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(loc=self.mu, scale=self.beta)
-        return frozen
-
     def _update(self, mu, beta):
         self.mu = np.float64(mu)
         self.beta = np.float64(beta)
