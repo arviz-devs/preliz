@@ -20,6 +20,7 @@ from .asymmetric_laplace import AsymmetricLaplace
 from .beta import Beta
 from .exponential import Exponential
 from .gamma import Gamma
+from .gumbel import Gumbel
 from .inversegamma import InverseGamma
 from .normal import Normal
 from .halfnormal import HalfNormal
@@ -363,84 +364,6 @@ class ExGaussian(Continuous):
     def _fit_mle(self, sample, **kwargs):
         K, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, K * sigma)
-
-
-class Gumbel(Continuous):
-    r"""
-    Gumbel distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \mu, \beta) = \frac{1}{\beta}e^{-(z + e^{-z})}
-
-    where
-
-    .. math::
-
-        z = \frac{x - \mu}{\beta}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Gumbel
-        az.style.use('arviz-doc')
-        mus = [0., 4., -1.]
-        betas = [1., 2., 4.]
-        for mu, beta in zip(mus, betas):
-            Gumbel(mu, beta).plot_pdf(support=(-10,20))
-
-    ========  ==========================================
-    Support   :math:`x \in \mathbb{R}`
-    Mean      :math:`\mu + \beta\gamma`, where :math:`\gamma` is the Euler-Mascheroni constant
-    Variance  :math:`\frac{\pi^2}{6} \beta^2`
-    ========  ==========================================
-
-    Parameters
-    ----------
-    mu : float
-        Location parameter.
-    beta : float
-        Scale parameter (beta > 0).
-    """
-
-    def __init__(self, mu=None, beta=None):
-        super().__init__()
-        self.dist = copy(stats.gumbel_r)
-        self.support = (-np.inf, np.inf)
-        self._parametrization(mu, beta)
-
-    def _parametrization(self, mu=None, beta=None):
-        self.mu = mu
-        self.beta = beta
-        self.params = (self.mu, self.beta)
-        self.param_names = ("mu", "beta")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if all_not_none(self.mu, self.beta):
-            self._update(self.mu, self.beta)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(loc=self.mu, scale=self.beta)
-        return frozen
-
-    def _update(self, mu, beta):
-        self.mu = np.float64(mu)
-        self.beta = np.float64(beta)
-        self.params = (self.mu, self.beta)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        beta = sigma / np.pi * 6**0.5
-        mu = mean - beta * np.euler_gamma
-        self._update(mu, beta)
-
-    def _fit_mle(self, sample, **kwargs):
-        mu, beta = self.dist.fit(sample, **kwargs)
-        self._update(mu, beta)
 
 
 class HalfCauchy(Continuous):
