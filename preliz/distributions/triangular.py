@@ -118,9 +118,11 @@ class Triangular(Continuous):
         return (self.lower + self.c + self.upper) / 3
 
     def median(self):
-        if self.c >= (self.lower + self.upper) / 2:
-            return self.lower + ((self.upper - self.lower) * (self.c - self.lower) / 2) ** 0.5
-        return self.upper - ((self.upper - self.lower) * (self.upper - self.c) / 2) ** 0.5
+        return np.where(
+            self.c >= (self.lower + self.upper) / 2,
+            self.lower + ((self.upper - self.lower) * (self.c - self.lower) / 2) ** 0.5,
+            self.upper - ((self.upper - self.lower) * (self.upper - self.c) / 2) ** 0.5,
+        )
 
     def var(self):
         return (
