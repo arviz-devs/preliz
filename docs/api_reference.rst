@@ -54,6 +54,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.studentt
    :members:
 
+.. automodule:: preliz.distributions.triangular
+   :members:
+
 .. automodule:: preliz.distributions.uniform
    :members:
 

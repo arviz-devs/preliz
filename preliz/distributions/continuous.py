@@ -26,6 +26,7 @@ from .halfnormal import HalfNormal
 from .halfstudentt import HalfStudentT
 from .laplace import Laplace
 from .studentt import StudentT
+from .triangular import Triangular
 from .uniform import Uniform
 from .vonmises import VonMises
 from .wald import Wald
@@ -1301,98 +1302,6 @@ class SkewNormal(Continuous):
     def _fit_mle(self, sample, **kwargs):
         alpha, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, alpha)
-
-
-class Triangular(Continuous):
-    r"""
-    Triangular distribution
-
-    The pdf of this distribution is
-
-    .. math::
-
-       \begin{cases}
-         0 & \text{for } x < a, \\
-         \frac{2(x-a)}{(b-a)(c-a)} & \text{for } a \le x < c, \\[4pt]
-         \frac{2}{b-a}             & \text{for } x = c, \\[4pt]
-         \frac{2(b-x)}{(b-a)(b-c)} & \text{for } c < x \le b, \\[4pt]
-         0 & \text{for } b < x.
-        \end{cases}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Triangular
-        az.style.use('arviz-doc')
-        lowers = [0., -1, 2]
-        cs = [2., 0., 6.5]
-        uppers = [4., 1, 8]
-        for lower, c, upper in zip(lowers, cs, uppers):
-            scale = upper - lower
-            c_ = (c - lower) / scale
-            Triangular(lower, c, upper).plot_pdf()
-
-    ========  ============================================================================
-    Support   :math:`x \in [lower, upper]`
-    Mean      :math:`\dfrac{lower + upper + c}{3}`
-    Variance  :math:`\dfrac{upper^2 + lower^2 +c^2 - lower*upper - lower*c - upper*c}{18}`
-    ========  ============================================================================
-
-    Parameters
-    ----------
-    lower : float
-        Lower limit.
-    c : float
-        Mode.
-    upper : float
-        Upper limit.
-    """
-
-    def __init__(self, lower=None, c=None, upper=None):
-        super().__init__()
-        self.dist = copy(stats.triang)
-        self.support = (-np.inf, np.inf)
-        self._parametrization(lower, c, upper)
-
-    def _parametrization(self, lower=None, c=None, upper=None):
-        self.lower = lower
-        self.c = c
-        self.upper = upper
-        self.params = (self.lower, self.c, self.upper)
-        self.param_names = ("lower", "c", "upper")
-        self.params_support = ((-np.inf, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
-        if all_not_none(lower, c, upper):
-            self._update(lower, c, upper)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            scale = self.upper - self.lower
-            c_ = (self.c - self.lower) / scale
-            frozen = self.dist(c=c_, loc=self.lower, scale=scale)
-        return frozen
-
-    def _update(self, lower, c, upper):
-        self.lower = np.float64(lower)
-        self.c = np.float64(c)
-        self.upper = np.float64(upper)
-        self.support = (self.lower, self.upper)
-        self.params = (self.lower, self.c, self.upper)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        # Assume symmetry
-        lower = mean - 6**0.5 * sigma
-        upper = mean + 6**0.5 * sigma
-        c = mean
-        self._update(lower, c, upper)
-
-    def _fit_mle(self, sample, **kwargs):
-        c_, lower, scale = self.dist.fit(sample, **kwargs)
-        upper = scale + lower
-        c = c_ * scale + lower
-        self._update(lower, c, upper)
 
 
 class TruncatedNormal(Continuous):
