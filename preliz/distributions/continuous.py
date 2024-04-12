@@ -25,6 +25,7 @@ from .normal import Normal
 from .halfnormal import HalfNormal
 from .halfstudentt import HalfStudentT
 from .laplace import Laplace
+from .logistic import Logistic
 from .studentt import StudentT
 from .triangular import Triangular
 from .uniform import Uniform
@@ -625,80 +626,6 @@ class _Kumaraswamy(stats.rv_continuous):
             q = random_state.random(size)
 
         return self.ppf(q)
-
-
-class Logistic(Continuous):
-    r"""
-    Logistic distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-    f(x \mid \mu, s) =
-        \frac{\exp\left(-\frac{x - \mu}{s}\right)}
-        {s \left(1 + \exp\left(-\frac{x - \mu}{s}\right)\right)^2}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Logistic
-        az.style.use('arviz-doc')
-        mus = [0., 0., -2.]
-        ss = [1., 2., .4]
-        for mu, s in zip(mus, ss):
-            Logistic(mu, s).plot_pdf(support=(-5,5))
-
-    =========  ==========================================
-     Support   :math:`x \in \mathbb{R}`
-     Mean      :math:`\mu`
-     Variance  :math:`\frac{s^2 \pi^2}{3}`
-    =========  ==========================================
-
-    Parameters
-    ----------
-    mu : float
-        Mean.
-    s : float
-        Scale (s > 0).
-    """
-
-    def __init__(self, mu=None, s=None):
-        super().__init__()
-        self.dist = copy(stats.logistic)
-        self.support = (-np.inf, np.inf)
-        self._parametrization(mu, s)
-
-    def _parametrization(self, mu=None, s=None):
-        self.mu = mu
-        self.s = s
-        self.params = (self.mu, self.s)
-        self.param_names = ("mu", "s")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if all_not_none(self.mu, self.s):
-            self._update(self.mu, self.s)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(loc=self.mu, scale=self.s)
-        return frozen
-
-    def _update(self, mu, s):
-        self.mu = np.float64(mu)
-        self.s = np.float64(s)
-        self.params = (self.mu, self.s)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        mu = mean
-        s = (3 * sigma**2 / np.pi**2) ** 0.5
-        self._update(mu, s)
-
-    def _fit_mle(self, sample, **kwargs):
-        mu, s = self.dist.fit(sample, **kwargs)
-        self._update(mu, s)
 
 
 class LogNormal(Continuous):

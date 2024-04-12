@@ -48,6 +48,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.laplace
    :members:
 
+.. automodule:: preliz.distributions.logistic
+   :members:
+
 .. automodule:: preliz.distributions.normal
    :members:
 
