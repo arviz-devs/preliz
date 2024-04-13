@@ -153,7 +153,6 @@ def plot_pdfpmf(
         else:
             x_c = np.linspace(x[0], x[-1], 1000)
             # if new distribution, directly compute pdf at non-integer values
-            print(dist.__class__.__name__)
             if dist.rv_frozen is None:
                 mass_c = np.clip(dist.pdf(x_c), np.min(mass), np.max(mass))
             # if old, interpolate
