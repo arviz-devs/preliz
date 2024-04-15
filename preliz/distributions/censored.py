@@ -1,13 +1,13 @@
 # pylint: disable=arguments-differ
 import numpy as np
 
-from preliz.distributions.distributions import TruncatedCensored
+from preliz.distributions.distributions import DistributionTransformer
 from preliz.internal.distribution_helper import all_not_none
 from preliz.internal.special import xlogx, xprody
 from preliz.distributions.truncated import Truncated
 
 
-class Censored(TruncatedCensored):
+class Censored(DistributionTransformer):
     r"""
     Censored distribution
 

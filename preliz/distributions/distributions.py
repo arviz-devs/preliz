@@ -40,9 +40,7 @@ class Distribution:
 
     def __repr__(self):
         name = self.__class__.__name__
-        if name == "Truncated":
-            name += self.dist.__class__.__name__
-        elif name == "Censored":
+        if name in ["Truncated", "Censored", "Hurdle"]:
             name += self.dist.__class__.__name__
         if self.is_frozen:
             bolded_name = "\033[1m" + name + "\033[0m"
@@ -701,8 +699,8 @@ class Discrete(Distribution):
         return self.rv_frozen.logpmf(x, *args, **kwds)
 
 
-class TruncatedCensored(Distribution):
-    """Base class for discrete distributions."""
+class DistributionTransformer(Distribution):
+    """Base class for distributions that transform other distributions"""
 
     def __init__(self):
         super().__init__()

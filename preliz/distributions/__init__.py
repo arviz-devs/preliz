@@ -3,6 +3,7 @@ from .discrete import *
 from .continuous_multivariate import *
 from .truncated import Truncated
 from .censored import Censored
+from .hurdle import Hurdle
 
 all_continuous = [
     AsymmetricLaplace,
@@ -61,4 +62,5 @@ __all__ = (
     + [s.__name__ for s in all_continuous_multivariate]
     + [Truncated.__name__]
     + [Censored.__name__]
+    + [Hurdle.__name__]
 )

@@ -1,11 +1,11 @@
 # pylint: disable=arguments-differ
 import numpy as np
 
-from preliz.distributions.distributions import TruncatedCensored
+from preliz.distributions.distributions import DistributionTransformer
 from preliz.internal.distribution_helper import all_not_none
 
 
-class Truncated(TruncatedCensored):
+class Truncated(DistributionTransformer):
     r"""
     Truncated distribution
 
