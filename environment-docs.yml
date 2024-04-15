@@ -1,0 +1,22 @@
+name: preliz-docs
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python >= 3.10
+  - arviz
+  - matplotlib>=3.5
+  - numba>=0.59
+  - numpy>=1.22
+  - scipy>=1.9.1,<1.13
+  - nbclient<0.6,>=0.2
+  - ipywidgets
+  - ipympl
+  - jupyterlab
+  - notebook
+  - pydata-sphinx-theme>=0.6.3
+  - myst-nb
+  - sphinx>=4
+  - sphinx-thebe
+  - sphinx-copybutton
+  - sphinx-tabs
