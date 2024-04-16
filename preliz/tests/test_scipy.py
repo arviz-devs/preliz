@@ -7,6 +7,7 @@ from scipy import stats
 from preliz.distributions import (
     AsymmetricLaplace,
     Beta,
+    Cauchy,
     DiscreteUniform,
     Exponential,
     Gamma,
@@ -45,6 +46,7 @@ from preliz.distributions import (
             {"loc": 2.5, "scale": 3.5, "kappa": 0.7},
         ),
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
+        (Cauchy, stats.cauchy, {"alpha": 2, "beta": 4.5}, {"loc": 2, "scale": 4.5}),
         (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
         (Gamma, stats.gamma, {"alpha": 2, "beta": 1 / 3}, {"a": 2, "scale": 3}),
         (Gumbel, stats.gumbel_r, {"mu": 2.5, "beta": 3.5}, {"loc": 2.5, "scale": 3.5}),
