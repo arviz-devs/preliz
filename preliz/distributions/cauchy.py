@@ -153,8 +153,8 @@ def nb_logpdf(x, alpha, beta):
 
 
 @nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, s):
-    return -(nb_logpdf(x, mu, s)).sum()
+def nb_neg_logpdf(x, alpha, beta):
+    return -(nb_logpdf(x, alpha, beta)).sum()
 
 
 @nb.njit(cache=True)
