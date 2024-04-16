@@ -18,6 +18,7 @@ from ..internal.distribution_helper import all_not_none, any_not_none
 from .distributions import Continuous
 from .asymmetric_laplace import AsymmetricLaplace
 from .beta import Beta
+from .cauchy import Cauchy
 from .exponential import Exponential
 from .gamma import Gamma
 from .gumbel import Gumbel
@@ -137,79 +138,6 @@ class BetaScaled(Continuous):
     def _fit_mle(self, sample, **kwargs):
         alpha, beta, lower, scale = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta, lower, lower + scale)
-
-
-class Cauchy(Continuous):
-    r"""
-    Cauchy Distribution
-
-    The pdf of this distribution is
-
-    .. math::
-
-        f(x \mid \alpha, \beta) =
-            \frac{1}{\pi \beta [1 + (\frac{x-\alpha}{\beta})^2]}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Cauchy
-        az.style.use('arviz-doc')
-        alphas = [0., 0., -2.]
-        betas = [.5, 1., 1.]
-        for alpha, beta in zip(alphas, betas):
-            Cauchy(alpha, beta).plot_pdf(support=(-5,5))
-
-    ========  ==============================================================
-    Support   :math:`x \in \mathbb{R}`
-    Mean      undefined
-    Variance  undefined
-    ========  ==============================================================
-
-    Parameters
-    ----------
-    alpha : float
-        Location parameter.
-    beta : float
-        Scale parameter > 0.
-    """
-
-    def __init__(self, alpha=None, beta=None):
-        super().__init__()
-        self.dist = copy(stats.cauchy)
-        self.support = (-np.inf, np.inf)
-        self._parametrization(alpha, beta)
-
-    def _parametrization(self, alpha=None, beta=None):
-        self.alpha = alpha
-        self.beta = beta
-        self.param_names = ("alpha", "beta")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        self.params = (self.alpha, self.beta)
-        if all_not_none(alpha, beta):
-            self._update(alpha, beta)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.alpha, self.beta)
-        return frozen
-
-    def _update(self, alpha, beta):
-        self.alpha = np.float64(alpha)
-        self.beta = np.float64(beta)
-        self.params = (self.alpha, self.beta)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        alpha = mean
-        beta = sigma
-        self._update(alpha, beta)
-
-    def _fit_mle(self, sample, **kwargs):
-        alpha, beta = self.dist.fit(sample, **kwargs)
-        self._update(alpha, beta)
 
 
 class ChiSquared(Continuous):
