@@ -27,6 +27,7 @@ from .halfstudentt import HalfStudentT
 from .inversegamma import InverseGamma
 from .laplace import Laplace
 from .logistic import Logistic
+from .lognormal import LogNormal
 from .normal import Normal
 from .pareto import Pareto
 from .studentt import StudentT
@@ -478,85 +479,6 @@ class _Kumaraswamy(stats.rv_continuous):
             q = random_state.random(size)
 
         return self.ppf(q)
-
-
-class LogNormal(Continuous):
-    r"""
-    Log-normal distribution.
-
-    Distribution of any random variable whose logarithm is normally
-    distributed. A variable might be modeled as log-normal if it can
-    be thought of as the multiplicative product of many small
-    independent factors.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \mu, \sigma) =
-          \frac{1}{x \sigma \sqrt{2\pi}}
-           \exp\left\{ -\frac{(\ln(x)-\mu)^2}{2\sigma^2} \right\}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import LogNormal
-        az.style.use('arviz-doc')
-        mus = [ 0., 0.]
-        sigmas = [.5, 1.]
-        for mu, sigma in zip(mus, sigmas):
-            LogNormal(mu, sigma).plot_pdf(support=(0,5))
-
-    ========  =========================================================================
-    Support   :math:`x \in [0, \infty)`
-    Mean      :math:`\exp\left(\mu+\frac{\sigma^2}{2}\right)`
-    Variance  :math:`[\exp(\sigma^2)-1] \exp(2\mu+\sigma^2)`
-    ========  =========================================================================
-
-    Parameters
-    ----------
-    mu : float
-        Location parameter.
-    sigma : float
-        Standard deviation. (sigma > 0)).
-    """
-
-    def __init__(self, mu=None, sigma=None):
-        super().__init__()
-        self.dist = copy(stats.lognorm)
-        self.support = (0, np.inf)
-        self._parametrization(mu, sigma)
-
-    def _parametrization(self, mu=None, sigma=None):
-        self.mu = mu
-        self.sigma = sigma
-        self.params = (self.mu, self.sigma)
-        self.param_names = ("mu", "sigma")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if all_not_none(mu, sigma):
-            self._update(mu, sigma)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.sigma, scale=np.exp(self.mu))
-        return frozen
-
-    def _update(self, mu, sigma):
-        self.mu = np.float64(mu)
-        self.sigma = np.float64(sigma)
-        self.params = (self.mu, self.sigma)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        mu = np.log(mean**2 / (sigma**2 + mean**2) ** 0.5)
-        sigma = np.log(sigma**2 / mean**2 + 1) ** 0.5
-        self._update(mu, sigma)
-
-    def _fit_mle(self, sample, **kwargs):
-        sigma, _, mu = self.dist.fit(sample, **kwargs)
-        self._update(np.log(mu), sigma)
 
 
 class LogitNormal(Continuous):
