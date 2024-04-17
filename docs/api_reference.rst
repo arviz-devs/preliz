@@ -57,6 +57,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.logistic
    :members:
 
+.. automodule:: preliz.distributions.lognormal
+   :members:
+
 .. automodule:: preliz.distributions.normal
    :members:
 
