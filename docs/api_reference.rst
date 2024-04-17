@@ -33,6 +33,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.cauchy
    :members:
 
+.. automodule:: preliz.distributions.chisquared
+   :members:
+
 .. automodule:: preliz.distributions.exponential
    :members:
 
@@ -49,6 +52,9 @@ This reference provides detailed documentation for user functions in the current
    :members:
 
 .. automodule:: preliz.distributions.inversegamma
+   :members:
+
+.. automodule:: preliz.distributions.kumaraswamy
    :members:
 
 .. automodule:: preliz.distributions.laplace

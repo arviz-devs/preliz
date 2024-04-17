@@ -19,6 +19,7 @@ from .distributions import Continuous
 from .asymmetric_laplace import AsymmetricLaplace
 from .beta import Beta
 from .cauchy import Cauchy
+from .chi_squared import ChiSquared
 from .exponential import Exponential
 from .gamma import Gamma
 from .gumbel import Gumbel
@@ -140,75 +141,6 @@ class BetaScaled(Continuous):
     def _fit_mle(self, sample, **kwargs):
         alpha, beta, lower, scale = self.dist.fit(sample, **kwargs)
         self._update(alpha, beta, lower, lower + scale)
-
-
-class ChiSquared(Continuous):
-    r"""
-    Chi squared  distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \nu) =
-                \frac{x^{(\nu-2)/2}e^{-x/2}}{2^{\nu/2}\Gamma(\nu/2)}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import ChiSquared
-        az.style.use('arviz-doc')
-        nus = [1., 3., 9.]
-        for nu in nus:
-                ax = ChiSquared(nu).plot_pdf(support=(0,20))
-                ax.set_ylim(0, 0.6)
-
-    ========  ===============================
-    Support   :math:`x \in [0, \infty)`
-    Mean      :math:`\nu`
-    Variance  :math:`2 \nu`
-    ========  ===============================
-
-    Parameters
-    ----------
-    nu : float
-        Degrees of freedom (nu > 0).
-    """
-
-    def __init__(self, nu=None):
-        super().__init__()
-        self.nu = nu
-        self.dist = copy(stats.chi2)
-        self.support = (0, np.inf)
-        self._parametrization(nu)
-
-    def _parametrization(self, nu=None):
-        self.nu = nu
-        self.param_names = ("nu",)
-        self.params_support = ((eps, np.inf),)
-        self.params = (self.nu,)
-        if self.nu is not None:
-            self._update(self.nu)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.nu)
-        return frozen
-
-    def _update(self, nu):
-        self.nu = np.float64(nu)
-        self.params = (self.nu,)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
-        nu = mean
-        self._update(nu)
-
-    def _fit_mle(self, sample, **kwargs):
-        nu, _, _ = self.dist.fit(sample, **kwargs)
-        self._update(nu)
 
 
 class ExGaussian(Continuous):
