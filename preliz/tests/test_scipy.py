@@ -15,6 +15,7 @@ from preliz.distributions import (
     HalfNormal,
     HalfStudentT,
     InverseGamma,
+    Kumaraswamy,
     Laplace,
     Logistic,
     LogNormal,
@@ -59,6 +60,7 @@ from preliz.distributions import (
             {"loc": 0, "scale": 2},
         ),  # not in scipy
         (InverseGamma, stats.invgamma, {"alpha": 5, "beta": 2}, {"a": 5, "scale": 2}),
+        (Kumaraswamy, stats.beta, {"a": 1, "b": 5}, {"a": 1, "b": 5}),  # not in scipy
         (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
         (Logistic, stats.logistic, {"mu": 2.5, "s": 4}, {"loc": 2.5, "scale": 4}),
         (LogNormal, stats.lognorm, {"mu": 0, "sigma": 2}, {"s": 2, "scale": 1}),
@@ -129,6 +131,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     expected_rvs = scipy_dist.rvs(20, random_state=rng)
     if preliz_name in [
         "HalfStudentT",
+        "Kumaraswamy",
         "StudentT",
         "Weibull",
         "InverseGamma",
