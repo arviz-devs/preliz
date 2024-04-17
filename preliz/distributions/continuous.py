@@ -25,6 +25,7 @@ from .gumbel import Gumbel
 from .halfnormal import HalfNormal
 from .halfstudentt import HalfStudentT
 from .inversegamma import InverseGamma
+from .kumaraswamy import Kumaraswamy
 from .laplace import Laplace
 from .logistic import Logistic
 from .lognormal import LogNormal
@@ -360,125 +361,6 @@ class HalfCauchy(Continuous):
     def _fit_mle(self, sample, **kwargs):
         _, beta = self.dist.fit(sample, **kwargs)
         self._update(beta)
-
-
-class Kumaraswamy(Continuous):
-    r"""
-    Kumaraswamy distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-         f(x \mid a, b) = a b x^{a - 1} (1 - x^a)^{b - 1}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Kumaraswamy
-        az.style.use('arviz-doc')
-        a_s = [.5, 5., 1., 2., 2.]
-        b_s = [.5, 1., 3., 2., 5.]
-        for a, b in zip(a_s, b_s):
-            ax = Kumaraswamy(a, b).plot_pdf()
-            ax.set_ylim(0, 3.)
-
-    ========  ==============================================================
-    Support   :math:`x \in (0, 1)`
-    Mean      :math:`b B(1 + \tfrac{1}{a}, b)`
-    Variance  :math:`b B(1 + \tfrac{2}{a}, b) - (b B(1 + \tfrac{1}{a}, b))^2`
-    ========  ==============================================================
-
-    Parameters
-    ----------
-    a : float
-        a > 0.
-    b : float
-        b > 0.
-    """
-
-    def __init__(self, a=None, b=None):
-        super().__init__()
-        self.dist = _Kumaraswamy
-        self.support = (0, 1)
-        self._parametrization(a, b)
-
-    def _parametrization(self, a=None, b=None):
-        self.a = a
-        self.b = b
-        self.params = (self.a, self.b)
-        self.param_names = ("a", "b")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
-        if (a and b) is not None:
-            self._update(a, b)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.a, self.b)
-        return frozen
-
-    def _update(self, a, b):
-        self.a = np.float64(a)
-        self.b = np.float64(b)
-        self.params = (self.a, self.b)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        optimize_moments(self, mean, sigma)
-
-    def _fit_mle(self, sample, **kwargs):
-        optimize_ml(self, sample, **kwargs)
-
-
-class _Kumaraswamy(stats.rv_continuous):
-    def __init__(self, a=None, b=None):
-        super().__init__()
-        self.a = a
-        self.b = b
-
-    def support(self, *args, **kwds):  # pylint: disable=unused-argument
-        return (0, 1)
-
-    def cdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
-        return 1 - (1 - x**self.a) ** self.b
-
-    def pdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
-        return (self.a * self.b * x ** (self.a - 1)) * ((1 - x**self.a) ** (self.b - 1))
-
-    def logpdf(self, x, *args, **kwds):  # pylint: disable=unused-argument
-        return (
-            np.log(self.a * self.b)
-            + (self.a - 1) * np.log(x)
-            + (self.b - 1) * np.log(1 - x**self.a)
-        )
-
-    def ppf(self, q, *args, **kwds):  # pylint: disable=unused-argument
-        return (1 - (1 - q) ** (1 / self.b)) ** (1 / self.a)
-
-    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
-        mean = self.b * betaf(1 + 1 / self.a, self.b)
-        var = self.b * betaf(1 + 2 / self.a, self.b) - self.b * betaf(1 + 2 / self.a, self.b) ** 2
-        return (mean, var, np.nan, np.nan)
-
-    def entropy(self, *args, **kwds):  # pylint: disable=unused-argument
-        # https://www.ijicc.net/images/vol12/iss4/12449_Nassir_2020_E_R.pdf
-        return (
-            (1 - 1 / self.b)
-            + (1 - 1 / self.a) * sum(1 / i for i in range(1, int(self.b) + 1))
-            - np.log(self.a * self.b)
-        )
-
-    def rvs(self, size=1, random_state=None):  # pylint: disable=arguments-differ
-        if random_state is None:
-            q = np.random.rand(size)
-        elif isinstance(random_state, int):
-            q = np.random.default_rng(random_state).random(size)
-        else:
-            q = random_state.random(size)
-
-        return self.ppf(q)
 
 
 class LogitNormal(Continuous):

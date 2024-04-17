@@ -87,7 +87,7 @@ from preliz.distributions import (
         (HalfStudentT(), 1, 10, 0.7, (0, np.inf), (99.997, 7.697)),
         (HalfStudentT(nu=7), 1, 10, 0.7, (0, np.inf), (2.541)),
         (InverseGamma(), 0, 1, 0.99, (0, np.inf), (8.889, 3.439)),
-        (Kumaraswamy(), 0.1, 0.6, 0.9, (0, 1), (2.246, 7.427)),
+        (Kumaraswamy(), 0.1, 0.6, 0.9, (0, 1), (2.311, 7.495)),
         (Laplace(), -1, 1, 0.9, (-np.inf, np.inf), (0, 0.435)),
         (Laplace(mu=0.5), -1, 1, 0.9, (-np.inf, np.inf), (0.303)),
         (Logistic(), -1, 1, 0.5, (-np.inf, np.inf), (0, 0.91)),
