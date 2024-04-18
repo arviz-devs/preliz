@@ -19,6 +19,7 @@ from preliz.distributions import (
     Kumaraswamy,
     Laplace,
     Logistic,
+    LogitNormal,
     LogNormal,
     Moyal,
     Normal,
@@ -67,6 +68,7 @@ from preliz.distributions import (
         (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
         (Logistic, stats.logistic, {"mu": 2.5, "s": 4}, {"loc": 2.5, "scale": 4}),
         (LogNormal, stats.lognorm, {"mu": 0, "sigma": 2}, {"s": 2, "scale": 1}),
+        (LogitNormal, stats.beta, {"mu": 0, "sigma": 0.2}, {"a": 50.5, "b": 50.5}),  # not in scipy
         (Moyal, stats.moyal, {"mu": 1, "sigma": 2}, {"loc": 1, "scale": 2}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (Pareto, stats.pareto, {"m": 1, "alpha": 4.5}, {"b": 4.5}),
@@ -124,7 +126,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected = scipy_dist.entropy()
         if preliz_dist.kind == "discrete":
             assert_almost_equal(actual, expected, decimal=1)
-        elif preliz_name in ["HalfStudentT", "Moyal"]:
+        elif preliz_name in ["HalfStudentT", "Moyal", "LogitNormal"]:
             assert_almost_equal(actual, expected, decimal=2)
         else:
             assert_almost_equal(actual, expected, decimal=4)
@@ -136,6 +138,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     if preliz_name in [
         "HalfStudentT",
         "Kumaraswamy",
+        "LogitNormal",
         "Moyal",
         "StudentT",
         "Weibull",
@@ -159,7 +162,9 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     else:
         expected_pdf = scipy_dist.pmf(actual_rvs)
 
-    if preliz_name == "HalfStudentT":
+    if preliz_name == "LogitNormal":
+        assert_almost_equal(actual_pdf, expected_pdf, decimal=1)
+    elif preliz_name == "HalfStudentT":
         assert_almost_equal(actual_pdf, expected_pdf, decimal=2)
     else:
         assert_almost_equal(actual_pdf, expected_pdf, decimal=4)
@@ -170,7 +175,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     actual_cdf = preliz_dist.cdf(cdf_vals)
     expected_cdf = scipy_dist.cdf(cdf_vals)
 
-    if preliz_name == "HalfStudentT":
+    if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_cdf, expected_cdf, decimal=2)
     else:
         assert_almost_equal(actual_cdf, expected_cdf, decimal=6)
@@ -178,7 +183,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     x_vals = [-1, 0, 0.25, 0.5, 0.75, 1, 2]
     actual_ppf = preliz_dist.ppf(x_vals)
     expected_ppf = scipy_dist.ppf(x_vals)
-    if preliz_name in ["HalfStudentT", "Wald"]:
+    if preliz_name in ["HalfStudentT", "Wald", "LogitNormal"]:
         assert_almost_equal(actual_ppf, expected_ppf, decimal=2)
     else:
         assert_almost_equal(actual_ppf, expected_ppf)
@@ -188,14 +193,17 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected_logpdf = scipy_dist.logpdf(actual_rvs)
     else:
         expected_logpdf = scipy_dist.logpmf(actual_rvs)
+
     if preliz_name == "HalfStudentT":
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=0)
+    elif preliz_name == "LogitNormal":
+        assert_almost_equal(actual_logpdf, expected_logpdf, decimal=1)
     else:
         assert_almost_equal(actual_logpdf, expected_logpdf)
 
     actual_neg_logpdf = preliz_dist._neg_logpdf(actual_rvs)
     expected_neg_logpdf = -expected_logpdf.sum()
-    if preliz_name == "HalfStudentT":
+    if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=1)
     else:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)
@@ -221,7 +229,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         actual_moments = preliz_dist.moments("mv")
         expected_moments = scipy_dist.stats("mv")
 
-    if preliz_name == "HalfStudentT":
+    if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_moments, expected_moments, decimal=1)
     else:
         assert_almost_equal(actual_moments, expected_moments)

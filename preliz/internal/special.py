@@ -434,6 +434,26 @@ def gammaln(x):
 
 
 @nb.vectorize(nopython=True, cache=True)
+def logit(x):
+    if x == 0:
+        return -np.inf
+    elif x == 1:
+        return np.inf
+    if x < 0 or x > 1:
+        return np.nan
+    else:
+        return np.log(x / (1 - x))
+
+
+@nb.vectorize(nopython=True, cache=True)
+def expit(x):
+    if x >= 0:
+        return 1 / (1 + np.exp(-x))
+    else:
+        return np.exp(x) / (1 + np.exp(x))
+
+
+@nb.vectorize(nopython=True, cache=True)
 def xlogy(x, y):
     if x == 0:
         return 0.0
