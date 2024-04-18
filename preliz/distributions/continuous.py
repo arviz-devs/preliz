@@ -10,10 +10,8 @@ from copy import copy
 
 import numpy as np
 from scipy import stats
-from scipy.special import beta as betaf  # pylint: disable=no-name-in-module
-from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
-from ..internal.optimization import optimize_ml, optimize_moments, optimize_moments_rice
+from ..internal.optimization import optimize_moments_rice
 from ..internal.distribution_helper import all_not_none, any_not_none
 from .distributions import Continuous
 from .asymmetric_laplace import AsymmetricLaplace
@@ -29,6 +27,7 @@ from .inversegamma import InverseGamma
 from .kumaraswamy import Kumaraswamy
 from .laplace import Laplace
 from .logistic import Logistic
+from .logitnormal import LogitNormal
 from .lognormal import LogNormal
 from .moyal import Moyal
 from .normal import Normal
@@ -294,154 +293,6 @@ class HalfCauchy(Continuous):
     def _fit_mle(self, sample, **kwargs):
         _, beta = self.dist.fit(sample, **kwargs)
         self._update(beta)
-
-
-class LogitNormal(Continuous):
-    r"""
-    Logit-Normal distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-       f(x \mid \mu, \tau) =
-           \frac{1}{x(1-x)} \sqrt{\frac{\tau}{2\pi}}
-           \exp\left\{ -\frac{\tau}{2} (logit(x)-\mu)^2 \right\}
-
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import LogitNormal
-        az.style.use('arviz-doc')
-        mus = [0., 0., 0., 1.]
-        sigmas = [0.3, 1., 2., 1.]
-        for mu, sigma in zip(mus, sigmas):
-            LogitNormal(mu, sigma).plot_pdf()
-
-    ========  ==========================================
-    Support   :math:`x \in (0, 1)`
-    Mean      no analytical solution
-    Variance  no analytical solution
-    ========  ==========================================
-
-    Parameters
-    ----------
-    mu : float
-        Location parameter.
-    sigma : float
-        Scale parameter (sigma > 0).
-    tau : float
-        Scale parameter (tau > 0).
-    """
-
-    def __init__(self, mu=None, sigma=None, tau=None):
-        super().__init__()
-        self.dist = _LogitNormal
-        self.support = (0, 1)
-        self._parametrization(mu, sigma, tau)
-
-    def _parametrization(self, mu=None, sigma=None, tau=None):
-        if all_not_none(sigma, tau):
-            raise ValueError(
-                "Incompatible parametrization. Either use mu and sigma, or mu and tau."
-            )
-
-        names = ("mu", "sigma")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-
-        if tau is not None:
-            self.tau = tau
-            sigma = from_precision(tau)
-            names = ("mu", "tau")
-
-        self.mu = mu
-        self.sigma = sigma
-        self.param_names = names
-        if all_not_none(mu, sigma):
-            self._update(mu, sigma)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.mu, self.sigma)
-        return frozen
-
-    def _update(self, mu, sigma):
-        self.mu = np.float64(mu)
-        self.sigma = np.float64(sigma)
-        self.tau = to_precision(sigma)
-
-        if self.param_names[1] == "sigma":
-            self.params = (self.mu, self.sigma)
-        elif self.param_names[1] == "tau":
-            self.params = (self.mu, self.tau)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        mu = logit(mean)
-        sigma = np.diff((mean - sigma * 3, mean + sigma * 3))
-        self._update(mu, sigma)
-
-    def _fit_mle(self, sample, **kwargs):
-        mu, sigma = stats.norm.fit(logit(sample), **kwargs)
-        self._update(mu, sigma)
-
-
-class _LogitNormal(stats.rv_continuous):
-    def __init__(self, mu=None, sigma=None):
-        super().__init__()
-        self.mu = mu
-        self.sigma = sigma
-
-    def support(self, *args, **kwds):  # pylint: disable=unused-argument
-        return (0, 1)
-
-    def cdf(self, x, *args, **kwds):
-        return stats.norm(self.mu, self.sigma, *args, **kwds).cdf(logit(x))
-
-    def pdf(self, x, *args, **kwds):
-        x = np.asarray(x)
-        mask = np.logical_or(x == 0, x == 1)
-        result = np.zeros_like(x, dtype=float)
-        result[~mask] = stats.norm(self.mu, self.sigma, *args, **kwds).pdf(logit(x[~mask])) / (
-            x[~mask] * (1 - x[~mask])
-        )
-        return result
-
-    def logpdf(self, x, *args, **kwds):
-        x = np.asarray(x)
-        mask = np.logical_or(x == 0, x == 1)
-        result = np.full_like(x, -np.inf, dtype=float)
-        result[~mask] = (
-            stats.norm(self.mu, self.sigma, *args, **kwds).logpdf(logit(x[~mask]))
-            - np.log(x[~mask])
-            - np.log1p(-x[~mask])
-        )
-        return result
-
-    def ppf(self, q, *args, **kwds):
-        x_vals = np.linspace(0, 1, 1000)
-        idx = np.searchsorted(self.cdf(x_vals[:-1], *args, **kwds), q)
-        return x_vals[idx]
-
-    def _stats(self, *args, **kwds):  # pylint: disable=unused-argument
-        # https://en.wikipedia.org/wiki/Logit-normal_distribution#Moments
-        norm = stats.norm(self.mu, self.sigma)
-        logistic_inv = expit(norm.ppf(np.linspace(0, 1, 100000)))
-        mean = np.mean(logistic_inv)
-        var = np.var(logistic_inv)
-        return (mean, var, np.nan, np.nan)
-
-    def entropy(self):  # pylint: disable=arguments-differ
-        moments = self._stats()
-        return stats.norm(moments[0], moments[1] ** 0.5).entropy()
-
-    def rvs(
-        self, size=1, random_state=None
-    ):  # pylint: disable=arguments-differ, disable=unused-argument
-        return expit(np.random.normal(self.mu, self.sigma, size))
 
 
 class Rice(Continuous):

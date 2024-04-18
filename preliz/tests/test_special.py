@@ -1,4 +1,4 @@
-import pytest
+# pylint: disable=no-member
 from numpy.testing import assert_almost_equal
 import numpy as np
 
@@ -57,3 +57,13 @@ def test_gamma():
 def test_digamma():
     x = np.linspace(0.1, 10, 100)
     assert_almost_equal(sc_special.digamma(x), pz_special.digamma(x))
+
+
+def test_logit():
+    x = np.linspace(-0.1, 1.1, 100)
+    assert_almost_equal(sc_special.logit(x), pz_special.logit(x))
+
+
+def test_expit():
+    x = np.linspace(-20, 10, 500)
+    assert_almost_equal(sc_special.expit(x), pz_special.expit(x))
