@@ -30,6 +30,7 @@ from .kumaraswamy import Kumaraswamy
 from .laplace import Laplace
 from .logistic import Logistic
 from .lognormal import LogNormal
+from .moyal import Moyal
 from .normal import Normal
 from .pareto import Pareto
 from .studentt import StudentT
@@ -441,86 +442,6 @@ class _LogitNormal(stats.rv_continuous):
         self, size=1, random_state=None
     ):  # pylint: disable=arguments-differ, disable=unused-argument
         return expit(np.random.normal(self.mu, self.sigma, size))
-
-
-class Moyal(Continuous):
-    r"""
-    Moyal distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \mu,\sigma) =
-            \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{1}{2}\left(z + e^{-z}\right)},
-
-    where
-
-    .. math::
-
-       z = \frac{x-\mu}{\sigma}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Moyal
-        az.style.use('arviz-doc')
-        mus = [-1., 0., 4.]
-        sigmas = [2., 1., 4.]
-        for mu, sigma in zip(mus, sigmas):
-            Moyal(mu, sigma).plot_pdf(support=(-10,20))
-
-    ========  ==============================================================
-    Support   :math:`x \in (-\infty, \infty)`
-    Mean      :math:`\mu + \sigma\left(\gamma + \log 2\right)`, where
-              :math:`\gamma` is the Euler-Mascheroni constant
-    Variance  :math:`\frac{\pi^{2}}{2}\sigma^{2}`
-    ========  ==============================================================
-
-    Parameters
-    ----------
-    mu : float
-        Location parameter.
-    sigma : float
-        Scale parameter (sigma > 0).
-    """
-
-    def __init__(self, mu=None, sigma=None):
-        super().__init__()
-        self.dist = copy(stats.moyal)
-        self.support = (-np.inf, np.inf)
-        self._parametrization(mu, sigma)
-
-    def _parametrization(self, mu=None, sigma=None):
-        self.mu = mu
-        self.sigma = sigma
-        self.params = (self.mu, self.sigma)
-        self.param_names = ("mu", "sigma")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
-        if all_not_none(mu, sigma):
-            self._update(self.mu, self.sigma)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(loc=self.mu, scale=self.sigma)
-        return frozen
-
-    def _update(self, mu, sigma):
-        self.mu = np.float64(mu)
-        self.sigma = np.float64(sigma)
-        self.params = (self.mu, self.sigma)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        sigma = sigma / np.pi * 2**0.5
-        mu = mean - sigma * (np.euler_gamma + np.log(2))
-        self._update(mu, sigma)
-
-    def _fit_mle(self, sample, **kwargs):
-        mu, sigma = self.dist.fit(sample, **kwargs)
-        self._update(mu, sigma)
 
 
 class Rice(Continuous):
