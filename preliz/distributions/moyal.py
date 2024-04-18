@@ -6,7 +6,7 @@ from scipy.special import erf, erfinv, zeta  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import erf, erfinv, mean_and_std, ppf_bounds_cont
+from ..internal.special import erf, erfinv, ppf_bounds_cont
 from ..internal.optimization import optimize_ml
 
 
