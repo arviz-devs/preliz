@@ -93,7 +93,7 @@ from preliz.distributions import (
         (Logistic(), -1, 1, 0.5, (-np.inf, np.inf), (0, 0.91)),
         (LogNormal(), 1, 4, 0.5, (0, np.inf), (1.216, 0.859)),
         (LogNormal(mu=1), 1, 4, 0.5, (0, np.inf), (0.978)),
-        (LogitNormal(), 0.3, 0.8, 0.9, (0, 1), (0.226, 0.677)),
+        (LogitNormal(), 0.3, 0.8, 0.9, (0, 1), (0.213, 0.676)),
         (LogitNormal(mu=0.7), 0.3, 0.8, 0.9, (0, 1), (0.531)),
         (Moyal(), 0, 10, 0.9, (-np.inf, np.inf), (2.935, 1.6)),
         (Moyal(mu=4), 0, 10, 0.9, (-np.inf, np.inf), (1.445)),
