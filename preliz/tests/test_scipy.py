@@ -20,6 +20,7 @@ from preliz.distributions import (
     Laplace,
     Logistic,
     LogNormal,
+    Moyal,
     Normal,
     Pareto,
     StudentT,
@@ -66,6 +67,7 @@ from preliz.distributions import (
         (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
         (Logistic, stats.logistic, {"mu": 2.5, "s": 4}, {"loc": 2.5, "scale": 4}),
         (LogNormal, stats.lognorm, {"mu": 0, "sigma": 2}, {"s": 2, "scale": 1}),
+        (Moyal, stats.moyal, {"mu": 1, "sigma": 2}, {"loc": 1, "scale": 2}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (Pareto, stats.pareto, {"m": 1, "alpha": 4.5}, {"b": 4.5}),
         (StudentT, stats.t, {"nu": 5, "mu": 0, "sigma": 2}, {"df": 5, "loc": 0, "scale": 2}),
@@ -122,7 +124,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected = scipy_dist.entropy()
         if preliz_dist.kind == "discrete":
             assert_almost_equal(actual, expected, decimal=1)
-        elif preliz_name == "HalfStudentT":
+        elif preliz_name in ["HalfStudentT", "Moyal"]:
             assert_almost_equal(actual, expected, decimal=2)
         else:
             assert_almost_equal(actual, expected, decimal=4)
@@ -134,6 +136,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     if preliz_name in [
         "HalfStudentT",
         "Kumaraswamy",
+        "Moyal",
         "StudentT",
         "Weibull",
         "InverseGamma",
