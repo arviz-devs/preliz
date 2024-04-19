@@ -7,7 +7,7 @@ from scipy.special import ndtr, expi  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont
+from ..internal.special import cdf_bounds
 from ..internal.optimization import optimize_ml, find_ppf
 
 
@@ -135,7 +135,7 @@ class Wald(Continuous):
         Compute the percent point function (PPF) at a given probability q.
         """
         q = np.asarray(q)
-        return nb_ppf(q, self)
+        return find_ppf(self, q)
 
     def logpdf(self, x):
         """
@@ -188,10 +188,6 @@ def nb_cdf(x, mu, lam):
     v = x / mu
     z = ndtr(u * (v - 1)) + np.exp(2 * lam / mu) * ndtr(-u * (v + 1))
     return cdf_bounds(z, x, 0, np.inf)
-
-
-def nb_ppf(q, dist):
-    return ppf_bounds_cont(find_ppf(dist, q), q, 0, np.inf)
 
 
 def nb_entropy(mu, lam):

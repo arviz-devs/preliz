@@ -18,6 +18,7 @@ from .binomial import Binomial  # pylint: disable=unused-import
 from .categorical import Categorical  # pylint: disable=unused-import
 from .discrete_uniform import DiscreteUniform  # pylint: disable=unused-import
 from .geometric import Geometric  # pylint: disable=unused-import
+from .hypergeometric import HyperGeometric  # pylint: disable=unused-import
 from .poisson import Poisson  # pylint: disable=unused-import
 from .negativebinomial import NegativeBinomial  # pylint: disable=unused-import
 from .zi_binomial import ZeroInflatedBinomial  # pylint: disable=unused-import
@@ -244,81 +245,3 @@ class _DiscreteWeibull(stats.rv_continuous):
 
     def rvs(self, size=1, random_state=None):  # pylint: disable=arguments-differ
         return self.ppf(np.random.uniform(size=size), random_state=random_state)
-
-
-class HyperGeometric(Discrete):
-    R"""
-    Discrete hypergeometric distribution.
-
-    The probability of :math:`x` successes in a sequence of :math:`n` bernoulli
-    trials taken without replacement from a population of :math:`N` objects,
-    containing :math:`k` good (or successful or Type I) objects.
-    The pmf of this distribution is
-
-    .. math:: f(x \mid N, n, k) = \frac{\binom{k}{x}\binom{N-k}{n-x}}{\binom{N}{n}}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import HyperGeometric
-        az.style.use('arviz-doc')
-        N = 50
-        k = 10
-        for n in [20, 25]:
-            HyperGeometric(N, k, n).plot_pdf(support=(1,15))
-
-    ========  =============================
-    Support   :math:`x \in \left[\max(0, n - N + k), \min(k, n)\right]`
-    Mean      :math:`\dfrac{nk}{N}`
-    Variance  :math:`\dfrac{(N-n)nk(N-k)}{(N-1)N^2}`
-    ========  =============================
-
-    Parameters
-    ----------
-    N : int
-        Total size of the population (N > 0)
-    k : int
-        Number of successful individuals in the population (0 <= k <= N)
-    n : int
-        Number of samples drawn from the population (0 <= n <= N)
-    """
-
-    def __init__(self, N=None, k=None, n=None):
-        super().__init__()
-        self.dist = copy(stats.hypergeom)
-        self._parametrization(N, k, n)
-        self.support = (0, np.inf)
-
-    def _parametrization(self, N=None, k=None, n=None):
-        self.N = N
-        self.k = k
-        self.n = n
-        self.param_names = ("N", "k", "n")
-        self.params_support = ((eps, np.inf), (eps, self.N), (eps, self.N))
-        if all_not_none(self.N, self.k, self.n):
-            self._update(N, k, n)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(M=self.N, N=self.n, n=self.k)
-        return frozen
-
-    def _update(self, N, k, n):
-        self.N = np.int64(N)
-        self.k = np.int64(k)
-        self.n = np.int64(n)
-        self.params = (self.N, self.k, self.n)
-        self.support = (max(0, n - N + k), min(k, n))
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        n = mean + sigma * 4
-        k = n
-        N = k * n / mean
-        params = N, k, n
-        optimize_moments(self, mean, sigma, params)
-
-    def _fit_mle(self, sample):
-        optimize_ml(self, sample)

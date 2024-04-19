@@ -6,7 +6,7 @@ import warnings
 from copy import copy
 
 import numpy as np
-from scipy.optimize import minimize, least_squares, root_scalar
+from scipy.optimize import minimize, least_squares, root_scalar, brentq
 from scipy.special import i0, i1, i0e, i1e  # pylint: disable=no-name-in-module
 from .distribution_helper import init_vals as default_vals
 
@@ -416,39 +416,42 @@ def find_kappa(data, mu):
 
 
 def find_ppf(dist, q):
-    """
-    Function to find the percent point function (ppf) given the
-    cumulative distribution function (cdf).
-
-    Parameters
-    ----------
-
-    dist : preliz distribution
-        The distribution for which to find the ppf.
-    q : float or list-like
-        The required quantile(s) for which to find the ppf.
-    """
-
-    def objective(x, dist, q):
-        return np.sum((dist.cdf(x) - q) ** 2)
-
-    q = np.asarray(q)
-    initial_guess, bounds = initialize_ppf(dist, q)
-    opt = minimize(objective, x0=initial_guess, method="Powell", bounds=bounds, args=(dist, q))
-
-    return opt["x"]
-
-
-def initialize_ppf(dist, q):
-    # Calculate k using the formula for Chebyshev's inequality
-    q = np.clip(q, 0.1, 0.9)
-    k = np.sqrt(1 / (1 - q))
-
-    k = np.where(q < 0.5, -k, k)
-
-    initial_guess = dist.mean() + k * dist.std()
+    q = np.atleast_1d(q)
+    ppf = np.zeros_like(q)
     lower, upper = dist.support
-    np.where(initial_guess < lower, lower, np.where(initial_guess > upper, upper, initial_guess))
-    bounds = [(lower, upper)]
+    for idx, q_i in enumerate(q):
+        if q_i < 0:
+            ppf[idx] = np.nan
+        elif q_i > 1:
+            ppf[idx] = np.nan
+        elif q_i == 0:
+            if dist.kind == "discrete":
+                ppf[idx] = lower - 1
+            else:
+                ppf[idx] = lower
+        elif q_i == 1:
+            ppf[idx] = upper
+        else:
+            if dist.__class__.__name__ == "HyperGeometric":
+                ppf[idx] = _ppf_single(dist, q_i) + 1
+            else:
+                ppf[idx] = _ppf_single(dist, q_i)
+    return ppf
 
-    return initial_guess, bounds
+
+def _ppf_single(dist, q):
+    def func(x, dist, q):
+        return dist.cdf(x) - q
+
+    factor = 10.0
+    left, right = dist.support
+
+    left = min(-factor, right)
+    while func(left, dist, q) > 0.0:
+        left, right = left * factor, left
+
+    right = max(factor, left)
+    while func(right, dist, q) < 0.0:
+        left, right = right, right * factor
+
+    return brentq(func, left, right, args=(dist, q))

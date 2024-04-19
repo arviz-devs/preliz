@@ -117,6 +117,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.geometric
    :members:
 
+.. automodule:: preliz.distributions.hypergeometric
+   :members:
+
 .. automodule:: preliz.distributions.poisson
    :members:
 
