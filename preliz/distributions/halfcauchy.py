@@ -3,7 +3,7 @@
 import numpy as np
 import numba as nb
 
-from ..internal.special import ppf_bounds_cont
+from ..internal.special import cdf_bounds, ppf_bounds_cont
 from ..internal.optimization import optimize_ml
 from ..internal.distribution_helper import eps
 from .distributions import Continuous
@@ -71,7 +71,7 @@ class HalfCauchy(Continuous):
         Compute the cumulative distribution function (CDF) at a given point x.
         """
         x = np.asarray(x)
-        return nb_cdf(x, self.beta)
+        return nb_cdf(x, self.beta, 0, np.inf)
 
     def ppf(self, q):
         """
@@ -126,8 +126,9 @@ class HalfCauchy(Continuous):
 
 
 @nb.njit(cache=True)
-def nb_cdf(x, beta):
-    return 2 / np.pi * np.arctan(x / beta) if x >= 0 else 0
+def nb_cdf(x, beta, lower, upper):
+    prob = 2 / np.pi * np.arctan(x / beta)
+    return cdf_bounds(prob, x, lower, upper)
 
 
 @nb.njit(cache=True)
