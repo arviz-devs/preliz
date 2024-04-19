@@ -33,6 +33,7 @@ from preliz.distributions import (
     Bernoulli,
     Binomial,
     Geometric,
+    HyperGeometric,
     NegativeBinomial,
     Poisson,
     ZeroInflatedBinomial,
@@ -87,6 +88,7 @@ from preliz.distributions import (
         (Bernoulli, stats.bernoulli, {"p": 0.4}, {"p": 0.4}),
         (DiscreteUniform, stats.randint, {"lower": -2, "upper": 1}, {"low": -2, "high": 2}),
         (Geometric, stats.geom, {"p": 0.4}, {"p": 0.4}),
+        (HyperGeometric, stats.hypergeom, {"N": 50, "k": 10, "n": 25}, {"M": 50, "N": 25, "n": 10}),
         (
             NegativeBinomial,
             stats.nbinom,

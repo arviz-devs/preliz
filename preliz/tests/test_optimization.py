@@ -12,6 +12,8 @@ from preliz.distributions import (
     Normal,
     StudentT,
     Weibull,
+    Geometric,
+    Poisson,
 )
 
 
@@ -25,6 +27,8 @@ from preliz.distributions import (
         (Normal, {"mu": 0, "sigma": 2}),
         (StudentT, {"nu": 5, "mu": 0, "sigma": 2}),
         (Weibull, {"alpha": 5.0, "beta": 2.0}),
+        (Geometric, {"p": 0.4}),
+        (Poisson, {"mu": 3.5}),
     ],
 )
 def test_find_ppf(p_dist, p_params):
