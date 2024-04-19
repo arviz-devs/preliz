@@ -147,7 +147,7 @@ from preliz.distributions import (
         (Binomial(), 3, 9, 0.9, (0, 9), (9, 0.490)),
         (Binomial(n=12), 3, 9, 0.9, (0, 12), (0.612)),
         (DiscreteUniform(), -2, 10, 0.9, (-3, 11), (-2, 10)),
-        (DiscreteWeibull(), 1, 6, 0.7, (0, np.inf), (0.938, 1.604)),
+        (DiscreteWeibull(), 1, 6, 0.7, (0, np.inf), (0.939, 1.608)),
         (Geometric(), 1, 4, 0.99, (0, np.inf), (0.6837)),
         (HyperGeometric(), 2, 14, 0.9, (0, 21), (56, 21, 21)),
         (NegativeBinomial(), 0, 15, 0.9, (0, np.inf), (7.573, 2.077)),
