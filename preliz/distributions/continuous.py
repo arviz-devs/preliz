@@ -21,6 +21,7 @@ from .chi_squared import ChiSquared
 from .exponential import Exponential
 from .gamma import Gamma
 from .gumbel import Gumbel
+from .halfcauchy import HalfCauchy
 from .halfnormal import HalfNormal
 from .halfstudentt import HalfStudentT
 from .inversegamma import InverseGamma
@@ -227,72 +228,6 @@ class ExGaussian(Continuous):
     def _fit_mle(self, sample, **kwargs):
         K, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, K * sigma)
-
-
-class HalfCauchy(Continuous):
-    r"""
-    HalfCauchy Distribution
-
-    The pdf of this distribution is
-
-    .. math::
-
-        f(x \mid \beta) =
-            \frac{2}{\pi \beta [1 + (\frac{x}{\beta})^2]}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import HalfCauchy
-        az.style.use('arviz-doc')
-        for beta in [.5, 1., 2.]:
-            HalfCauchy(beta).plot_pdf(support=(0,5))
-
-    ========  ==========================================
-    Support   :math:`x \in [0, \infty)`
-    Mean      undefined
-    Variance  undefined
-    ========  ==========================================
-
-    Parameters
-    ----------
-    beta : float
-        Scale parameter :math:`\beta` (``beta`` > 0)
-    """
-
-    def __init__(self, beta=None):
-        super().__init__()
-        self.dist = copy(stats.halfcauchy)
-        self.support = (0, np.inf)
-        self._parametrization(beta)
-
-    def _parametrization(self, beta=None):
-        self.beta = beta
-        self.params = (self.beta,)
-        self.param_names = ("beta",)
-        self.params_support = ((eps, np.inf),)
-        if self.beta is not None:
-            self._update(self.beta)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(scale=self.beta)
-        return frozen
-
-    def _update(self, beta):
-        self.beta = np.float64(beta)
-        self.params = (self.beta,)
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
-        beta = sigma
-        self._update(beta)
-
-    def _fit_mle(self, sample, **kwargs):
-        _, beta = self.dist.fit(sample, **kwargs)
-        self._update(beta)
 
 
 class Rice(Continuous):
