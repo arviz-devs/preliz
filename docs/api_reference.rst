@@ -43,7 +43,10 @@ This reference provides detailed documentation for user functions in the current
    :members:
 
 .. automodule:: preliz.distributions.gumbel
-   :members:   
+   :members:
+
+.. automodule:: preliz.distributions.halfcauchy
+   :members:
 
 .. automodule:: preliz.distributions.halfnormal
    :members:
