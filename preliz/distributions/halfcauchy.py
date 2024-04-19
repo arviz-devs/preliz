@@ -125,7 +125,7 @@ class HalfCauchy(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.vectorize(nopython=True, cache=True)
+@nb.njit(cache=True)
 def nb_cdf(x, beta):
     return 2 / np.pi * np.arctan(x / beta) if x >= 0 else 0
 
