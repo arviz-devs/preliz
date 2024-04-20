@@ -1,8 +1,6 @@
 import inspect
-import logging
 import traceback
 import sys
-
 
 try:
     from IPython import get_ipython
@@ -16,9 +14,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
 from matplotlib.ticker import MaxNLocator
-from scipy.interpolate import interp1d, PchipInterpolator
-
-_log = logging.getLogger("preliz")
 
 
 def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False, ax=None):
@@ -152,17 +147,8 @@ def plot_pdfpmf(
             ax.vlines(x, 0, mass, ls="dotted", color=p[0].get_color(), alpha=alpha)
         else:
             x_c = np.linspace(x[0], x[-1], 1000)
-            # if new distribution, directly compute pdf at non-integer values
-            if dist.rv_frozen is None:
-                mass_c = np.clip(dist.pdf(x_c), np.min(mass), np.max(mass))
-            # if old, interpolate
-            else:
-                if len(x) > 2:
-                    interp = PchipInterpolator(x, mass)
-                else:
-                    interp = interp1d(x, mass)
-
-                mass_c = np.clip(interp(x_c), np.min(mass), np.max(mass))
+            # we compute pmf at non-integer values to get a continuous curve
+            mass_c = np.clip(dist.pdf(x_c), np.min(mass), np.max(mass))
 
             p = ax.plot(x_c, mass_c, ls="dotted", color=color, alpha=alpha)
             ax.plot(x, mass, "o", label=label, color=p[0].get_color(), alpha=alpha)
