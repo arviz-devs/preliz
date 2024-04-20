@@ -28,7 +28,7 @@ class ZeroInflatedBinomial(Discrete):
 
         import arviz as az
         from preliz import ZeroInflatedBinomial
-        az.style.use('arviz-white')
+        az.style.use('arviz-doc')
         ns = [10, 20]
         ps = [0.5, 0.7]
         psis = [0.7, 0.4]
