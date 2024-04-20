@@ -436,7 +436,7 @@ def find_ppf(dist, q):
                 ppf[idx] = _ppf_single(dist, q_i) + 1
             else:
                 ppf[idx] = _ppf_single(dist, q_i)
-    return ppf
+    return ppf[0] if len(ppf) == 1 else ppf
 
 
 def _ppf_single(dist, q):
