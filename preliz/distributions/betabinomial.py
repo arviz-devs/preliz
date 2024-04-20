@@ -203,9 +203,8 @@ def nb_logpdf(x, alpha, beta, n, lower, upper):
     if x > upper:
         return -np.inf
     else:
-        k = np.floor(x)
-        combiln = -np.log(n + 1) - betaln(n - k + 1, k + 1)
-        return combiln + betaln(k + alpha, n - k + beta) - betaln(alpha, beta)
+        combiln = -np.log(n + 1) - betaln(n - x + 1, x + 1)
+        return combiln + betaln(x + alpha, n - x + beta) - betaln(alpha, beta)
 
 
 @nb.njit(cache=True)
