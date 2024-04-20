@@ -432,11 +432,11 @@ def find_ppf(dist, q):
         elif q_i == 1:
             ppf[idx] = upper
         else:
-            if dist.__class__.__name__ == "HyperGeometric":
+            if dist.__class__.__name__ in ["HyperGeometric", "BetaBinomial"]:
                 ppf[idx] = _ppf_single(dist, q_i) + 1
             else:
                 ppf[idx] = _ppf_single(dist, q_i)
-    return ppf
+    return ppf[0] if len(ppf) == 1 else ppf
 
 
 def _ppf_single(dist, q):

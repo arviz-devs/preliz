@@ -1,9 +1,29 @@
+# Continuous Distributions
 from .continuous import *
-from .discrete import *
+
+# Multivariate Distributions
 from .continuous_multivariate import *
+
+# Discrete Distributions
+from .bernoulli import Bernoulli
+from .betabinomial import BetaBinomial
+from .binomial import Binomial
+from .categorical import Categorical
+from .discrete_uniform import DiscreteUniform
+from .discrete_weibull import DiscreteWeibull
+from .geometric import Geometric
+from .hypergeometric import HyperGeometric
+from .poisson import Poisson
+from .negativebinomial import NegativeBinomial
+from .zi_binomial import ZeroInflatedBinomial
+from .zi_negativebinomial import ZeroInflatedNegativeBinomial
+from .zi_poisson import ZeroInflatedPoisson
+
+# Transform Distributions
 from .truncated import Truncated
 from .censored import Censored
 from .hurdle import Hurdle
+
 
 all_continuous = [
     AsymmetricLaplace,
