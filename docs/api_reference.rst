@@ -108,6 +108,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.bernoulli
    :members:
 
+.. automodule:: preliz.distributions.betabinomial
+   :members:
+
 .. automodule:: preliz.distributions.binomial
    :members:
 

@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 
 
-from preliz.distributions import (
+from preliz import (
     AsymmetricLaplace,
     Beta,
     Cauchy,
@@ -32,6 +32,7 @@ from preliz.distributions import (
     Wald,
     Weibull,
     Bernoulli,
+    BetaBinomial,
     Binomial,
     Geometric,
     HyperGeometric,
@@ -87,6 +88,12 @@ from preliz.distributions import (
             {"c": 5.0, "scale": 2.0},
         ),
         (Binomial, stats.binom, {"n": 4, "p": 0.4}, {"n": 4, "p": 0.4}),
+        (
+            BetaBinomial,
+            stats.betabinom,
+            {"alpha": 2, "beta": 5, "n": 10},
+            {"n": 10, "a": 2, "b": 5},
+        ),
         (Bernoulli, stats.bernoulli, {"p": 0.4}, {"p": 0.4}),
         (DiscreteUniform, stats.randint, {"lower": -2, "upper": 1}, {"low": -2, "high": 2}),
         (Geometric, stats.geom, {"p": 0.4}, {"p": 0.4}),
