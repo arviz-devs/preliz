@@ -51,13 +51,13 @@ def test_truncated():
     assert_almost_equal(actual_var, expected_var, decimal=2)
 
     actual_skew = custom_truncnorm_dist.skewness()
-    expected_skew = genera_truncnorm_dist.rv_frozen.stats("s")
+    expected_skew = genera_truncnorm_dist.skewness()
     assert_almost_equal(actual_skew, expected_skew, decimal=2)
 
     actual_kurt = custom_truncnorm_dist.kurtosis()
-    expected_kurt = genera_truncnorm_dist.rv_frozen.stats("k")
+    expected_kurt = genera_truncnorm_dist.kurtosis()
     assert_almost_equal(actual_kurt, expected_kurt, decimal=1)
 
     actual_entropy = custom_truncnorm_dist.entropy()
-    expected_entropy = genera_truncnorm_dist._entropy()
+    expected_entropy = genera_truncnorm_dist.entropy()
     assert_almost_equal(actual_entropy, expected_entropy, decimal=2)
