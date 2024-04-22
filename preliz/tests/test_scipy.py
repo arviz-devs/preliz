@@ -27,6 +27,7 @@ from preliz import (
     Pareto,
     StudentT,
     Triangular,
+    TruncatedNormal,
     Uniform,
     VonMises,
     Wald,
@@ -78,6 +79,12 @@ from preliz import (
         (Pareto, stats.pareto, {"m": 1, "alpha": 4.5}, {"b": 4.5}),
         (StudentT, stats.t, {"nu": 5, "mu": 0, "sigma": 2}, {"df": 5, "loc": 0, "scale": 2}),
         (Triangular, stats.triang, {"lower": 0, "upper": 1, "c": 0.45}, {"c": 0.45}),
+        (
+            TruncatedNormal,
+            stats.truncnorm,
+            {"mu": 0, "sigma": 1, "lower": -1, "upper": 1},
+            {"loc": 0, "scale": 1, "a": -1, "b": 1},
+        ),
         (Uniform, stats.uniform, {"lower": -2, "upper": 1}, {"loc": -2, "scale": 3}),
         (VonMises, stats.vonmises, {"mu": 0, "kappa": 10}, {"loc": 0, "kappa": 10}),
         (Wald, stats.invgauss, {"mu": 2, "lam": 10}, {"mu": 2 / 10, "scale": 10}),
@@ -216,6 +223,8 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     expected_neg_logpdf = -expected_logpdf.sum()
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=1)
+    elif preliz_name in ["TruncatedNormal"]:
+        assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=6)
     else:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)
 
@@ -242,6 +251,8 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_moments, expected_moments, decimal=1)
+    elif preliz_name in ["TruncatedNormal"]:
+        assert_almost_equal(actual_moments, expected_moments, decimal=6)
     else:
         assert_almost_equal(actual_moments, expected_moments)
 

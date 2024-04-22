@@ -87,6 +87,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.triangular
    :members:
 
+.. automodule:: preliz.distributions.truncatednormal
+   :members:
+
 .. automodule:: preliz.distributions.uniform
    :members:
 
