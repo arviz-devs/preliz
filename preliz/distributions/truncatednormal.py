@@ -3,7 +3,7 @@
 import numpy as np
 import numba as nb
 
-from ..internal.special import cdf_bounds, erf, erfinv, ppf_bounds_cont
+from ..internal.special import cdf_bounds, erf, erfinv, mean_and_std, ppf_bounds_cont
 from ..internal.optimization import optimize_ml
 from ..internal.distribution_helper import eps, all_not_none
 from .distributions import Continuous
@@ -349,6 +349,8 @@ class TruncatedNormal(Continuous):
         self._update(mean, sigma)
 
     def _fit_mle(self, sample):
+        mean, sigma = mean_and_std(sample)
+        self._update(mean, sigma, np.min(sample), np.max(sample))
         optimize_ml(self, sample)
 
 

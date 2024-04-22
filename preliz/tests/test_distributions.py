@@ -161,7 +161,7 @@ def test_moments(distribution, params):
         (StudentT, (4, 0, 1)),
         (StudentT, (1000, 0, 1)),
         (Triangular, (-3, 0, 5)),
-        (TruncatedNormal, (0, 1, -np.inf, np.inf)),
+        (TruncatedNormal, (0, 1, -1, 1)),
         (Uniform, (0, 1)),
         (VonMises, (0, 1)),
         (Wald, (1, 1)),
