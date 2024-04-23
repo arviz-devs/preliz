@@ -25,6 +25,7 @@ from preliz import (
     Moyal,
     Normal,
     Pareto,
+    Rice,
     SkewNormal,
     StudentT,
     Triangular,
@@ -84,6 +85,7 @@ from preliz import (
             {"mu": 1, "sigma": 0.5, "alpha": 2},
             {"a": 2, "loc": 1, "scale": 0.5},
         ),
+        (Rice, stats.rice, {"nu": 0.5, "sigma": 2}, {"b": 0.25, "scale": 2}),
         (StudentT, stats.t, {"nu": 5, "mu": 0, "sigma": 2}, {"df": 5, "loc": 0, "scale": 2}),
         (Triangular, stats.triang, {"lower": 0, "upper": 1, "c": 0.45}, {"c": 0.45}),
         (
@@ -151,7 +153,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected = scipy_dist.entropy()
         if preliz_dist.kind == "discrete":
             assert_almost_equal(actual, expected, decimal=1)
-        elif preliz_name in ["HalfStudentT", "Moyal", "LogitNormal", "SkewNormal"]:
+        elif preliz_name in ["HalfStudentT", "Moyal", "LogitNormal", "SkewNormal", "Rice"]:
             assert_almost_equal(actual, expected, decimal=2)
         else:
             assert_almost_equal(actual, expected, decimal=4)
@@ -239,6 +241,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     if preliz_dist.__class__.__name__ not in [
         "HalfStudentT",
+        "Rice",
         "VonMises",
         "ZeroInflatedBinomial",
         "ZeroInflatedNegativeBinomial",
