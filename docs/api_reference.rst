@@ -81,6 +81,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.pareto
    :members:
 
+.. automodule:: preliz.distributions.rice
+   :members:
+
 .. automodule:: preliz.distributions.skewnormal
    :members:
 

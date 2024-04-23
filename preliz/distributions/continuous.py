@@ -11,8 +11,7 @@ from copy import copy
 import numpy as np
 from scipy import stats
 
-from ..internal.optimization import optimize_moments_rice
-from ..internal.distribution_helper import all_not_none, any_not_none
+from ..internal.distribution_helper import all_not_none
 from .distributions import Continuous
 from .asymmetric_laplace import AsymmetricLaplace
 from .beta import Beta
@@ -35,6 +34,7 @@ from .normal import Normal
 from .pareto import Pareto
 from .skewnormal import SkewNormal
 from .studentt import StudentT
+from .rice import Rice
 from .triangular import Triangular
 from .truncatednormal import TruncatedNormal
 from .uniform import Uniform
@@ -230,118 +230,3 @@ class ExGaussian(Continuous):
     def _fit_mle(self, sample, **kwargs):
         K, mu, sigma = self.dist.fit(sample, **kwargs)
         self._update(mu, sigma, K * sigma)
-
-
-class Rice(Continuous):
-    r"""
-    Rice distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-        f(x\mid \nu ,\sigma )=
-            {\frac  {x}{\sigma ^{2}}}\exp
-            \left({\frac  {-(x^{2}+\nu ^{2})}
-            {2\sigma ^{2}}}\right)I_{0}\left({\frac  {x\nu }{\sigma ^{2}}}\right)
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import Rice
-        az.style.use('arviz-doc')
-        nus = [0., 0., 4.]
-        sigmas = [1., 2., 2.]
-        for nu, sigma in  zip(nus, sigmas):
-            Rice(nu, sigma).plot_pdf(support=(0,10))
-
-    ========  ==============================================================
-    Support   :math:`x \in (0, \infty)`
-    Mean      :math:`\sigma {\sqrt  {\pi /2}}\,\,L_{{1/2}}(-\nu ^{2}/2\sigma ^{2})`
-    Variance  :math:`2\sigma ^{2}+\nu ^{2}-{\frac  {\pi \sigma ^{2}}{2}}L_{{1/2}}^{2}
-                        \left({\frac  {-\nu ^{2}}{2\sigma ^{2}}}\right)`
-    ========  ==============================================================
-
-    Rice distribution has 2 alternative parameterizations. In terms of nu and sigma
-    or b and sigma.
-
-    The link between the two parametrizations is given by
-
-    .. math::
-
-       b = \dfrac{\nu}{\sigma}
-
-    Parameters
-    ----------
-    nu : float
-        Noncentrality parameter.
-    sigma : float
-        Scale parameter.
-    b : float
-        Shape parameter.
-    """
-
-    def __init__(self, nu=None, sigma=None, b=None):
-        super().__init__()
-        self.name = "rice"
-        self.dist = copy(stats.rice)
-        self.support = (0, np.inf)
-        self._parametrization(nu, sigma, b)
-
-    def _parametrization(self, nu=None, sigma=None, b=None):
-        if all_not_none(nu, b):
-            raise ValueError(
-                "Incompatible parametrization. Either use nu and sigma or b and sigma."
-            )
-
-        self.param_names = ("nu", "sigma")
-        self.params_support = ((eps, np.inf), (eps, np.inf))
-
-        if b is not None:
-            self.b = b
-            self.sigma = sigma
-            self.param_names = ("b", "sigma")
-            if all_not_none(b, sigma):
-                nu = self._from_b(b, sigma)
-
-        self.nu = nu
-        self.sigma = sigma
-        if all_not_none(self.nu, self.sigma):
-            self._update(self.nu, self.sigma)
-
-    def _from_b(self, b, sigma):
-        nu = b * sigma
-        return nu
-
-    def _to_b(self, nu, sigma):
-        b = nu / sigma
-        return b
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            b_ = self._to_b(self.nu, self.sigma)
-            frozen = self.dist(b=b_, scale=self.sigma)
-        return frozen
-
-    def _update(self, nu, sigma):
-        self.nu = np.float64(nu)
-        self.sigma = np.float64(sigma)
-        self.b = self._to_b(self.nu, self.sigma)
-
-        if self.param_names[0] == "nu":
-            self.params = (self.nu, self.sigma)
-        elif self.param_names[0] == "b":
-            self.params = (self.b, self.sigma)
-
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        nu, sigma = optimize_moments_rice(mean, sigma)
-        self._update(nu, sigma)
-
-    def _fit_mle(self, sample, **kwargs):
-        b, _, sigma = self.dist.fit(sample, **kwargs)
-        nu = self._from_b(b, sigma)
-        self._update(nu, sigma)
