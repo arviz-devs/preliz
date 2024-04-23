@@ -25,6 +25,7 @@ from preliz import (
     Moyal,
     Normal,
     Pareto,
+    SkewNormal,
     StudentT,
     Triangular,
     TruncatedNormal,
@@ -77,6 +78,12 @@ from preliz import (
         (Moyal, stats.moyal, {"mu": 1, "sigma": 2}, {"loc": 1, "scale": 2}),
         (Normal, stats.norm, {"mu": 0, "sigma": 2}, {"loc": 0, "scale": 2}),
         (Pareto, stats.pareto, {"m": 1, "alpha": 4.5}, {"b": 4.5}),
+        (
+            SkewNormal,
+            stats.skewnorm,
+            {"mu": 1, "sigma": 0.5, "alpha": 2},
+            {"a": 2, "loc": 1, "scale": 0.5},
+        ),
         (StudentT, stats.t, {"nu": 5, "mu": 0, "sigma": 2}, {"df": 5, "loc": 0, "scale": 2}),
         (Triangular, stats.triang, {"lower": 0, "upper": 1, "c": 0.45}, {"c": 0.45}),
         (
@@ -144,7 +151,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected = scipy_dist.entropy()
         if preliz_dist.kind == "discrete":
             assert_almost_equal(actual, expected, decimal=1)
-        elif preliz_name in ["HalfStudentT", "Moyal", "LogitNormal"]:
+        elif preliz_name in ["HalfStudentT", "Moyal", "LogitNormal", "SkewNormal"]:
             assert_almost_equal(actual, expected, decimal=2)
         else:
             assert_almost_equal(actual, expected, decimal=4)
@@ -201,7 +208,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     x_vals = [-1, 0, 0.25, 0.5, 0.75, 1, 2]
     actual_ppf = preliz_dist.ppf(x_vals)
     expected_ppf = scipy_dist.ppf(x_vals)
-    if preliz_name in ["HalfStudentT", "Wald", "LogitNormal"]:
+    if preliz_name in ["HalfStudentT", "Wald", "LogitNormal", "SkewNormal"]:
         assert_almost_equal(actual_ppf, expected_ppf, decimal=2)
     else:
         assert_almost_equal(actual_ppf, expected_ppf)
@@ -216,6 +223,8 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=0)
     elif preliz_name == "LogitNormal":
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=1)
+    elif preliz_name == "SkewNormal":
+        assert_almost_equal(actual_logpdf, expected_logpdf, decimal=6)
     else:
         assert_almost_equal(actual_logpdf, expected_logpdf)
 
@@ -223,7 +232,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     expected_neg_logpdf = -expected_logpdf.sum()
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=1)
-    elif preliz_name in ["TruncatedNormal"]:
+    elif preliz_name in ["TruncatedNormal", "SkewNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=6)
     else:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)
@@ -261,5 +270,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     if preliz_name == "HalfStudentT":
         assert_almost_equal(actual_median, expected_median, decimal=1)
+    elif preliz_name == "SkewNormal":
+        assert_almost_equal(actual_median, expected_median, decimal=6)
     else:
         assert_almost_equal(actual_median, expected_median)
