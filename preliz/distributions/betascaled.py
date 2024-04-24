@@ -72,7 +72,6 @@ class BetaScaled(Continuous):
         self.param_names = ("alpha", "beta", "lower", "upper")
         self.params_support = ((eps, np.inf), (eps, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
         if all_not_none(alpha, beta):
-            print(alpha, beta, lower, upper)
             self._update(alpha, beta, lower, upper)
 
     def _update(self, alpha, beta, lower=None, upper=None):
