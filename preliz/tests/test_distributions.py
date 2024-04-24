@@ -8,6 +8,7 @@ from test_helper import run_notebook
 from preliz.distributions import (
     AsymmetricLaplace,
     Beta,
+    BetaScaled,
     Cauchy,
     ChiSquared,
     Gamma,
@@ -137,6 +138,7 @@ def test_moments(distribution, params):
     [
         (AsymmetricLaplace, (1, 4, 3)),
         (Beta, (2, 5)),
+        (BetaScaled, (2, 2, -1, 2)),
         (Cauchy, (0, 1)),
         (ChiSquared, (1,)),
         (ExGaussian, (0, 1, 3)),
