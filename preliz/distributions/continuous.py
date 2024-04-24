@@ -15,6 +15,7 @@ from ..internal.distribution_helper import all_not_none
 from .distributions import Continuous
 from .asymmetric_laplace import AsymmetricLaplace
 from .beta import Beta
+from .betascaled import BetaScaled
 from .cauchy import Cauchy
 from .chi_squared import ChiSquared
 from .exponential import Exponential
@@ -54,96 +55,6 @@ def from_precision(precision):
 def to_precision(sigma):
     precision = 1 / sigma**2
     return precision
-
-
-class BetaScaled(Continuous):
-    r"""
-    Scaled Beta distribution.
-
-    The pdf of this distribution is
-
-    .. math::
-
-       f(x \mid \alpha, \beta) =
-           \frac{(x-\text{lower})^{\alpha - 1} (\text{upper} - x)^{\beta - 1}}
-           {(\text{upper}-\text{lower})^{\alpha+\beta-1} B(\alpha, \beta)}
-
-    .. plot::
-        :context: close-figs
-
-        import arviz as az
-        from preliz import BetaScaled
-        az.style.use('arviz-doc')
-        alphas = [2, 2]
-        betas = [2, 5]
-        lowers = [-0.5, -1]
-        uppers = [1.5, 2]
-        for alpha, beta, lower, upper in zip(alphas, betas, lowers, uppers):
-            BetaScaled(alpha, beta, lower, upper).plot_pdf()
-
-    ========  ==============================================================
-    Support   :math:`x \in (lower, upper)`
-    Mean      :math:`\dfrac{\alpha}{\alpha + \beta} (upper-lower) + lower`
-    Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)} (upper-lower)`
-    ========  ==============================================================
-
-    Parameters
-    ----------
-    alpha : float
-        alpha  > 0
-    beta : float
-        beta  > 0
-    lower: float
-        Lower limit.
-    upper: float
-        Upper limit (upper > lower).
-    """
-
-    def __init__(self, alpha=None, beta=None, lower=0, upper=1):
-        super().__init__()
-        self.alpha = alpha
-        self.beta = beta
-        self.lower = lower
-        self.upper = upper
-        self.dist = copy(stats.beta)
-        self.support = (lower, upper)
-        self._parametrization(self.alpha, self.beta, self.lower, self.upper)
-
-    def _parametrization(self, alpha=None, beta=None, lower=None, upper=None):
-        self.param_names = ("alpha", "beta", "lower", "upper")
-        self.params_support = ((eps, np.inf), (eps, np.inf), (-np.inf, np.inf), (-np.inf, np.inf))
-        if all_not_none(alpha, beta):
-            self._update(alpha, beta, lower, upper)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.alpha, self.beta, loc=self.lower, scale=self.upper - self.lower)
-        return frozen
-
-    def _update(self, alpha, beta, lower=None, upper=None):
-        if lower is not None:
-            self.lower = np.float64(lower)
-        if upper is not None:
-            self.upper = np.float64(upper)
-
-        self.alpha = np.float64(alpha)
-        self.beta = np.float64(beta)
-        self.params = (self.alpha, self.beta, self.lower, self.upper)
-        self.support = self.lower, self.upper
-        self._update_rv_frozen()
-
-    def _fit_moments(self, mean, sigma):
-        mean = (mean - self.lower) / (self.upper - self.lower)
-        sigma = sigma / (self.upper - self.lower)
-        kappa = mean * (1 - mean) / sigma**2 - 1
-        alpha = max(0.5, kappa * mean)
-        beta = max(0.5, kappa * (1 - mean))
-        self._update(alpha, beta)
-
-    def _fit_mle(self, sample, **kwargs):
-        alpha, beta, lower, scale = self.dist.fit(sample, **kwargs)
-        self._update(alpha, beta, lower, lower + scale)
 
 
 class ExGaussian(Continuous):

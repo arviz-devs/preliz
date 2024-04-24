@@ -7,6 +7,7 @@ from scipy import stats
 from preliz import (
     AsymmetricLaplace,
     Beta,
+    BetaScaled,
     Cauchy,
     ChiSquared,
     DiscreteUniform,
@@ -57,6 +58,12 @@ from preliz import (
             {"loc": 2.5, "scale": 3.5, "kappa": 0.7},
         ),
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
+        (
+            BetaScaled,
+            stats.beta,
+            {"alpha": 2, "beta": 5, "lower": -1, "upper": 3},
+            {"a": 2, "b": 5, "loc": -1, "scale": 4},
+        ),
         (Cauchy, stats.cauchy, {"alpha": 2, "beta": 4.5}, {"loc": 2, "scale": 4.5}),
         (ChiSquared, stats.chi2, {"nu": 3}, {"df": 3}),
         (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
