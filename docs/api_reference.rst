@@ -39,6 +39,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.chisquared
    :members:
 
+.. automodule:: preliz.distributions.exgaussian
+   :members:
+
 .. automodule:: preliz.distributions.exponential
    :members:
 
