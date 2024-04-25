@@ -2,11 +2,12 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
+from scipy.stats import skew
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import erf
-from ..internal.optimization import optimize_ml, find_ppf
+from ..internal.special import erf, mean_and_std
+from ..internal.optimization import find_ppf
 
 
 class ExGaussian(Continuous):
@@ -150,7 +151,12 @@ class ExGaussian(Continuous):
         self._update(mean, sigma, 1e-4)
 
     def _fit_mle(self, sample):
-        optimize_ml(self, sample)
+        mean, std = mean_and_std(sample)
+        skweness = skew(sample)
+        nu = std * (skweness / 2) ** (1 / 3)
+        mu = mean - nu
+        var = std**2 * (1 - (skweness / 2) ** (2 / 3))
+        self._update(mu, var**0.5, 1 / nu)
 
 
 @nb.vectorize(nopython=True, cache=True)

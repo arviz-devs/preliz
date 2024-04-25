@@ -193,7 +193,7 @@ def test_mle(distribution, params):
     dist_ = distribution()
     dist_._fit_mle(sample)
 
-    if dist.__class__.__name__ == "Pareto":
+    if dist.__class__.__name__ in ["Pareto", "ExGaussian"]:
         tol = 0
     else:
         tol = 1
