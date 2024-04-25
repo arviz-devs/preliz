@@ -188,6 +188,7 @@ class BetaScaled(Continuous):
         self._update(alpha, beta)
 
     def _fit_mle(self, sample):
+        self._update(None, None, np.min(sample), np.max(sample))
         optimize_ml(self, sample)
 
 
