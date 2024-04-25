@@ -11,6 +11,7 @@ from preliz import (
     Cauchy,
     ChiSquared,
     DiscreteUniform,
+    ExGaussian,
     Exponential,
     Gamma,
     Gumbel,
@@ -66,6 +67,12 @@ from preliz import (
         ),
         (Cauchy, stats.cauchy, {"alpha": 2, "beta": 4.5}, {"loc": 2, "scale": 4.5}),
         (ChiSquared, stats.chi2, {"nu": 3}, {"df": 3}),
+        (
+            ExGaussian,
+            stats.exponnorm,
+            {"mu": -1, "sigma": 0.5, "nu": 1},
+            {"loc": -1, "scale": 0.5, "K": 1 / 0.5},
+        ),
         (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
         (Gamma, stats.gamma, {"alpha": 2, "beta": 1 / 3}, {"a": 2, "scale": 3}),
         (Gumbel, stats.gumbel_r, {"mu": 2.5, "beta": 3.5}, {"loc": 2.5, "scale": 3.5}),
@@ -160,7 +167,14 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected = scipy_dist.entropy()
         if preliz_dist.kind == "discrete":
             assert_almost_equal(actual, expected, decimal=1)
-        elif preliz_name in ["HalfStudentT", "Moyal", "LogitNormal", "SkewNormal", "Rice"]:
+        elif preliz_name in [
+            "HalfStudentT",
+            "Moyal",
+            "LogitNormal",
+            "SkewNormal",
+            "Rice",
+            "ExGaussian",
+        ]:
             assert_almost_equal(actual, expected, decimal=2)
         else:
             assert_almost_equal(actual, expected, decimal=4)
@@ -170,6 +184,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     rng = np.random.default_rng(1)
     expected_rvs = scipy_dist.rvs(20, random_state=rng)
     if preliz_name in [
+        "ExGaussian",
         "HalfStudentT",
         "Kumaraswamy",
         "LogitNormal",
@@ -217,7 +232,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     x_vals = [-1, 0, 0.25, 0.5, 0.75, 1, 2]
     actual_ppf = preliz_dist.ppf(x_vals)
     expected_ppf = scipy_dist.ppf(x_vals)
-    if preliz_name in ["HalfStudentT", "Wald", "LogitNormal", "SkewNormal"]:
+    if preliz_name in ["HalfStudentT", "Wald", "LogitNormal", "SkewNormal", "ExGaussian"]:
         assert_almost_equal(actual_ppf, expected_ppf, decimal=2)
     else:
         assert_almost_equal(actual_ppf, expected_ppf)
@@ -232,7 +247,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=0)
     elif preliz_name == "LogitNormal":
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=1)
-    elif preliz_name == "SkewNormal":
+    elif preliz_name in ["SkewNormal", "ExGaussian"]:
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=6)
     else:
         assert_almost_equal(actual_logpdf, expected_logpdf)
@@ -241,7 +256,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     expected_neg_logpdf = -expected_logpdf.sum()
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=1)
-    elif preliz_name in ["TruncatedNormal", "SkewNormal"]:
+    elif preliz_name in ["TruncatedNormal", "SkewNormal", "ExGaussian"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=6)
     else:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)

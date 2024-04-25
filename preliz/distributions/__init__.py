@@ -1,5 +1,34 @@
 # Continuous Distributions
-from .continuous import *
+from .asymmetric_laplace import AsymmetricLaplace
+from .beta import Beta
+from .betascaled import BetaScaled
+from .cauchy import Cauchy
+from .chi_squared import ChiSquared
+from .exgaussian import ExGaussian
+from .exponential import Exponential
+from .gamma import Gamma
+from .gumbel import Gumbel
+from .halfcauchy import HalfCauchy
+from .halfnormal import HalfNormal
+from .halfstudentt import HalfStudentT
+from .inversegamma import InverseGamma
+from .kumaraswamy import Kumaraswamy
+from .laplace import Laplace
+from .logistic import Logistic
+from .logitnormal import LogitNormal
+from .lognormal import LogNormal
+from .moyal import Moyal
+from .normal import Normal
+from .pareto import Pareto
+from .skewnormal import SkewNormal
+from .studentt import StudentT
+from .rice import Rice
+from .triangular import Triangular
+from .truncatednormal import TruncatedNormal
+from .uniform import Uniform
+from .vonmises import VonMises
+from .wald import Wald
+from .weibull import Weibull
 
 # Multivariate Distributions
 from .continuous_multivariate import *

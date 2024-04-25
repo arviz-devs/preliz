@@ -15,8 +15,8 @@ except ImportError:
     pass
 from scipy import stats
 
+from preliz import Beta, Normal
 from .distributions_multivariate import Continuous
-from .continuous import Beta, Normal
 from ..internal.distribution_helper import all_not_none
 from ..internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
 from ..internal.plot_helper import check_inside_notebook, get_slider

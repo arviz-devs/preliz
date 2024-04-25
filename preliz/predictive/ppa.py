@@ -20,7 +20,7 @@ from ..internal.plot_helper import (
 )
 from ..internal.parser import get_prior_pp_samples, from_preliz, from_bambi
 from ..internal.predictive_helper import back_fitting, select_prior_samples
-from ..distributions.continuous import Normal
+from ..distributions import Normal
 from ..distributions.distributions import Distribution
 
 _log = logging.getLogger("preliz")
