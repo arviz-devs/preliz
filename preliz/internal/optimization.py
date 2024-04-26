@@ -176,7 +176,7 @@ def optimize_moments_rice(mean, std_dev):
 def optimize_ml(dist, sample):
     def negll(params, dist, sample):
         dist._update(*params)
-        return -dist.logpdf(sample).sum()
+        return dist._neg_logpdf(sample)
 
     dist._fit_moments(np.mean(sample), np.std(sample))
     init_vals = dist.params
@@ -312,7 +312,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
         if dist._check_endpoints(x_min, x_max, raise_error=False):
             dist._fit_mle(sample)  # pylint:disable=protected-access
             corr = get_penalization(sample_size, dist)
-            loss = -(dist.logpdf(sample).sum() - corr)
+            loss = dist._neg_logpdf(sample) + corr
 
         fitted.update(loss, dist)
 
