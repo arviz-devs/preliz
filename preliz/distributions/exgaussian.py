@@ -6,7 +6,7 @@ from scipy.stats import skew
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import erf, mean_and_std
+from ..internal.special import erf, erfc, erfcx, mean_and_std
 from ..internal.optimization import find_ppf
 
 
@@ -63,9 +63,9 @@ class ExGaussian(Continuous):
         self._parametrization(mu, sigma, nu)
 
     def _parametrization(self, mu=None, sigma=None, nu=None):
-        self.nu = nu
         self.mu = mu
         self.sigma = sigma
+        self.nu = nu
         self.param_names = ("mu", "sigma", "nu")
         self.params = (mu, sigma, nu)
         #  if nu is too small we get a non-smooth distribution
@@ -74,9 +74,9 @@ class ExGaussian(Continuous):
             self._update(mu, sigma, nu)
 
     def _update(self, mu, sigma, nu):
-        self.nu = np.float64(nu)
         self.mu = np.float64(mu)
         self.sigma = np.float64(sigma)
+        self.nu = np.float64(nu)
         self.params = (self.mu, self.sigma, self.nu)
         self.is_frozen = True
 
@@ -179,7 +179,7 @@ def nb_logpdf(x, mu, sigma, nu):
             -np.log(nu)
             + (mu - x) / nu
             + 0.5 * (sigma / nu) ** 2
-            + np.log(0.5 * (1 + erf((x - (mu + (sigma**2) / nu)) / (sigma * 2**0.5))))
+            + normal_lcdf(x, mu + (sigma**2) / nu, sigma)
         )
     else:
         return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
@@ -188,3 +188,12 @@ def nb_logpdf(x, mu, sigma, nu):
 @nb.njit(cache=True)
 def nb_neg_logpdf(x, mu, sigma, nu):
     return -(nb_logpdf(x, mu, sigma, nu)).sum()
+
+
+@nb.vectorize(nopython=True, cache=True)
+def normal_lcdf(x, mu, sigma):
+    z_val = (x - mu) / sigma
+    if z_val < -1:
+        return np.log(erfcx(-z_val / 2**0.5) / 2) - abs(z_val) ** 2 / 2
+    else:
+        return np.log1p(-erfc(z_val / 2**0.5) / 2)
