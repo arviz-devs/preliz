@@ -117,6 +117,11 @@ def erfinv(p):
     return -erfcinv(p + 1)
 
 
+@nb.njit(cache=True)
+def erfcx(x):
+    return np.exp(x**2) * erfc(x)
+
+
 @nb.vectorize(nopython=True, cache=True)
 def beta(a, b):
     if a < 0 or b < 0:
