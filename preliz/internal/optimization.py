@@ -180,7 +180,7 @@ def optimize_ml(dist, sample):
 
     dist._fit_moments(np.mean(sample), np.std(sample))
     init_vals = dist.params
-    
+
     opt = minimize(negll, x0=init_vals, bounds=dist.params_support, args=(dist, sample))
 
     dist._update(*opt["x"])
