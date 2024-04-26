@@ -25,10 +25,7 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
     def entropy_loss(params, dist):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
-        if dist.rv_frozen is None:
-            return -dist.entropy()
-        else:
-            return -dist.rv_frozen.entropy()
+        return -dist.entropy()
 
     cons = {
         "type": "eq",
