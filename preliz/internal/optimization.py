@@ -25,10 +25,7 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
     def entropy_loss(params, dist):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
-        if dist.rv_frozen is None:
-            return -dist.entropy()
-        else:
-            return -dist.rv_frozen.entropy()
+        return -dist.entropy()
 
     cons = {
         "type": "eq",
@@ -183,6 +180,7 @@ def optimize_ml(dist, sample):
 
     dist._fit_moments(np.mean(sample), np.std(sample))
     init_vals = dist.params
+    print(init_vals)
 
     opt = minimize(negll, x0=init_vals, bounds=dist.params_support, args=(dist, sample))
 

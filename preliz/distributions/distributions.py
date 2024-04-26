@@ -34,7 +34,6 @@ class Distribution:
     """
 
     def __init__(self):
-        self.rv_frozen = None
         self.is_frozen = False
         self.opt = None
 
@@ -52,14 +51,6 @@ class Distribution:
             return f"{bolded_name}({description})"
         else:
             return name
-
-    def _update_rv_frozen(self):
-        """Update the rv_frozen object"""
-
-        frozen = self._get_frozen()
-        if frozen is not None:
-            self.is_frozen = True
-            self.rv_frozen = frozen
 
     def summary(self, mass=0.94, fmt=".2f"):
         """
@@ -106,7 +97,7 @@ class Distribution:
         random_state : {None, int, numpy.random.Generator, numpy.random.RandomState}
             Defaults to None
         """
-        return self.rv_frozen.rvs(*args, **kwds)
+        return self.rvs(*args, **kwds)
 
     def cdf(self, x, *args, **kwds):
         """Cumulative distribution function.
@@ -116,7 +107,7 @@ class Distribution:
         x : array_like
             Values on which to evaluate the cdf
         """
-        return self.rv_frozen.cdf(x, *args, **kwds)
+        return self.cdf(x, *args, **kwds)
 
     def ppf(self, q, *args, **kwds):
         """Percent point function (inverse of cdf).
@@ -126,23 +117,23 @@ class Distribution:
         x : array_like
             Values on which to evaluate the inverse of the cdf
         """
-        return self.rv_frozen.ppf(q, *args, **kwds)
+        return self.ppf(q, *args, **kwds)
 
     def mean(self):
         """Mean of the distribution."""
-        return self.rv_frozen.mean()
+        return self.mean()
 
     def median(self):
         """Median of the distribution."""
-        return self.rv_frozen.median()
+        return self.median()
 
     def std(self):
         """Standard deviation of the distribution."""
-        return self.rv_frozen.std()
+        return self.std()
 
     def var(self):
         """Variance of the distribution."""
-        return self.rv_frozen.var()
+        return self.var()
 
     def skewness(self):
         """Skewness of the distribution."""
@@ -165,26 +156,23 @@ class Distribution:
             where 'm' = mean, 'v' = variance, 's' = skewness, and 'k' = kurtosis.
             Valid combinations are any subset of 'mvsk'.
         """
-        if self.rv_frozen is None:
-            moments = []
-            for m_t in types:
-                if m_t not in "mdvsk":
-                    raise ValueError(
-                        "The input string should only contain the letters "
-                        "'m', 'd', 'v', 's', or 'k'."
-                    )
-                if m_t == "m":
-                    moments.append(self.mean())
-                elif m_t == "d":
-                    moments.append(self.std())
-                elif m_t == "v":
-                    moments.append(self.var())
-                elif m_t == "s":
-                    moments.append(self.skewness())
-                elif m_t == "k":
-                    moments.append(self.kurtosis())
-        else:
-            moments = self.rv_frozen.stats(moments=types)
+        moments = []
+        for m_t in types:
+            if m_t not in "mdvsk":
+                raise ValueError(
+                    "The input string should only contain the letters "
+                    "'m', 'd', 'v', 's', or 'k'."
+                )
+            if m_t == "m":
+                moments.append(self.mean())
+            elif m_t == "d":
+                moments.append(self.std())
+            elif m_t == "v":
+                moments.append(self.var())
+            elif m_t == "s":
+                moments.append(self.skewness())
+            elif m_t == "k":
+                moments.append(self.kurtosis())
 
         return moments
 
@@ -205,10 +193,7 @@ class Distribution:
             raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
-            if self.rv_frozen is None:
-                eti_b = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
-            else:
-                eti_b = self.rv_frozen.interval(mass)
+            eti_b = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
             lower_tail = float(f"{eti_b[0]:{fmt}}")
             upper_tail = float(f"{eti_b[1]:{fmt}}")
             return (lower_tail, upper_tail)
@@ -640,7 +625,7 @@ class Continuous(Distribution):
         x : array_like
             Values on which to evaluate the pdf
         """
-        return self.rv_frozen.pdf(x, *args, **kwds)
+        return self.pdf(x, *args, **kwds)
 
     def logpdf(self, x, *args, **kwds):
         """Probability mass function at x.
@@ -650,7 +635,7 @@ class Continuous(Distribution):
         x : array_like
             Values on which to evaluate the pdf
         """
-        return self.rv_frozen.logpdf(x, *args, **kwds)
+        return self.logpdf(x, *args, **kwds)
 
 
 class Discrete(Distribution):
@@ -686,7 +671,7 @@ class Discrete(Distribution):
         x : array_like
             Values on which to evaluate the pdf
         """
-        return self.rv_frozen.pmf(x, *args, **kwds)
+        return self.pdf(x, *args, **kwds)
 
     def logpdf(self, x, *args, **kwds):
         """Probability mass function at x.
@@ -696,7 +681,7 @@ class Discrete(Distribution):
         x : array_like
             Values on which to evaluate the pdf
         """
-        return self.rv_frozen.logpmf(x, *args, **kwds)
+        return self.logpdf(x, *args, **kwds)
 
 
 class DistributionTransformer(Distribution):
