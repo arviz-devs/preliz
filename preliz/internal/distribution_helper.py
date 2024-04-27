@@ -20,6 +20,7 @@ def hdi_from_pdf(dist, mass=0.94):
     This is faster, but potentially less accurate, than directly minimizing the
     interval as evaluating the ppf can be slow, specially for some distributions.
     """
+
     if dist.kind == "continuous":
         lower_ep, upper_ep = dist._finite_endpoints("full")
         x_vals = np.linspace(lower_ep, upper_ep, 10000)
@@ -38,7 +39,11 @@ def hdi_from_pdf(dist, mass=0.94):
         indices.append(idx)
         if mass_cum >= mass:
             break
-    return x_vals[np.sort(indices)[[0, -1]]]
+
+    if indices:
+        return x_vals[np.sort(indices)[[0, -1]]]
+    else:
+        return np.nan, np.nan
 
 
 def all_not_none(*args):
