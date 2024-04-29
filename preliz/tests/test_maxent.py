@@ -103,10 +103,10 @@ from preliz.distributions import (
         (Pareto(), 1, 4, 0.9, (1, np.inf), (1.660, 1)),
         (Pareto(m=2), 1, 4, 0.9, (2, np.inf), (3.321)),
         (Rice(), 0, 4, 0.7, (0, np.inf), (0, 2.577)),
-        (Rice(), 1, 10, 0.9, (0, np.inf), (3.453, 3.735)),
+        (Rice(), 1, 10, 0.9, (0, np.inf), (3.454, 3.734)),
         (Rice(nu=4), 0, 6, 0.9, (0, np.inf), (1.402)),
         (SkewNormal(), -2, 10, 0.9, (-np.inf, np.inf), (4.061, 3.648, -0.021)),
-        (SkewNormal(mu=-1), -2, 10, 0.9, (-np.inf, np.inf), (6.293, 4.908)),
+        (SkewNormal(mu=-1), -2, 10, 0.9, (-np.inf, np.inf), (6.292, 4.903)),
         (StudentT(), -1, 1, 0.683, (-np.inf, np.inf), (99.999, 0, 0.994)),
         (StudentT(nu=7), -1, 1, 0.683, (-np.inf, np.inf), (0, 0.928)),
         (

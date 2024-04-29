@@ -601,8 +601,21 @@ class Continuous(Distribution):
         n_points : int
             Number of values to return.
         """
-        lower_ep, upper_ep = self._finite_endpoints(support)
-        return continuous_xvals(lower_ep, upper_ep, n_points)
+        if isinstance(support, tuple):
+            return self.ppf(np.linspace(*self.cdf(support), n_points))
+        else:
+            lower_ep, upper_ep = self.support
+
+            if not np.isfinite(lower_ep) or support == "restricted":
+                lower_ep = 0.0001
+            if not np.isfinite(upper_ep) or support == "restricted":
+                upper_ep = 0.9999
+
+            half_n_points = int(n_points / 2)
+            even = np.linspace(*self.ppf([lower_ep, upper_ep]), half_n_points)
+            uneven = self.ppf(np.linspace(lower_ep, upper_ep, half_n_points))
+
+            return np.sort(np.concatenate([even, uneven]))
 
     def _fit_mle(self, sample, **kwargs):
         """
