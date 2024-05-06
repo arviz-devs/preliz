@@ -7,7 +7,7 @@ from scipy.special import bdtr, bdtrik  # pylint: disable=no-name-in-module
 from .distributions import Discrete
 from ..internal.optimization import optimize_moments
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln, mean_and_std
+from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln, mean_and_std, xlogy
 
 
 class Binomial(Discrete):
@@ -84,7 +84,7 @@ class Binomial(Discrete):
         Compute the probability density function (PDF) at a given point x.
         """
         x = np.asarray(x)
-        return np.exp(nb_logpdf(self.n, x, self.p))
+        return np.exp(self.logpdf(x))
 
     def cdf(self, x):
         """
@@ -102,13 +102,13 @@ class Binomial(Discrete):
         """
         Compute the log probability density function (log PDF) at a given point x.
         """
-        return nb_logpdf(self.n, x, self.p)
+        return nb_logpdf(x, self.n, self.p)
 
     def _neg_logpdf(self, x):
         """
         Compute the neg log_pdf sum for the array x.
         """
-        return nb_neg_logpdf(self.n, x, self.p)
+        return nb_neg_logpdf(x, self.n, self.p)
 
     def entropy(self):
         return nb_entropy(self.n, self.p)
@@ -177,15 +177,12 @@ def nb_fit_mle(sample):
 
 
 @nb.njit(cache=True)
-def nb_logpdf(n, y, p):
+def nb_logpdf(x, n, p):
     return (
-        gammaln(n + 1)
-        - (gammaln(y + 1) + gammaln(n - y + 1))
-        + y * np.log(p)
-        + (n - y) * np.log1p(-p)
+        gammaln(n + 1) - (gammaln(x + 1) + gammaln(n - x + 1)) + xlogy(x, p) + xlogy(n - x, 1 - p)
     )
 
 
 @nb.njit(cache=True)
-def nb_neg_logpdf(n, y, p):
-    return -(nb_logpdf(n, y, p)).sum()
+def nb_neg_logpdf(x, n, p):
+    return -(nb_logpdf(x, n, p)).sum()
