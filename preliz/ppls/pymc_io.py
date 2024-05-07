@@ -68,7 +68,11 @@ def get_pymc_to_preliz():
     """
     Generate dictionary mapping pymc to preliz distributions
     """
-    all_distributions = modules["preliz.distributions"].__all__
+    all_distributions = [
+        dist
+        for dist in modules["preliz.distributions"].__all__
+        if dist not in ["Truncated", "Censored", "Hurdle"]
+    ]
     pymc_to_preliz = dict(
         zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
     )
