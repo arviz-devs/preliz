@@ -15,6 +15,8 @@ from ..internal.special import (
     cdf_bounds,
     ppf_bounds_cont,
     mean_and_std,
+    xlogy,
+    xlog1py,
 )
 
 
@@ -248,10 +250,13 @@ def nb_entropy(alpha, beta):
     )
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, alpha, beta):
-    beta_ = gammaln(alpha) + gammaln(beta) - gammaln(alpha + beta)
-    return (alpha - 1) * np.log(x) + (beta - 1) * np.log(1 - x) - beta_
+    if x < 0 or x > 1:
+        return -np.inf
+    else:
+        beta_ = gammaln(alpha) + gammaln(beta) - gammaln(alpha + beta)
+        return xlogy((alpha - 1), x) + xlog1py((beta - 1), -x) - beta_
 
 
 @nb.njit(cache=True)

@@ -67,3 +67,20 @@ def test_logit():
 def test_expit():
     x = np.linspace(-20, 10, 500)
     assert_almost_equal(sc_special.expit(x), pz_special.expit(x))
+
+
+def test_xlogy():
+    x = np.linspace(0, 10, 10)
+    y = np.linspace(0, 10, 10)
+    assert_almost_equal(sc_special.xlogy(x, y), pz_special.xlogy(x, y))
+
+
+def test_xlog1py():
+    x = np.linspace(0, 10, 10)
+    y = np.linspace(0, 10, 10)
+    assert_almost_equal(sc_special.xlog1py(x, y), pz_special.xlog1py(x, y))
+
+
+def test_xlogx():
+    x = np.linspace(0.0, 10, 10)
+    assert_almost_equal(pz_special.xlogy(x, x), pz_special.xlogx(x))

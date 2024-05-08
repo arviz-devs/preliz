@@ -6,7 +6,7 @@ import numba as nb
 from scipy.special import gammaincc, gammainccinv  # pylint: disable=no-name-in-module
 
 from ..internal.distribution_helper import all_not_none, any_not_none, eps
-from ..internal.special import gammaln, digamma, cdf_bounds, ppf_bounds_cont
+from ..internal.special import gammaln, digamma, cdf_bounds, ppf_bounds_cont, xlogy
 from ..internal.optimization import optimize_ml
 from .distributions import Continuous
 
@@ -188,9 +188,12 @@ def nb_entropy(alpha, beta):
     return alpha + gammaln(alpha) - (1 + alpha) * digamma(alpha) + np.log(beta)
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, alpha, beta):
-    return alpha * np.log(beta) - gammaln(alpha) - (alpha + 1) * np.log(x) - beta / x
+    if x <= 0:
+        return -np.inf
+    else:
+        return xlogy(alpha, beta) - gammaln(alpha) - xlogy((alpha + 1), x) - beta / x
 
 
 @nb.njit(cache=True)

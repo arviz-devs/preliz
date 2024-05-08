@@ -7,7 +7,7 @@ from scipy.special import gammainc, gammaincinv  # pylint: disable=no-name-in-mo
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont, gammaln, digamma
+from ..internal.special import cdf_bounds, ppf_bounds_cont, gammaln, digamma, xlogy
 from ..internal.optimization import optimize_ml
 
 
@@ -150,13 +150,8 @@ def nb_ppf(q, nu):
 def nb_logpdf(x, nu):
     if x < 0:
         return -np.inf
-    elif x == 0:
-        if nu < 2:
-            return np.inf
-        else:
-            return -np.inf
     else:
-        return (nu / 2 - 1) * np.log(x) - x / 2 - nu / 2 * np.log(2) - gammaln(nu / 2)
+        return xlogy(nu / 2 - 1, x) - x / 2 - gammaln(nu / 2) - (nu * np.log(2)) / 2
 
 
 @nb.njit(cache=True)

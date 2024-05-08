@@ -11,6 +11,8 @@ from ..internal.special import (
     digamma,
     cdf_bounds,
     ppf_bounds_cont,
+    xlogy,
+    xlog1py,
 )
 
 
@@ -169,9 +171,12 @@ def nb_entropy(a, b):
     return (1 - 1 / b) + (1 - 1 / a) * h_b - np.log(a) - np.log(b)
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, a, b):
-    return np.log(a * b) + (a - 1) * np.log(x) + (b - 1) * np.log(1 - x**a)
+    if x < 0 or x > 1:
+        return -np.inf
+    else:
+        return np.log(a * b) + xlogy((a - 1), x) + xlog1py((b - 1), -(x**a))
 
 
 @nb.njit(cache=True)

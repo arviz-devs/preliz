@@ -189,10 +189,13 @@ def nb_ppf(q, alpha, beta, lower, upper):
     return ppf_bounds_cont(x_val, q, lower, upper)
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, alpha, beta):
-    x = x / (1 / beta)
-    return xlogy(alpha - 1.0, x) - x - gammaln(alpha) - np.log(1 / beta)
+    if x < 0:
+        return -np.inf
+    else:
+        x = x / (1 / beta)
+        return xlogy(alpha - 1.0, x) - x - gammaln(alpha) - np.log(1 / beta)
 
 
 @nb.njit(cache=True)

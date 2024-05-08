@@ -7,7 +7,7 @@ from scipy.special import bdtr, bdtrik  # pylint: disable=no-name-in-module
 from .distributions import Discrete
 from ..internal.optimization import optimize_moments
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln, mean_and_std, xlogy
+from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln, mean_and_std, xlogy, xlog1py
 
 
 class Binomial(Discrete):
@@ -176,11 +176,19 @@ def nb_fit_mle(sample):
     return n, p
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, n, p):
-    return (
-        gammaln(n + 1) - (gammaln(x + 1) + gammaln(n - x + 1)) + xlogy(x, p) + xlogy(n - x, 1 - p)
-    )
+    if x < 0:
+        return -np.inf
+    elif x > n:
+        return -np.inf
+    else:
+        return (
+            gammaln(n + 1)
+            - (gammaln(x + 1) + gammaln(n - x + 1))
+            + xlogy(x, p)
+            + xlog1py(n - x, -p)
+        )
 
 
 @nb.njit(cache=True)

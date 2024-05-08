@@ -242,15 +242,18 @@ def nb_entropy(nu, sigma):
     )
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, nu, sigma):
-    return (
-        gammaln((nu + 1) / 2)
-        - gammaln(nu / 2)
-        - 0.5 * np.log(nu * np.pi * sigma**2)
-        - 0.5 * (nu + 1) * np.log(1 + (x / sigma) ** 2 / nu)
-        + np.log(2)
-    )
+    if x < 0:
+        return -np.inf
+    else:
+        return (
+            gammaln((nu + 1) / 2)
+            - gammaln(nu / 2)
+            - 0.5 * np.log(nu * np.pi * sigma**2)
+            - 0.5 * (nu + 1) * np.log(1 + (x / sigma) ** 2 / nu)
+            + np.log(2)
+        )
 
 
 @nb.njit(cache=True)

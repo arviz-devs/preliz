@@ -152,9 +152,12 @@ def nb_fit_mle(sample):
     return np.mean(sample)
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, mu):
-    return xlogy(x, mu) - gammaln(x + 1) - mu
+    if x < 0:
+        return -np.inf
+    else:
+        return xlogy(x, mu) - gammaln(x + 1) - mu
 
 
 @nb.njit(cache=True)

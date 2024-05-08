@@ -205,11 +205,26 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     else:
         assert_almost_equal(actual_rvs, expected_rvs)
 
-    actual_pdf = preliz_dist.pdf(actual_rvs)
-    if preliz_dist.kind == "continuous":
-        expected_pdf = scipy_dist.pdf(actual_rvs)
+    support = preliz_dist.support
+    if preliz_name == "VonMises":
+        extended_vals = actual_rvs
     else:
-        expected_pdf = scipy_dist.pmf(actual_rvs)
+        extended_vals = np.concatenate(
+            [
+                actual_rvs,
+                support,
+                [support[0] - 1],
+                [support[0] - 2],
+                [support[1] + 1],
+                [support[1] + 2],
+            ]
+        )
+
+    actual_pdf = preliz_dist.pdf(extended_vals)
+    if preliz_dist.kind == "continuous":
+        expected_pdf = scipy_dist.pdf(extended_vals)
+    else:
+        expected_pdf = scipy_dist.pmf(extended_vals)
 
     if preliz_name == "LogitNormal":
         assert_almost_equal(actual_pdf, expected_pdf, decimal=1)
@@ -218,11 +233,8 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     else:
         assert_almost_equal(actual_pdf, expected_pdf, decimal=4)
 
-    support = preliz_dist.support
-    cdf_vals = np.concatenate([actual_rvs, support, [support[0] - 1], [support[1] + 1]])
-
-    actual_cdf = preliz_dist.cdf(cdf_vals)
-    expected_cdf = scipy_dist.cdf(cdf_vals)
+    actual_cdf = preliz_dist.cdf(extended_vals)
+    expected_cdf = scipy_dist.cdf(extended_vals)
 
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_cdf, expected_cdf, decimal=2)
@@ -237,11 +249,11 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     else:
         assert_almost_equal(actual_ppf, expected_ppf)
 
-    actual_logpdf = preliz_dist.logpdf(actual_rvs)
+    actual_logpdf = preliz_dist.logpdf(extended_vals)
     if preliz_dist.kind == "continuous":
-        expected_logpdf = scipy_dist.logpdf(actual_rvs)
+        expected_logpdf = scipy_dist.logpdf(extended_vals)
     else:
-        expected_logpdf = scipy_dist.logpmf(actual_rvs)
+        expected_logpdf = scipy_dist.logpmf(extended_vals)
 
     if preliz_name == "HalfStudentT":
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=0)
@@ -252,7 +264,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     else:
         assert_almost_equal(actual_logpdf, expected_logpdf)
 
-    actual_neg_logpdf = preliz_dist._neg_logpdf(actual_rvs)
+    actual_neg_logpdf = preliz_dist._neg_logpdf(extended_vals)
     expected_neg_logpdf = -expected_logpdf.sum()
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=1)

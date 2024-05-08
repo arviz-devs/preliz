@@ -393,14 +393,17 @@ def nb_entropy(mu, sigma, lower, upper):
     ) / (2 * z)
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, mu, sigma, lower, upper):
-    xi = (x - mu) / sigma
-    alpha = (lower - mu) / sigma
-    beta = (upper - mu) / sigma
-    z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-    logphi = np.log(1 / (2 * np.pi) ** 0.5) - xi**2 / 2
-    return logphi - (np.log(sigma) + np.log(z))
+    if x < lower or x > upper:
+        return -np.inf
+    else:
+        xi = (x - mu) / sigma
+        alpha = (lower - mu) / sigma
+        beta = (upper - mu) / sigma
+        z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+        logphi = np.log(1 / (2 * np.pi) ** 0.5) - xi**2 / 2
+        return logphi - (np.log(sigma) + np.log(z))
 
 
 @nb.njit(cache=True)

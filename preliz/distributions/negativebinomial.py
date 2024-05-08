@@ -195,9 +195,12 @@ def nb_ppf(q, n, p, lower, upper):
     return ppf_bounds_disc(x_vals, q, lower, upper)
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(y, n, p):
-    return gammaln(y + n) - gammaln(n) - gammaln(y + 1) + xlogy(n, p) + xlogy(y, 1 - p)
+    if y < 0:
+        return -np.inf
+    else:
+        return gammaln(y + n) - gammaln(n) - gammaln(y + 1) + xlogy(n, p) + xlogy(y, 1 - p)
 
 
 @nb.njit(cache=True)
