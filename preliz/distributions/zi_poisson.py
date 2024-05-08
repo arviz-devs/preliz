@@ -124,7 +124,7 @@ class ZeroInflatedPoisson(Discrete):
                 return poisson_entropy
             else:
                 # The var can be 0 with probability 1-psi or something else with probability psi
-                zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
+                zero_entropy = -(1 - self.psi) * np.logp(1 - self.psi) - self.psi * np.log(self.psi)
                 # The total entropy is the weighted sum of the two entropies
                 return (1 - self.psi) * zero_entropy + self.psi * poisson_entropy
 
@@ -175,7 +175,9 @@ def nb_ppf(q, psi, mu, lower, upper):
 
 @nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, psi, mu):
-    if x == 0:
+    if x < 0:
+        return -np.inf
+    elif x == 0:
         return np.log(np.exp(-mu) * psi - psi + 1)
     else:
         return np.log(psi) + xlogy(x, mu) - gammaln(x + 1) - mu

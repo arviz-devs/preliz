@@ -467,6 +467,14 @@ def xlogy(x, y):
 
 
 @nb.vectorize(nopython=True, cache=True)
+def xlog1py(x, y):
+    if x == 0:
+        return 0.0
+    else:
+        return x * np.log1p(y)
+
+
+@nb.vectorize(nopython=True, cache=True)
 def xlogx(x):
     if x == 0:
         return 0.0

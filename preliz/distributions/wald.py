@@ -198,12 +198,14 @@ def nb_entropy(mu, lam):
 
 @nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, mu, lam):
-    if x > 0:
+    if x <= 0:
+        return -np.inf
+    elif x == np.inf:
+        return -np.inf
+    else:
         return (
             np.log(lam) - (np.log(2 * np.pi) + 3 * np.log(x)) - lam * (x - mu) ** 2 / (mu**2 * x)
         ) / 2
-    else:
-        return np.inf
 
 
 @nb.njit(cache=True)

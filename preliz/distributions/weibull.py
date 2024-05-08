@@ -12,6 +12,7 @@ from ..internal.special import (
     mean_and_std,
     cdf_bounds,
     ppf_bounds_cont,
+    xlogy,
 )
 
 
@@ -170,10 +171,13 @@ def nb_entropy(alpha, beta):
     return np.euler_gamma * (1 - 1 / alpha) + np.log(beta / alpha) + 1
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, alpha, beta):
-    x_b = x / beta
-    return np.log(alpha / beta) + (alpha - 1) * np.log(x_b) - x_b**alpha
+    if x < 0:
+        return -np.inf
+    else:
+        x_b = x / beta
+        return np.log(alpha / beta) + xlogy((alpha - 1), x_b) - x_b**alpha
 
 
 @nb.njit(cache=True)

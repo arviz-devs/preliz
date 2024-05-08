@@ -218,7 +218,9 @@ def nb_ppf(q, psi, n, p, lower, upper):
 
 @nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(y, psi, n, p, mu):
-    if y == 0:
+    if y < 0:
+        return -np.inf
+    elif y == 0:
         return np.log((1 - psi) + psi * (n / (n + mu)) ** n)
     else:
         return (

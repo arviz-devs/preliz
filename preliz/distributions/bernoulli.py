@@ -2,11 +2,11 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import logit, expit  # pylint: disable=no-name-in-module
 
 from .distributions import Discrete
 from ..internal.optimization import optimize_ml
 from ..internal.distribution_helper import eps, all_not_none
+from ..internal.special import xlogx, logit, expit
 
 
 class Bernoulli(Discrete):
@@ -191,7 +191,7 @@ def nb_pdf(x, p):
 @nb.njit(cache=True)
 def nb_entropy(p):
     q = 1 - p
-    return -q * np.log(q) - p * np.log(p)
+    return -xlogx(q) - xlogx(p)
 
 
 @nb.vectorize(nopython=True, cache=True)

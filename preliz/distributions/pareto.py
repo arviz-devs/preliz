@@ -4,7 +4,7 @@ import numpy as np
 import numba as nb
 
 from ..internal.optimization import optimize_ml
-from ..internal.special import ppf_bounds_cont
+from ..internal.special import ppf_bounds_cont, xlogy
 from ..internal.distribution_helper import all_not_none, eps
 from .distributions import Continuous
 
@@ -168,7 +168,7 @@ def nb_entropy(alpha, m):
 def nb_logpdf(x, alpha, m):
     if x < m:
         return -np.inf
-    return np.log(alpha) + alpha * np.log(m) - (alpha + 1) * np.log(x)
+    return np.log(alpha) + xlogy(alpha, m) - xlogy((alpha + 1), x)
 
 
 @nb.njit(cache=True)

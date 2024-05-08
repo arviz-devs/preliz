@@ -6,6 +6,7 @@ import numpy as np
 from .distributions import Discrete
 from ..internal.distribution_helper import eps
 from ..internal.special import mean_sample, cdf_bounds, ppf_bounds_disc
+from ..internal.special import xlog1py, xlogx
 
 
 class Geometric(Discrete):
@@ -139,12 +140,15 @@ def nb_ppf(q, p, lower, upper):
 
 @nb.njit(cache=True)
 def nb_entropy(p):
-    return (-(1 - p) * np.log(1 - p) - p * np.log(p)) / p
+    return (xlog1py((-1 + p), -p) - xlogx(p)) / p
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, p):
-    return (x - 1) * np.log((1 - p)) + np.log(p)
+    if x < 1:
+        return -np.inf
+    else:
+        return xlog1py(x - 1, -p) + np.log(p)
 
 
 @nb.njit(cache=True)

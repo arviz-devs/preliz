@@ -2,11 +2,11 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import expit, logit
 
 from .distributions import Discrete
 from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import optimize_ml
+from ..internal.special import xlogx, expit, logit
 
 
 class Categorical(Discrete):
@@ -170,7 +170,7 @@ def nb_ppf(q, p):
 
 @nb.njit(cache=True)
 def nb_entropy(p):
-    return -np.sum(p * np.log(p))
+    return -np.sum(xlogx(p))
 
 
 def nb_logpdf(x, p):

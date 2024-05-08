@@ -5,7 +5,7 @@ import numba as nb
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont, mean_sample
+from ..internal.special import cdf_bounds, ppf_bounds_cont, mean_sample, xlog1py
 
 
 class Exponential(Continuous):
@@ -158,7 +158,7 @@ def nb_cdf(x, lam):
 
 @nb.njit(cache=True)
 def nb_ppf(q, beta):
-    return ppf_bounds_cont(-beta * np.log(1 - q), q, 0, np.inf)
+    return ppf_bounds_cont(-xlog1py(beta, -q), q, 0, np.inf)
 
 
 @nb.vectorize(nopython=True, cache=True)
