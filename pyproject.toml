@@ -5,6 +5,8 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "preliz"
 readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
 authors = [
     {name = "ArviZ team", email = "arviz.devs@gmail.com"}
 ]
@@ -36,6 +38,8 @@ name = "preliz"
 [project.urls]
 source = "https://github.com/arviz-devs/preliz"
 tracker = "https://github.com/arviz-devs/preliz/issues"
+documentation = "https://preliz.readthedocs.io"
+funding = "https://opencollective.com/arviz"
 
 [project.optional-dependencies]
 full = [
