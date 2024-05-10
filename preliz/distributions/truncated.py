@@ -77,8 +77,8 @@ class Truncated(DistributionTransformer):
             self.is_frozen = True
 
         self.support = (
-            max(self.dist.support[0], self.lower),
-            min(self.dist.support[1], self.upper),
+            np.maximum(self.dist.support[0], self.lower),
+            np.minimum(self.dist.support[1], self.upper),
         )
         self.params_support = (*self.dist.params_support, self.dist.support, self.dist.support)
 
