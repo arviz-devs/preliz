@@ -93,6 +93,9 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.skewnormal
    :members:
 
+.. automodule:: preliz.distributions.skew_studentt
+   :members:
+
 .. automodule:: preliz.distributions.studentt
    :members:
 
