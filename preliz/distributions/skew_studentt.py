@@ -43,11 +43,8 @@ class SkewStudentT(Continuous):
     ========  ==========================================
     Support   :math:`x \in \mathbb{R}`
     Mean      .. math::
-
-                  \frac{(a-b) \sqrt{(a+b)}}{2}\frac{\Gamma\left(a-\frac{1}{2}\right)\Gamma
-                  \left(b-\frac{1}{2}\right)}{\Gamma(a) \Gamma(b)}
-
-    Variance
+                  \mu + \sigma\frac{(a-b) \sqrt{(a+b)}}{2}\frac{\Gamma\left(a-\frac{1}{2}\right)
+                  \Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a) \Gamma(b)}
     ========  ==========================================
 
     Parameters
@@ -60,7 +57,7 @@ class SkewStudentT(Continuous):
         First Shape Parameter (a > 0)
     b : float
         Second Shape Parameter (b > 0)
-    lam : float, optional
+    lam : float
         Scale Parameter (lam > 0). Converges to the precision as a and b approach close
 
     Notes
