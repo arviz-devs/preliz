@@ -57,6 +57,12 @@ class SkewStudentT(Continuous):
     lam : float, optional
         Scale Parameter (lam > 0). Converges to the precision as a and b approach close
 
+    Notes
+    -----
+    If a > b, the distribution is positively skewed, and if a < b, the distribution
+    is negatively skewed. If a = b, the distribution is StudentT with
+    nu (degrees of freedom) = 2a.
+
     """
 
     def __init__(self, mu=None, sigma=None, a=None, b=None, lam=None):
@@ -124,6 +130,11 @@ class SkewStudentT(Continuous):
         Compute the neg log_pdf sum for the array x.
         """
         return nb_neg_logpdf(x, self.mu, self.sigma, self.a, self.b)
+
+    def entropy(self):
+        x_values = self.xvals("restricted")
+        logpdf = self.logpdf(x_values)
+        return -np.trapz(np.exp(logpdf) * logpdf, x_values)
 
     def mean(self):
         return ((self.a + self.b) ** 0.5) / (2 * beta(self.a, self.b)) * (

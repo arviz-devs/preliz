@@ -29,6 +29,7 @@ from preliz import (
     Pareto,
     Rice,
     SkewNormal,
+    SkewStudentT,
     StudentT,
     Triangular,
     TruncatedNormal,
@@ -100,6 +101,12 @@ from preliz import (
             {"a": 2, "loc": 1, "scale": 0.5},
         ),
         (Rice, stats.rice, {"nu": 0.5, "sigma": 2}, {"b": 0.25, "scale": 2}),
+        (
+            SkewStudentT,
+            stats.jf_skew_t,
+            {"mu": 0.5, "sigma": 2, "a": 3, "b": 5},
+            {"loc": 0.5, "scale": 2, "a": 3, "b": 5},
+        ),
         (StudentT, stats.t, {"nu": 5, "mu": 0, "sigma": 2}, {"df": 5, "loc": 0, "scale": 2}),
         (Triangular, stats.triang, {"lower": 0, "upper": 1, "c": 0.45}, {"c": 0.45}),
         (
@@ -172,6 +179,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
             "Moyal",
             "LogitNormal",
             "SkewNormal",
+            "SkewStudentT",
             "Rice",
             "ExGaussian",
         ]:
