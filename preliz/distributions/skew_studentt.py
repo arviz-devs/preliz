@@ -17,12 +17,14 @@ class SkewStudentT(Continuous):
     The pdf of this distribution is
 
     .. math::
-        f(t)=f(t ; a, b)=
-        C_{a, b}^{-1}\left\{1+\frac{t}{\left(a+b+t^2\right)^{1 / 2}}\right\}^{a+1 / 2}\left\
-        {1-\frac{t}{\left(a+b+t^2\right)^{1 / 2}}\right\}^{b+1 / 2}
+
+        f(t)=f(t ; a, b)=C_{a, b}^{-1}\left\{1+\frac{t}{\left(a+b+t^2\right)^{1 / 2}}
+        \right\}^{a+1 / 2}\left\{1-\frac{t}{\left(a+b+t^2\right)^{1 / 2}}\right\}^{b+1 / 2}
+
     where
 
     .. math::
+
         C_{a, b}=2^{a+b-1} B(a, b)(a+b)^{1 / 2}
 
     .. plot::
@@ -38,12 +40,15 @@ class SkewStudentT(Continuous):
         for mu, sigma, a, b in zip(mus, sigmas, a_s, b_s):
             SkewStudentT(mu, sigma, a, b).plot_pdf(support=(-10,6))
 
-    ========  ========================
+    ========  ==========================================
     Support   :math:`x \in \mathbb{R}`
-    Mean      :math:`\frac{(a-b) \sqrt{(a+b)}}{2} \frac{\Gamma\left(a-\frac{1}{2}\right)
-    \Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a) \Gamma(b)}`
+    Mean      .. math::
+
+                  \frac{(a-b) \sqrt{(a+b)}}{2}\frac{\Gamma\left(a-\frac{1}{2}\right)\Gamma
+                  \left(b-\frac{1}{2}\right)}{\Gamma(a) \Gamma(b)}
+
     Variance
-    ========  ========================
+    ========  ==========================================
 
     Parameters
     ----------
@@ -152,7 +157,7 @@ class SkewStudentT(Continuous):
             * (
                 comb(1, np.arange(2))
                 * np.where(np.arange(1 + 1) % 2 > 0, -1, 1)
-                * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(1 + 1))
+                * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(2))
             ).sum()
         )
         return (
@@ -181,7 +186,7 @@ class SkewStudentT(Continuous):
             * (
                 comb(1, np.arange(2))
                 * np.where(np.arange(2) % 2 > 0, -1, 1)
-                * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(1 + 1))
+                * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(2))
             ).sum()
         )
         nu2 = ((self.a + self.b) / (4 * beta(self.a, self.b))) * (
@@ -205,12 +210,12 @@ class SkewStudentT(Continuous):
         nu1 = ((self.a + self.b) ** 0.5 / (2 * beta(self.a, self.b))) * (
             comb(1, np.arange(2))
             * np.where(np.arange(2) % 2 > 0, -1, 1)
-            * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(1 + 1))
+            * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(2))
         ).sum()
         nu2 = ((self.a + self.b) / (4 * beta(self.a, self.b))) * (
             comb(2, np.arange(3))
             * np.where(np.arange(3) % 2 > 0, -1, 1)
-            * beta(self.a + 1 - np.arange(3), self.b - 1 + np.arange(2 + 1))
+            * beta(self.a + 1 - np.arange(3), self.b - 1 + np.arange(3))
         ).sum() - nu1**2
         nu3 = (
             ((self.a + self.b) ** 1.5 / (8 * beta(self.a, self.b)))
