@@ -73,7 +73,7 @@ from preliz.distributions import (
         (Normal(), -1, 0, 1, (0, 1.482)),
         (Pareto(), 0.5, 1, 4, (0.541, 0.289)),
         (Rice(), 2, 4, 6, (0, 3.395)),
-        (SkewStudentT(), 2, 4, 6, (3.999, 2.652, 1.685, 1.685)),
+        (SkewStudentT(), 2, 4, 6, (4, 2.648, 1.663, 1.663)),
         pytest.param(
             StudentT(),
             -1,

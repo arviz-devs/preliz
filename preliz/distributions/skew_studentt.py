@@ -7,7 +7,7 @@ from scipy.special import comb
 from .distributions import Continuous
 from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
 from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.special import beta, betainc, betaincinv, cdf_bounds, ppf_bounds_cont
+from ..internal.special import beta, betainc, betaincinv, cdf_bounds, ppf_bounds_cont, gamma
 
 
 class SkewStudentT(Continuous):
@@ -40,7 +40,8 @@ class SkewStudentT(Continuous):
 
     ========  ========================
     Support   :math:`x \in \mathbb{R}`
-    Mean
+    Mean      :math:`\frac{(a-b) \sqrt{(a+b)}}{2} \frac{\Gamma\left(a-\frac{1}{2}\right)
+    \Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a) \Gamma(b)}`
     Variance
     ========  ========================
 
@@ -137,27 +138,26 @@ class SkewStudentT(Continuous):
         return -np.trapz(np.exp(logpdf) * logpdf, x_values)
 
     def mean(self):
-        return ((self.a + self.b) ** 0.5) / (2 * beta(self.a, self.b)) * (
-            comb(1, np.arange(2))
-            * np.where(np.arange(2) % 2 > 0, -1, 1)
-            * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(2))
-        ).sum() * self.sigma + self.mu
+        return (
+            (self.a - self.b) * (self.a + self.b) ** 0.5 * gamma(self.a - 0.5) * gamma(self.b - 0.5)
+        ) / (2 * gamma(self.a) * gamma(self.b)) * self.sigma + self.mu
 
     def median(self):
         return self.ppf(0.5)
 
     def var(self):
+        nu = (
+            (self.a + self.b) ** 0.5
+            / (2 * beta(self.a, self.b))
+            * (
+                comb(1, np.arange(2))
+                * np.where(np.arange(1 + 1) % 2 > 0, -1, 1)
+                * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(1 + 1))
+            ).sum()
+        )
         return (
             np.where(
-                np.isfinite(
-                    (self.a + self.b) ** 0.5
-                    / (2 * beta(self.a, self.b))
-                    * (
-                        comb(1, np.arange(2))
-                        * np.where(np.arange(1 + 1) % 2 > 0, -1, 1)
-                        * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(1 + 1))
-                    ).sum()
-                ),
+                np.isfinite(nu),
                 (self.a + self.b)
                 / (4 * beta(self.a, self.b))
                 * (
@@ -165,16 +165,7 @@ class SkewStudentT(Continuous):
                     * np.where(np.arange(3) % 2 > 0, -1, 1)
                     * beta(self.a + 1 - np.arange(3), self.b - 1 + np.arange(3))
                 ).sum()
-                - (
-                    (self.a + self.b) ** 0.5
-                    / (2 * beta(self.a, self.b))
-                    * (
-                        comb(1, np.arange(2))
-                        * np.where(np.arange(1 + 1) % 2 > 0, -1, 1)
-                        * beta(self.a + 0.5 - np.arange(2), self.b - 0.5 + np.arange(1 + 1))
-                    ).sum()
-                )
-                ** 2,
+                - nu**2,
                 np.inf,
             )
             * self.sigma**2

@@ -108,7 +108,7 @@ from preliz.distributions import (
         (Rice(nu=4), 0, 6, 0.9, (0, np.inf), (1.402)),
         (SkewNormal(), -2, 10, 0.9, (-np.inf, np.inf), (4.061, 3.648, -0.021)),
         (SkewNormal(mu=-1), -2, 10, 0.9, (-np.inf, np.inf), (6.292, 4.903)),
-        (SkewStudentT(), -1, 1, 0.9, (-np.inf, np.inf), (-0.095, 0.52, 3.49, 3.114)),
+        (SkewStudentT(), -1, 1, 0.9, (-np.inf, np.inf), (-0.095, 0.52, 3.488, 3.112)),
         (SkewStudentT(mu=0.7, sigma=0.4), -1, 1, 0.9, (-np.inf, np.inf), (2.004, 5.212)),
         (StudentT(), -1, 1, 0.683, (-np.inf, np.inf), (99.999, 0, 0.994)),
         (StudentT(nu=7), -1, 1, 0.683, (-np.inf, np.inf), (0, 0.928)),
