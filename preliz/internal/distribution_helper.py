@@ -128,6 +128,7 @@ init_vals = {
     "Pareto": {"alpha": 5, "m": 2.0},
     "Rice": {"nu": 2.0, "sigma": 1.0},
     "SkewNormal": {"mu": 0.0, "sigma": 1, "alpha": 6.0},
+    "SkewStudentT": {"mu": 0.0, "sigma": 1, "a": 2.0, "b": 2.0},
     "StudentT": {"nu": 7, "mu": 0.0, "sigma": 1},
     "Triangular": {"lower": -2, "c": 0.0, "upper": 2.0},
     "TruncatedNormal": {"mu": 0.0, "sigma": 1, "lower": -2, "upper": 3.0},

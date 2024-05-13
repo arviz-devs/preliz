@@ -20,6 +20,7 @@ from .lognormal import LogNormal
 from .moyal import Moyal
 from .normal import Normal
 from .pareto import Pareto
+from .skew_studentt import SkewStudentT
 from .skewnormal import SkewNormal
 from .studentt import StudentT
 from .rice import Rice
@@ -78,6 +79,7 @@ all_continuous = [
     Pareto,
     Rice,
     SkewNormal,
+    SkewStudentT,
     StudentT,
     Triangular,
     TruncatedNormal,
