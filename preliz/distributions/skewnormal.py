@@ -2,11 +2,12 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
+from scipy.stats import skew  # pylint: disable=no-name-in-module
 from scipy.special import owens_t  # pylint: disable=no-name-in-module
 
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import erf
+from ..internal.special import erf, norm_logcdf
 from ..internal.optimization import find_ppf, optimize_ml
 
 
@@ -179,6 +180,8 @@ class SkewNormal(Continuous):
         self._update(mean, sigma, 0)
 
     def _fit_mle(self, sample):
+        skewness = skew(sample)
+        self.alpha = skewness / (1 - skewness**2) ** 0.5
         optimize_ml(self, sample)
 
 
@@ -186,13 +189,21 @@ def nb_cdf(x, mu, sigma, alpha):
     return 0.5 * (1 + erf((x - mu) / (sigma * 2**0.5))) - 2 * owens_t((x - mu) / sigma, alpha)
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, mu, sigma, alpha):
-    return (
-        np.log1p(erf(((x - mu) * alpha) / np.sqrt(2 * sigma**2)))
-        - 0.5 * (x - mu) ** 2 / sigma**2
-        + np.log(1 / (sigma**2 * np.pi * 2.0)) / 2.0
-    )
+    if x == np.inf:
+        return -np.inf
+    elif x == -np.inf:
+        return -np.inf
+    else:
+        z_val = (x - mu) / sigma
+        return (
+            np.log(2)
+            - np.log(sigma)
+            - z_val**2 / 2.0
+            - np.log((2 * np.pi) ** 0.5)
+            + norm_logcdf(alpha * z_val)
+        )
 
 
 @nb.njit(cache=True)

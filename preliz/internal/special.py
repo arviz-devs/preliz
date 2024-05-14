@@ -491,6 +491,15 @@ def xprody(x, y):
 
 
 @nb.vectorize(nopython=True, cache=True)
+def norm_logcdf(x):
+    t = x * np.sqrt(0.5)
+    if x < -1.0:
+        return np.log(erfcx(-t) / 2) - t * t
+    else:
+        return np.log1p(-erfc(t) / 2)
+
+
+@nb.vectorize(nopython=True, cache=True)
 def cdf_bounds(prob, x, lower, upper):
     if x < lower:
         return 0

@@ -166,11 +166,7 @@ class HyperGeometric(Discrete):
         return random_state.hypergeometric(self.k, self.N - self.k, self.n, size=size)
 
     def _fit_moments(self, mean, sigma):
-        n = mean + sigma * 4
-        k = n
-        N = k * n / mean
-        params = N, k, n
-        optimize_moments(self, mean, sigma, params)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)

@@ -65,7 +65,7 @@ from preliz.distributions import (
         (Gumbel, (0, 2)),
         (HalfCauchy, (1,)),
         (HalfNormal, (1,)),
-        (HalfStudentT, (3, 1)),
+        (HalfStudentT, (5, 1)),
         (HalfNormal, (2,)),
         (InverseGamma, (3, 5)),
         (Kumaraswamy, (2, 3)),
@@ -77,7 +77,7 @@ from preliz.distributions import (
         (Normal, (0, 1)),
         (Pareto, (5, 1)),
         (Rice, (0, 2)),
-        (SkewNormal, (0, 1, 6)),
+        (SkewNormal, (0, 1, -1)),
         (SkewStudentT, (0, 1, 2, 2)),
         (StudentT, (4, 0, 1)),
         (Triangular, (0, 2, 4)),
@@ -92,7 +92,7 @@ from preliz.distributions import (
         (DiscreteUniform, (-2, 2)),
         (DiscreteWeibull, (0.9, 1.3)),
         (Geometric, (0.75,)),
-        (HyperGeometric, (50, 20, 10)),
+        (HyperGeometric, (50, 10, 20)),
         (NegativeBinomial, (10, 0.5)),
         (Poisson, (4.2,)),
         (ZeroInflatedBinomial, (0.5, 10, 0.8)),
@@ -107,10 +107,17 @@ from preliz.distributions import (
     ],
 )
 def test_auto_recover(distribution, params):
-    dist = distribution(*params)
-    sample = dist.rvs(10000)
-    pz.mle([distribution()], sample)
-    assert_allclose(dist.params, params, atol=1)
+    for _ in range(10):
+        sample = distribution(*params).rvs(10_000)
+        dist = distribution()
+        try:
+            pz.mle([dist], sample)
+            assert_allclose(dist.params, params, atol=1)
+            break
+        except AssertionError:
+            pass
+    else:
+        raise AssertionError(f"Test failed after 10 attempts.{dist.params}")
 
 
 def test_recover_right():

@@ -267,8 +267,6 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=0)
     elif preliz_name == "LogitNormal":
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=1)
-    elif preliz_name in ["SkewNormal"]:
-        assert_almost_equal(actual_logpdf, expected_logpdf, decimal=6)
     else:
         assert_almost_equal(actual_logpdf, expected_logpdf)
 
@@ -276,7 +274,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     expected_neg_logpdf = -expected_logpdf.sum()
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=1)
-    elif preliz_name in ["TruncatedNormal", "SkewNormal"]:
+    elif preliz_name in ["TruncatedNormal"]:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf, decimal=6)
     else:
         assert_almost_equal(actual_neg_logpdf, expected_neg_logpdf)

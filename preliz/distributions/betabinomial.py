@@ -181,16 +181,7 @@ class BetaBinomial(Discrete):
         )
 
     def _fit_moments(self, mean, sigma):
-        # Crude aproximation for n (as in Binomial distribution)
-        # For alpha and beta see:
-        # https://en.wikipedia.org/wiki/Beta-binomial_distribution#Method_of_moments
-        n = mean + sigma * 2
-        p = mean / n
-        rho = ((sigma**2 / (mean * (1 - p))) - 1) / (n - 1)
-        alpha = max(0.5, (p / rho) - p)
-        beta = max(0.5, (alpha / p) - alpha)
-        params = alpha, beta, n
-        optimize_moments(self, mean, sigma, params)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
