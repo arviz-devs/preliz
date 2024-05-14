@@ -77,7 +77,7 @@ from preliz.distributions import (
         (Normal, (0, 1)),
         (Pareto, (5, 1)),
         (Rice, (0, 2)),
-        (SkewNormal, (0, 1, 6)),
+        (SkewNormal, (0, 1, -1)),
         (SkewStudentT, (0, 1, 2, 2)),
         (StudentT, (4, 0, 1)),
         (Triangular, (0, 2, 4)),
