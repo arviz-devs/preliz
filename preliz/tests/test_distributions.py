@@ -125,7 +125,6 @@ def test_moments(distribution, params):
         "Kumaraswamy",
         "LogitNormal",
         "Rice",
-        "SkewNormal",
         "StudentT",
     ]:
         tol = 0
