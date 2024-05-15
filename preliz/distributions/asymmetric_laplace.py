@@ -5,6 +5,7 @@ import numba as nb
 
 from .distributions import Continuous
 from ..internal.distribution_helper import all_not_none, eps
+from ..internal.optimization import optimize_ml
 
 
 class AsymmetricLaplace(Continuous):
@@ -178,9 +179,8 @@ class AsymmetricLaplace(Continuous):
         b = (sigma / 2) * (2**0.5)
         self._update(1, mu, b)
 
-    def _fit_mle(self, sample, **kwargs):
-        kappa, mu, b = nb_fit_mle(sample)
-        self._update(kappa, mu, b)
+    def _fit_mle(self, sample):
+        optimize_ml(self, sample)
 
 
 @nb.vectorize(nopython=True, cache=True)
@@ -230,13 +230,3 @@ def nb_rvs(random_samples, mu, b, kappa):
 @nb.njit(cache=True)
 def nb_entropy(b, kappa):
     return 1 + np.log(kappa + 1 / kappa) + np.log(b)
-
-
-@nb.njit(cache=True)
-def nb_fit_mle(sample):
-    new_mu = np.median(sample)
-    new_b = np.mean(np.abs(sample - new_mu))
-    new_kappa = np.sum((sample - new_mu) * np.sign(sample - new_mu)) / np.sum(
-        np.abs(sample - new_mu)
-    )
-    return new_kappa, new_mu, new_b

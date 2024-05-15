@@ -8,7 +8,7 @@ from scipy.special import owens_t  # pylint: disable=no-name-in-module
 from .distributions import Continuous
 from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
 from ..internal.special import erf, norm_logcdf
-from ..internal.optimization import find_ppf, optimize_ml
+from ..internal.optimization import find_ppf, optimize_ml, optimize_moments
 
 
 class SkewNormal(Continuous):
@@ -176,8 +176,7 @@ class SkewNormal(Continuous):
         return np.sign(u_0) * u_1 * self.sigma + self.mu
 
     def _fit_moments(self, mean, sigma):
-        # Assume gaussian
-        self._update(mean, sigma, 0)
+        optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
         skewness = skew(sample)

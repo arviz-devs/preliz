@@ -3,7 +3,7 @@
 import numpy as np
 import numba as nb
 
-from ..internal.special import cdf_bounds, erf, erfinv, mean_and_std, ppf_bounds_cont
+from ..internal.special import cdf_bounds, erf, erfinv, ppf_bounds_cont
 from ..internal.optimization import optimize_ml
 from ..internal.distribution_helper import eps, all_not_none
 from .distributions import Continuous
@@ -128,14 +128,14 @@ class TruncatedNormal(Continuous):
     def mean(self):
         alpha = (self.lower - self.mu) / self.sigma
         beta = (self.upper - self.mu) / self.sigma
-        z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
         return (
             self.mu
             + (
                 (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * alpha**2))
                 - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * beta**2))
             )
-            / z
+            / z_val
             * self.sigma
         )
 
@@ -150,7 +150,7 @@ class TruncatedNormal(Continuous):
     def var(self):
         alpha = (self.lower - self.mu) / self.sigma
         beta = (self.upper - self.mu) / self.sigma
-        z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
         # Handle for -np.inf or np.inf
         psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
         psi_beta = (0, 0) if beta == np.inf else (1, beta)
@@ -160,13 +160,13 @@ class TruncatedNormal(Continuous):
                 psi_beta[1] * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
                 - psi_alpha[1] * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
             )
-            / z
+            / z_val
             - (
                 (
                     (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
                     - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
                 )
-                / z
+                / z_val
             )
             ** 2
         )
@@ -177,7 +177,7 @@ class TruncatedNormal(Continuous):
     def skewness(self):
         alpha = (self.lower - self.mu) / self.sigma
         beta = (self.upper - self.mu) / self.sigma
-        z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
         # Handle for -np.inf or np.inf
         psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
         psi_beta = (0, 0) if beta == np.inf else (1, beta)
@@ -190,7 +190,7 @@ class TruncatedNormal(Continuous):
                 * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
                 * psi_beta[0]
             )
-            / z
+            / z_val
             - 3
             * (
                 psi_alpha[1]
@@ -204,14 +204,14 @@ class TruncatedNormal(Continuous):
                 (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
                 - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
             )
-            / z**2
+            / z_val**2
             + 2
             * (
                 (
                     (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
                     - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
                 )
-                / z
+                / z_val
             )
             ** 3
         )
@@ -225,13 +225,13 @@ class TruncatedNormal(Continuous):
                 * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
                 * psi_beta[0]
             )
-            / z
+            / z_val
             - (
                 (
                     (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
                     - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
                 )
-                / z
+                / z_val
             )
             ** 2
         ) ** (3 / 2)
@@ -240,7 +240,7 @@ class TruncatedNormal(Continuous):
     def kurtosis(self):
         alpha = (self.lower - self.mu) / self.sigma
         beta = (self.upper - self.mu) / self.sigma
-        z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
         # Handle for -np.inf or np.inf
         psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
         psi_beta = (0, 0) if beta == np.inf else (1, beta)
@@ -261,7 +261,7 @@ class TruncatedNormal(Continuous):
                     - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
                 )
                 ** 2
-                / z**3
+                / z_val**3
             )
             - (
                 4
@@ -277,7 +277,7 @@ class TruncatedNormal(Continuous):
                     (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
                     - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
                 )
-                / z**2
+                / z_val**2
             )
             - (
                 3
@@ -290,7 +290,7 @@ class TruncatedNormal(Continuous):
                         * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
                         * psi_beta[0]
                     )
-                    / z
+                    / z_val
                 )
                 ** 2
             )
@@ -301,7 +301,7 @@ class TruncatedNormal(Continuous):
                         (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
                         - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
                     )
-                    / z
+                    / z_val
                 )
                 ** 4
             )
@@ -313,7 +313,7 @@ class TruncatedNormal(Continuous):
                 * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
                 * psi_beta[0]
             )
-            / z
+            / z_val
         )
 
         denominator = (
@@ -326,13 +326,13 @@ class TruncatedNormal(Continuous):
                 * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
                 * psi_beta[0]
             )
-            / z
+            / z_val
             - (
                 (
                     (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
                     - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
                 )
-                / z
+                / z_val
             )
             ** 2
         ) ** 2
@@ -349,8 +349,7 @@ class TruncatedNormal(Continuous):
         self._update(mean, sigma)
 
     def _fit_mle(self, sample):
-        mean, sigma = mean_and_std(sample)
-        self._update(mean, sigma, np.min(sample), np.max(sample))
+        self._update(None, None, np.min(sample), np.max(sample))
         optimize_ml(self, sample)
 
 
@@ -359,8 +358,8 @@ def nb_cdf(x, mu, sigma, lower, upper):
     xi = (x - mu) / sigma
     alpha = (lower - mu) / sigma
     beta = (upper - mu) / sigma
-    z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-    prob = (0.5 * (1 + erf(xi / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))) / z
+    z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+    prob = (0.5 * (1 + erf(xi / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))) / z_val
     return cdf_bounds(prob, x, lower, upper)
 
 
@@ -383,14 +382,14 @@ def nb_ppf(q, mu, sigma, lower, upper):
 def nb_entropy(mu, sigma, lower, upper):
     alpha = (lower - mu) / sigma
     beta = (upper - mu) / sigma
-    z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+    z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
     # Handle for -np.inf or np.inf
     psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
     psi_beta = (0, 0) if beta == np.inf else (1, beta)
-    return np.log((2 * np.pi * np.e) ** 0.5 * sigma * z) + (
+    return np.log((2 * np.pi * np.e) ** 0.5 * sigma * z_val) + (
         (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[1] * psi_alpha[0]
         - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[1] * psi_beta[0]
-    ) / (2 * z)
+    ) / (2 * z_val)
 
 
 @nb.vectorize(nopython=True, cache=True)
@@ -401,9 +400,9 @@ def nb_logpdf(x, mu, sigma, lower, upper):
         xi = (x - mu) / sigma
         alpha = (lower - mu) / sigma
         beta = (upper - mu) / sigma
-        z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
         logphi = np.log(1 / (2 * np.pi) ** 0.5) - xi**2 / 2
-        return logphi - (np.log(sigma) + np.log(z))
+        return logphi - (np.log(sigma) + np.log(z_val))
 
 
 @nb.njit(cache=True)
@@ -415,6 +414,8 @@ def nb_neg_logpdf(x, mu, sigma, lower, upper):
 def nb_rvs(random_samples, mu, sigma, lower, upper):
     alpha = (lower - mu) / sigma
     beta = (upper - mu) / sigma
-    z = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-    inv_phi = 2**0.5 * erfinv(2 * (0.5 * (1 + erf(alpha / 2**0.5)) + random_samples * z) - 1)
+    z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
+    inv_phi = 2**0.5 * erfinv(
+        2 * (0.5 * (1 + erf(alpha / 2**0.5)) + random_samples * z_val) - 1
+    )
     return inv_phi * sigma + mu

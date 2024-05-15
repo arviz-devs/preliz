@@ -58,7 +58,7 @@ from preliz.distributions import (
         (Beta, (2, 5)),
         (BetaScaled, (2, 5, -1, 4)),
         (Cauchy, (0, 1)),
-        (ChiSquared, (1,)),
+        (ChiSquared, (5,)),
         (ExGaussian, (0, 1, 3)),
         (Exponential, (5,)),
         (Gamma, (2, 5)),
@@ -77,25 +77,25 @@ from preliz.distributions import (
         (Normal, (0, 1)),
         (Pareto, (5, 1)),
         (Rice, (0, 2)),
-        (SkewNormal, (0, 1, -1)),
+        (SkewNormal, (0, 1, -6)),
         (SkewStudentT, (0, 1, 2, 2)),
         (StudentT, (4, 0, 1)),
-        (Triangular, (0, 2, 4)),
-        (TruncatedNormal, (0, 1, -1, 1)),
+        (Triangular, (0, 3, 4)),
+        (TruncatedNormal, (0, 0.5, -1, 1)),
         (Uniform, (2, 5)),
         (VonMises, (1, 2)),
         (Wald, (2, 1)),
         (Weibull, (2, 1)),
         (Bernoulli, (0.5,)),
-        (BetaBinomial, (1, 2, 10)),
+        (BetaBinomial, (2, 5, 10)),
         (Binomial, (5, 0.5)),
         (DiscreteUniform, (-2, 2)),
         (DiscreteWeibull, (0.9, 1.3)),
         (Geometric, (0.75,)),
         (HyperGeometric, (50, 10, 20)),
-        (NegativeBinomial, (10, 0.5)),
+        (NegativeBinomial, (10, 2.5)),
         (Poisson, (4.2,)),
-        (ZeroInflatedBinomial, (0.5, 10, 0.8)),
+        (ZeroInflatedBinomial, (0.5, 10, 0.6)),
         (ZeroInflatedNegativeBinomial, (0.7, 8, 4)),
         (
             ZeroInflatedPoisson,
@@ -111,8 +111,15 @@ def test_auto_recover(distribution, params):
         sample = distribution(*params).rvs(10_000)
         dist = distribution()
         try:
+            if dist.__class__.__name__ in [
+                "BetaScaled",
+                "TruncatedNormal",
+            ]:
+                tol = 1
+            else:
+                tol = 0.1
             pz.mle([dist], sample)
-            assert_allclose(dist.params, params, atol=1)
+            assert_allclose(dist.params, params, atol=tol)
             break
         except AssertionError:
             pass

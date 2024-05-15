@@ -4,7 +4,6 @@
 import numpy as np
 import numba as nb
 
-from ..internal.optimization import optimize_ml
 from ..internal.distribution_helper import all_not_none
 from .distributions import Continuous
 
@@ -172,7 +171,10 @@ class Triangular(Continuous):
         self._update(lower, c, upper)
 
     def _fit_mle(self, sample):
-        optimize_ml(self, sample)
+        lower = np.min(sample)
+        upper = np.max(sample)
+        middle = (np.mean(sample) * 3) - lower - upper
+        self._update(lower, middle, upper)
 
 
 @nb.vectorize(nopython=True, cache=True)
