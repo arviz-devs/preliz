@@ -83,7 +83,7 @@ def multivariates():
         (Normal, (0, 1)),
         (Pareto, (5, 1)),
         (Rice, (4, 1)),
-        (SkewNormal, (0, 1, 6)),
+        (SkewNormal, (0, 1, 0)),
         (StudentT, (100, 0, 1)),
         (Triangular, (-2, 3, 7)),
         (TruncatedNormal, (0, 1, -np.inf, np.inf)),

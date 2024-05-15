@@ -176,6 +176,8 @@ class SkewNormal(Continuous):
         return np.sign(u_0) * u_1 * self.sigma + self.mu
 
     def _fit_moments(self, mean, sigma):
+        if self.alpha is None:
+            self.alpha = 0
         optimize_moments(self, mean, sigma)
 
     def _fit_mle(self, sample):
