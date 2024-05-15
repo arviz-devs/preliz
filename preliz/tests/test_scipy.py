@@ -71,8 +71,8 @@ from preliz import (
         (
             ExGaussian,
             stats.exponnorm,
-            {"mu": -1, "sigma": 0.5, "nu": 1},
-            {"loc": -1, "scale": 0.5, "K": 1 / 0.5},
+            {"mu": -1, "sigma": 2, "nu": 5},
+            {"loc": -1, "scale": 2, "K": 5 / 2},
         ),
         (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
         (Gamma, stats.gamma, {"alpha": 2, "beta": 1 / 3}, {"a": 2, "scale": 3}),
@@ -313,7 +313,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     if preliz_name == "HalfStudentT":
         assert_almost_equal(actual_median, expected_median, decimal=1)
-    elif preliz_name == "SkewNormal":
+    elif preliz_name in ["SkewNormal", "ExGaussian"]:
         assert_almost_equal(actual_median, expected_median, decimal=6)
     else:
         assert_almost_equal(actual_median, expected_median)

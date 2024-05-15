@@ -492,7 +492,7 @@ def xprody(x, y):
 
 @nb.vectorize(nopython=True, cache=True)
 def norm_logcdf(x):
-    t = x * np.sqrt(0.5)
+    t = x * 0.7071067811865476
     if x < -1.0:
         return np.log(erfcx(-t) / 2) - t * t
     else:
