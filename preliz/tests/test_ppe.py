@@ -5,7 +5,6 @@ import pytest
 from numpy.testing import assert_allclose
 
 np.random.seed(42)
-rng = np.random.default_rng(42)
 
 
 @pytest.mark.parametrize(
@@ -21,7 +20,7 @@ rng = np.random.default_rng(42)
             (175.096086, 174.918323),
             (1.192426, 1.223783),
             9.01539,
-        )
+        ),
     ],
 )
 def test_ppe_pymc(mu_x, sigma_x, sigma_z, target, X, new_mu_x, new_sigma_x, new_sigma_z):
