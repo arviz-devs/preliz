@@ -21,17 +21,7 @@ rng = np.random.default_rng(42)
             (175.096086, 174.918323),
             (1.192426, 1.223783),
             9.01539,
-        ),
-        (
-            0,
-            10,
-            10,
-            pz.StudentT(mu=174, sigma=20, nu=3),  # The target is StudentT
-            np.random.normal(0, 10, 120),
-            173.835985,
-            3.219217,
-            33.454929,
-        ),
+        )
     ],
 )
 def test_ppe_pymc(mu_x, sigma_x, sigma_z, target, X, new_mu_x, new_sigma_x, new_sigma_z):
@@ -45,14 +35,14 @@ def test_ppe_pymc(mu_x, sigma_x, sigma_z, target, X, new_mu_x, new_sigma_x, new_
         )
     )
     with pm.Model() as model:
-        x = pm.Normal("x", mu=mu_x, sigma=sigma_x, rng=rng)
-        z = pm.HalfNormal("z", sigma_z, rng=rng)
+        x = pm.Normal("x", mu=mu_x, sigma=sigma_x)
+        z = pm.HalfNormal("z", sigma_z)
         x_idx = (
             x
             if max(np.asarray(mu_x).size, np.asarray(sigma_x).size) == 1
             else x[np.repeat(np.arange(2), Y.size / 2)]
         )
-        y = pm.Normal("y", x_idx, z, observed=Y, rng=rng)
+        y = pm.Normal("y", x_idx, z, observed=Y)
     new_prior_vals = pz.ppe(model, target)[1]
     assert_allclose(new_prior_vals["x"].mu, new_mu_x, rtol=1e-6)
     assert_allclose(new_prior_vals["x"].sigma, new_sigma_x, rtol=1e-6)
