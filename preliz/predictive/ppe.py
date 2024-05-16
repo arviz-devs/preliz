@@ -39,6 +39,9 @@ def ppe(model, target):
     prior : a dictionary
         Prior samples approximating the prior distribution that will induce
         a prior predictive distribution close to ``target``.
+    new_priors : a dictionary
+        PreliZ Distributions approximating the prior distribution inducing a
+        prior predictive distribution close to ``target``.
     pymc_string : a string
         This is the PyMC model string with the new priors.
         Computed by taking the "prior samples" and fit it into the model's prior families
@@ -58,4 +61,4 @@ def ppe(model, target):
     # So we can write it as a PyMC model
     new_priors = backfitting(prior, p_model, var_info2)
 
-    return prior, write_pymc_string(new_priors, var_info2)
+    return prior, new_priors, write_pymc_string(new_priors, var_info2)

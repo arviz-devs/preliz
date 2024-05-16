@@ -232,7 +232,7 @@ def optimize_pymc_model(fmodel, target, draws, prior, initial_guess, bounds, var
         # can we sample systematically from these and less random?
         # This should be more flexible and allow other targets than just
         # a preliz distribution
-        obs = target.rvs(draws)
+        obs = target.rvs(draws, random_state=np.random.default_rng(_))
         result = minimize(
             fmodel,
             initial_guess,
