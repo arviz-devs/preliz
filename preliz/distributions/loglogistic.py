@@ -35,11 +35,11 @@ class LogLogistic(Continuous):
         for mu, sigma in zip(mus, sigmas):
             LogLogistic(mu, sigma).plot_pdf(support=(0, 6))
 
-    ========  =========================================================================
+    ========  ==========================================================================
     Support   :math:`x \in [0, \infty)`
     Mean      :math:`{\alpha\,\pi/\beta \over \sin(\pi/\beta)}`
-    Variance  :math:` \alpha^2 \left( 2b / \sin 2b -b^2 / \sin^2 b \right), \quad \beta>2`
-    ========  =========================================================================
+    Variance  :math:`\alpha^2 \left(2b / \sin 2b -b^2 / \sin^2 b \right), \quad \beta>2`
+    ========  ==========================================================================
 
     Parameters
     ----------
