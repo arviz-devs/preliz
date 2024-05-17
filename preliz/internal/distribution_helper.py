@@ -120,6 +120,7 @@ init_vals = {
     "InverseGamma": {"alpha": 3.0, "beta": 5.0},
     "Kumaraswamy": {"a": 2.0, "b": 2.0},
     "Laplace": {"mu": 0.0, "b": 1.0},
+    "LogLogistic": {"alpha": 1, "beta": 5},
     "Logistic": {"mu": 0.0, "s": 1},
     "LogNormal": {"mu": 0.0, "sigma": 0.5},
     "LogitNormal": {"mu": 0.0, "sigma": 0.5},
