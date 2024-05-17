@@ -15,6 +15,7 @@ from .inversegamma import InverseGamma
 from .kumaraswamy import Kumaraswamy
 from .laplace import Laplace
 from .logistic import Logistic
+from .loglogistic import LogLogistic
 from .logitnormal import LogitNormal
 from .lognormal import LogNormal
 from .moyal import Moyal
@@ -72,6 +73,7 @@ all_continuous = [
     Kumaraswamy,
     Laplace,
     Logistic,
+    LogLogistic,
     LogNormal,
     LogitNormal,
     Moyal,

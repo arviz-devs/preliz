@@ -22,6 +22,7 @@ from preliz import (
     Kumaraswamy,
     Laplace,
     Logistic,
+    LogLogistic,
     LogitNormal,
     LogNormal,
     Moyal,
@@ -88,6 +89,7 @@ from preliz import (
         (InverseGamma, stats.invgamma, {"alpha": 5, "beta": 2}, {"a": 5, "scale": 2}),
         (Kumaraswamy, stats.beta, {"a": 1, "b": 5}, {"a": 1, "b": 5}),  # not in scipy
         (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
+        (LogLogistic, stats.fisk, {"alpha": 1, "beta": 8}, {"c": 8}),
         (Logistic, stats.logistic, {"mu": 2.5, "s": 4}, {"loc": 2.5, "scale": 4}),
         (LogNormal, stats.lognorm, {"mu": 0, "sigma": 2}, {"s": 2, "scale": 1}),
         (LogitNormal, stats.beta, {"mu": 0, "sigma": 0.2}, {"a": 50.5, "b": 50.5}),  # not in scipy
@@ -281,6 +283,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     if preliz_dist.__class__.__name__ not in [
         "HalfStudentT",
+        "LogLogistic",
         "Rice",
         "VonMises",
         "ZeroInflatedBinomial",
