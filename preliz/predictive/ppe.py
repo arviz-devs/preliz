@@ -47,7 +47,6 @@ def ppe(model, target):
         Computed by taking the "prior samples" and fit it into the model's prior families
         using MLE.
     """
-
     _log.info(""""This is an experimental method under development, use with caution.""")
 
     # Get information from PyMC model
