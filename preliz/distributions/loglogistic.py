@@ -161,7 +161,7 @@ def nb_cdf(x, alpha, beta):
 
 @nb.njit(cache=True)
 def nb_ppf(q, alpha, beta):
-    return ppf_bounds_cont((alpha * q / (1 - q)) ** (1 / beta), q, 0, np.inf)
+    return ppf_bounds_cont(alpha * (q / (1 - q)) ** (1 / beta), q, 0, np.inf)
 
 
 @nb.njit(cache=True)
