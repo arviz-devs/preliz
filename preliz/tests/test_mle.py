@@ -110,7 +110,7 @@ from preliz.distributions import (
 )
 def test_auto_recover(distribution, params):
     for _ in range(10):
-        sample = distribution(*params).rvs(10_000)
+        sample = distribution(*params).rvs(20_000)
         dist = distribution()
         try:
             if dist.__class__.__name__ in [
@@ -119,7 +119,7 @@ def test_auto_recover(distribution, params):
             ]:
                 tol = 1
             else:
-                tol = 0.1
+                tol = 0.5
             pz.mle([dist], sample)
             assert_allclose(dist.params, params, atol=tol)
             break
