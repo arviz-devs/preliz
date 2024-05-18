@@ -26,13 +26,13 @@ def ppe(model, target):
     ----------
     model : a probabilistic model
         Currently it only works with PyMC model. More PPls coming soon.
-    target : a Preliz distribution
-        This represent the prior predictive distribution **previously** elicited from the user,
+    target : a Preliz distribution or list
+        Instance of a PreliZ distribution or a list of tuples where each tuple contains a PreliZ
+        distribution and a weight.
+        This represents the prior predictive distribution **previously** elicited from the user,
         possibly using other Preliz's methods to obtain this distribution, such as maxent,
         roulette, quartile, etc.
         This should represent the domain-knowledge of the user and not any observed dataset.
-        Currently only works with a Preliz distributions. In the future we should support mixture of
-        distributions (mixture of "experts"), and maybe other options.
 
     Returns
     -------

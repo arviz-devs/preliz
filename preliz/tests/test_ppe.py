@@ -31,6 +31,30 @@ np.random.seed(42)
             "new_sigma_x": (2.621553, 2.691291),
             "new_sigma_z": 19.769245,
         },
+        {
+            "mu_x": 0,
+            "sigma_x": 10,
+            "sigma_z": 10,
+            "target": [(pz.Normal(mu=174, sigma=20), 0.5), (pz.Normal(mu=176, sigma=19.5), 0.5)],
+            "X": np.random.normal(0, 10, 120),
+            "new_mu_x": 175.015421,
+            "new_sigma_x": 1.941163,
+            "new_sigma_z": 19.63016,
+        },
+        {
+            "mu_x": [0, 1],
+            "sigma_x": [10, 10],
+            "sigma_z": 10,
+            "target": [
+                (pz.Normal(mu=174, sigma=20), 0.5),
+                (pz.Normal(mu=176, sigma=19.5), 0.4),
+                (pz.StudentT(mu=174, sigma=20, nu=3), 0.1),
+            ],
+            "X": np.random.normal(0, 10, 120),
+            "new_mu_x": [175.045326, 174.626407],
+            "new_sigma_x": [2.933791, 2.917447],
+            "new_sigma_z": 21.413898,
+        },
     ],
 )
 def test_ppe(params):
