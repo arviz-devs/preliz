@@ -227,12 +227,13 @@ def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
             tau_not += 0.5 * tau_not
 
 
-def optimize_pymc_model(fmodel, target, draws, prior, initial_guess, bounds, var_info, p_model):
+def optimize_pymc_model(
+    fmodel, target, draws, prior, initial_guess, bounds, var_info, p_model, rng
+):
     for _ in range(400):
         # can we sample systematically from these and less random?
         # This should be more flexible and allow other targets than just
         # a preliz distribution
-        rng = np.random.default_rng(_)
         if isinstance(target, list):
             obs = get_weighted_rvs(target, draws, rng)
         else:
