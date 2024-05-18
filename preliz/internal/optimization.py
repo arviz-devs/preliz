@@ -227,15 +227,16 @@ def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
             tau_not += 0.5 * tau_not
 
 
-def optimize_pymc_model(fmodel, targets, draws, prior, initial_guess, bounds, var_info, p_model):
+def optimize_pymc_model(fmodel, target, draws, prior, initial_guess, bounds, var_info, p_model):
     for _ in range(400):
         # can we sample systematically from these and less random?
         # This should be more flexible and allow other targets than just
         # a preliz distribution
-        if isinstance(targets, list):
-            obs = get_weighted_rvs([d[0] for d in targets], [w[1] for w in targets], draws, _)
+        rng = np.random.default_rng(_)
+        if isinstance(target, list):
+            obs = get_weighted_rvs(target, draws, rng)
         else:
-            obs = targets.rvs(draws, np.random.default_rng(_))
+            obs = target.rvs(draws, random_state=rng)
         result = minimize(
             fmodel,
             initial_guess,
@@ -457,7 +458,9 @@ def _ppf_single(dist, q):
     return brentq(func, left, right, args=(dist, q))
 
 
-def get_weighted_rvs(targets, weights, size, seed):
+def get_weighted_rvs(target, size, rng):
+    targets = [t[0] for t in target]
+    weights = [t[1] for t in target]
     target_rnd_choices = np.random.choice(len(targets), size=size, p=weights)
-    samples = [target.rvs(size, np.random.default_rng(seed)) for target in targets]
+    samples = [target.rvs(size, random_state=rng) for target in targets]
     return np.choose(target_rnd_choices, samples)
