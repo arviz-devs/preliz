@@ -451,9 +451,4 @@ def _ppf_single(dist, q):
     while func(right, dist, q) < 0.0:
         left, right = right, right * factor
 
-    # if left < dist.support[0]:
-    #     left = dist.support[0]
-    # if right > dist.support[1]:
-    #     right = dist.support[1]
-
     return brentq(func, left, right, args=(dist, q))
