@@ -1,6 +1,7 @@
 """Projective predictive elicitation."""
 
 import logging
+import numpy as np
 
 from preliz.internal.optimization import optimize_pymc_model
 from preliz.ppls.pymc_io import (
@@ -15,7 +16,7 @@ from preliz.ppls.pymc_io import (
 _log = logging.getLogger("preliz")
 
 
-def ppe(model, target):
+def ppe(model, target, seed=0):
     """
     Projective Predictive Elicitation.
 
@@ -26,13 +27,15 @@ def ppe(model, target):
     ----------
     model : a probabilistic model
         Currently it only works with PyMC model. More PPls coming soon.
-    target : a Preliz distribution
-        This represent the prior predictive distribution **previously** elicited from the user,
+    target : a Preliz distribution or list
+        Instance of a PreliZ distribution or a list of tuples where each tuple contains a PreliZ
+        distribution and a weight.
+        This represents the prior predictive distribution **previously** elicited from the user,
         possibly using other Preliz's methods to obtain this distribution, such as maxent,
         roulette, quartile, etc.
         This should represent the domain-knowledge of the user and not any observed dataset.
-        Currently only works with a Preliz distributions. In the future we should support mixture of
-        distributions (mixture of "experts"), and maybe other options.
+    seed : int
+        A seed to initialize the Random Generator. Default is 0.
 
     Returns
     -------
@@ -50,13 +53,14 @@ def ppe(model, target):
     _log.info(""""This is an experimental method under development, use with caution.""")
 
     # Get information from PyMC model
+    rng = np.random.default_rng(seed)
     bounds, prior, p_model, var_info, var_info2, draws, free_rvs = get_model_information(model)
     # Initial point for optimization
     guess = get_guess(model, free_rvs)
     # compile PyMC model
     fmodel = compile_logp(model)
     # find prior that induce a prior predictive distribution close to target
-    prior = optimize_pymc_model(fmodel, target, draws, prior, guess, bounds, var_info, p_model)
+    prior = optimize_pymc_model(fmodel, target, draws, prior, guess, bounds, var_info, p_model, rng)
     # Fit the prior into the model's prior
     # So we can write it as a PyMC model
     new_priors = backfitting(prior, p_model, var_info2)
