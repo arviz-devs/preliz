@@ -11,7 +11,7 @@ from ..internal.optimization import optimize_ml, optimize_moments
 
 class LogLogistic(Continuous):
     r"""
-    Log-normal distribution.
+    Log-Logistic distribution.
 
     Also known as the Fisk distribution is a continuous non-negative distribution used in survival
     analysis as a parametric model for events whose rate increases initially and decreases later
