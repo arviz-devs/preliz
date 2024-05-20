@@ -59,7 +59,7 @@ class LogLogistic(Continuous):
         self.beta = beta
         self.params = (self.alpha, self.beta)
         self.param_names = ("alpha", "beta")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.params_support = ((eps, np.inf), (eps, np.inf))
         if all_not_none(alpha, beta):
             self._update(alpha, beta)
 
