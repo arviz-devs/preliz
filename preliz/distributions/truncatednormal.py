@@ -36,8 +36,9 @@ class TruncatedNormal(Continuous):
     ========  ==========================================
     Support   :math:`x \in [a, b]`
     Mean      :math:`\mu +{\frac {\phi (\alpha )-\phi (\beta )}{Z}}\sigma`
-    Variance  :math:`\sigma ^{2}\left[1+{\frac {\alpha \phi (\alpha )-\beta \phi (\beta )}{Z}}-
-                        \left({\frac {\phi (\alpha )-\phi (\beta )}{Z}}\right)^{2}\right]`
+    Variance  .. math::
+                  \sigma ^{2}\left[1+{\frac {\alpha \phi (\alpha )-\beta \phi (\beta )}{Z}}-
+                  \left({\frac {\phi (\alpha )-\phi (\beta )}{Z}}\right)^{2}\right]
     ========  ==========================================
 
     Parameters
