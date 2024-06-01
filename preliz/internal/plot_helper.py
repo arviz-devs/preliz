@@ -5,10 +5,10 @@ import sys
 try:
     from IPython import get_ipython
     from ipywidgets import FloatSlider, IntSlider, FloatText, IntText, Checkbox, ToggleButton
+    from pymc import sample_prior_predictive
 except ImportError:
     pass
 
-from pymc import sample_prior_predictive
 from arviz import plot_kde, plot_ecdf, hdi, extract
 from arviz.stats.density_utils import _kde_linear
 import numpy as np
