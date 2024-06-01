@@ -469,7 +469,6 @@ def plot_repr(results, kind_plot, references, iterations, ax):
                 ax.set_xticks(bins + 0.5)
         else:
             bins = "auto"
-        print(results.T.shape)
         ax.hist(
             results.T,
             alpha=alpha,
