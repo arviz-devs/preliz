@@ -8,7 +8,8 @@ try:
 except ImportError:
     pass
 
-from arviz import plot_kde, plot_ecdf, hdi
+from pymc import sample_prior_predictive
+from arviz import plot_kde, plot_ecdf, hdi, extract
 from arviz.stats.density_utils import _kde_linear
 import numpy as np
 import matplotlib.pyplot as plt
@@ -425,6 +426,39 @@ def plot_decorator(func, iterations, kind_plot, references, plot_func):
     return looper
 
 
+def pymc_plot_decorator(func, iterations, kind_plot, references, plot_func):
+    def looper(*args, **kwargs):
+        results = []
+        kwargs.pop("__resample__")
+        x_min = kwargs.pop("__x_min__")
+        x_max = kwargs.pop("__x_max__")
+        if not kwargs.pop("__set_xlim__"):
+            x_min = None
+            x_max = None
+            auto = True
+        else:
+            auto = False
+
+        for _ in range(iterations):
+            with func(*args, **kwargs) as model:
+                obs_name = model.observed_RVs[0].name
+                idata = sample_prior_predictive()
+                val = extract(idata, group="prior_predictive")[obs_name].values
+            if not np.isnan(val).any():
+                results.append(val)
+        results = np.array(results)
+
+        _, ax = plt.subplots()
+        ax.set_xlim(x_min, x_max, auto=auto)
+        print(results.shape)
+        if plot_func is None:
+            pymc_plot_repr(results, kind_plot, references, iterations, ax)
+        else:
+            plot_func(np.reshape(results, (results.shape[0], -1)), ax)
+
+    return looper
+
+
 def plot_repr(results, kind_plot, references, iterations, ax):
     alpha = max(0.01, 1 - iterations * 0.009)
 
@@ -435,6 +469,7 @@ def plot_repr(results, kind_plot, references, iterations, ax):
                 ax.set_xticks(bins + 0.5)
         else:
             bins = "auto"
+        print(results.T.shape)
         ax.hist(
             results.T,
             alpha=alpha,
@@ -462,6 +497,50 @@ def plot_repr(results, kind_plot, references, iterations, ax):
             color="0.5",
         )
         a = np.concatenate(results)
+        ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
+
+    plot_references(references, ax)
+
+
+def pymc_plot_repr(results, kind_plot, references, iterations, ax):
+    alpha = max(0.01, 1 - iterations * 0.009)
+
+    if kind_plot == "hist":
+        if results[0].dtype.kind == "i":
+            bins = np.arange(np.min(results), np.max(results) + 1.5) - 0.5
+            if len(bins) < 30:
+                ax.set_xticks(bins + 0.5)
+        else:
+            bins = "auto"
+        reshaped_t = np.reshape(results.T, (-1, results.shape[0]))
+        ax.hist(
+            reshaped_t,
+            alpha=alpha,
+            density=True,
+            color=["0.5"] * iterations,
+            bins=bins,
+            histtype="step",
+        )
+        ax.hist(
+            np.ravel(results),
+            density=True,
+            bins=bins,
+            color="k",
+            ls="--",
+            histtype="step",
+        )
+    elif kind_plot == "kde":
+        for result in results:
+            ax.plot(*_kde_linear(np.ravel(result), grid_len=100), "0.5", alpha=alpha)
+        ax.plot(*_kde_linear(np.ravel(results), grid_len=100), "k--")
+    elif kind_plot == "ecdf":
+        sorted_reshape = np.reshape(np.sort(results, axis=1).T, (-1, results.shape[0]))
+        ax.plot(
+            sorted_reshape,
+            np.linspace(0, 1, sorted_reshape.shape[0], endpoint=False),
+            color="0.5",
+        )
+        a = np.ravel(results)
         ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
 
     plot_references(references, ax)

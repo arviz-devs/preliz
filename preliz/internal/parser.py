@@ -17,7 +17,7 @@ def inspect_source(fmodel):
     return source, signature
 
 
-def parse_function_for_pred_textboxes(source, signature):
+def parse_function_for_pred_textboxes(source, signature, engine="preliz"):
     model = {}
 
     slidify = list(signature.parameters.keys())
@@ -29,7 +29,10 @@ def parse_function_for_pred_textboxes(source, signature):
     for match in matches:
         dist_name_str = match.group(2)
         arguments = [s.strip() for s in match.group(3).split(",")]
-        args = parse_arguments(arguments, regex)
+        if engine == "pymc":
+            args = pymc_parse_arguments(arguments, regex)
+        else:
+            args = parse_arguments(arguments, regex)
         for arg in args:
             if arg:
                 func, var, idx = arg
@@ -53,6 +56,23 @@ def parse_arguments(lst, regex):
                 else:
                     func = item.split("(")[0].split(".")[-1]
                     result.append((func, match.group(0), idx))
+    return result
+
+
+def pymc_parse_arguments(lst, regex):
+    result = []
+    for idx, item in enumerate(lst):
+        match = re.search(regex, item)
+        if match:
+            if item.isidentifier():
+                result.append((None, match.group(0), idx - 1))
+            else:
+                if "**" in item:
+                    power = item.split("**")[1].strip()
+                    result.append((power, match.group(0), idx - 1))
+                else:
+                    func = item.split("(")[0].split(".")[-1]
+                    result.append((func, match.group(0), idx - 1))
     return result
 
 
