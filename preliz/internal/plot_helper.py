@@ -15,6 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
 from matplotlib.ticker import MaxNLocator
+from .logging import disable_pymc_sampling_logs
 
 
 def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False, ax=None):
@@ -438,23 +439,17 @@ def pymc_plot_decorator(func, iterations, kind_plot, references, plot_func):
             auto = True
         else:
             auto = False
-
-        for _ in range(iterations):
-            with func(*args, **kwargs) as model:
-                obs_name = model.observed_RVs[0].name
-                idata = sample_prior_predictive()
-                val = extract(idata, group="prior_predictive")[obs_name].values
-            if not np.isnan(val).any():
-                results.append(val)
-        results = np.array(results)
-
+        with func(*args, **kwargs) as model:
+            obs_name = model.observed_RVs[0].name
+            with disable_pymc_sampling_logs():
+                idata = sample_prior_predictive(samples=iterations)
+            results = extract(idata, group="prior_predictive")[obs_name].values
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
-        print(results.shape)
         if plot_func is None:
             pymc_plot_repr(results, kind_plot, references, iterations, ax)
         else:
-            plot_func(np.reshape(results, (results.shape[0], -1)), ax)
+            plot_func(results, ax)
 
     return looper
 
@@ -511,9 +506,8 @@ def pymc_plot_repr(results, kind_plot, references, iterations, ax):
                 ax.set_xticks(bins + 0.5)
         else:
             bins = "auto"
-        reshaped_t = np.reshape(results.T, (-1, results.shape[0]))
         ax.hist(
-            reshaped_t,
+            results,
             alpha=alpha,
             density=True,
             color=["0.5"] * iterations,
@@ -521,7 +515,7 @@ def pymc_plot_repr(results, kind_plot, references, iterations, ax):
             histtype="step",
         )
         ax.hist(
-            np.ravel(results),
+            np.concatenate(results),
             density=True,
             bins=bins,
             color="k",
@@ -530,16 +524,15 @@ def pymc_plot_repr(results, kind_plot, references, iterations, ax):
         )
     elif kind_plot == "kde":
         for result in results:
-            ax.plot(*_kde_linear(np.ravel(result), grid_len=100), "0.5", alpha=alpha)
-        ax.plot(*_kde_linear(np.ravel(results), grid_len=100), "k--")
+            ax.plot(*_kde_linear(result, grid_len=100), "0.5", alpha=alpha)
+        ax.plot(*_kde_linear(np.concatenate(results), grid_len=100), "k--")
     elif kind_plot == "ecdf":
-        sorted_reshape = np.reshape(np.sort(results, axis=1).T, (-1, results.shape[0]))
         ax.plot(
-            sorted_reshape,
-            np.linspace(0, 1, sorted_reshape.shape[0], endpoint=False),
+            np.sort(results, axis=1).T,
+            np.linspace(0, 1, len(results[0]), endpoint=False),
             color="0.5",
         )
-        a = np.ravel(results)
+        a = np.concatenate(results)
         ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
 
     plot_references(references, ax)
