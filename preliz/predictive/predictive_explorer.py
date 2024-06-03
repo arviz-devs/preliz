@@ -4,10 +4,12 @@ try:
 except ImportError:
     pass
 from preliz.internal.parser import inspect_source, parse_function_for_pred_textboxes
-from preliz.internal.plot_helper import get_textboxes, plot_decorator
+from preliz.internal.plot_helper import get_textboxes, plot_decorator, pymc_plot_decorator
 
 
-def predictive_explorer(fmodel, samples=50, kind_plot="ecdf", references=None, plot_func=None):
+def predictive_explorer(
+    fmodel, samples=50, kind_plot="ecdf", references=None, plot_func=None, engine="preliz"
+):
     """
     Create textboxes and plot a set of samples returned by a function relating one or more
     PreliZ distributions.
@@ -18,7 +20,8 @@ def predictive_explorer(fmodel, samples=50, kind_plot="ecdf", references=None, p
     Parameters
     ----------
     fmodel : callable
-        A function with PreliZ distributions. The distributions should call their rvs methods.
+        A function with PreliZ distributions or PyMC distributions, depending on the selected
+        engine. The PreliZ distributions should call their rvs method.
     samples : int, optional
         The number of samples to draw from the prior predictive distribution (default is 50).
     kind_plot : str, optional
@@ -30,14 +33,16 @@ def predictive_explorer(fmodel, samples=50, kind_plot="ecdf", references=None, p
     plot_func : function
         Custom matplotlib code. Defaults to None. ``kind_plot`` and ``references`` are ignored
         if ``plot_func`` is specified.
+    engine : str, optional
+        Library used to define the fmodel. Either `pymc` or `preliz`. Default to `preliz`.
     """
     source, signature = inspect_source(fmodel)
-
-    model = parse_function_for_pred_textboxes(source, signature)
+    model = parse_function_for_pred_textboxes(source, signature, engine)
     textboxes = get_textboxes(signature, model)
-
-    new_fmodel = plot_decorator(fmodel, samples, kind_plot, references, plot_func)
-
+    if engine == "pymc":
+        new_fmodel = pymc_plot_decorator(fmodel, samples, kind_plot, references, plot_func)
+    else:
+        new_fmodel = plot_decorator(fmodel, samples, kind_plot, references, plot_func)
     out = interactive_output(new_fmodel, textboxes)
     default_names = ["__set_xlim__", "__x_min__", "__x_max__", "__resample__"]
     default_controls = [textboxes[name] for name in default_names]
