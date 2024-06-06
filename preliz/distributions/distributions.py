@@ -312,7 +312,7 @@ class Distribution:
             plot the median and two interquantiles ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
-        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -377,7 +377,7 @@ class Distribution:
             plot the median and two interquantiles ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
-        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -440,7 +440,7 @@ class Distribution:
             plot the median and two interquantiles ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
-        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -491,7 +491,7 @@ class Distribution:
             plot the median and two interquantiles ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
-        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
