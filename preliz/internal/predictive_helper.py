@@ -1,5 +1,6 @@
 from sys import modules
 
+import re
 import numpy as np
 
 
@@ -68,3 +69,12 @@ def select_prior_samples(selected, prior_samples, model):
     subsample = {rv: prior_samples[rv][selected] for rv in model.keys()}
 
     return subsample
+
+
+def get_engine(source):
+    source = re.sub(r"#.*$|^#.*$", "", source, flags=re.MULTILINE)
+    if re.search(r"\s*(?:bmb|bambi)\.Model\s*", source):
+        return "bambi"
+    if re.search(r"\s*(?:pm|pymc)\.Model\s*", source):
+        return "pymc"
+    return "preliz"
