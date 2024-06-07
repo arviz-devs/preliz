@@ -4,8 +4,6 @@ import re
 from sys import modules
 
 import numpy as np
-import pymc as pm
-import bambi as bmb
 
 from preliz import distributions
 from .distribution_helper import init_vals
@@ -20,9 +18,9 @@ def inspect_source(fmodel):
         for name, param in signature.parameters.items()
     }
     model = fmodel(**default_params)
-    if isinstance(model, pm.Model):
+    if getattr(model, "basic_RVs", False):
         engine = "pymc"
-    elif isinstance(model, bmb.Model):
+    elif getattr(model, "formula", False):
         engine = "bambi"
     else:
         engine = "preliz"

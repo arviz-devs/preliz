@@ -25,8 +25,8 @@ def predictive_explorer(
     Parameters
     ----------
     fmodel : callable
-        A function with PreliZ distributions, PyMC distributions, or Bambi distributions.
-        The PreliZ distributions should call their rvs method.
+        A function with a PreliZ model, a PyMC model, or a Bambi model.
+        See examples section below for details
     samples : int, optional
         The number of samples to draw from the prior predictive distribution (default is 50).
     kind_plot : str, optional
