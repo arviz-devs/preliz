@@ -442,7 +442,7 @@ def bambi_plot_decorator(func, iterations, kind_plot, references, plot_func):
         model = func(*args, **kwargs)
         model.build()
         with disable_pymc_sampling_logs():
-            idata = model.prior_predictive(iterations, random_seed=iterations)
+            idata = model.prior_predictive(iterations)
         results = extract(idata, group="prior_predictive")[model.response_name].values.T
 
         _, ax = plt.subplots()

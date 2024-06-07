@@ -10,7 +10,6 @@ from preliz.internal.plot_helper import (
     pymc_plot_decorator,
     bambi_plot_decorator,
 )
-from preliz.internal.predictive_helper import get_engine
 
 
 def predictive_explorer(
@@ -44,8 +43,7 @@ def predictive_explorer(
         The function will automatically select the appropriate library to use based on the fmodel
         provided.
     """
-    source, signature = inspect_source(fmodel)
-    engine = get_engine(source) if engine == "auto" else engine
+    source, signature, engine = inspect_source(fmodel)
     model = parse_function_for_pred_textboxes(source, signature, engine)
     textboxes = get_textboxes(signature, model)
     if engine == "pymc":

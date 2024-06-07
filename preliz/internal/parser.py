@@ -4,6 +4,8 @@ import re
 from sys import modules
 
 import numpy as np
+import pymc as pm
+import bambi as bmb
 
 from preliz import distributions
 from .distribution_helper import init_vals
@@ -13,8 +15,18 @@ def inspect_source(fmodel):
     source = inspect.getsource(fmodel)
     signature = inspect.signature(fmodel)
     source = re.sub(r"#.*$|^#.*$", "", source, flags=re.MULTILINE)
-
-    return source, signature
+    default_params = {
+        name: (param.default if param.default is not inspect.Parameter.empty else np.nan)
+        for name, param in signature.parameters.items()
+    }
+    model = fmodel(**default_params)
+    if isinstance(model, pm.Model):
+        engine = "pymc"
+    elif isinstance(model, bmb.Model):
+        engine = "bambi"
+    else:
+        engine = "preliz"
+    return source, signature, engine
 
 
 def parse_function_for_pred_textboxes(source, signature, engine="preliz"):
