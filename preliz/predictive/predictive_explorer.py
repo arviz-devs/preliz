@@ -4,11 +4,16 @@ try:
 except ImportError:
     pass
 from preliz.internal.parser import inspect_source, parse_function_for_pred_textboxes
-from preliz.internal.plot_helper import get_textboxes, plot_decorator, pymc_plot_decorator
+from preliz.internal.plot_helper import (
+    get_textboxes,
+    plot_decorator,
+    pymc_plot_decorator,
+    bambi_plot_decorator,
+)
 
 
 def predictive_explorer(
-    fmodel, samples=50, kind_plot="ecdf", references=None, plot_func=None, engine="preliz"
+    fmodel, samples=50, kind_plot="ecdf", references=None, plot_func=None, engine="auto"
 ):
     """
     Create textboxes and plot a set of samples returned by a function relating one or more
@@ -20,8 +25,8 @@ def predictive_explorer(
     Parameters
     ----------
     fmodel : callable
-        A function with PreliZ distributions or PyMC distributions, depending on the selected
-        engine. The PreliZ distributions should call their rvs method.
+        A function with a PreliZ model, a PyMC model, or a Bambi model.
+        See examples section below for details
     samples : int, optional
         The number of samples to draw from the prior predictive distribution (default is 50).
     kind_plot : str, optional
@@ -34,13 +39,17 @@ def predictive_explorer(
         Custom matplotlib code. Defaults to None. ``kind_plot`` and ``references`` are ignored
         if ``plot_func`` is specified.
     engine : str, optional
-        Library used to define the fmodel. Either `pymc` or `preliz`. Default to `preliz`.
+        Library used to define the fmodel. Either `preliz`, `pymc` or `bambi`. Default is `auto`.
+        The function will automatically select the appropriate library to use based on the fmodel
+        provided.
     """
-    source, signature = inspect_source(fmodel)
+    source, signature, engine = inspect_source(fmodel)
     model = parse_function_for_pred_textboxes(source, signature, engine)
     textboxes = get_textboxes(signature, model)
     if engine == "pymc":
         new_fmodel = pymc_plot_decorator(fmodel, samples, kind_plot, references, plot_func)
+    elif engine == "bambi":
+        new_fmodel = bambi_plot_decorator(fmodel, samples, kind_plot, references, plot_func)
     else:
         new_fmodel = plot_decorator(fmodel, samples, kind_plot, references, plot_func)
     out = interactive_output(new_fmodel, textboxes)

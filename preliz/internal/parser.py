@@ -13,8 +13,18 @@ def inspect_source(fmodel):
     source = inspect.getsource(fmodel)
     signature = inspect.signature(fmodel)
     source = re.sub(r"#.*$|^#.*$", "", source, flags=re.MULTILINE)
-
-    return source, signature
+    default_params = {
+        name: (param.default if param.default is not inspect.Parameter.empty else np.nan)
+        for name, param in signature.parameters.items()
+    }
+    model = fmodel(**default_params)
+    if getattr(model, "basic_RVs", False):
+        engine = "pymc"
+    elif getattr(model, "formula", False):
+        engine = "bambi"
+    else:
+        engine = "preliz"
+    return source, signature, engine
 
 
 def parse_function_for_pred_textboxes(source, signature, engine="preliz"):
@@ -24,11 +34,17 @@ def parse_function_for_pred_textboxes(source, signature, engine="preliz"):
     regex = r"\b" + r"\b|\b".join(slidify) + r"\b"
 
     all_dist_str = dist_as_str()
-    matches = match_preliz_dist(all_dist_str, source, "preliz")
+    matches = match_preliz_dist(all_dist_str, source, engine)
 
     for match in matches:
-        dist_name_str = match.group(2)
-        arguments = [s.strip() for s in match.group(3).split(",")]
+        if engine == "bambi":
+            dist_name_str = match.group(1)
+        else:
+            dist_name_str = match.group(2)
+        if engine == "bambi":
+            arguments = [s.strip() for s in match.group(2).split(",")]
+        else:
+            arguments = [s.strip() for s in match.group(3).split(",")]
         if engine == "pymc":
             args = pymc_parse_arguments(arguments, regex)
         else:
@@ -160,10 +176,10 @@ def match_preliz_dist(all_dist_str, source, engine):
     # remove comments
     source = re.sub(r"#.*$|^#.*$", "", source, flags=re.MULTILINE)
 
-    if engine == "preliz":
+    if engine in ["preliz", "pymc"]:
         regex = rf"(.*?({all_dist_str}).*?)\(([^()]*(?:\([^()]*\)[^()]*)*)\)"
     if engine == "bambi":
-        regex = rf'(\w+)\s*=\s*(?:\w+\.)?Prior\("({all_dist_str})",\s*((?:\w+=\w+(?:,?\s*)?)*)\s*\)'
+        regex = rf'\s*(?:\w+\.)?Prior\("({all_dist_str})",\s*((?:\w+=\w+(?:,?\s*)?)*)\s*\)'
     matches = re.finditer(regex, source)
     return matches
 

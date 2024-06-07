@@ -427,9 +427,36 @@ def plot_decorator(func, iterations, kind_plot, references, plot_func):
     return looper
 
 
+def bambi_plot_decorator(func, iterations, kind_plot, references, plot_func):
+    def looper(*args, **kwargs):
+        kwargs.pop("__resample__")
+        x_min = kwargs.pop("__x_min__")
+        x_max = kwargs.pop("__x_max__")
+        if not kwargs.pop("__set_xlim__"):
+            x_min = None
+            x_max = None
+            auto = True
+        else:
+            auto = False
+
+        model = func(*args, **kwargs)
+        model.build()
+        with disable_pymc_sampling_logs():
+            idata = model.prior_predictive(iterations)
+        results = extract(idata, group="prior_predictive")[model.response_name].values.T
+
+        _, ax = plt.subplots()
+        ax.set_xlim(x_min, x_max, auto=auto)
+        if plot_func is None:
+            plot_repr(results, kind_plot, references, iterations, ax)
+        else:
+            plot_func(results, ax)
+
+    return looper
+
+
 def pymc_plot_decorator(func, iterations, kind_plot, references, plot_func):
     def looper(*args, **kwargs):
-        results = []
         kwargs.pop("__resample__")
         x_min = kwargs.pop("__x_min__")
         x_max = kwargs.pop("__x_max__")
@@ -443,11 +470,11 @@ def pymc_plot_decorator(func, iterations, kind_plot, references, plot_func):
             obs_name = model.observed_RVs[0].name
             with disable_pymc_sampling_logs():
                 idata = sample_prior_predictive(samples=iterations)
-            results = extract(idata, group="prior_predictive")[obs_name].values
+            results = extract(idata, group="prior_predictive")[obs_name].values.T
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
         if plot_func is None:
-            pymc_plot_repr(results, kind_plot, references, iterations, ax)
+            plot_repr(results, kind_plot, references, iterations, ax)
         else:
             plot_func(results, ax)
 
@@ -466,48 +493,6 @@ def plot_repr(results, kind_plot, references, iterations, ax):
             bins = "auto"
         ax.hist(
             results.T,
-            alpha=alpha,
-            density=True,
-            color=["0.5"] * iterations,
-            bins=bins,
-            histtype="step",
-        )
-        ax.hist(
-            np.concatenate(results),
-            density=True,
-            bins=bins,
-            color="k",
-            ls="--",
-            histtype="step",
-        )
-    elif kind_plot == "kde":
-        for result in results:
-            ax.plot(*_kde_linear(result, grid_len=100), "0.5", alpha=alpha)
-        ax.plot(*_kde_linear(np.concatenate(results), grid_len=100), "k--")
-    elif kind_plot == "ecdf":
-        ax.plot(
-            np.sort(results, axis=1).T,
-            np.linspace(0, 1, len(results[0]), endpoint=False),
-            color="0.5",
-        )
-        a = np.concatenate(results)
-        ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
-
-    plot_references(references, ax)
-
-
-def pymc_plot_repr(results, kind_plot, references, iterations, ax):
-    alpha = max(0.01, 1 - iterations * 0.009)
-
-    if kind_plot == "hist":
-        if results[0].dtype.kind == "i":
-            bins = np.arange(np.min(results), np.max(results) + 1.5) - 0.5
-            if len(bins) < 30:
-                ax.set_xticks(bins + 0.5)
-        else:
-            bins = "auto"
-        ax.hist(
-            results,
             alpha=alpha,
             density=True,
             color=["0.5"] * iterations,
