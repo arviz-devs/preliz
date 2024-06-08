@@ -14,38 +14,6 @@ def to_precision(sigma):
     return precision
 
 
-def hdi_from_pdf(dist, mass=0.94):
-    """
-    Approximate the HDI by evaluating the pdf.
-    This is faster, but potentially less accurate, than directly minimizing the
-    interval as evaluating the ppf can be slow, specially for some distributions.
-    """
-
-    if dist.kind == "continuous":
-        lower_ep, upper_ep = dist._finite_endpoints("full")
-        x_vals = np.linspace(lower_ep, upper_ep, 10000)
-        pdf = dist.pdf(x_vals)
-        pdf = pdf[np.isfinite(pdf)]
-        pdf = pdf / pdf.sum()
-    else:
-        x_vals = dist.xvals(support="restricted", n_points=10000)
-        pdf = dist.pdf(x_vals)
-
-    sorted_idx = np.argsort(pdf)[::-1]
-    mass_cum = 0
-    indices = []
-    for idx in sorted_idx:
-        mass_cum += pdf[idx]
-        indices.append(idx)
-        if mass_cum >= mass:
-            break
-
-    if indices:
-        return x_vals[np.sort(indices)[[0, -1]]]
-    else:
-        return np.nan, np.nan
-
-
 def all_not_none(*args):
     for arg in args:
         if arg is None:

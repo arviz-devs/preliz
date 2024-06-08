@@ -227,6 +227,32 @@ def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
             tau_not += 0.5 * tau_not
 
 
+def optimize_hdi(dist, mass):
+    def interval_loss(params):
+        cdf = dist.cdf(params)
+        loss = (cdf[1] - cdf[0]) - mass
+        return loss
+
+    def interval_short(params):
+        lower, upper = params
+        return upper - lower
+
+    cons = {
+        "type": "eq",
+        "fun": interval_loss,
+    }
+    init_vals = dist.eti(mass=mass)
+    bounds = np.array([dist.support])
+    opt = minimize(interval_short, x0=init_vals, bounds=bounds, constraints=cons)
+
+    lower, upper = opt.x
+    if dist.kind == "discrete":
+        upper = np.floor(upper - 1).astype(int)
+        lower = np.ceil(lower).astype(int)
+
+    return lower, upper
+
+
 def optimize_pymc_model(
     fmodel, target, draws, prior, initial_guess, bounds, var_info, p_model, rng
 ):
