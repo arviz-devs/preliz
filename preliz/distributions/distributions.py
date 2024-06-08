@@ -46,8 +46,11 @@ class Distribution:
             bolded_name = "\033[1m" + name + "\033[0m"
 
             description = "".join(
-                f"{n}={np.round(v, 2)}," for n, v in zip(self.param_names, self.params)
-            ).strip(",")
+                f"{n}={v:.3g}, "
+                if np.isscalar(v)
+                else f"{n}=[" + "".join(f"{vi:.3g}, " for vi in v).strip(", ") + "], "
+                for n, v in zip(self.param_names, self.params)
+            ).strip(", ")
 
             return f"{bolded_name}({description})"
         else:
