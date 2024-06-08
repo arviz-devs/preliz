@@ -215,9 +215,10 @@ def test_mle(distribution, params):
 
 
 @pytest.mark.parametrize("fmt", (".2f", ".1g"))
+@pytest.mark.parametrize("interval", ("hdi", "eti", [0.25, 0.75]))
 @pytest.mark.parametrize("mass", (0.5, 0.95))
-def test_summary_args(fmt, mass):
-    result = Normal(0, 1).summary(mass, fmt)
+def test_summary_args(mass, interval, fmt):
+    result = Normal(0, 1).summary(mass=mass, interval=interval, fmt=fmt)
     assert result.mean == 0
     assert result.std == 1
 
@@ -233,7 +234,7 @@ def test_summary_univariate_valid(a_few_poissons):
     assert result.mean == 4.5
     assert result.std == 2.12
     assert result.lower == 1.0
-    assert result.upper == 9.0
+    assert result.upper == 8.0
 
 
 def test_summary_multivariate_valid(multivariates):
