@@ -22,8 +22,9 @@ from ..internal.distribution_helper import (
     init_vals,
     valid_scalar_params,
     valid_distribution,
-    hdi_from_pdf,
 )
+
+from ..internal.optimization import optimize_hdi
 
 
 class Distribution:
@@ -200,7 +201,7 @@ class Distribution:
             Probability mass in the interval. Defaults to 0.94
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
-            i.e. 2 digits after the decimal point.
+            i.e. 2 digits after the decimal point. Use `"none"` for not format.
         """
         valid_distribution(self)
 
@@ -209,12 +210,14 @@ class Distribution:
 
         if valid_scalar_params(self):
             lower_tail, upper_tail = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
-            if self.kind == "continuos":
+            if self.kind == "continuos" and fmt != "none":
+                print("hi!")
                 lower_tail = float(f"{lower_tail:{fmt}}")
                 upper_tail = float(f"{upper_tail:{fmt}}")
-            else:
+            elif self.kind == "discrete":
                 lower_tail = int(lower_tail)
                 upper_tail = int(upper_tail)
+
             return (lower_tail, upper_tail)
         else:
             return None
@@ -228,7 +231,7 @@ class Distribution:
             Probability mass in the interval. Defaults to 0.94
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
-            i.e. 2 digits after the decimal point.
+            i.e. 2 digits after the decimal point. Use `"none"` for not format.
         """
         valid_distribution(self)
 
@@ -236,8 +239,8 @@ class Distribution:
             raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
-            lower_tail, upper_tail = hdi_from_pdf(self, mass)
-            if self.kind == "continuos":
+            lower_tail, upper_tail = optimize_hdi(self, mass)
+            if self.kind == "continuos" and fmt != "none":
                 lower_tail = float(f"{lower_tail:{fmt}}")
                 upper_tail = float(f"{upper_tail:{fmt}}")
             return (lower_tail, upper_tail)
