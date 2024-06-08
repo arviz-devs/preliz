@@ -28,7 +28,7 @@ def hdi_from_pdf(dist, mass=0.94):
         pdf = pdf[np.isfinite(pdf)]
         pdf = pdf / pdf.sum()
     else:
-        x_vals = dist.xvals(support="full")
+        x_vals = dist.xvals(support="restricted", n_points=10000)
         pdf = dist.pdf(x_vals)
 
     sorted_idx = np.argsort(pdf)[::-1]

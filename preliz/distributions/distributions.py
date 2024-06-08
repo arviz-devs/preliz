@@ -52,7 +52,7 @@ class Distribution:
         else:
             return name
 
-    def summary(self, mass=0.94, fmt=".2f"):
+    def summary(self, mass=0.94, interval="hdi", fmt=".2f"):
         """
         Namedtuple with the mean, median, standard deviation, and lower and upper bounds
         of the equal-tailed interval.
@@ -61,6 +61,10 @@ class Distribution:
         ----------
         mass: float
             Probability mass for the equal-tailed interval. Defaults to 0.94
+        interval : str or list-like
+            Type of interval. Available options are highest density interval `"hdi"` (default),
+            equal tailed interval `"eti"` or arbitrary interval defined by a list-like object
+            with a pair of values.
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point.
@@ -80,9 +84,20 @@ class Distribution:
             mean = float(f"{self.mean():{fmt}}")
             median = float(f"{self.median():{fmt}}")
             std = float(f"{self.std():{fmt}}")
-            eti = self.eti(mass)
-            lower_tail = float(f"{eti[0]:{fmt}}")
-            upper_tail = float(f"{eti[1]:{fmt}}")
+
+            if isinstance(interval, (tuple, list, np.ndarray)):
+                c_int = self.ppf(interval)
+            elif interval == "hdi":
+                c_int = self.hdi(mass, fmt=fmt)
+            elif interval == "eti":
+                c_int = self.eti(mass, fmt=fmt)
+
+            if self.kind == "discrete":
+                lower_tail = c_int[0]
+                upper_tail = c_int[1]
+            else:
+                lower_tail = float(f"{c_int[0]:{fmt}}")
+                upper_tail = float(f"{c_int[1]:{fmt}}")
             return attr(mean, median, std, lower_tail, upper_tail)
         else:
             return None
@@ -193,9 +208,13 @@ class Distribution:
             raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
-            eti_b = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
-            lower_tail = float(f"{eti_b[0]:{fmt}}")
-            upper_tail = float(f"{eti_b[1]:{fmt}}")
+            lower_tail, upper_tail = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
+            if self.kind == "continuos":
+                lower_tail = float(f"{lower_tail:{fmt}}")
+                upper_tail = float(f"{upper_tail:{fmt}}")
+            else:
+                lower_tail = int(lower_tail)
+                upper_tail = int(upper_tail)
             return (lower_tail, upper_tail)
         else:
             return None
@@ -217,9 +236,10 @@ class Distribution:
             raise ValueError("Invalid format string.")
 
         if valid_scalar_params(self):
-            hdi = hdi_from_pdf(self, mass)
-            lower_tail = float(f"{hdi[0]:{fmt}}")
-            upper_tail = float(f"{hdi[1]:{fmt}}")
+            lower_tail, upper_tail = hdi_from_pdf(self, mass)
+            if self.kind == "continuos":
+                lower_tail = float(f"{lower_tail:{fmt}}")
+                upper_tail = float(f"{upper_tail:{fmt}}")
             return (lower_tail, upper_tail)
         else:
             return None
