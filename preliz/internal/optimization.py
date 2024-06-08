@@ -117,7 +117,7 @@ def optimize_moments(dist, mean, sigma, params=None):
 
     init_vals = np.array(dist.params)[none_idx]
 
-    if dist.__class__.__name__ in ["HyperGeometric", "BetaBinomial", "SkewNormal"]:
+    if dist.__class__.__name__ in ["HyperGeometric", "BetaBinomial"]:
         opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
     else:
         bounds = np.array(dist.params_support)[none_idx]

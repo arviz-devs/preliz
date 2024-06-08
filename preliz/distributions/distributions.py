@@ -201,7 +201,7 @@ class Distribution:
             Probability mass in the interval. Defaults to 0.94
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
-            i.e. 2 digits after the decimal point. Use `"none"` for not format.
+            i.e. 2 digits after the decimal point. Use `"none"` for no format.
         """
         valid_distribution(self)
 
@@ -231,7 +231,7 @@ class Distribution:
             Probability mass in the interval. Defaults to 0.94
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
-            i.e. 2 digits after the decimal point. Use `"none"` for not format.
+            i.e. 2 digits after the decimal point. Use `"none"` for no format.
         """
         valid_distribution(self)
 
