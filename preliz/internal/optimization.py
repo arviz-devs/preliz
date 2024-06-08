@@ -247,7 +247,7 @@ def optimize_hdi(dist, mass):
 
     lower, upper = opt.x
     if dist.kind == "discrete":
-        upper = np.floor(upper + 1).astype(int)
+        upper = np.floor(upper - 1).astype(int)
         lower = np.ceil(lower).astype(int)
 
     return lower, upper
