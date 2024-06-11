@@ -14,7 +14,7 @@ from .unidimensional import *
 
 __all__ = ["maxent", "mle", "ppa", "roulette", "quartile"]
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 _log = logging.getLogger("preliz")
 
