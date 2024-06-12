@@ -122,7 +122,7 @@ Contents
 
    examples/param_space_1d_examples
    examples/observed_space_examples
-
+   gallery_content
    api_reference
 
 Indices

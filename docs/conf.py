@@ -51,6 +51,8 @@ extensions = [
     "myst_nb",
     "matplotlib.sphinxext.plot_directive",
     "sphinx_tabs.tabs",
+    "pydata_sphinx_theme",
+    "sphinx_design",
 ]
 
 # -- Extension configuration -------------------------------------------------
