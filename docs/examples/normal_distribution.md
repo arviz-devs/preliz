@@ -20,12 +20,13 @@ Normal priors are commonly chosen in Bayesian analysis because they represent a 
 
 ```{code-cell}
 ---
-tags: [hide-input]
+tags: [remove-input]
 mystnb:
   image:
     alt: Normal Distribution PDF
 ---
 
+import matplotlib.pyplot as plt
 import arviz as az
 from preliz import Normal
 az.style.use('arviz-doc')
@@ -33,6 +34,7 @@ mus = [0., 0., -2.]
 sigmas = [1, 0.5, 1]
 for mu, sigma in zip(mus, sigmas):
     Normal(mu, sigma).plot_pdf()
+plt.savefig('normal.png')
 ```
 
 ## Cumulative Distribution Function (CDF):

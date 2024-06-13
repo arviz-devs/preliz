@@ -580,7 +580,7 @@ Continuous Multivariate Distributions
       +++
       Multivariate Normal
 
-Special Distributions
+Distribution Modifiers
 
 .. grid:: 1 2 3 3
    :gutter: 2 2 3 3
