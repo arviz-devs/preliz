@@ -55,7 +55,9 @@ extensions = [
 ]
 
 # -- Extension configuration -------------------------------------------------
-nb_execution_mode = "off"
+nb_execution_mode = "auto"
+nb_execution_excludepatterns = ["*.ipynb"]
+nb_kernel_rgx_aliases = {".*": "python3"}
 myst_enable_extensions = ["colon_fence", "deflist"]
 
 thebe_config = {
