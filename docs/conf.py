@@ -58,7 +58,7 @@ extensions = [
 nb_execution_mode = "auto"
 nb_execution_excludepatterns = ["*.ipynb"]
 nb_kernel_rgx_aliases = {".*": "python3"}
-myst_enable_extensions = ["colon_fence", "deflist"]
+myst_enable_extensions = ["colon_fence", "deflist", "dollarmath"]
 
 thebe_config = {
     "always_load": True,
