@@ -39,7 +39,7 @@ for mu, sigma in zip(mus, sigmas):
 
 ```{code-cell}
 ---
-tags: [hide-input]
+tags: [remove-input]
 mystnb:
   image:
     alt: Normal Distribution CDF
@@ -66,7 +66,7 @@ Variance  :math:`\sigma^2`
 $$
 f(x \mid \mu, \sigma) =
 \frac{1}{\sigma \sqrt{2\pi}}
-\exp\left\{ -\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2 \right\}
+\exp\left( -\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2 \right)
 $$
 
 **Cumulative Distribution Function (CDF):**
