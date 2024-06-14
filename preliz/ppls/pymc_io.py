@@ -118,15 +118,10 @@ def get_model_information(model):  # pylint: disable=too-many-locals
     rvs_to_values = model.rvs_to_values
 
     for r_v in model.free_RVs:
-        if not non_constant_parents(r_v):
-            free_rvs.append(r_v)
-
-    for r_v in model.free_RVs:
         r_v_eval = r_v.eval()
         size = r_v_eval.size
         shape = r_v_eval.shape
-        nc_parents = non_constant_parents(r_v)
-
+        nc_parents, full_dependent = non_constant_parents(r_v)
         name = r_v.owner.op.name
         dist = pymc_to_preliz[name]
         p_model[r_v.name] = dist
@@ -136,6 +131,15 @@ def get_model_information(model):  # pylint: disable=too-many-locals
             var_info[rvs_to_values[r_v].name] = (shape, size, idxs)
             # the keys are the name of the (untransformed) variable
             var_info2[r_v.name] = (shape, size, idxs)
+            if not full_dependent:
+                free_rvs.append(r_v)
+                if size > 1:
+                    for i in range(size):
+                        bounds.append(dist.support)
+                        prior[f"{r_v.name}__{i}"] = []
+                else:
+                    bounds.append(dist.support)
+                    prior[r_v.name] = []
         else:
             free_rvs.append(r_v)
 
@@ -204,8 +208,8 @@ def reshape_params(model, var_info, p_model, params):
 def non_constant_parents(var_):
     """Find the parents of a variable that are not constant."""
     parents = []
-    for variable in var_.get_parents()[0].inputs[3:]:
+    parent_inputs = var_.get_parents()[0].inputs[3:]
+    for variable in parent_inputs:
         if not isinstance(variable, TensorConstant):
             parents.append(variable)
-
-    return parents
+    return parents, parents == parent_inputs
