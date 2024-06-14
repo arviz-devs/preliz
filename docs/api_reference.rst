@@ -36,7 +36,7 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.cauchy
    :members:
 
-.. automodule:: preliz.distributions.chisquared
+.. automodule:: preliz.distributions.chi_squared
    :members:
 
 .. automodule:: preliz.distributions.exgaussian
@@ -130,7 +130,7 @@ This reference provides detailed documentation for user functions in the current
    :members:
 
 .. automodule:: preliz.distributions.betabinomial
-   :members:
+   :members:f
 
 .. automodule:: preliz.distributions.binomial
    :members:
@@ -138,10 +138,10 @@ This reference provides detailed documentation for user functions in the current
 .. automodule:: preliz.distributions.categorical
    :members:
 
-.. automodule:: preliz.distributions.discreteuniform
+.. automodule:: preliz.distributions.discrete_uniform
    :members:
 
-.. automodule:: preliz.distributions.discreteweibull
+.. automodule:: preliz.distributions.discrete_weibull
    :members:
 
 .. automodule:: preliz.distributions.geometric
