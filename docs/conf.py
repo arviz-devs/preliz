@@ -47,7 +47,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
     "sphinx_copybutton",
-    "sphinx_thebe",
     "myst_nb",
     "matplotlib.sphinxext.plot_directive",
     "sphinx_tabs.tabs",
@@ -56,13 +55,6 @@ extensions = [
 # -- Extension configuration -------------------------------------------------
 nb_execution_mode = "off"
 myst_enable_extensions = ["colon_fence", "deflist"]
-
-thebe_config = {
-    "always_load": True,
-    "repository_url": "https://github.com/arviz-devs/arviz_sandbox",
-    "repository_branch": "main",
-    "selector": "div.highlight-ipython3",
-}
 
 autodoc_default_options = {
     "inherited-members": True,
