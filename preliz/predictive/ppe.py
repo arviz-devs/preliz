@@ -3,6 +3,11 @@
 import logging
 import numpy as np
 
+try:
+    import bambi as bmb
+except ModuleNotFoundError:
+    pass
+
 from preliz.internal.optimization import optimize_pymc_model
 from preliz.ppls.pymc_io import (
     get_model_information,
@@ -25,8 +30,8 @@ def ppe(model, target, seed=0):
 
     Parameters
     ----------
-    model : a probabilistic model
-        Currently it only works with PyMC model. More PPls coming soon.
+    model : :obj:`pymc.models.core.Model` or :obj:`bambi.models.Model`
+        Probabilistic model
     target : a Preliz distribution or list
         Instance of a PreliZ distribution or a list of tuples where each tuple contains a PreliZ
         distribution and a weight.
@@ -54,6 +59,9 @@ def ppe(model, target, seed=0):
 
     # Get information from PyMC model
     rng = np.random.default_rng(seed)
+    if isinstance(model, bmb.Model):
+        model.build()
+        model = model.backend.model
     bounds, prior, p_model, var_info, var_info2, draws, free_rvs = get_model_information(model)
     # Initial point for optimization
     guess = get_guess(model, free_rvs)
