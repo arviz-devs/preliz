@@ -266,11 +266,10 @@ def get_moments(dist, moments):
     }
     str_m = []
     seen = []
-    for moment in moments:
+    values = dist.moments(moments)
+    for moment, value in zip(moments, values):
         if moment not in seen:
-            value = dist.moments(moment)
-            if isinstance(value, (np.ndarray, int, float)):
-                str_m.append(f"{names[moment]}={value:.3g}")
+            str_m.append(f"{names[moment]}={value:.3g}")
 
         seen.append(moment)
 
