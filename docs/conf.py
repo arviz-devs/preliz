@@ -50,11 +50,14 @@ extensions = [
     "myst_nb",
     "matplotlib.sphinxext.plot_directive",
     "sphinx_tabs.tabs",
+    "sphinx_design",
 ]
 
 # -- Extension configuration -------------------------------------------------
-nb_execution_mode = "off"
-myst_enable_extensions = ["colon_fence", "deflist"]
+nb_execution_mode = "auto"
+nb_execution_excludepatterns = ["*.ipynb"]
+nb_kernel_rgx_aliases = {".*": "python3"}
+myst_enable_extensions = ["colon_fence", "deflist", "dollarmath"]
 
 autodoc_default_options = {
     "inherited-members": True,
