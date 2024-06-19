@@ -81,9 +81,21 @@ $$
 where [erf is the error function](https://en.wikipedia.org/wiki/Error_function).
 
 
-:::{seealso}
-{doc}`students_t_distribution`
-:::
+```{seealso}
+:class: seealso
+
+**Common Alternatives:**
+
+- [Truncated Normal Distribution](truncated_normal_distribution.md) - Limits the normal distribution to values within a specified range.
+- [Half Normal Distribution](half_normal_distribution.md) - Considers only the positive half of the normal distribution.
+- [Log Normal Distribution](log_normal_distribution.md) - Assumes the logarithm of values follows a normal distribution.
+- [Student's T Distribution](students_t_distribution.md) - Used instead of the normal distribution when the sample size is small.
+
+**Related Distributions:**
+
+- [Von Mises Distribution](vonmises_distribution.md) - Suitable for data on a circular scale, like angles or time of day.
+- [Logistic Distribution](logistic_distribution.md) - Has heavier tails than the normal distribution, used in logistic regression.
+```
 
 ## References
 
