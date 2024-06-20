@@ -78,7 +78,7 @@ F(x \mid \mu, \sigma) =
 \frac{1}{2} \left[ 1 + \text{erf} \left( \frac{x - \mu}{\sigma \sqrt{2}} \right) \right]
 $$
 
-where [erf is the error function](https://en.wikipedia.org/wiki/Error_function).
+where [erf](https://en.wikipedia.org/wiki/Error_function) is the error function.
 
 
 ```{seealso}
@@ -86,15 +86,16 @@ where [erf is the error function](https://en.wikipedia.org/wiki/Error_function).
 
 **Common Alternatives:**
 
-- [Truncated Normal Distribution](truncated_normal_distribution.md) - Limits the normal distribution to values within a specified range.
-- [Half Normal Distribution](half_normal_distribution.md) - Considers only the positive half of the normal distribution.
-- [Log Normal Distribution](log_normal_distribution.md) - Assumes the logarithm of values follows a normal distribution.
-- [Student's T Distribution](students_t_distribution.md) - Used instead of the normal distribution when the sample size is small.
+- [Student's T Distribution](students_t_distribution.md) - Commonly used as a robust alternative to the Normal, it has a third parameter controlling the heaviness of the tails.
+- [Logistic Distribution](logistic_distribution.md) - Used as a robust alternative to the Normal, it has heavier tails than the normal distribution.
+- [Truncated Normal Distribution](truncated_normal_distribution.md) - Bounds the Normal distribution within a specified range. Sometimes, it is used for Normal-like parameters when certain values are not permitted.
 
 **Related Distributions:**
 
-- [Von Mises Distribution](vonmises_distribution.md) - Suitable for data on a circular scale, like angles or time of day.
-- [Logistic Distribution](logistic_distribution.md) - Has heavier tails than the normal distribution, used in logistic regression.
+- [Half Normal Distribution](half_normal_distribution.md) - Considers only the positive half of the Normal distribution.
+- [Log Normal Distribution](log_normal_distribution.md) - If a random variable follows a LogNormal distribution, its natural logarithm will be Normally distributed. It is suitable for modelling positive and right-skewed data or parameters.
+- [Von Mises Distribution](vonmises_distribution.md) - Close to a wrapped Normal on the circle. Suitable for data on a circular scale, like angles or time of day.
+
 ```
 
 ## References
