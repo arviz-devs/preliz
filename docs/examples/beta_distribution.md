@@ -46,7 +46,7 @@ mystnb:
     alt: Beta Distribution CDF
 ---
 
-for mu, sigma in zip(mus, sigmas):
+for mu, sigma in zip(alphas, betas):
     Beta(mu, sigma).plot_cdf()
 ```
 
@@ -69,16 +69,16 @@ f(x \mid \alpha, \beta) =
     \frac{x^{\alpha - 1} (1 - x)^{\beta - 1}}{B(\alpha, \beta)}
 $$
 
-where $\B(\alpha,\beta)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) 
+where $B(\alpha,\beta)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) 
 
 **Cumulative Distribution Function (CDF):**
 
 $$
-F(x \mid \alpha,\beta) = \frac{\B{}(x;\alpha,\beta)}{\B{}(\alpha,\beta)} = I_x(\alpha,\beta)
+F(x \mid \alpha,\beta) = \frac{B(x;\alpha,\beta)}{B(\alpha,\beta)} = I_x(\alpha,\beta)
 $$
 
 
-where $\B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) and $I_x(\alpha,\beta)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
+where $B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) and $I_x(\alpha,\beta)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
 
 
 
