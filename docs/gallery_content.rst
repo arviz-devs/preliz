@@ -24,7 +24,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/Beta.png
          :alt: Beta
 
       +++
