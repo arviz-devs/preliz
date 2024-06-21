@@ -12,7 +12,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Asymmetric Laplace
 
       +++
@@ -24,7 +24,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/Beta.png
+      .. image:: examples/img/Beta.png
          :alt: Beta
 
       +++
@@ -36,7 +36,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Beta Scaled
 
       +++
@@ -48,7 +48,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Cauchy
 
       +++
@@ -60,7 +60,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Chi-Squared
 
       +++
@@ -72,7 +72,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Ex-Gaussian
 
       +++
@@ -84,7 +84,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Exponential
 
       +++
@@ -96,7 +96,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Gamma
 
       +++
@@ -108,7 +108,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Gumbel
 
       +++
@@ -120,7 +120,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Half-Cauchy
 
       +++
@@ -132,7 +132,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Half-Normal
 
       +++
@@ -144,7 +144,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Half-Student's t
 
       +++
@@ -156,7 +156,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Inverse Gamma
 
       +++
@@ -168,7 +168,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Kumaraswamy
 
       +++
@@ -180,7 +180,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Laplace
 
       +++
@@ -192,7 +192,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Log-Normal
 
       +++
@@ -204,7 +204,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Logistic
 
       +++
@@ -216,7 +216,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Log-Logistic
 
       +++
@@ -228,7 +228,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Logit-Normal
 
       +++
@@ -240,7 +240,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Moyal
 
       +++
@@ -252,7 +252,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/normal.png
+      .. image:: examples/img/Normal.png
          :alt: Normal
 
       +++
@@ -264,7 +264,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Pareto
 
       +++
@@ -276,7 +276,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Rice
 
       +++
@@ -288,7 +288,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Skew-Normal
 
       +++
@@ -300,7 +300,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/students_t.png
+      .. image:: examples/img/students_t.png
          :alt: Student's t
 
       +++
@@ -312,7 +312,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Skew-Student's t
 
       +++
@@ -324,7 +324,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Triangular
 
       +++
@@ -336,7 +336,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Truncated Normal
 
       +++
@@ -348,7 +348,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Uniform
 
       +++
@@ -360,7 +360,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Von Mises
 
       +++
@@ -372,7 +372,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Wald
 
       +++
@@ -384,7 +384,7 @@ Continuous Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Weibull
 
       +++
@@ -401,7 +401,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Bernoulli
 
       +++
@@ -413,7 +413,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Beta Binomial
 
       +++
@@ -425,7 +425,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Binomial
 
       +++
@@ -437,7 +437,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Categorical
 
       +++
@@ -449,7 +449,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Discrete Uniform
 
       +++
@@ -461,7 +461,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Discrete Weibull
 
       +++
@@ -473,7 +473,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Geometric
 
       +++
@@ -485,7 +485,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Hypergeometric
 
       +++
@@ -497,7 +497,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Negative Binomial
 
       +++
@@ -509,7 +509,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Poisson
 
       +++
@@ -521,7 +521,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Zero-Inflated Binomial
 
       +++
@@ -533,7 +533,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Zero-Inflated Negative Binomial
 
       +++
@@ -545,7 +545,7 @@ Discrete Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Zero-Inflated Poisson
 
       +++
@@ -562,7 +562,7 @@ Continuous Multivariate Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Dirichlet
 
       +++
@@ -574,7 +574,7 @@ Continuous Multivariate Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Multivariate Normal
 
       +++
@@ -591,7 +591,7 @@ Distribution Modifiers
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Censored
 
       +++
@@ -603,7 +603,7 @@ Distribution Modifiers
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Hurdle
 
       +++
@@ -615,7 +615,7 @@ Distribution Modifiers
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/placeholder.png
+      .. image:: examples/img/placeholder.png
          :alt: Truncated
 
       +++
