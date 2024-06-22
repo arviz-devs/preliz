@@ -36,7 +36,6 @@ sigmas = [1., 1., 2.]
 for nu, mu, sigma in zip(nus, mus, sigmas):
     StudentT(nu, mu, sigma).plot_pdf(support=(-10,6))
 
-plt.savefig('students_t.png')
 ```
 
 ## Cumulative Distribution Function (CDF):
