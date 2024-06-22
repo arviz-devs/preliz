@@ -33,7 +33,6 @@ betas = [.5, 5., 5.]
 for alpha, beta in zip(alphas, betas):
     ax = Beta(alpha, beta).plot_pdf()
 ax.set_ylim(0, 5)
-plt.savefig('Beta.png')
 ```
 
 ## Cumulative Distribution Function (CDF):

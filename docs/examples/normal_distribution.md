@@ -34,7 +34,6 @@ mus = [0., 0., -2.]
 sigmas = [1, 0.5, 1]
 for mu, sigma in zip(mus, sigmas):
     Normal(mu, sigma).plot_pdf()
-plt.savefig('normal.png')
 ```
 
 ## Cumulative Distribution Function (CDF):
