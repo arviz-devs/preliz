@@ -91,13 +91,10 @@ where $I_x(a, b)$ denotes the [regularized incomplete beta function](https://en.
 
 **Common Alternatives:**
 
+- [Skewed Student's t Distribution](skew_studentt_distribution.md) - Extends the Student's t-distribution by introducing a skewness parameter, allowing for the modeling of data that is not symmetrically distributed. 
+- [Half-Student's t Distribution](halfstudentt_distribution.md) - Considers only the positive values of the Student's t-distribution. 
 - [Normal Distribution](normal_distribution.md) - When $\nu \to \infty$, the t-distribution converges to the normal distribution.
 - [Cauchy Distribution](cauchy_distribution.md) - The Cauchy distribution is a special case of the Student's t-distribution with $\nu=1$.
-
-**Related Distributions:**
-
-- [Chi-Squared Distribution](chi_squared_distribution.md) - Student's t-distribution is a transformation of chi-squared distribution and can be obtained from chi-squared distribution and normal distribution.
-
 ```
 ## References
 
