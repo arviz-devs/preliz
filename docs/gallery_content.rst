@@ -295,7 +295,7 @@ Continuous Distributions
       Skew-Normal
 
    .. grid-item-card::
-      :link: ./examples/student_t_distribution.html
+      :link: ./examples/students_t_distribution.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery

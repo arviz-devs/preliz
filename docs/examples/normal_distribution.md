@@ -78,7 +78,7 @@ F(x \mid \mu, \sigma) =
 \frac{1}{2} \left[ 1 + \text{erf} \left( \frac{x - \mu}{\sigma \sqrt{2}} \right) \right]
 $$
 
-where [erf](https://en.wikipedia.org/wiki/Error_function) is the error function.
+where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 
 
 ```{seealso}
