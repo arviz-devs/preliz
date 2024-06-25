@@ -82,6 +82,7 @@ $$
 
 - [Normal Distribution](normal_distribution.md) - Often used as an alternative to the logistic distribution when the tails are not of primary concern.
 - [Cauchy Distribution](cauchy_distribution.md) - Has much heavier tails than the logistic distribution, making it a robust alternative when outliers are a concern.
+- [Student's t Distribution](students_t_distribution.md) - A generalization of the normal distribution with heavier tails.
 
 **Related Distributions:**
 
