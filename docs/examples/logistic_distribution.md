@@ -10,11 +10,11 @@ kernelspec:
 ---
 # Logistic Distribution
 
-The logistic distribution is a continuous probability distribution with a shape that resembles the normal distribution, but with heavier tails. It is defined by two parameters: the mean ($\mu$) and the scale parameter ($s$). The mean determines the center of the distribution, while the scale parameter controls the steepness of the curve.
+The logistic distribution is a continuous probability distribution with a shape that resembles the normal distribution but with heavier tails. Thus, it is sometimes used as a replacement for the normal when heavier tails are needed. It is defined by two parameters: the mean ($\mu$) and the scale parameter ($s$). The mean determines the center of the distribution, while the scale parameter controls the width.
 
 Its cumulative distribution function is the [logistic function](https://en.wikipedia.org/wiki/Logistic_function), which is characterized by an S-shaped curve (sigmoid curve). It is particularly useful in modeling growth processes, such as population growth, where the rate of growth decreases as the population reaches its carrying capacity. 
 
-In logistic regression (whether frequentist or Bayesian flavor), the logistic distribution is used to model the probability of a binary outcome based on one or more predictor variables. The logistic function maps any real value into the range [0, 1], making it suitable for binary classification tasks. 
+A logistic regression model is typically characterized by a Bernoulli distribution for the likelihood and the logistic function as the inverse link function. However, logistic regression can also be [described](https://en.wikipedia.org/wiki/Logistic_distribution#Logistic_regression) as a latent variable model where the error term follows a logistic distribution.
 
 ## Probability Density Function (PDF):
 
@@ -86,7 +86,7 @@ $$
 
 **Related Distributions:**
 
-- [Log-logistic Distribution](log_logistic_distribution.md) - The probability distribution of a random variable whose logarithm has a logistic distribution.
+- [Log-logistic Distribution](log_logistic_distribution.md) - If a random variable is distributed as a logistic, then its exponential is distributed as a log-logistic distribution.
 ```
 
 ## References
