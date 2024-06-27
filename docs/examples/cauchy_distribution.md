@@ -16,8 +16,6 @@ In physics, the Cauchy distribution is also known as the Lorentz distribution, C
 
 In finance, the Cauchy distribution is used to model extreme events, such as stock market crashes, where the tails of the distribution are of particular interest.
 
-In Bayesian modeling, the Cauchy distribution has been [recommended](https://doi.org/10.1214/08-AOAS191) as a prior for logistic regression coefficients.
-
 ## Probability Density Function (PDF):
 
 ```{code-cell}
