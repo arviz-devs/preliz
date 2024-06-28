@@ -16,9 +16,8 @@ class Logistic(Continuous):
 
     .. math::
 
-    f(x \mid \mu, s) =
-        \frac{\exp\left(-\frac{x - \mu}{s}\right)}
-        {s \left(1 + \exp\left(-\frac{x - \mu}{s}\right)\right)^2}
+        f(x \mid \mu, s) =
+            \frac{ \exp ( - \frac{x - \mu}{s})}{s(1 + \exp ( - \frac{x - \mu}{s}))^2}
 
     .. plot::
         :context: close-figs
@@ -32,9 +31,9 @@ class Logistic(Continuous):
             Logistic(mu, s).plot_pdf(support=(-5,5))
 
     =========  ==========================================
-    Support   :math:`x \in \mathbb{R}`
-    Mean      :math:`\mu`
-    Variance  :math:`\frac{s^2 \pi^2}{3}`
+    Support    :math:`x \in \mathbb{R}`
+    Mean       :math:`\mu`
+    Variance   :math:`\frac{s^2 \pi^2}{3}`
     =========  ==========================================
 
     Parameters
