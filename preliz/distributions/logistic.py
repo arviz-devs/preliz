@@ -16,9 +16,8 @@ class Logistic(Continuous):
 
     .. math::
 
-    f(x \mid \mu, s) =
-        \frac{\exp\left(-\frac{x - \mu}{s}\right)}
-        {s \left(1 + \exp\left(-\frac{x - \mu}{s}\right)\right)^2}
+        f(x \mid \mu, s) =
+            \frac{ \exp ( - \frac{x - \mu}{s})}{s(1 + \exp ( - \frac{x - \mu}{s}))^2}
 
     .. plot::
         :context: close-figs
