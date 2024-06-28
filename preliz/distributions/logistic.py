@@ -31,9 +31,9 @@ class Logistic(Continuous):
             Logistic(mu, s).plot_pdf(support=(-5,5))
 
     =========  ==========================================
-    Support   :math:`x \in \mathbb{R}`
-    Mean      :math:`\mu`
-    Variance  :math:`\frac{s^2 \pi^2}{3}`
+    Support    :math:`x \in \mathbb{R}`
+    Mean       :math:`\mu`
+    Variance   :math:`\frac{s^2 \pi^2}{3}`
     =========  ==========================================
 
     Parameters
