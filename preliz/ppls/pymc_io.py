@@ -204,8 +204,8 @@ def reshape_params(model, var_info, p_model, params):
 def non_constant_parents(var_):
     """Find the parents of a variable that are not constant."""
     parents = []
-    for variable in var_.get_parents()[0].inputs[3:]:
+    for variable in var_.get_parents()[0].inputs[2:]:
         if not isinstance(variable, TensorConstant):
-            parents.append(variable)
+            parents.append(variable.owner.inputs[0])
 
     return parents
