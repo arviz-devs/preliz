@@ -93,6 +93,7 @@ def plot_dirichlet(
     interval,
     levels,
     support,
+    legend,
     figsize,
     axes,
     xy_lim="auto",
@@ -161,16 +162,21 @@ def plot_dirichlet(
                 ax.set_xlim(*xlim)
             if xy_lim != "auto" and representation != "cdf":
                 ax.set_ylim(*ylim)
-        fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
+
+        if legend == "title":
+            fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
 
     else:
         if dim == 3:
             if axes is None:
                 _, axes = plt.subplots(1, 1)
             DirichletOnSimplex(alpha).plot(ax=axes)
-            axes.set_title(repr_to_matplotlib(dist))
+            if legend == "title":
+                axes.set_title(repr_to_matplotlib(dist))
         else:
             raise ValueError("joint only works for Dirichlet of dim=3")
+
+    return axes
 
 
 def joint_normal(dist, ax):
@@ -229,6 +235,7 @@ def plot_mvnormal(
     interval,
     levels,
     support,
+    legend,
     figsize,
     axes,
     xy_lim="auto",
@@ -297,13 +304,17 @@ def plot_mvnormal(
                 ax.set_xlim(*xlim)
             if xy_lim != "auto" and representation != "cdf":
                 ax.set_ylim(*ylim)
-        fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
+        if legend == "title":
+            fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
 
     else:
         if dim == 2:
             if axes is None:
                 _, axes = plt.subplots(1, 1)
             joint_normal(dist, axes)
-            axes.set_title(repr_to_matplotlib(dist))
+            if legend == "title":
+                axes.set_title(repr_to_matplotlib(dist))
         else:
             raise ValueError("joint only works for Multivariate Normal of dim=2")
+
+    return axes
