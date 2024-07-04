@@ -562,7 +562,7 @@ Continuous Multivariate Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/placeholder.png
+      .. image:: examples/img/Dirichlet.png
          :alt: Dirichlet
 
       +++
@@ -574,7 +574,7 @@ Continuous Multivariate Distributions
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/placeholder.png
+      .. image:: examples/img/MvNormal.png
          :alt: Multivariate Normal
 
       +++
