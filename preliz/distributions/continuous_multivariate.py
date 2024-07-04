@@ -97,6 +97,7 @@ class Dirichlet(Continuous):
         interval="hdi",
         levels=None,
         support="full",
+        legend="title",
         figsize=None,
         ax=None,
     ):
@@ -122,6 +123,9 @@ class Dirichlet(Continuous):
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axis
@@ -132,7 +136,7 @@ class Dirichlet(Continuous):
         ax : matplotlib axis
         """
         return plot_dirichlet(
-            self, "pdf", marginals, pointinterval, interval, levels, support, figsize, ax
+            self, "pdf", marginals, pointinterval, interval, levels, support, legend, figsize, ax
         )
 
     def plot_cdf(
@@ -141,6 +145,7 @@ class Dirichlet(Continuous):
         interval="hdi",
         levels=None,
         support="full",
+        legend="title",
         figsize=None,
         ax=None,
     ):
@@ -162,6 +167,9 @@ class Dirichlet(Continuous):
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axis
@@ -172,7 +180,7 @@ class Dirichlet(Continuous):
         ax : matplotlib axis
         """
         return plot_dirichlet(
-            self, "cdf", "marginals", pointinterval, interval, levels, support, figsize, ax
+            self, "cdf", "marginals", pointinterval, interval, levels, support, legend, figsize, ax
         )
 
     def plot_ppf(
@@ -180,6 +188,7 @@ class Dirichlet(Continuous):
         pointinterval=False,
         interval="hdi",
         levels=None,
+        legend="title",
         figsize=None,
         ax=None,
     ):
@@ -198,6 +207,9 @@ class Dirichlet(Continuous):
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
             (in this last case nothing will be plotted).
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axis
@@ -208,7 +220,7 @@ class Dirichlet(Continuous):
         ax : matplotlib axis
         """
         return plot_dirichlet(
-            self, "ppf", "marginals", pointinterval, interval, levels, None, figsize, ax
+            self, "ppf", "marginals", pointinterval, interval, levels, None, legend, figsize, ax
         )
 
     def plot_interactive(
@@ -415,6 +427,7 @@ class MvNormal(Continuous):
         interval="hdi",
         levels=None,
         support="full",
+        legend="title",
         figsize=None,
         ax=None,
     ):
@@ -440,6 +453,9 @@ class MvNormal(Continuous):
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axis
@@ -450,7 +466,7 @@ class MvNormal(Continuous):
         ax : matplotlib axis
         """
         return plot_mvnormal(
-            self, "pdf", marginals, pointinterval, interval, levels, support, figsize, ax
+            self, "pdf", marginals, pointinterval, interval, levels, support, legend, figsize, ax
         )
 
     def plot_cdf(
@@ -459,6 +475,7 @@ class MvNormal(Continuous):
         interval="hdi",
         levels=None,
         support="full",
+        legend="title",
         figsize=None,
         ax=None,
     ):
@@ -480,6 +497,9 @@ class MvNormal(Continuous):
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axis
@@ -490,7 +510,7 @@ class MvNormal(Continuous):
         ax : matplotlib axis
         """
         return plot_mvnormal(
-            self, "cdf", "marginals", pointinterval, interval, levels, support, figsize, ax
+            self, "cdf", "marginals", pointinterval, interval, levels, support, legend, figsize, ax
         )
 
     def plot_ppf(
@@ -498,6 +518,7 @@ class MvNormal(Continuous):
         pointinterval=False,
         interval="hdi",
         levels=None,
+        legend="title",
         figsize=None,
         ax=None,
     ):
@@ -516,6 +537,9 @@ class MvNormal(Continuous):
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
             (in this last case nothing will be plotted).
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axis
@@ -526,7 +550,7 @@ class MvNormal(Continuous):
         ax : matplotlib axis
         """
         return plot_mvnormal(
-            self, "ppf", "marginals", pointinterval, interval, levels, None, figsize, ax
+            self, "ppf", "marginals", pointinterval, interval, levels, None, legend, figsize, ax
         )
 
     def plot_interactive(
