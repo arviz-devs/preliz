@@ -19,11 +19,11 @@ class Censored(DistributionTransformer):
     .. math::
 
         \begin{cases}
-            0 & \text{for } x < lower, \\
-            \text{CDF}(lower) & \text{for } x = lower, \\
-            \text{PDF}(x) & \text{for } lower < x < upper, \\
-            1-\text{CDF}(upper) & \text {for} x = upper, \\
-            0 & \text{for } x > upper,
+            0 & \text{for } x < \text{lower}, \\
+            \text{CDF}(\text{lower}) & \text{for } x = \text{lower}, \\
+            \text{PDF}(x) & \text{for } \text{lower} < x < \text{upper}, \\
+            1-\text{CDF}(\text{upper}) & \text {for } x = \text{upper}, \\
+            0 & \text{for } x > \text{upper},
         \end{cases}
 
     .. plot::
