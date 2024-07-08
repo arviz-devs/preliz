@@ -29,7 +29,7 @@ import arviz as az
 from preliz import Normal, Censored
 az.style.use('arviz-doc')
 Censored(Normal(0, 1), -1, 1).plot_pdf(support=(-4, 4))
-Normal(0, 1).plot_pdf(alpha=0.5)
+Normal(0, 1).plot_pdf(alpha=0.5);
 ```
 
 ## Cumulative Distribution Function (CDF):
