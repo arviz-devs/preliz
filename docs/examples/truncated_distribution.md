@@ -42,7 +42,7 @@ mystnb:
 ---
 
 Truncated(Gamma(mu=2, sigma=1), 1, 4.5).plot_cdf()
-Gamma(mu=2, sigma=1).plot_cdf()
+Gamma(mu=2, sigma=1).plot_cdf();
 ```
 
 
@@ -56,7 +56,7 @@ Given a base distribution with cumulative distribution function (CDF) and probab
 $$
 \begin{cases}
     0 & \text{for } x < \text{lower}, \\
-    \frac{\text{PDF}(x, dist)}{\text{CDF}(upper, dist) - \text{CDF}(lower, dist)}
+    \frac{\text{PDF}(x)}{\text{CDF}(upper) - \text{CDF}(lower)}
     & \text{for } \text{lower} <= x <= \text{upper}, \\
     0 & \text{for } x > \text{upper},
 \end{cases}

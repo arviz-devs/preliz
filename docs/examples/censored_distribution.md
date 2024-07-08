@@ -43,7 +43,7 @@ mystnb:
 ---
 
 Censored(Normal(0, 1), -1, 1).plot_cdf(support=(-4, 4))
-Normal(0, 1).plot_cdf(alpha=0.5)
+Normal(0, 1).plot_cdf(alpha=0.5);
 ```
 
 
@@ -57,9 +57,9 @@ Given a base distribution with cumulative distribution function (CDF) and probab
 $$
 \begin{cases}
     0 & \text{for } x < \text{lower}, \\
-    \text{CDF}(lower) & \text{for } x = \text{lower}, \\
+    \text{CDF}(\text{lower}) & \text{for } x = \text{lower}, \\
     \text{PDF}(x) & \text{for } \text{lower} < x < \text{upper}, \\
-    1-\text{CDF}(upper) & \text {for } x = \text{upper}, \\
+    1-\text{CDF}(\text{upper}) & \text {for } x = \text{upper}, \\
     0 & \text{for } x > \text{upper},
 \end{cases}
 $$
