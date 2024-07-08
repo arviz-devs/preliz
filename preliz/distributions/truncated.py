@@ -17,10 +17,10 @@ class Truncated(DistributionTransformer):
     .. math::
 
         \begin{cases}
-            0 & \text{for } x < lower, \\
-            \frac{\text{PDF}(x, dist)}{\text{CDF}(upper, dist) - \text{CDF}(lower, dist)}
-            & \text{for } lower <= x <= upper, \\
-            0 & \text{for } x > upper,
+            0 & \text{for } x < \text{lower}, \\
+            \frac{\text{PDF}(x)}{\text{CDF}(upper) - \text{CDF}(lower)}
+            & \text{for } \text{lower} <= x <= \text{upper}, \\
+            0 & \text{for } x > \text{upper},
         \end{cases}
 
     .. plot::
