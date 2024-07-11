@@ -10,7 +10,7 @@ kernelspec:
 ---
 # Asymmetric Laplace Distribution
 
-The Asymmetric Laplace distribution (ALD) is a continuous probability distribution. It is a generalization of the Laplace distribution. Just as the Laplace distribution consists of two exponential distributions of equal scale back-to-back about $x = m$, the ALD consists of two exponential distributions of unequal scale back to back about $x = m$, adjusted to assure continuity and normalization. 
+The Asymmetric Laplace distribution (ALD) is a continuous probability distribution. It is a generalization of the Laplace distribution. Just as the Laplace distribution consists of two exponential distributions of equal scale back-to-back about $x = \mu$, the ALD consists of two exponential distributions of unequal scale back to back about $x = \mu$, adjusted to assure continuity and normalization. 
 
 The difference of two variates exponentially distributed with different means and rate parameters will be distributed according to the ALD. When the two rate parameters are equal, the difference will be distributed according to the Laplace distribution.
 
@@ -75,8 +75,8 @@ $$
 $$
 F(x|\\b,\kappa,\mu)  = 
     \begin{cases}
-      \frac{\kappa^2}{1+\kappa^2}\exp ((\\b \kappa)(x-m)) & \text{if } x \leq m \\
-     1-\frac{1}{1+\kappa^2} \exp (-\\b \kappa(x-m))  & \text{if } x > m
+      \frac{\kappa^2}{1+\kappa^2}\exp ((\\b \kappa)(x-\mu)) & \text{if } x \leq \mu \\
+     1-\frac{1}{1+\kappa^2} \exp (-\\b \kappa(x-\mu))  & \text{if } x > \mu
     \end{cases}
 $$
 
