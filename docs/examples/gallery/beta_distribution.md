@@ -32,7 +32,7 @@ alphas = [.5, 5., 2.]
 betas = [.5, 5., 5.]
 for alpha, beta in zip(alphas, betas):
     ax = Beta(alpha, beta).plot_pdf()
-ax.set_ylim(0, 5)
+ax.set_ylim(0, 5);
 ```
 
 ## Cumulative Distribution Function (CDF):
