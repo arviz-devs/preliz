@@ -91,7 +91,8 @@ $$
 
 **Common Alternatives:**
 
-- [Beta Distribution](beta_distribution.md) - The Uniform distribution is a special case of the Beta distribution with $\alpha = \beta = 1$.
+- [Beta Distribution](beta_distribution.md) - The Uniform distribution with $lower=0$, $upper=1$ is a special case of the Beta distribution with $\alpha = \beta = 1$.
+- [Beta Scaled Distribution](beta_scaled distribution.md) - The Uniform distribution is a special case of the Beta scaled distribution with $\alpha = \beta = 1$ and $lower$, $upper$ parameters.
 
 **Related Distributions:**
 
