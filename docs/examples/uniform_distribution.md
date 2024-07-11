@@ -10,7 +10,7 @@ kernelspec:
 ---
 # Uniform Distribution
 
-The Uniform distribution is a continuous probability distribution bounded between two real numbers, $lower$ and $upper$, representing the lower and upper bounds, respectively. In other notations, these parameters are often denoted as $a$ and $b$, or $\alpha$ and $\beta$, respectively.
+The Uniform distribution is a continuous probability distribution bounded between two real numbers, $lower$ and $upper$, representing the lower and upper bounds, respectively.
 
 The probability density of the Uniform distribution is constant between $lower$ and $upper$ and zero elsewhere. Despite its simplicity, it is rare to observe a real-world distribution where all outcomes are equally likely.
 
