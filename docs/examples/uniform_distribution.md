@@ -12,7 +12,10 @@ kernelspec:
 
 The Uniform distribution is a continuous probability distribution bounded between two real numbers, $lower$ and $upper$, representing the lower and upper bounds, respectively.
 
-The probability density of the Uniform distribution is constant between $lower$ and $upper$ and zero elsewhere. Despite its simplicity, it is rare to observe a real-world distribution where all outcomes are equally likely.
+The probability density of the Uniform distribution is constant between $lower$ and $upper$ and zero elsewhere. Some experiments of physical origin exhibit this kind of behaviour. For instance, if we record, for a long time, the times at which radioactive particles are emitted within each hour, the outcomes will be uniform on the interval [0, 60] minutes interval.
+
+
+we encounter a continuous random variable that describes an experiment where the outcome is completely arbitrary, except that we know it lies between certain bounds. Many experiments of physical origin exhibit this kind of behavior. For instance, consider an experiment where we measure the emission of radioactive particles from some material over a long period. If we record the times at which particles are emitted within each hour, the outcomes will lie in the interval [0, 60] minutes
 
 The Uniform distribution is the maximum entropy probability distribution for a random variable under no constraint other than that it is contained in the interval $[lower,upper]$. It's often employed in random sampling, for generating random numbers, and as a non-informative (flat) prior in Bayesian statistics when there is no prior knowledge about the parameter other than its range.
 
