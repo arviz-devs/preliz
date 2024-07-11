@@ -37,7 +37,7 @@ ls = [1, -2]
 us = [6, 2]
 for l, u in zip(ls, us):
     ax = Uniform(l, u).plot_pdf()
-ax.set_ylim(0, 0.3)
+ax.set_ylim(0, 0.3);
 
 ```
 
@@ -90,8 +90,6 @@ $$
 :class: seealso
 
 
-- [Beta Distribution](beta_distribution.md) - The Uniform distribution with $lower=0$, $upper=1$ is a special case of the Beta distribution with $\alpha = \beta = 1$.
-- [Beta Scaled Distribution](beta_scaled distribution.md) - The Uniform distribution is a special case of the Beta scaled distribution with $\alpha = \beta = 1$ and $lower$, $upper$ parameters.
 
 **Related Distributions:**
 
