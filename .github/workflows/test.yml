@@ -5,10 +5,10 @@ on:
     branches:
       - main
     paths-ignore:
-      - "docs/"
+      - "docs/**"
   pull_request:
     paths-ignore:
-      - "docs/"
+      - "docs/**"
 
 jobs:
   test:
