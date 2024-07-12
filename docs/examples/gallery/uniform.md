@@ -93,9 +93,9 @@ $$
 
 **Related Distributions:**
 
-- [Beta Distribution](beta_distribution.md) - The Uniform distribution with $lower=0$, $upper=1$ is a special case of the Beta distribution with $\alpha = \beta = 1$.
-- [Beta Scaled Distribution](beta_scaled_distribution.md) - The Uniform distribution is a special case of the Beta Scaled distribution with $\alpha = \beta = 1$ and $lower$, $upper$ parameters.
-- [Discrete Uniform Distribution](discrete_uniform_distribution.md) - The discrete version of the Uniform distribution.
+- [Beta](beta.md) - The Uniform distribution with $lower=0$, $upper=1$ is a special case of the Beta distribution with $\alpha = \beta = 1$.
+- [Beta Scaled](beta_scaled.md) - The Uniform distribution is a special case of the Beta Scaled distribution with $\alpha = \beta = 1$ and $lower$, $upper$ parameters.
+- [Discrete Uniform](discrete_uniform.md) - The discrete version of the Uniform distribution.
 ```
 # References
 

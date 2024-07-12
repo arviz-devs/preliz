@@ -71,18 +71,18 @@ $$
 
 **Common Alternatives:**
 
-- [Student's t Distribution](students_t_distribution.md) - The Cauchy distribution is a special case of the Student's t-distribution with $\nu=1$.
-- [Normal Distribution](normal_distribution.md) - Often used as an alternative to the Cauchy distribution when the tails are not of primary concern.
-- [Logistic Distribution](logistic_distribution.md) - A symmetric distribution with lighter tails than the Cauchy distribution.
+- [Student's t](students_t.md) - The Cauchy distribution is a special case of the Student's t-distribution with $\nu=1$.
+- [Normal](normal.md) - Often used as an alternative to the Cauchy distribution when the tails are not of primary concern.
+- [Logistic](logistic.md) - A symmetric distribution with lighter tails than the Cauchy distribution.
 
 **Related Distributions:**
 
-- [Half-Cauchy Distribution](half_cauchy_distribution.md) - Considers only the positive half of the Cauchy distribution, often used as a prior for scale parameters.
+- [Half-Cauchy](half_cauchy.md) - Considers only the positive half of the Cauchy distribution, often used as a prior for scale parameters.
 ```
 
 ## References
 
-- [Wikipedia - Cauchy Distribution](https://en.wikipedia.org/wiki/Cauchy_distribution)
+- [Wikipedia - Cauchy](https://en.wikipedia.org/wiki/Cauchy_distribution)
 
 
 

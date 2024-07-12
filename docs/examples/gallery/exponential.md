@@ -77,18 +77,18 @@ $$
 
 **Common Alternatives:**
 
-- [Gamma Distribution](gamma_distribution.md) - The Exponential distribution is a special case of the Gamma distribution with the shape parameter $\alpha = 1$.
-- [Weibull Distribution](weibull_distribution.md) - The Exponential distribution is a special case of the Weibull distribution with the shape parameter $\alpha = 1$.
+- [Gamma](gamma.md) - The Exponential distribution is a special case of the Gamma distribution with the shape parameter $\alpha = 1$.
+- [Weibull](weibull.md) - The Exponential distribution is a special case of the Weibull distribution with the shape parameter $\alpha = 1$.
 
 **Related Distributions:**
 
-- [Poisson Distribution](poisson_distribution.md) - While the Exponential distribution models the time between events in a Poisson process, the Poisson distribution models the number of events in fixed intervals of time or space.
-- [Geometric Distribution](geometric_distribution.md) - The discrete counterpart of the Exponential distribution, modeling the number of trials needed to achieve the first success in a sequence of Bernoulli trials.
+- [Poisson](poisson.md) - While the Exponential distribution models the time between events in a Poisson process, the Poisson distribution models the number of events in fixed intervals of time or space.
+- [Geometric](geometric.md) - The discrete counterpart of the Exponential distribution, modeling the number of trials needed to achieve the first success in a sequence of Bernoulli trials.
 ```
 
 ## References
 
-- [Wikipedia - Exponential Distribution](https://en.wikipedia.org/wiki/Exponential_distribution)
+- [Wikipedia - Exponential](https://en.wikipedia.org/wiki/Exponential_distribution)
 
 
 

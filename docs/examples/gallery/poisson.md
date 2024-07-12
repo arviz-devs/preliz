@@ -73,19 +73,19 @@ where $\Gamma(x + 1, \mu)$ is the [upper incomplete gamma function](https://en.w
 
 **Common Alternatives:**
 
-- [NegativeBinomial](negative_binomial_distribution.md) - The Negative Binomial is often used as an alternative the Poisson when the variance is greater than the mean (overdispersed data).
-- [ZeroInflatedPoisson](zero_inflated_poisson_distribution.md) - The Zero-Inflated Poisson is used when there is an excess of zero counts in the data.
-- [HurdlePoisson](hurdle_distribution.md) - The Hurdle Poisson is used when there is an excess of zero counts in the data.
+- [NegativeBinomial](negative_binomial.md) - The Negative Binomial is often used as an alternative the Poisson when the variance is greater than the mean (overdispersed data).
+- [ZeroInflatedPoisson](zero_inflated_poisson.md) - The Zero-Inflated Poisson is used when there is an excess of zero counts in the data.
+- [HurdlePoisson](hurdle.md) - The Hurdle Poisson is used when there is an excess of zero counts in the data.
 
 **Related Distributions:**
 
-- [Binomial](binomial_distribution.md) - The Poisson distribution can be derived as a limiting case to the binomial distribution as the number of trials goes to infinity and the expected number of successes remains fixed. See [law of rare events](https://en.wikipedia.org/wiki/Poisson_distribution#law_of_rare_events). 
-- [Normal](normal_distribution.md) - For sufficiently large values of $\mu$, the normal distribution with mean $\mu$ and standard deviation \sqrt{\mu} can be a good approximation to the Poisson. 
+- [Binomial](binomial.md) - The Poisson distribution can be derived as a limiting case to the binomial distribution as the number of trials goes to infinity and the expected number of successes remains fixed. See [law of rare events](https://en.wikipedia.org/wiki/Poisson_distribution#law_of_rare_events). 
+- [Normal](normal.md) - For sufficiently large values of $\mu$, the normal distribution with mean $\mu$ and standard deviation \sqrt{\mu} can be a good approximation to the Poisson. 
 ```
 
 ## References
 
-- [Wikipedia - Poisson Distribution](https://en.wikipedia.org/wiki/Poisson_distribution)
+- [Wikipedia - Poisson](https://en.wikipedia.org/wiki/Poisson_distribution)
 
 
 
