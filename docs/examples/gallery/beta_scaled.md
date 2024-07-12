@@ -85,9 +85,9 @@ where $y$ is the scaled variable $y = \frac{(x - lower)}{(upper - lower)}$. $B(x
 :class: seealso
 
 **Related Distributions:**
-- [Beta](beta_scaled_distribution.md) - A Beta scaled distribution with $lower=0$ and $upper=1$.
-- [Kumaraswamy Distribution](Kumaraswamy_distribution.md) -  It is similar to the Beta scaled distribution, but restricted to the [0, 1] interval and with closed form expression for its probability density function, cumulative distribution function and quantile function.
-- [Uniform Distribution](uniform_distribution.md) - The Uniform distribution on the interval $[lower, upper]$ is a special case of the Beta scaled distribution with $\alpha = \beta = 1$.
+- [Beta](beta.md) - A Beta scaled distribution with $lower=0$ and $upper=1$.
+- [Kumaraswamy](Kumaraswamy.md) -  It is similar to the Beta scaled distribution, but restricted to the [0, 1] interval and with closed form expression for its probability density function, cumulative distribution function and quantile function.
+- [Uniform](uniform.md) - The Uniform distribution on the interval $[lower, upper]$ is a special case of the Beta scaled distribution with $\alpha = \beta = 1$.
 ```
 
 ## References
