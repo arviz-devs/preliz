@@ -86,7 +86,7 @@ $$
 :class: seealso
 
 **Related Distributions:**
-- [Laplace](laplace_distribution.md) - The Asymmetric Laplace distribution is a generalization of the Laplace distribution.
+- [Laplace](laplace.md) - The Asymmetric Laplace distribution is a generalization of the Laplace distribution.
 ```
 
 ## References

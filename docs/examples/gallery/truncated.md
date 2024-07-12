@@ -86,8 +86,8 @@ where `lower` and `upper` are the lower and upper bounds of the truncated distri
 
 **Related Distributions:**
 
-- [Censored](censored_distribution.md) - In a censored distribution, values outside the range are not recorded, while in a truncated distribution, they are set to the nearest bound.
-- [TruncatedNormal](truncated_normal_distribution.md) - A truncated normal distribution is a normal distribution that has been restricted to a specific range.
+- [Censored](censored.md) - In a censored distribution, values outside the range are not recorded, while in a truncated distribution, they are set to the nearest bound.
+- [TruncatedNormal](truncated_normal.md) - A truncated normal distribution is a normal distribution that has been restricted to a specific range.
 
 ```
 

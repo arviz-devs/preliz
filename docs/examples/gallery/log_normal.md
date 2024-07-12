@@ -78,13 +78,13 @@ $$
 
 **Common Alternatives:**
 
-- [Normal Distribution](normal_distribution.md) - The log-normal distribution is directly related to the normal distribution since if a variable is log-normally distributed, its logarithm follows a normal distribution. This relationship is crucial for understanding the log-normal's properties and applications.
+- [Normal](normal.md) - The log-normal distribution is directly related to the normal distribution since if a variable is log-normally distributed, its logarithm follows a normal distribution. This relationship is crucial for understanding the log-normal's properties and applications.
 
 **Related Distributions:**
 
-- [Exponential Distribution](exponential_distribution.md) - It's a simpler model for positive, skewed data but lacks the flexibility of the log-normal distribution in modeling a wide range of shapes.
-- [Gamma Distribution](gamma_distribution.md) - Used for modeling positively skewed data, similar to the log-normal distribution, but with different skewness and kurtosis properties.
-- [Pareto Distribution](pareto_distribution.md) - Also models positive, skewed data, focusing on the "long tail" of distribution which is useful in economics and finance for modeling wealth distribution or significant rare events.
+- [Exponential](exponential.md) - It's a simpler model for positive, skewed data but lacks the flexibility of the log-normal distribution in modeling a wide range of shapes.
+- [Gamma](gamma.md) - Used for modeling positively skewed data, similar to the log-normal distribution, but with different skewness and kurtosis properties.
+- [Pareto](pareto.md) - Also models positive, skewed data, focusing on the "long tail" of distribution which is useful in economics and finance for modeling wealth distribution or significant rare events.
 ```
 
 ## References

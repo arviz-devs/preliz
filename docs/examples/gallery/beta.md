@@ -86,12 +86,12 @@ where $B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia
 
 **Common Alternatives:**
 
-- [Kumaraswamy Distribution](Kumaraswamy_distribution.md) -  It is similar to the Beta distribution, but with closed form expression for its probability density function, cumulative distribution function and quantile function.
+- [Kumaraswamy](Kumaraswamy.md) -  It is similar to the Beta distribution, but with closed form expression for its probability density function, cumulative distribution function and quantile function.
 
 **Related Distributions:**
-- [Beta Scaled](beta_scaled_distribution.md) - A Beta distribution defined on an arbitrary range.
-- [Uniform Distribution](uniform_distribution.md) - The Uniform distribution on the interval [0, 1] is a special case of the Beta distribution with $\alpha = \beta = 1$.
-- [Dirichlet Distribution](dirichlet_distribution.md) - The Dirichlet distribution is the generalization of the Beta to higher dimensions.
+- [Beta Scaled](beta_scaled.md) - A Beta distribution defined on an arbitrary range.
+- [Uniform](uniform.md) - The Uniform distribution on the interval [0, 1] is a special case of the Beta distribution with $\alpha = \beta = 1$.
+- [Dirichlet](dirichlet.md) - The Dirichlet distribution is the generalization of the Beta to higher dimensions.
 ```
 
 ## References

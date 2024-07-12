@@ -85,15 +85,15 @@ where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 
 **Common Alternatives:**
 
-- [Student's T Distribution](students_t_distribution.md) - Commonly used as a robust alternative to the Normal, it has a third parameter controlling the heaviness of the tails.
-- [Logistic Distribution](logistic_distribution.md) - Used as a robust alternative to the Normal, it has heavier tails than the normal distribution.
-- [Truncated Normal Distribution](truncated_normal_distribution.md) - Bounds the Normal distribution within a specified range. Sometimes, it is used for Normal-like parameters when certain values are not permitted.
+- [Student's T](students_t.md) - Commonly used as a robust alternative to the Normal, it has a third parameter controlling the heaviness of the tails.
+- [Logistic](logistic.md) - Used as a robust alternative to the Normal, it has heavier tails than the normal distribution.
+- [Truncated Normal](truncated_normal.md) - Bounds the Normal distribution within a specified range. Sometimes, it is used for Normal-like parameters when certain values are not permitted.
 
 **Related Distributions:**
 
-- [Half Normal Distribution](half_normal_distribution.md) - Considers only the positive half of the Normal distribution.
-- [Log Normal Distribution](log_normal_distribution.md) - If a random variable follows a LogNormal distribution, its natural logarithm will be Normally distributed. It is suitable for modelling positive and right-skewed data or parameters.
-- [Von Mises Distribution](vonmises_distribution.md) - Close to a wrapped Normal on the circle. Suitable for data on a circular scale, like angles or time of day.
+- [Half Normal](half_normal.md) - Considers only the positive half of the Normal distribution.
+- [Log Normal](log_normal.md) - If a random variable follows a LogNormal distribution, its natural logarithm will be Normally distributed. It is suitable for modelling positive and right-skewed data or parameters.
+- [Von Mises](vonmises.md) - Close to a wrapped Normal on the circle. Suitable for data on a circular scale, like angles or time of day.
 
 ```
 
