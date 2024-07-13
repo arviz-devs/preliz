@@ -130,7 +130,7 @@ This reference provides detailed documentation for user functions in the current
    :members:
 
 .. automodule:: preliz.distributions.betabinomial
-   :members:f
+   :members:
 
 .. automodule:: preliz.distributions.binomial
    :members:
