@@ -55,7 +55,7 @@ Continuous Distributions
       Cauchy
 
    .. grid-item-card::
-      :link: ./examples/gallery/chi_squared.html
+      :link: ./api_reference.html#preliz.distributions.chi_squared.ChiSquared
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -67,7 +67,7 @@ Continuous Distributions
       Chi-Squared
 
    .. grid-item-card::
-      :link: ./examples/gallery/ex_gaussian.html
+      :link: ./api_reference.html#preliz.distributions.exgaussian.ExGaussian
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -91,7 +91,7 @@ Continuous Distributions
       Exponential
 
    .. grid-item-card::
-      :link: ./examples/gallery/gamma.html
+      :link: ./api_reference.html#preliz.distributions.gamma.Gamma
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -103,7 +103,7 @@ Continuous Distributions
       Gamma
 
    .. grid-item-card::
-      :link: ./examples/gallery/gumbel.html
+      :link: ./api_reference.html#preliz.distributions.gumbel.Gumbel
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -115,7 +115,7 @@ Continuous Distributions
       Gumbel
 
    .. grid-item-card::
-      :link: ./examples/gallery/half_cauchy.html
+      :link: ./api_reference.html#preliz.distributions.halfcauchy.HalfCauchy
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -127,7 +127,7 @@ Continuous Distributions
       Half-Cauchy
 
    .. grid-item-card::
-      :link: ./examples/gallery/half_normal.html
+      :link: ./api_reference.html#preliz.distributions.halfnormal.HalfNormal
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -139,7 +139,7 @@ Continuous Distributions
       Half-Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/half_student_t.html
+      :link: ./api_reference.html#preliz.distributions.halfstudentt.HalfStudentT
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -151,7 +151,7 @@ Continuous Distributions
       Half-Student's t
 
    .. grid-item-card::
-      :link: ./examples/gallery/inverse_gamma.html
+      :link: ./api_reference.html#preliz.distributions.inversegamma.InverseGamma
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -163,7 +163,7 @@ Continuous Distributions
       Inverse Gamma
 
    .. grid-item-card::
-      :link: ./examples/gallery/kumaraswamy.html
+      :link: ./api_reference.html#preliz.distributions.kumaraswamy.Kumaraswamy
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -175,7 +175,7 @@ Continuous Distributions
       Kumaraswamy
 
    .. grid-item-card::
-      :link: ./examples/gallery/laplace.html
+      :link: ./api_reference.html#preliz.distributions.laplace.Laplace
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -211,7 +211,7 @@ Continuous Distributions
       Logistic
 
    .. grid-item-card::
-      :link: ./examples/gallery/log_logistic.html
+      :link: ./api_reference.html#preliz.distributions.loglogistic.LogLogistic
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -223,7 +223,7 @@ Continuous Distributions
       Log-Logistic
 
    .. grid-item-card::
-      :link: ./examples/gallery/logit_normal.html
+      :link: ./api_reference.html#preliz.distributions.logitnormal.LogitNormal
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -235,7 +235,7 @@ Continuous Distributions
       Logit-Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/moyal.html
+      :link: ./api_reference.html#preliz.distributions.moyal.Moyal
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -259,7 +259,7 @@ Continuous Distributions
       Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/pareto.html
+      :link: ./api_reference.html#preliz.distributions.pareto.Pareto
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -271,7 +271,7 @@ Continuous Distributions
       Pareto
 
    .. grid-item-card::
-      :link: ./examples/gallery/rice.html
+      :link: ./api_reference.html#preliz.distributions.rice.Rice
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -283,7 +283,7 @@ Continuous Distributions
       Rice
 
    .. grid-item-card::
-      :link: ./examples/gallery/skew_normal.html
+      :link: ./api_reference.html#preliz.distributions.skewnormal.SkewNormal
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -307,7 +307,7 @@ Continuous Distributions
       Student's t
 
    .. grid-item-card::
-      :link: ./examples/gallery/skew_student_t.html
+      :link: ./api_reference.html#preliz.distributions.skew_studentt.SkewStudentT
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -319,7 +319,7 @@ Continuous Distributions
       Skew-Student's t
 
    .. grid-item-card::
-      :link: ./examples/gallery/triangular.html
+      :link: ./api_reference.html#preliz.distributions.triangular.Triangular
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -331,7 +331,7 @@ Continuous Distributions
       Triangular
 
    .. grid-item-card::
-      :link: ./examples/gallery/truncated_normal.html
+      :link: ./api_reference.html#preliz.distributions.truncatednormal.TruncatedNormal
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -355,7 +355,7 @@ Continuous Distributions
       Uniform
 
    .. grid-item-card::
-      :link: ./examples/gallery/von_mises.html
+      :link: ./api_reference.html#preliz.distributions.vonmises.VonMises
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -367,7 +367,7 @@ Continuous Distributions
       Von Mises
 
    .. grid-item-card::
-      :link: ./examples/gallery/wald.html
+      :link: ./api_reference.html#preliz.distributions.wald.Wald
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -379,7 +379,7 @@ Continuous Distributions
       Wald
 
    .. grid-item-card::
-      :link: ./examples/gallery/weibull.html
+      :link: ./api_reference.html#preliz.distributions.weibull.Weibull
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -396,7 +396,7 @@ Discrete Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./examples/gallery/bernoulli.html
+      :link: ./api_reference.html#preliz.distributions.bernoulli.Bernoulli
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -408,7 +408,7 @@ Discrete Distributions
       Bernoulli
 
    .. grid-item-card::
-      :link: ./examples/gallery/beta_binomial.html
+      :link: ./api_reference.html#preliz.distributions.betabinomial.BetaBinomial
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -420,7 +420,7 @@ Discrete Distributions
       Beta Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/binomial.html
+      :link: ./api_reference.html#preliz.distributions.binomial.Binomial
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -432,7 +432,7 @@ Discrete Distributions
       Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/categorical.html
+      :link: ./api_reference.html#preliz.distributions.categorical.Categorical
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -444,7 +444,7 @@ Discrete Distributions
       Categorical
 
    .. grid-item-card::
-      :link: ./examples/gallery/discrete_uniform.html
+      :link: ./api_reference.html#preliz.distributions.discrete_uniform.DiscreteUniform
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -456,7 +456,7 @@ Discrete Distributions
       Discrete Uniform
 
    .. grid-item-card::
-      :link: ./examples/gallery/discrete_weibull.html
+      :link: ./api_reference.html#preliz.distributions.discrete_weibull.DiscreteWeibull
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -468,7 +468,7 @@ Discrete Distributions
       Discrete Weibull
 
    .. grid-item-card::
-      :link: ./examples/gallery/geometric.html
+      :link: ./api_reference.html#preliz.distributions.geometric.Geometric
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -480,7 +480,7 @@ Discrete Distributions
       Geometric
 
    .. grid-item-card::
-      :link: ./examples/gallery/hypergeometric.html
+      :link: ./api_reference.html#preliz.distributions.hypergeometric.HyperGeometric
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -492,7 +492,7 @@ Discrete Distributions
       Hypergeometric
 
    .. grid-item-card::
-      :link: ./examples/gallery/negative_binomial.html
+      :link: ./api_reference.html#preliz.distributions.negativebinomial.NegativeBinomial
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -516,7 +516,7 @@ Discrete Distributions
       Poisson
 
    .. grid-item-card::
-      :link: ./examples/gallery/zero_inflated_binomial.html
+      :link: ./api_reference.html#preliz.distributions.zi_binomial.ZeroInflatedBinomial
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -528,7 +528,7 @@ Discrete Distributions
       Zero-Inflated Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/zero_inflated_negative_binomial.html
+      :link: ./api_reference.html#preliz.distributions.zi_negativebinomial.ZeroInflatedNegativeBinomial
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -540,7 +540,7 @@ Discrete Distributions
       Zero-Inflated Negative Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/zero_inflated_poisson.html
+      :link: ./api_reference.html#preliz.distributions.zi_poisson.ZeroInflatedPoisson
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -557,7 +557,7 @@ Continuous Multivariate Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./examples/gallery/dirichlet.html
+      :link: ./api_reference.html#preliz.distributions.continuous_multivariate.Dirichlet
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -569,7 +569,7 @@ Continuous Multivariate Distributions
       Dirichlet
 
    .. grid-item-card::
-      :link: ./examples/gallery/mvnormal.html
+      :link: ./api_reference.html#preliz.distributions.continuous_multivariate.MvNormal
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -598,7 +598,7 @@ Distribution Modifiers
       Censored
 
    .. grid-item-card::
-      :link: ./examples/gallery/hurdle.html
+      :link: ./api_reference.html#preliz.distributions.hurdle.Hurdle
       :text-align: center
       :shadow: none
       :class-card: example-gallery
