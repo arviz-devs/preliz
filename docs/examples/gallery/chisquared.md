@@ -10,9 +10,9 @@ kernelspec:
 ---
 # Chi-Squared Distribution
 
-The chi-squared (also chi-square or $\chi^2$) distribution is a fundamental continuous probability distribution in statistics, characterized by its degrees of freedom, $\nu$. This distribution emerges from the sum of the squares of $\nu$ independent standard normal random variables.
+The chi-squared (also chi-square or $\chi^2$) is a continuous probability distribution characterized by a single parameter, $\nu$, usually called degrees of freedom. This distribution emerges from the sum of the squares of $\nu$ independent standard normal random variables.
 
-The chi-squared distribution is widely used in inferential statistics for many statistical tests, for hypothesis testing and the construction of confidence intervals. It is used in common chi-squared tests for goodness of fit, which compare an observed distribution to a theoretical one, and for testing the independence of two criteria of classification in qualitative data. Additionally, the chi-squared distribution is used for finding confidence intervals to estimate the population standard deviation of a normal distribution based on a sample standard deviation.
+The chi-squared distribution is widely used in many statistical tests, for hypothesis testing and constructing confidence intervals. 
 
 ## Probability Density Function (PDF):
 
@@ -24,7 +24,6 @@ mystnb:
     alt: Chi-Squared Distribution PDF
 ---
 
-import matplotlib.pyplot as plt
 import arviz as az
 from preliz import ChiSquared
 az.style.use('arviz-doc')
