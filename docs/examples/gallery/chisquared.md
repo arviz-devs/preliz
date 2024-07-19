@@ -24,13 +24,14 @@ mystnb:
     alt: Chi-Squared Distribution PDF
 ---
 
+import numpy as np
 import arviz as az
 from preliz import ChiSquared
 az.style.use('arviz-doc')
 nus = [1, 3, 9]
 
 for nu in nus:
-    ax = ChiSquared(nu).plot_pdf(support=(0, 20))
+    ax = ChiSquared(nu).plot_pdf(support=(np.finfo(float).eps, 20))
     ax.set_ylim(0, 0.6)
 ```
 
