@@ -55,7 +55,7 @@ Continuous Distributions
       Cauchy
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.chi_squared.ChiSquared
+      :link: ./examples/gallery/chisquared.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
