@@ -121,7 +121,7 @@ Contents
    :maxdepth: 2
 
    examples/param_space_1d_examples
-   examples/observed_space_examples
+   examples/observed_space_examples_all
    gallery_content
    api_reference
 
