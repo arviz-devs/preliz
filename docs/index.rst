@@ -1,4 +1,4 @@
-A tool-box for prior elicitation 
+``````````````A tool-box for prior elicitation
 ===================================================
 
 |PyPI version|
@@ -121,7 +121,7 @@ Contents
    :maxdepth: 2
 
    examples/param_space_1d_examples
-   examples/observed_space_examples_all
+   examples/observed_space_examples
    gallery_content
    api_reference
 
