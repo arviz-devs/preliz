@@ -91,7 +91,7 @@ Continuous Distributions
       Exponential
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.gamma.Gamma
+      :link: ./examples/gallery/gamma.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
