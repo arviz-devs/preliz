@@ -12,9 +12,9 @@ kernelspec:
 
 The gamma distribution is a continuous probability distribution that describes the time until a specified number of events occur in a Poisson process, in which $\alpha$ events occur continuously and independently at a constant average rate $\beta$. The gamma distribution is characterized by two parameters: the shape parameter $\alpha$ and the rate parameter $\beta$.
 
-The gamma distribution is widely used in many fields, including physics, biology, finance, and reliability engineering. Examples include modeling the time until a specified number of decays of a radioactive atom, the time until a specified number of seizures in patients with epilepsy, the time until a specified number of failures of a machine, and the time until a specified number of changes in the price of a stock. 
+The gamma distribution is widely used in many settings, including modeling the time until a specified number of decays of a radioactive atom, the time until a specified number of seizures in patients with epilepsy, the time until a specified number of failures of a machine, and the time until a specified number of changes in the price of a stock. 
 
-In Bayesian modeling, the gamma distribution is used as a conjugate prior for the precision (inverse variance) of the normal distribution. It is also the conjugate prior for the exponential distribution, which is a special case of the gamma distribution with $\alpha = 1$.
+The gamma distribution is used as a conjugate prior for the exponential distribution and for the precision of the normal distribution. It can also used as prior for scale parameters, in particular when there is interest in avoiding values close to zero or one wants to include more information than with other prior commonly used for scale parameter like the halfnormal or the exponential.
 
 ## Probability Density Function (PDF):
 
@@ -26,7 +26,6 @@ mystnb:
     alt: Gamma Distribution PDF
 ---
 
-import numpy as np
 import arviz as az
 from preliz import Gamma
 az.style.use('arviz-doc')
