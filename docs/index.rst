@@ -1,4 +1,4 @@
-``````````````A tool-box for prior elicitation
+A tool-box for prior elicitation
 ===================================================
 
 |PyPI version|
