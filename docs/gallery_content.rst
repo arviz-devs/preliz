@@ -67,7 +67,7 @@ Continuous Distributions
       Chi-Squared
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.exgaussian.ExGaussian
+      :link: ./examples/gallery/exgaussian.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
