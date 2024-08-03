@@ -61,18 +61,22 @@ Variance  :math:`\sigma^2 + \nu^2`
 **Probability Density Function (PDF):**
 
 $$
-f(x \mid \mu, \sigma, \nu) = \frac{1}{2\nu} \exp\left(\frac{\mu - x}{\nu} + \frac{\sigma^2}{2\nu^2} \right) \operatorname{erfc}\left(\frac{\mu + \frac{\sigma^2}{\nu} - x}{\sqrt{2}\sigma}\right)
+f(x \mid \mu, \sigma, \nu) =
+\frac{1}{\nu}\exp\left(\frac{\mu-x}{\nu}+\frac{\sigma^2}{2\nu^2}\right)\Phi\left(\frac{x-\mu}{\sigma}-\frac{\sigma}{\nu}\right)
 $$
 
-where $\operatorname{erfc}$ is the [complementary error function](https://en.wikipedia.org/wiki/Error_function#Complementary_error_function).
+where $\Phi$ is the [standard normal PDF](normal.md).
 
 **Cumulative Distribution Function (CDF):**
 
 $$
-F(x \mid \mu, \sigma, \nu) = \Phi\left( \frac{x - \mu}{\sigma} \right) - \exp\left( \frac{\mu - x}{\nu} + \frac{\sigma^2}{2\nu^2} \right) \operatorname{erfc}\left( \frac{\mu + \frac{\sigma^2}{\nu} - x}{\sqrt{2}\sigma} \right)
+F(x \mid \mu, \sigma, \nu) = 
+ \frac{1}{2} \left(1 + \operatorname{erf}\left( \frac{x - \mu}{\sigma \sqrt{2}} \right)\right)
+- \frac{1}{2} \exp\left( \frac{1}{2\nu} \left(2\mu + \frac{\sigma^2}{\nu} - 2x\right) \right) \left(1 + \operatorname{erf}\left( \frac{x - \left(\mu + \frac{\sigma^2}{\nu}\right)}{\sigma \sqrt{2}} \right)\right)
 $$
 
-where $\Phi$ is the [standard normal CDF](normal.md).
+where $\operatorname{erf}$ is the [error function](https://en.wikipedia.org/wiki/Error_function).
+
 
 ```{seealso}
 :class: seealso

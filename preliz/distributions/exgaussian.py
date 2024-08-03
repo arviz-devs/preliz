@@ -21,7 +21,7 @@ class ExGaussian(Continuous):
 
     .. math::
 
-        f(x \mid \mu, \sigma, \tau) =
+        f(x \mid \mu, \sigma, \nu) =
             \frac{1}{\nu}\;
             \exp\left\{\frac{\mu-x}{\nu}+\frac{\sigma^2}{2\nu^2}\right\}
             \Phi\left(\frac{x-\mu}{\sigma}-\frac{\sigma}{\nu}\right)
