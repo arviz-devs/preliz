@@ -3,6 +3,7 @@
 # pylint: disable=protected-access
 from sys import modules
 
+import arviz as az
 import numpy as np
 
 try:
@@ -209,3 +210,17 @@ def non_constant_parents(var_):
             parents.append(variable.owner.inputs[0])
 
     return parents
+
+
+def parse_backfitting(model, data):
+    posterior = az.extract(data, group="posterior")
+
+    model_info = get_model_information(model)[2]
+    parsed_info = [(dist, var) for var, dist in model_info.items()]
+    print(posterior, parsed_info)
+    new_priors = []
+    for dist, var in parsed_info:
+        dist._fit_mle(posterior[var].values)
+        new_priors.append((dist, var))
+    new_model = "\n".join(f"{var} = {new_prior}" for new_prior, var in new_priors)
+    return new_model
