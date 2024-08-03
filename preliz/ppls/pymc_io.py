@@ -217,7 +217,7 @@ def parse_backfitting(model, data):
 
     model_info = get_model_information(model)[2]
     parsed_info = [(dist, var) for var, dist in model_info.items()]
-    print(posterior, parsed_info)
+
     new_priors = []
     for dist, var in parsed_info:
         dist._fit_mle(posterior[var].values)
