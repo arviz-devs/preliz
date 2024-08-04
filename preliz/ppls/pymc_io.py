@@ -8,6 +8,7 @@ import numpy as np
 
 try:
     from pytensor.tensor import vector, TensorConstant
+    from pytensor.graph.basic import ancestors
     from pymc import logp, compile_pymc
     from pymc.util import is_transformed_name, get_untransformed_name
 except ModuleNotFoundError:
@@ -119,14 +120,10 @@ def get_model_information(model):  # pylint: disable=too-many-locals
     rvs_to_values = model.rvs_to_values
 
     for r_v in model.free_RVs:
-        if not non_constant_parents(r_v):
-            free_rvs.append(r_v)
-
-    for r_v in model.free_RVs:
         r_v_eval = r_v.eval()
         size = r_v_eval.size
         shape = r_v_eval.shape
-        nc_parents = non_constant_parents(r_v)
+        nc_parents = non_constant_parents(r_v, model.free_RVs)
 
         name = r_v.owner.op.name
         dist = pymc_to_preliz[name]
@@ -202,13 +199,14 @@ def reshape_params(model, var_info, p_model, params):
     return value
 
 
-def non_constant_parents(var_):
+def non_constant_parents(var_, free_rvs):
     """Find the parents of a variable that are not constant."""
     parents = []
     for variable in var_.get_parents()[0].inputs[2:]:
         if not isinstance(variable, TensorConstant):
-            parents.append(variable.owner.inputs[0])
-
+            for free_rv in free_rvs:
+                if free_rv in list(ancestors([variable])) and free_rv not in parents:
+                    parents.append(free_rv)
     return parents
 
 
