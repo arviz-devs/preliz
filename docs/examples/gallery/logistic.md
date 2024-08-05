@@ -27,9 +27,9 @@ mystnb:
 ---
 
 import matplotlib.pyplot as plt
-import arviz as az
-from preliz import Logistic
-az.style.use('arviz-doc')
+
+from preliz import Logistic, style
+style.use('preliz-doc')
 mus = [0., 0., -2.]
 ss = [1., 2., .4]
 for mu, s in zip(mus, ss):

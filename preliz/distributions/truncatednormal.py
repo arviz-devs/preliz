@@ -23,9 +23,9 @@ class TruncatedNormal(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import TruncatedNormal
-        az.style.use('arviz-doc')
+
+        from preliz import TruncatedNormal, style
+        style.use('preliz-doc')
         mus = [0.,  0., 0.]
         sigmas = [3.,5.,7.]
         lowers = [-3, -5, -5]

@@ -27,9 +27,9 @@ class NegativeBinomial(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import NegativeBinomial
-        az.style.use('arviz-doc')
+        
+        from preliz import NegativeBinomial, style
+        style.use('preliz-doc')
         mus = [1, 2, 8]
         alphas = [0.9, 2, 4]
         for mu, alpha in zip(mus, alphas):

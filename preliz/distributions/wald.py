@@ -28,9 +28,9 @@ class Wald(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Wald
-        az.style.use('arviz-doc')
+
+        from preliz import Wald, style
+        style.use('preliz-doc')
         mus = [1., 1.]
         lams = [1., 3.]
         for mu, lam in zip(mus, lams):

@@ -25,9 +25,9 @@ class ChiSquared(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import ChiSquared
-        az.style.use('arviz-doc')
+
+        from preliz import ChiSquared, style
+        style.use('preliz-doc')
         nus = [1., 3., 9.]
         for nu in nus:
                 ax = ChiSquared(nu).plot_pdf(support=(0,20))

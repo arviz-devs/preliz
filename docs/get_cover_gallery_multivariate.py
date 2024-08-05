@@ -1,10 +1,10 @@
 # pylint: disable=invalid-name
 import matplotlib.pyplot as plt
-import arviz as az
-import numpy as np
-from preliz import Dirichlet, MvNormal
 
-az.style.use("arviz-doc")
+import numpy as np
+from preliz import style, Dirichlet, MvNormal
+
+style.use("preliz-doc")
 
 w = 1834 / 300
 h = 1234 / 300

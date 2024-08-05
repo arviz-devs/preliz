@@ -38,7 +38,7 @@ class Dirichlet(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
+
         import matplotlib.pyplot as plt
         from preliz import Dirichlet
         _, axes = plt.subplots(2, 2)
@@ -339,7 +339,7 @@ class MvNormal(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
+
         import matplotlib.pyplot as plt
         from preliz import MvNormal
         _, axes = plt.subplots(2, 2, figsize=(9, 9), sharex=True, sharey=True)

@@ -27,9 +27,9 @@ class AsymmetricLaplace(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import AsymmetricLaplace
-        az.style.use('arviz-doc')
+
+        from preliz import AsymmetricLaplace, style
+        style.use('preliz-doc')
         kappas = [1., 2., .5]
         mus = [0., 0., 3.]
         bs = [1., 1., 1.]

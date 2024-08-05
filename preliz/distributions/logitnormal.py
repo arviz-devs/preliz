@@ -23,9 +23,9 @@ class LogitNormal(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import LogitNormal
-        az.style.use('arviz-doc')
+
+        from preliz import LogitNormal, style
+        style.use('preliz-doc')
         mus = [0., 0., 0., 1.]
         sigmas = [0.3, 1., 2., 1.]
         for mu, sigma in zip(mus, sigmas):

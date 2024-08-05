@@ -23,9 +23,9 @@ class HalfCauchy(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import HalfCauchy
-        az.style.use('arviz-doc')
+
+        from preliz import HalfCauchy, style
+        style.use('preliz-doc')
         for beta in [.5, 1., 2.]:
             HalfCauchy(beta).plot_pdf(support=(0,5))
 

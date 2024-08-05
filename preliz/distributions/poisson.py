@@ -22,9 +22,9 @@ class Poisson(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Poisson
-        az.style.use('arviz-doc')
+
+        from preliz import Poisson, style
+        style.use('preliz-doc')
         for mu in [0.5, 3, 8]:
             Poisson(mu).plot_pdf()
 

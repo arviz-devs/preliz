@@ -30,9 +30,9 @@ class BetaBinomial(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import BetaBinomial
-        az.style.use('arviz-doc')
+
+        from preliz import BetaBinomial, style
+        style.use('preliz-doc')
         alphas = [0.5, 1, 2.3]
         betas = [0.5, 1, 2]
         n = 10

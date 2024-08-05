@@ -27,9 +27,9 @@ class Triangular(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Triangular
-        az.style.use('arviz-doc')
+        
+        from preliz import Triangular, style
+        style.use('preliz-doc')
         lowers = [0., -1, 2]
         cs = [2., 0., 6.5]
         uppers = [4., 1, 8]

@@ -23,9 +23,9 @@ class Geometric(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Geometric
-        az.style.use('arviz-doc')
+
+        from preliz import Geometric, style
+        style.use('preliz-doc')
         for p in [0.1, 0.25, 0.75]:
             Geometric(p).plot_pdf(support=(1,10))
 

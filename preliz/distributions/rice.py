@@ -25,9 +25,9 @@ class Rice(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Rice
-        az.style.use('arviz-doc')
+
+        from preliz import Rice, style
+        style.use('preliz-doc')
         nus = [0., 0., 4.]
         sigmas = [1., 2., 2.]
         for nu, sigma in  zip(nus, sigmas):

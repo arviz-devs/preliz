@@ -19,9 +19,9 @@ class Uniform(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Uniform
-        az.style.use('arviz-doc')
+
+        from preliz import Uniform, style
+        style.use('preliz-doc')
         ls = [1, -2]
         us = [6, 2]
         for l, u in zip(ls, us):

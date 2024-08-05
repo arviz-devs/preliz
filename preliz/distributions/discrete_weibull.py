@@ -22,9 +22,9 @@ class DiscreteWeibull(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import DiscreteWeibull
-        az.style.use('arviz-doc')
+
+        from preliz import DiscreteWeibull, style
+        style.use('preliz-doc')
         qs = [0.1, 0.9, 0.9]
         betas = [0.5, 0.5, 2]
         for q, b in zip(qs, betas):

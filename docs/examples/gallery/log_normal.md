@@ -25,9 +25,8 @@ mystnb:
 ---
 
 import matplotlib.pyplot as plt
-import arviz as az
-from preliz import LogNormal
-az.style.use('arviz-doc')
+from preliz import style, LogNormal
+style.use('preliz-doc')
 mus = [0., 0., 0.]
 sigmas = [0.25, 0.5, 1.]
 for mu, sigma in zip(mus, sigmas):

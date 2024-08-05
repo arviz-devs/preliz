@@ -27,9 +27,9 @@ class LogLogistic(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import LogLogistic
-        az.style.use('arviz-doc')
+
+        from preliz import LogLogistic, style
+        style.use('preliz-doc')
         mus = [1, 1, 2]
         sigmas = [4, 8, 8]
         for mu, sigma in zip(mus, sigmas):

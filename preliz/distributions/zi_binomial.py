@@ -26,9 +26,9 @@ class ZeroInflatedBinomial(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import ZeroInflatedBinomial
-        az.style.use('arviz-doc')
+        
+        from preliz import ZeroInflatedBinomial, style
+        style.use('preliz-doc')
         ns = [10, 20]
         ps = [0.5, 0.7]
         psis = [0.7, 0.4]

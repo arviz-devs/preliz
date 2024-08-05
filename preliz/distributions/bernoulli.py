@@ -21,9 +21,9 @@ class Bernoulli(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Bernoulli
-        az.style.use('arviz-doc')
+
+        from preliz import Bernoulli, style
+        style.use('preliz-doc')
         for p in [0, 0.5, 0.8]:
             Bernoulli(p).plot_pdf()
 

@@ -29,9 +29,9 @@ class LogNormal(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import LogNormal
-        az.style.use('arviz-doc')
+
+        from preliz import LogNormal, style
+        style.use('preliz-doc')
         mus = [ 0., 0.]
         sigmas = [.5, 1.]
         for mu, sigma in zip(mus, sigmas):

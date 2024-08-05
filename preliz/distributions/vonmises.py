@@ -26,9 +26,9 @@ class VonMises(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import VonMises
-        az.style.use('arviz-doc')
+
+        from preliz import VonMises, style
+        style.use('preliz-doc')
         mus = [0., 0., 0.,  -2.5]
         kappas = [.01, 0.5, 4., 2.]
         for mu, kappa in zip(mus, kappas):

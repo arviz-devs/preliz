@@ -26,9 +26,9 @@ class InverseGamma(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import InverseGamma
-        az.style.use('arviz-doc')
+        
+        from preliz import InverseGamma, style
+        style.use('preliz-doc')
         alphas = [1., 2., 3.]
         betas = [1., 1., .5]
         for alpha, beta in zip(alphas, betas):
