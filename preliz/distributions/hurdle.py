@@ -32,9 +32,9 @@ class Hurdle(DistributionTransformer):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Gamma, Hurdle
-        az.style.use('arviz-doc')
+        
+        from preliz import Gamma, Hurdle, style
+        style.use('preliz-doc')
         Hurdle(Gamma(mu=2, sigma=1), 0.8).plot_pdf()
         Gamma(mu=2, sigma=1).plot_pdf()
         

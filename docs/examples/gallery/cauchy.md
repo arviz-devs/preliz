@@ -24,9 +24,9 @@ tags: [remove-input]
 mystnb: image
 ---
 import matplotlib.pyplot as plt
-import arviz as az
-from preliz import Cauchy
-az.style.use('arviz-doc')
+
+from preliz import Cauchy, style
+style.use('preliz-doc')
 alphas = [0., 0., -2.]
 betas = [1, 0.5, 1]
 for alpha, beta in zip(alphas, betas):

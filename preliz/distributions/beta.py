@@ -34,9 +34,9 @@ class Beta(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Beta
-        az.style.use('arviz-doc')
+        
+        from preliz import Beta, style
+        style.use('preliz-doc')
         alphas = [.5, 5., 2.]
         betas = [.5, 5., 5.]
         for alpha, beta in zip(alphas, betas):

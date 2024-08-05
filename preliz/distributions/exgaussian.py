@@ -32,9 +32,9 @@ class ExGaussian(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import ExGaussian
-        az.style.use('arviz-doc')
+
+        from preliz import ExGaussian, style
+        style.use('preliz-doc')
         mus = [0., 0., -3.]
         sigmas = [1., 3., 1.]
         nus = [1., 1., 4.]

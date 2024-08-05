@@ -25,9 +25,9 @@ class Binomial(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Binomial
-        az.style.use('arviz-doc')
+
+        from preliz import Binomial, style
+        style.use('preliz-doc')
         ns = [5, 10, 10]
         ps = [0.5, 0.5, 0.7]
         for n, p in zip(ns, ps):

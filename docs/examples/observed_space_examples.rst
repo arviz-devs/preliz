@@ -3,7 +3,7 @@ Predictive Elicitation
 
 .. code-block:: python
 
-    import arviz as az
+    
     import preliz as pz
     import numpy as np
     import pandas as pd
@@ -12,7 +12,7 @@ Predictive Elicitation
 
     az.style.library["arviz-doc"]["figure.dpi"] = 100
     az.style.library["arviz-doc"]["figure.figsize"] = (10, 4)
-    az.style.use("arviz-doc")
+    az.style.use("preliz-doc")
 
 Predictive elicitation refers to the elicitation of priors by making evaluations on the observed space, instead of the parameters space. The advantage of the former is that generally it is easier to think about observations than parameters, specially for domain experts. If you are a forest engineer, you may be more familiar with the expected rate of wildfires in an area than with the ``rho`` parameter of a model.
 

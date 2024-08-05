@@ -1,13 +1,14 @@
 # pylint: disable=invalid-name
 import matplotlib.pyplot as plt
-import arviz as az
+
 import numpy as np
 from preliz import Gamma
 from preliz import distributions
+from preliz import style
 from preliz.internal.distribution_helper import init_vals
 
 
-az.style.use("arviz-doc")
+style.use("preliz-doc")
 rng = np.random.default_rng(247)
 
 init_vals["Hurdle"] = None

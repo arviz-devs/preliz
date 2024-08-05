@@ -30,9 +30,9 @@ class Gumbel(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Gumbel
-        az.style.use('arviz-doc')
+
+        from preliz import Gumbel, style
+        style.use('preliz-doc')
         mus = [0., 4., -1.]
         betas = [1., 2., 4.]
         for mu, beta in zip(mus, betas):

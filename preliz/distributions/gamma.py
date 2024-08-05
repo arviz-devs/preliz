@@ -28,9 +28,9 @@ class Gamma(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Gamma
-        az.style.use('arviz-doc')
+        
+        from preliz import Gamma, style
+        style.use('preliz-doc')
         alphas = [1., 3., 7.5]
         betas = [.5, 1., 1.]
         for alpha, beta in zip(alphas, betas):

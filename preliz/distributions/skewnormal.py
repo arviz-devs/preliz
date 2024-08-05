@@ -25,9 +25,9 @@ class SkewNormal(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import SkewNormal
-        az.style.use('arviz-doc')
+
+        from preliz import SkewNormal, style
+        style.use('preliz-doc')
         for alpha in [-6, 0, 6]:
             SkewNormal(mu=0, sigma=1, alpha=alpha).plot_pdf()
 

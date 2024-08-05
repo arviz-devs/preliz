@@ -22,9 +22,9 @@ class Pareto(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Pareto
-        az.style.use('arviz-doc')
+
+        from preliz import Pareto, style
+        style.use('preliz-doc')
         alphas = [1., 5., 5.]
         ms = [1., 1., 2.]
         for alpha, m in zip(alphas, ms):

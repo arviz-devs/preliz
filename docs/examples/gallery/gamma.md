@@ -26,9 +26,9 @@ mystnb:
     alt: Gamma Distribution PDF
 ---
 
-import arviz as az
-from preliz import Gamma
-az.style.use('arviz-doc')
+
+from preliz import Gamma, style
+style.use('preliz-doc')
 alphas = [1, 3, 7.5]
 betas = [0.5, 1., 1.]
 

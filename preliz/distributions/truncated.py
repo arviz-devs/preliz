@@ -26,9 +26,9 @@ class Truncated(DistributionTransformer):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Gamma, Truncated
-        az.style.use('arviz-doc')
+        
+        from preliz import Gamma, Truncated, style
+        style.use('preliz-doc')
         Truncated(Gamma(mu=2, sigma=1), 1, 4.5).plot_pdf()
         Gamma(mu=2, sigma=1).plot_pdf()
         

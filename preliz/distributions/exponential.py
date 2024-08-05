@@ -21,9 +21,9 @@ class Exponential(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Exponential
-        az.style.use('arviz-doc')
+
+        from preliz import Exponential, style
+        style.use('preliz-doc')
         for lam in [0.5,  2.]:
             Exponential(lam).plot_pdf(support=(0,5))
 

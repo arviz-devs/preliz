@@ -24,9 +24,9 @@ mystnb:
     alt: Beta Scaled Distribution PDF
 ---
 
-import arviz as az
-from preliz import BetaScaled
-az.style.use('arviz-doc')
+
+from preliz import BetaScaled, style
+style.use('preliz-doc')
 alphas = [2, 2]
 betas = [2, 5]
 lowers = [-0.5, -1]

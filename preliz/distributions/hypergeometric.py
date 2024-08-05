@@ -26,9 +26,9 @@ class HyperGeometric(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import HyperGeometric
-        az.style.use('arviz-doc')
+
+        from preliz import HyperGeometric, style
+        style.use('preliz-doc')
         N = 50
         k = 10
         for n in [20, 25]:

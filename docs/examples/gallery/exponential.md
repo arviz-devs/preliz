@@ -27,9 +27,9 @@ mystnb:
 ---
 
 import matplotlib.pyplot as plt
-import arviz as az
-from preliz import Exponential
-az.style.use('arviz-doc')
+
+from preliz import Exponential, style
+style.use('preliz-doc')
 lambdas = [0.5, 1., 2.]
 
 for lam in lambdas:

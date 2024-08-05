@@ -23,9 +23,9 @@ class HalfNormal(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import HalfNormal
-        az.style.use('arviz-doc')
+
+        from preliz import HalfNormal, style
+        style.use('preliz-doc')
         for sigma in [0.4,  2.]:
             HalfNormal(sigma).plot_pdf(support=(0,5))
 

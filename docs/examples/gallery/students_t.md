@@ -27,9 +27,9 @@ mystnb:
 ---
 
 import matplotlib.pyplot as plt
-import arviz as az
-from preliz import StudentT
-az.style.use('arviz-doc')
+
+from preliz import StudentT, style
+style.use('preliz-doc')
 nus = [2., 5., 5.]
 mus = [0., 0.,  -4.]
 sigmas = [1., 1., 2.]

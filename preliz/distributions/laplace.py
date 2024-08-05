@@ -22,9 +22,9 @@ class Laplace(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Laplace
-        az.style.use('arviz-doc')
+
+        from preliz import Laplace, style
+        style.use('preliz-doc')
         mus = [0., 0., 0., -5.]
         bs = [1., 2., 4., 4.]
         for mu, b in zip(mus, bs):

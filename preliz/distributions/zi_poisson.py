@@ -28,9 +28,9 @@ class ZeroInflatedPoisson(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import ZeroInflatedPoisson
-        az.style.use('arviz-doc')
+        
+        from preliz import ZeroInflatedPoisson, style
+        style.use('preliz-doc')
         psis = [0.7, 0.4]
         mus = [8, 4]
         for psi, mu in zip(psis, mus):

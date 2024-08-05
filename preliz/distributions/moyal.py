@@ -30,9 +30,9 @@ class Moyal(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Moyal
-        az.style.use('arviz-doc')
+
+        from preliz import Moyal, style
+        style.use('preliz-doc')
         mus = [-1., 0., 4.]
         sigmas = [2., 1., 4.]
         for mu, sigma in zip(mus, sigmas):

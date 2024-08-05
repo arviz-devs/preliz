@@ -34,9 +34,9 @@ class HalfStudentT(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import HalfStudentT
-        az.style.use('arviz-doc')
+        
+        from preliz import HalfStudentT, style
+        style.use('preliz-doc')
         sigmas = [1., 2., 2.]
         nus = [3, 3., 10.]
         for sigma, nu in zip(sigmas, nus):

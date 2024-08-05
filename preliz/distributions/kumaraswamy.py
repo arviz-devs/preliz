@@ -29,9 +29,9 @@ class Kumaraswamy(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Kumaraswamy
-        az.style.use('arviz-doc')
+
+        from preliz import Kumaraswamy, style
+        style.use('preliz-doc')
         a_s = [.5, 5., 1., 2., 2.]
         b_s = [.5, 1., 3., 2., 5.]
         for a, b in zip(a_s, b_s):

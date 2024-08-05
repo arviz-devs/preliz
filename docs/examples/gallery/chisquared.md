@@ -25,9 +25,9 @@ mystnb:
 ---
 
 import numpy as np
-import arviz as az
-from preliz import ChiSquared
-az.style.use('arviz-doc')
+
+from preliz import ChiSquared, style
+style.use('preliz-doc')
 nus = [1, 3, 9]
 
 for nu in nus:

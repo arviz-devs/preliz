@@ -20,9 +20,9 @@ class Categorical(Discrete):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import Categorical
-        az.style.use('arviz-doc')
+
+        from preliz import Categorical, style
+        style.use('preliz-doc')
         ps = [[0.1, 0.6, 0.3], [0.3, 0.1, 0.1, 0.5]]
         for p in ps:
             Categorical(p).plot_pdf()

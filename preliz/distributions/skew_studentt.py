@@ -30,9 +30,9 @@ class SkewStudentT(Continuous):
     .. plot::
         :context: close-figs
 
-        import arviz as az
-        from preliz import SkewStudentT
-        az.style.use('arviz-doc')
+
+        from preliz import SkewStudentT, style
+        style.use('preliz-doc')
         mus = [2., 2., 4.]
         sigmas = [1., 2., 2.]
         a_s = [1., 1., 2.]
