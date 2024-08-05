@@ -65,18 +65,17 @@ f(x \mid \mu, \sigma, \nu) =
 \frac{1}{\nu}\exp\left(\frac{\mu-x}{\nu}+\frac{\sigma^2}{2\nu^2}\right)\Phi\left(\frac{x-\mu}{\sigma}-\frac{\sigma}{\nu}\right)
 $$
 
-where $\Phi$ is the [standard normal PDF](normal.md).
+where $\Phi$ is the [standard normal CDF](normal.md).
 
 **Cumulative Distribution Function (CDF):**
 
 $$
 F(x \mid \mu, \sigma, \nu) = 
- \frac{1}{2} \left(1 + \operatorname{erf}\left( \frac{x - \mu}{\sigma \sqrt{2}} \right)\right)
+ \Phi(x, \mu, \sigma)
 - \frac{1}{2} \exp\left( \frac{1}{2\nu} \left(2\mu + \frac{\sigma^2}{\nu} - 2x\right) \right) \left(1 + \operatorname{erf}\left( \frac{x - \left(\mu + \frac{\sigma^2}{\nu}\right)}{\sigma \sqrt{2}} \right)\right)
 $$
 
-where $\operatorname{erf}$ is the [error function](https://en.wikipedia.org/wiki/Error_function).
-
+where $\Phi$ is the CDF of a Gaussian distribution, $\text{erf}$ is the error function
 
 ```{seealso}
 :class: seealso
