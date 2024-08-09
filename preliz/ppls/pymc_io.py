@@ -211,7 +211,7 @@ def non_constant_parents(var_, free_rvs):
     return parents
 
 
-def posterior_to_prior(model, idata, alternative=None):
+def posterior_to_prior(model, posterior, alternative=None):
     """
     Get the model information for fitting the samples from prior into user provided model's prior.
     We need to "backfit" because we can not use arbitrary samples as priors.
@@ -221,15 +221,14 @@ def posterior_to_prior(model, idata, alternative=None):
     model : A PyMC model
     A probabilistic model
 
-    idata : Inference Data
-    InferenceData from which to extract the data.
+    posterior : Posterior samples
+    InferenceData from with the posterior group
 
     alternative : "auto", list, dict, defaults to None
     Users can add the model variables to consider alternative distributions while fitting samples
 
     """
 
-    posterior = az.extract(idata, group="posterior")
     model_info = get_model_information(model)[2]
     parsed_info = [(dist, var) for var, dist in model_info.items()]
     new_priors = []
