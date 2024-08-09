@@ -211,7 +211,7 @@ def non_constant_parents(var_, free_rvs):
     return parents
 
 
-def parse_backfitting(model, data, alternative=None):
+def posterior_to_prior(model, idata, alternative=None):
     """
     Get the model information for fitting the samples from prior into user provided model's prior.
     We need to "backfit" because we can not use arbitrary samples as priors.
@@ -221,33 +221,31 @@ def parse_backfitting(model, data, alternative=None):
     model : A PyMC model
     A probabilistic model
 
-    data : np.ndarray
-    Samples which needs to be fitted using "backfitting"
+    idata : Inference Data
+    InferenceData from which to extract the data.
 
-    alternative : list, defaults to None
+    alternative : "auto", list, dict, defaults to None
     Users can add the model variables to consider alternative distributions while fitting samples
 
     """
 
-    data = np.asarray(data)
-    with model:
-        idata = sample(random_seed=4124)
     posterior = az.extract(idata, group="posterior")
     model_info = get_model_information(model)[2]
-    if alternative:
-        parsed_info = []
-        for key in model_info.keys():
-            if key in alternative:
-                dists_extra = [pz.Gamma(), pz.Normal(), pz.HalfNormal(), model_info[key]]
-                idx = np.argmin(fit_to_sample(dists_extra, data, data.min(), data.max()).losses)
-                parsed_info.append((dists_extra[idx], key))
-            else:
-                parsed_info.append((model_info[key], key))
-    else:
-        parsed_info = [(dist, var) for var, dist in model_info.items()]
+    parsed_info = [(dist, var) for var, dist in model_info.items()]
     new_priors = []
+
     for dist, var in parsed_info:
-        dist._fit_mle(posterior[var].values)
-        new_priors.append((dist, var))
+        dists = [model_info[var]]
+
+        if alternative == "auto":
+            dists += [pz.Normal(), pz.HalfNormal(), pz.Gamma()]
+        elif isinstance(alternative, list):
+            dists += alternative
+        elif isinstance(alternative, dict):
+            dists += alternative.get(var, [])
+        # Take the dist with the least penalization term
+        idx = pz.mle(dists, posterior[var].values)[0]
+        new_priors.append((dists[idx[0]], var))
+
     new_model = "\n".join(f"{var} = {new_prior}" for new_prior, var in new_priors)
     return new_model
