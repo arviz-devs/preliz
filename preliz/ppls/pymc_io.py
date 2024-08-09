@@ -3,18 +3,19 @@
 # pylint: disable=protected-access
 from sys import modules
 
+import preliz as pz
 import arviz as az
 import numpy as np
 
 try:
     from pytensor.tensor import vector, TensorConstant
     from pytensor.graph.basic import ancestors
-    from pymc import logp, compile_pymc
+    from pymc import logp, compile_pymc, sample
     from pymc.util import is_transformed_name, get_untransformed_name
 except ModuleNotFoundError:
     pass
 
-from preliz.internal.optimization import get_distributions
+from preliz.internal.optimization import get_distributions, fit_to_sample
 
 
 def backfitting(prior, p_model, var_info2):
@@ -210,12 +211,40 @@ def non_constant_parents(var_, free_rvs):
     return parents
 
 
-def parse_backfitting(model, data):
-    posterior = az.extract(data, group="posterior")
+def parse_backfitting(model, data, alternative=None):
+    """
+    Get the model information for fitting the samples from prior into user provided model's prior.
+    We need to "backfit" because we can not use arbitrary samples as priors.
 
+    Parameters
+    ----------
+    model : A PyMC model
+    A probabilistic model
+
+    data : np.ndarray
+    Samples which needs to be fitted using "backfitting"
+
+    alternative : list, defaults to None
+    Users can add the model variables to consider alternative distributions while fitting samples
+
+    """
+
+    data = np.asarray(data)
+    with model:
+        idata = sample(random_seed=4124)
+    posterior = az.extract(idata, group="posterior")
     model_info = get_model_information(model)[2]
-    parsed_info = [(dist, var) for var, dist in model_info.items()]
-
+    if alternative:
+        parsed_info = []
+        for key in model_info.keys():
+            if key in alternative:
+                dists_extra = [pz.Gamma(), pz.Normal(), pz.HalfNormal(), model_info[key]]
+                idx = np.argmin(fit_to_sample(dists_extra, data, data.min(), data.max()).losses)
+                parsed_info.append((dists_extra[idx], key))
+            else:
+                parsed_info.append((model_info[key], key))
+    else:
+        parsed_info = [(dist, var) for var, dist in model_info.items()]
     new_priors = []
     for dist, var in parsed_info:
         dist._fit_mle(posterior[var].values)
