@@ -3,16 +3,19 @@
 # pylint: disable=protected-access
 from sys import modules
 
+import preliz as pz
+import arviz as az
 import numpy as np
 
 try:
     from pytensor.tensor import vector, TensorConstant
-    from pymc import logp, compile_pymc
+    from pytensor.graph.basic import ancestors
+    from pymc import logp, compile_pymc, sample
     from pymc.util import is_transformed_name, get_untransformed_name
 except ModuleNotFoundError:
     pass
 
-from preliz.internal.optimization import get_distributions
+from preliz.internal.optimization import get_distributions, fit_to_sample
 
 
 def backfitting(prior, p_model, var_info2):
@@ -118,14 +121,10 @@ def get_model_information(model):  # pylint: disable=too-many-locals
     rvs_to_values = model.rvs_to_values
 
     for r_v in model.free_RVs:
-        if not non_constant_parents(r_v):
-            free_rvs.append(r_v)
-
-    for r_v in model.free_RVs:
         r_v_eval = r_v.eval()
         size = r_v_eval.size
         shape = r_v_eval.shape
-        nc_parents = non_constant_parents(r_v)
+        nc_parents = non_constant_parents(r_v, model.free_RVs)
 
         name = r_v.owner.op.name
         dist = pymc_to_preliz[name]
@@ -201,11 +200,54 @@ def reshape_params(model, var_info, p_model, params):
     return value
 
 
-def non_constant_parents(var_):
+def non_constant_parents(var_, free_rvs):
     """Find the parents of a variable that are not constant."""
     parents = []
     for variable in var_.get_parents()[0].inputs[2:]:
         if not isinstance(variable, TensorConstant):
-            parents.append(variable.owner.inputs[0])
-
+            for free_rv in free_rvs:
+                if free_rv in list(ancestors([variable])) and free_rv not in parents:
+                    parents.append(free_rv)
     return parents
+
+
+def parse_backfitting(model, data, alternative=None):
+    """
+    Get the model information for fitting the samples from prior into user provided model's prior.
+    We need to "backfit" because we can not use arbitrary samples as priors.
+
+    Parameters
+    ----------
+    model : A PyMC model
+    A probabilistic model
+
+    data : np.ndarray
+    Samples which needs to be fitted using "backfitting"
+
+    alternative : list, defaults to None
+    Users can add the model variables to consider alternative distributions while fitting samples
+
+    """
+
+    data = np.asarray(data)
+    with model:
+        idata = sample(random_seed=4124)
+    posterior = az.extract(idata, group="posterior")
+    model_info = get_model_information(model)[2]
+    if alternative:
+        parsed_info = []
+        for key in model_info.keys():
+            if key in alternative:
+                dists_extra = [pz.Gamma(), pz.Normal(), pz.HalfNormal(), model_info[key]]
+                idx = np.argmin(fit_to_sample(dists_extra, data, data.min(), data.max()).losses)
+                parsed_info.append((dists_extra[idx], key))
+            else:
+                parsed_info.append((model_info[key], key))
+    else:
+        parsed_info = [(dist, var) for var, dist in model_info.items()]
+    new_priors = []
+    for dist, var in parsed_info:
+        dist._fit_mle(posterior[var].values)
+        new_priors.append((dist, var))
+    new_model = "\n".join(f"{var} = {new_prior}" for new_prior, var in new_priors)
+    return new_model
