@@ -4,18 +4,17 @@
 from sys import modules
 
 import preliz as pz
-import arviz as az
 import numpy as np
 
 try:
     from pytensor.tensor import vector, TensorConstant
     from pytensor.graph.basic import ancestors
-    from pymc import logp, compile_pymc, sample
+    from pymc import logp, compile_pymc
     from pymc.util import is_transformed_name, get_untransformed_name
 except ModuleNotFoundError:
     pass
 
-from preliz.internal.optimization import get_distributions, fit_to_sample
+from preliz.internal.optimization import get_distributions
 
 
 def backfitting(prior, p_model, var_info2):
