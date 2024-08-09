@@ -3,7 +3,6 @@
 # pylint: disable=protected-access
 from sys import modules
 
-import preliz as pz
 import numpy as np
 
 try:
@@ -15,6 +14,8 @@ except ModuleNotFoundError:
     pass
 
 from preliz.internal.optimization import get_distributions
+from preliz.distributions import Gamma, Normal, HalfNormal
+from preliz.unidimensional.mle import mle
 
 
 def backfitting(prior, p_model, var_info2):
@@ -236,13 +237,13 @@ def posterior_to_prior(model, posterior, alternative=None):
         dists = [model_info[var]]
 
         if alternative == "auto":
-            dists += [pz.Normal(), pz.HalfNormal(), pz.Gamma()]
+            dists += [Normal(), HalfNormal(), Gamma()]
         elif isinstance(alternative, list):
             dists += alternative
         elif isinstance(alternative, dict):
             dists += alternative.get(var, [])
         # Take the dist with the least penalization term
-        idx = pz.mle(dists, posterior[var].values)[0]
+        idx = mle(dists, posterior[var].values)[0]
         new_priors.append((dists[idx[0]], var))
 
     new_model = "\n".join(f"{var} = {new_prior}" for new_prior, var in new_priors)
