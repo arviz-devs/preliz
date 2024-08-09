@@ -213,8 +213,9 @@ def non_constant_parents(var_, free_rvs):
 
 def posterior_to_prior(model, posterior, alternative=None):
     """
-    Get the model information for fitting the samples from prior into user provided model's prior.
-    We need to "backfit" because we can not use arbitrary samples as priors.
+    Updates the priors of a probabilistic model by fitting them to posterior data, using either predefined or
+    user-specified alternative distributions. It selects the best-fitting distribution for each variable based
+    on maximum likelihood estimation (MLE). The result is a model with priors better aligned to the observed data.
 
     Parameters
     ----------
@@ -242,9 +243,12 @@ def posterior_to_prior(model, posterior, alternative=None):
             dists += alternative
         elif isinstance(alternative, dict):
             dists += alternative.get(var, [])
-        # Take the dist with the least penalization term
-        idx = mle(dists, posterior[var].values)[0]
-        new_priors.append((dists[idx[0]], var))
+        if len(dists) == 1:
+            dists[0]._fit_mle(posterior[var].values)
+            new_priors.append((dists[0], var))
+        else:
+            idx = mle(dists, posterior[var].values, plot=False)[0]
+            new_priors.append((dists[idx[0]], var))
 
     new_model = "\n".join(f"{var} = {new_prior}" for new_prior, var in new_priors)
     return new_model
