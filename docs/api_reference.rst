@@ -15,10 +15,23 @@ This reference provides detailed documentation for user functions in the current
    :members:
 
 
+:mod:`preliz.multidimensional`
+======================================
+
+.. automodule:: preliz.multidimensional
+   :members:
+
+
 :mod:`preliz.predictive`
 ======================================
 
 .. automodule:: preliz.predictive
+   :members:
+
+:mod:`preliz.ppls`
+======================================
+
+.. automodule:: preliz.ppls
    :members:
 
 :mod:`preliz.distributions.continuous`
