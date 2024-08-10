@@ -32,7 +32,7 @@ def posterior_to_prior(model, posterior, alternative=None):
 
     if alternative is None:
         for var, dist in model_info.items():
-            dists._fit_mle(posterior[var].values)
+            dist._fit_mle(posterior[var].values)
             new_priors.append((dist, var))
     else:
         for var, dist in model_info.items():
