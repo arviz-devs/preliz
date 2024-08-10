@@ -2,10 +2,10 @@
 
 from preliz.distributions import Gamma, Normal, HalfNormal
 from preliz.unidimensional.mle import mle
-from preliz.ppls.pymc_io import get_model_information
+from preliz.ppls.pymc_io import get_model_information, write_pymc_string
 
 
-def posterior_to_prior(model, posterior, alternative=None):
+def posterior_to_prior(model, idata, alternative=None):
     """
     Fit a posterior from a model to its prior
 
@@ -15,7 +15,7 @@ def posterior_to_prior(model, posterior, alternative=None):
     Parameters
     ----------
     model : A PyMC model
-    posterior : InferenceData
+    idata : InferenceData
         InferenceData with a posterior group.
     alternative : "auto", list or dict
         Defaults to None, the samples are fit to the original prior distribution.
@@ -23,17 +23,19 @@ def posterior_to_prior(model, posterior, alternative=None):
         predefined distributions.
         Use a list of PreliZ distribution to specify the alternative distributions
         you want to consider.
-        Use a dict with variables names in ``model`` as key and a list of preliz
-        distributions as value. This allows to specify alternative distributions
+        Use a dict with variables names in ``model`` as keys and a list of PreliZ
+        distributions as values. This allows to specify alternative distributions
         per variable.
     """
-    model_info = get_model_information(model)[2]
-    new_priors = []
+    _, _, model_info, _, var_info2, *_ = get_model_information(model)
+    new_priors = {}
+    posterior = idata.posterior.stack(sample=("chain", "draw"))
 
     if alternative is None:
         for var, dist in model_info.items():
+            print(var)
             dist._fit_mle(posterior[var].values)
-            new_priors.append((dist, var))
+            new_priors[var] = dist
     else:
         for var, dist in model_info.items():
             dists = [dist]
@@ -45,8 +47,9 @@ def posterior_to_prior(model, posterior, alternative=None):
             elif isinstance(alternative, dict):
                 dists += alternative.get(var, [])
 
-            idx = mle(dists, posterior[var].values, plot=False)[0]
-            new_priors.append((dists[idx[0]], var))
+            idx, _ = mle(dists, posterior[var].values, plot=False)
+            new_priors[var] = dists[idx[0]]
 
-    new_model = "\n".join(f"{var} = {new_prior}" for new_prior, var in new_priors)
+    new_model = write_pymc_string(new_priors, var_info2)
+
     return new_model
