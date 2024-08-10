@@ -37,4 +37,4 @@ style.core.USER_LIBRARY_PATHS.append(_preliz_style_path)
 style.core.reload_library()
 
 # clean namespace
-del handler, logging, os_path, rcParams, _preliz_style_path, _log
+del logging, os_path, rcParams, _preliz_style_path, _log
