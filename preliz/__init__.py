@@ -11,6 +11,7 @@ from matplotlib import style
 
 from .distributions import *
 from .predictive import *
+from .ppls import *
 from .unidimensional import *
 
 
