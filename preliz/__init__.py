@@ -13,9 +13,8 @@ from .distributions import *
 from .predictive import *
 from .ppls import *
 from .unidimensional import *
+from .multidimensional import *
 
-
-__all__ = ["maxent", "mle", "ppa", "roulette", "quartile"]
 
 __version__ = "0.8.1"
 
@@ -36,3 +35,6 @@ rcParams["savefig.bbox"] = "tight"
 _preliz_style_path = os_path.join(os_path.dirname(__file__), "styles")
 style.core.USER_LIBRARY_PATHS.append(_preliz_style_path)
 style.core.reload_library()
+
+# clean namespace
+del logging, os_path, rcParams, _preliz_style_path, _log
