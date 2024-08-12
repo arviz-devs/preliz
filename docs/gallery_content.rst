@@ -103,7 +103,7 @@ Continuous Distributions
       Gamma
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.gumbel.Gumbel
+      :link: ./examples/gallery/gumbel.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
