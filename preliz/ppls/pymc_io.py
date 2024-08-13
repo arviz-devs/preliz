@@ -123,8 +123,9 @@ def get_model_information(model):  # pylint: disable=too-many-locals
         size = r_v_eval.size
         shape = r_v_eval.shape
         nc_parents = non_constant_parents(r_v, model.free_RVs)
-
-        name = r_v.owner.op.name
+        name = (
+            r_v.owner.op.name if r_v.owner.op.name else str(r_v.owner.op).split("RV", 1)[0].lower()
+        )
         dist = pymc_to_preliz[name]
         p_model[r_v.name] = dist
         if nc_parents:
