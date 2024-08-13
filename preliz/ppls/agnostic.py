@@ -33,7 +33,6 @@ def posterior_to_prior(model, idata, alternative=None):
 
     if alternative is None:
         for var, dist in model_info.items():
-            print(var)
             dist._fit_mle(posterior[var].values)
             new_priors[var] = dist
     else:

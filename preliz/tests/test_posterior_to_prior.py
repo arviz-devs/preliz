@@ -1,3 +1,5 @@
+import re
+
 import preliz as pz
 import pymc as pm
 
@@ -12,6 +14,8 @@ with pm.Model() as model:
 
 def test_p2p():
     pz.posterior_to_prior(model, idata)
-    pz.posterior_to_prior(model, idata, alternative="auto")
+    assert 'Gamma\x1b[0m("b", alpha=' in pz.posterior_to_prior(model, idata, alternative="auto")
     pz.posterior_to_prior(model, idata, alternative=[pz.LogNormal()])
-    pz.posterior_to_prior(model, idata, alternative={"b": [pz.Gamma(mu=0)]})
+    assert 'Gamma\x1b[0m("b", mu=' in pz.posterior_to_prior(
+        model, idata, alternative={"b": [pz.Gamma(mu=0)]}
+    )
