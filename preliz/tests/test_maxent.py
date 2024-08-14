@@ -167,7 +167,7 @@ from preliz.distributions import (
     ],
 )
 def test_maxent(dist, lower, upper, mass, support, result):
-    _, opt = maxent(dist, lower, upper, mass)
+    maxent(dist, lower, upper, mass)
 
     assert_almost_equal(dist.support, support, 0)
 
@@ -176,8 +176,8 @@ def test_maxent(dist, lower, upper, mass, support, result):
         "HyperGeometric",
         "ZeroInflatedBinomial",
     ]:  # optimization fails to converge, but results are reasonable
-        assert opt.success
-    assert_allclose(opt.x, result, atol=0.001)
+        assert dist.opt.success
+    assert_allclose(dist.opt.x, result, atol=0.001)
 
 
 def test_maxent_plot():

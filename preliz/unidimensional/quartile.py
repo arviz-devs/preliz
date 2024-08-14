@@ -42,6 +42,7 @@ def quartile(
     -------
 
     axes: matplotlib axes
+    dict: dict with the parameters of the distribution
 
     See Also
     --------
@@ -98,6 +99,8 @@ def quartile(
 
     opt = optimize_quartile(distribution, quartiles, none_idx, fixed)
 
+    distribution.opt = opt
+
     r_error, _ = relative_error(distribution, q1, q3, 0.5)
 
     if r_error > 0.01:
@@ -113,4 +116,5 @@ def quartile(
         else:
             cid = -1
         ax.plot(quartiles, [0, 0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
-    return ax, opt
+
+    return ax, distribution.params_dict
