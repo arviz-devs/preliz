@@ -41,8 +41,8 @@ def quartile(
     Returns
     -------
 
-    axes: matplotlib axes
     dict: dict with the parameters of the distribution
+    axes: matplotlib axes (only if `plot=True`)
 
     See Also
     --------
@@ -116,5 +116,6 @@ def quartile(
         else:
             cid = -1
         ax.plot(quartiles, [0, 0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
+        return distribution, ax
 
-    return ax, distribution.params_dict
+    return distribution

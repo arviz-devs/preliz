@@ -40,8 +40,8 @@ def maxent(
     Returns
     -------
 
-    axes: matplotlib axes
     dict: dict with the parameters of the distribution
+    axes: matplotlib axes (only if `plot=True`)
 
     See Also
     --------
@@ -129,8 +129,9 @@ def maxent(
         else:
             cid = -1
         ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
+        return distribution, ax
 
-    return ax, distribution.params_dict
+    return distribution
 
 
 def end_points_ints(lower, upper):
