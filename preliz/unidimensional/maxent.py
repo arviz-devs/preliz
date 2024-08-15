@@ -40,7 +40,8 @@ def maxent(
     Returns
     -------
 
-    axes: matplotlib axes
+    dict: dict with the parameters of the distribution
+    axes: matplotlib axes (only if `plot=True`)
 
     See Also
     --------
@@ -110,6 +111,7 @@ def maxent(
         )
 
     opt = optimize_max_ent(distribution, lower, upper, mass, none_idx, fixed)
+    distribution.opt = opt
 
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)
 
@@ -127,7 +129,9 @@ def maxent(
         else:
             cid = -1
         ax.plot([lower, upper], [0, 0], "o", color=ax.get_lines()[cid].get_c(), alpha=0.5)
-    return ax, opt
+        return distribution, ax
+
+    return distribution
 
 
 def end_points_ints(lower, upper):

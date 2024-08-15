@@ -56,6 +56,13 @@ class Distribution:
         else:
             return name
 
+    @property
+    def params_dict(self):
+        if self.is_frozen:
+            return dict(zip(self.param_names, self.params))
+        else:
+            return None
+
     def summary(self, mass=0.94, interval="hdi", fmt=".2f"):
         """
         Namedtuple with the mean, median, standard deviation, and lower and upper bounds

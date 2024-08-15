@@ -109,6 +109,6 @@ from preliz.distributions import (
     ],
 )
 def test_quartile(distribution, q1, q2, q3, result):
-    _, opt = quartile(distribution, q1, q2, q3)
+    quartile(distribution, q1, q2, q3)
 
-    assert_allclose(opt.x, result, atol=0.01)
+    assert_allclose(distribution.opt.x, result, atol=0.01)
