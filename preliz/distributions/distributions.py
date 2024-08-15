@@ -2,6 +2,7 @@
 Parent classes for all families.
 """
 # pylint: disable=no-member
+# pylint: disable=import-outside-toplevel
 from collections import namedtuple
 from copy import copy
 
@@ -284,6 +285,8 @@ class Distribution:
                 )
         except ImportError:
             pass
+
+        return None
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """
