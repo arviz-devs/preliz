@@ -2,6 +2,7 @@
 Parent classes for all families.
 """
 # pylint: disable=no-member
+# pylint: disable=import-outside-toplevel
 from collections import namedtuple
 from copy import copy
 
@@ -256,6 +257,36 @@ class Distribution:
             return (lower_tail, upper_tail)
         else:
             return None
+
+    def to_pymc(self, name=None, **kwargs):
+        """
+        Convert the PreliZ distribution to a PyMC distribution.
+
+        name : str
+            Name of PyMC distribution. Needed if inside Model context
+        kwargs : PyMC distributions properties
+            kwargs are used to specify properties such as shape or dims
+
+        Returns
+        -------
+        PyMC distribution
+        """
+        try:
+            import pymc.distributions as pm_dists
+            from pymc.model import Model
+
+            model = Model.get_context(error_if_none=False)
+
+            if model is None:
+                return getattr(pm_dists, self.__class__.__name__).dist(**self.params_dict, **kwargs)
+            else:
+                return getattr(pm_dists, self.__class__.__name__)(
+                    name, **self.params_dict, **kwargs
+                )
+        except ImportError:
+            pass
+
+        return None
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """

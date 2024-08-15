@@ -1,6 +1,7 @@
 # pylint: disable=redefined-outer-name
 
 import pytest
+from pymc import Model
 from numpy.testing import assert_almost_equal
 import numpy as np
 from test_helper import run_notebook
@@ -293,3 +294,12 @@ def test_plot_interactive(capsys, a_few_poissons):
     captured = capsys.readouterr()
     assert "RuntimeError" in captured.out
     run_notebook("plot_interactive.ipynb")
+
+
+def test_to_pymc():
+    with Model() as model:
+        Gamma(1, 1).to_pymc("a", shape=(2, 2))
+
+    assert model.basic_RVs[0].name == "a"
+    assert model.basic_RVs[0].ndim == 2
+    assert Normal(0, 1).to_pymc(shape=2).ndim == 1
