@@ -11,7 +11,7 @@ with pm.Model() as model:
     a = pm.Normal("a", mu=0, sigma=1)
     b = pm.HalfNormal("b", sigma=1)
     y = pm.Normal("y", mu=a, sigma=b, observed=data)
-    idata = pm.sample(tune=200, draws=200, random_seed=2945)
+    idata = pm.sample(tune=200, draws=500, random_seed=2945)
 
 
 def test_p2p_pymc():
