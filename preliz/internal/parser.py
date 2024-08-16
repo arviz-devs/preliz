@@ -18,13 +18,15 @@ def inspect_source(fmodel):
         for name, param in signature.parameters.items()
     }
     model = fmodel(**default_params)
+    return source, signature, get_engine(model)
+
+
+def get_engine(model):
     if getattr(model, "basic_RVs", False):
-        engine = "pymc"
+        return "pymc"
     elif getattr(model, "formula", False):
-        engine = "bambi"
-    else:
-        engine = "preliz"
-    return source, signature, engine
+        return "bambi"
+    return "preliz"
 
 
 def parse_function_for_pred_textboxes(source, signature, engine="preliz"):
