@@ -2,7 +2,8 @@ from preliz.ppls.pymc_io import get_model_information
 
 
 def get_bmb_model_information(model):
-    model.build()
+    if not model.built:
+        model.build()
     pymc_model = model.backend.model
     return get_model_information(pymc_model)
 
@@ -14,7 +15,6 @@ def write_bambi_string(new_priors, var_info):
     """
     header = "{"
     for key, value in new_priors.items():
-        print(repr(value).split("("))
         dist_name, dist_params = repr(value).split("(")
         dist_params = dist_params.rstrip(")")
         size = var_info[key][1]
