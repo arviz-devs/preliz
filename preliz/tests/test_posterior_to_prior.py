@@ -11,7 +11,7 @@ with pm.Model() as model:
     a = pm.Normal("a", mu=0, sigma=1)
     b = pm.HalfNormal("b", sigma=1)
     y = pm.Normal("y", mu=a, sigma=b, observed=data)
-    idata = pm.sample(tune=200, draws=200)
+    idata = pm.sample(tune=200, draws=500, random_seed=2945)
 
 
 def test_p2p_pymc():
@@ -32,7 +32,7 @@ bmb_data = pd.DataFrame(
 )
 bmb_prior = {"Intercept": bmb.Prior("HalfStudentT", nu=1)}
 bmb_model = bmb.Model("y ~ x + x1", bmb_data, priors=bmb_prior)
-bmb_idata = bmb_model.fit(tune=200, draws=200)
+bmb_idata = bmb_model.fit(tune=200, draws=200, random_seed=2945)
 
 
 def test_p2p_bambi():
