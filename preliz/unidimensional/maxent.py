@@ -43,6 +43,11 @@ def maxent(
     dict: dict with the parameters of the distribution
     axes: matplotlib axes (only if `plot=True`)
 
+    Notes
+    -----
+    After calling this function the attribute `opt` of the distribution will be updated with the
+    OptimizeResult object from the optimization step.
+
     See Also
     --------
     quartile : Find the distribution with the specified quartiles.
