@@ -44,6 +44,11 @@ def quartile(
     dict: dict with the parameters of the distribution
     axes: matplotlib axes (only if `plot=True`)
 
+    Notes
+    -----
+    After calling this function the attribute `opt` of the distribution will be updated with the
+    OptimizeResult object from the optimization step.
+
     See Also
     --------
     maxent : Find the maximum entropy distribution with a given mass inside a user defined interval.
