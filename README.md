@@ -52,6 +52,11 @@ pip install "preliz[full,lab]"
 ```
 pip install "preliz[full,notebook]"
 ```
+PreliZ is also available through [conda-forge](https://anaconda.org/conda-forge/preliz).
+
+```
+conda install -c conda-forge preliz
+```
 
 ### Development
 The latest development version can be installed from the main branch using pip:
