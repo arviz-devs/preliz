@@ -242,3 +242,142 @@ If you are unable to run this notebook, you can get a glimpse of ``ppa`` from th
 .. image:: ppa.gif
     :alt: Prior predictive assistant
     :align: center
+
+Posterior to Prior
+-------------------
+Now let's look at another experimental method called “posterior to prior“ (p2p for short). This method fits the posterior distribution derived from the model to align with its prior distribution by maximizing the likelihood of each posterior marginal with respect to the prior.
+This method returns a string with the updated priors. It assumes the posterior was originally created using the model. This function works with **PyMC** and **Bambi** models.
+
+.. tabs::
+
+    .. tab:: PyMC
+        PyMC is an optional dependency of PreliZ, you will need it if you want to use the ``posterior_to_prior`` function with PyMC models.
+
+        To install *PyMC*, you can run the following command:
+
+        .. code-block:: bash
+
+            conda install -c conda-forge pymc
+
+        .. code-block:: python
+
+            # Add pymc
+            import pymc as pm
+
+        You can define the model using PyMC and input the inference data.
+
+        .. code-block::
+
+            data = pz.Normal(0, 1).rvs(200)
+            with pm.Model() as model:
+                a = pm.Normal("a", mu=0, sigma=1)
+                b = pm.HalfNormal("b", sigma=1)
+                y = pm.Normal("y", mu=a, sigma=b, observed=data)
+                idata = pm.sample(tune=200, draws=500, random_seed=2945)
+
+        The ``posterior_to_prior`` function automatically detects that the model includes PyMC distributions.
+        Alternatively, you can explicitly set the function to use the PyMC engine by specifying the ``engine=pymc`` parameter.
+
+        Another parameter you can define is ``alternative``. This parameter enables the model to include both the original distributions and a
+        set of predefined alternative distributions.
+
+        When we set ``alternative=None``, no alternative distributions are considered while fitting the model.
+
+        .. code-block::
+
+            >>> pz.posterior_to_prior(model, idata, alternative=None)
+            with pm.Model() as model:
+                a = pm.Normal("a", mu=-0.0104, sigma=0.0725)
+                b = pm.HalfNormal("b", sigma=1.03)
+
+        When we set ``alternative=auto``, most common alternative distributions are considered while fitting the model.
+
+        .. code-block:: bash
+
+            >>> pz.posterior_to_prior(model, idata, alternative="auto")
+            with pm.Model() as model:
+                a = pm.Normal("a", mu=0.184, sigma=0.0697)
+                b = pm.Gamma("b", alpha=423, beta=426)
+
+        We can add a list of distributions to be considered as alternative distributions while fitting the model.
+
+        .. code-block:: bash
+
+            >>> pz.posterior_to_prior(model, idata, alternative=[pz.LogNormal()])
+            with pm.Model() as model:
+                a = pm.Normal("a", mu=-0.0934, sigma=0.0685)
+                b = pm.LogNormal("b", mu=-0.0175, sigma=0.0491)
+
+        We can pass ``alternative`` a dictionary with variable names as keys and lists of PreliZ distributions
+        as values to specify different distributions for each variable.
+
+        .. code-block:: bash
+
+            >>> pz.posterior_to_prior(model, idata, alternative={"b": [pz.Gamma(mu=0)]}))
+            with pm.Model() as model:
+                a = pm.Normal("a", mu=-0.00377, sigma=0.0696)
+                b = pm.Gamma("b", mu=1.03, sigma=0.0519)
+
+    .. tab:: Bambi
+
+        Bambi is an optional dependency of PreliZ, you will need it if you want to use the ``posterior_to_prior`` function with Bambi models.
+
+        To install *Bambi*, you can run the following command:
+
+        .. code-block:: bash
+
+            conda install -c conda-forge bambi
+
+        .. code-block:: python
+
+            # Add bambi
+            import bambi as bmb
+
+        You can define the model using Bambi and input the inference data.
+
+        .. code-block::
+
+            data = pd.DataFrame(
+            {
+                "y": np.random.normal(size=117),
+                "x": np.random.normal(size=117),
+                "x1": np.random.normal(size=117),
+            }
+            )
+            prior = {"Intercept": bmb.Prior("HalfStudentT", nu=1)}
+            model = bmb.Model("y ~ x + x1", data, priors=prior)
+            idata = model.fit(tune=200, draws=200, random_seed=2945)
+
+        The ``posterior_to_prior`` function can automatically identify if the model uses Bambi distributions.
+        If you prefer, you can also explicitly set it to use the Bambi engine by adding the ``engine=bambi`` parameter.
+
+        You can also set the ``alternative`` parameter to include both the original and a set predefined alternative distributions.
+
+        When we set ``alternative=None``, no alternative distributions are considered while fitting the model.
+
+        .. code-block:: bash
+
+            >>> pz.posterior_to_prior(model, idata, alternative=None)
+            {"y_sigma" : bmb.Prior("HalfStudentT", nu=351, sigma=0.108), "Intercept" : bmb.Prior("HalfStudentT", nu=351, sigma=0.108), "x" : bmb.Prior("Normal", mu=0.00347, sigma=0.0846), "x1" : bmb.Prior("Normal", mu=0.00347, sigma=0.0846)}
+
+        When we set ``alternative=auto``, most common alternative distributions are considered while fitting the model.
+
+        .. code-block:: bash
+
+            >>> pz.posterior_to_prior(model, idata, alternative="auto")
+            {"y_sigma" : bmb.Prior("Gamma", alpha=232, beta=248), "Intercept" : bmb.Prior("Normal", mu=0.0356, sigma=0.0348), "x" : bmb.Prior("Normal", mu=-0.071, sigma=0.0733), "x1" : bmb.Prior("Normal", mu=-0.071, sigma=0.0733)}
+
+        We can add a list of distributions to be considered as alternative distributions while fitting the model.
+
+        .. code-block:: bash
+
+            >>> pz.posterior_to_prior(model, idata, alternative=[pz.LogNormal()])
+            {"y_sigma" : bmb.Prior("LogNormal", mu=-0.0384, sigma=0.0667), "Intercept" : bmb.Prior("HalfStudentT", nu=285, sigma=0.979), "x" : bmb.Prior("Normal", mu=0.11, sigma=0.0934), "x1" : bmb.Prior("Normal", mu=0.11, sigma=0.0934)}
+
+        We can pass ``alternative`` a dictionary with variable names as keys and lists of PreliZ distributions
+        as values to specify different distributions for each variable.
+
+        .. code-block:: bash
+
+            >>> pz.posterior_to_prior(model, idata, alternative={"Intercept": [pz.Normal(mu=1, sigma=1)]})
+            {"y_sigma" : bmb.Prior("HalfStudentT", nu=100, sigma=1.06), "Intercept" : bmb.Prior("Normal", mu=0.084, sigma=0.0628), "x" : bmb.Prior("Normal", mu=0.0444, sigma=0.102), "x1" : bmb.Prior("Normal", mu=0.0444, sigma=0.102)}
