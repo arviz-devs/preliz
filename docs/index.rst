@@ -56,7 +56,10 @@ PreliZ is tested on Python 3.10+. And depends on ArviZ, matplotlib, NumPy, and S
 Installation
 ============
 
-For the latest release (base set of dependencies) you can do:
+For the latest release, you can install PreliZ either using pip or conda-forge:
+
+Using pip
+---------
 
 .. code-block:: bash
 
@@ -75,6 +78,16 @@ To make use of the interactive features, you can install the optional dependenci
     .. code-block:: bash
 
       pip install "preliz[full,notebook]"
+
+Using conda-forge
+-----------------
+
+.. code-block:: bash
+
+    conda install -c conda-forge preliz
+
+Development
+===========
 
 The latest development version can be installed from the main branch using pip:
 
