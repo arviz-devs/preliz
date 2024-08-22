@@ -51,6 +51,7 @@ extensions = [
     "matplotlib.sphinxext.plot_directive",
     "sphinx_tabs.tabs",
     "sphinx_design",
+    "jupyter_sphinx",
 ]
 
 # -- Extension configuration -------------------------------------------------

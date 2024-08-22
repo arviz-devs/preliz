@@ -19,3 +19,4 @@ dependencies:
   - sphinx>=4
   - sphinx-copybutton
   - sphinx-tabs
+  - jupyter-sphinx

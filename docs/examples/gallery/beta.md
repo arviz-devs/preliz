@@ -31,11 +31,12 @@ where $\mu$ is the mean of the distribution and $\nu$ is the concentration param
 
 ## Probability Density Function (PDF):
 
-
 ::::::{tab-set}
+:class: full-width
+
 :::::{tab-item} Parameters $\alpha$ and $\beta$
 ```{jupyter-execute}
-:remove-input:
+:hide-code:
 
 from preliz import Beta, style
 style.use('preliz-doc')
@@ -48,8 +49,8 @@ ax.set_ylim(0, 5);
 :::::
 
 :::::{tab-item} Parameters $\mu$ and $\sigma$  
-```{juptyer-execute}
-:remove-input:
+```{jupyter-execute}
+:hide-code:
 
 from preliz import Beta, style
 style.use('preliz-doc')
@@ -63,7 +64,7 @@ ax.set_ylim(0, 5);
 
 :::::{tab-item} Parameters $\mu$ and $\nu$
 ```{jupyter-execute}
-:remove-input:
+:hide-code:
 
 from preliz import Beta, style
 style.use('preliz-doc')
@@ -78,17 +79,48 @@ ax.set_ylim(0, 5);
 
 ## Cumulative Distribution Function (CDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Beta Distribution CDF
----
+::::::{tab-set}
+:class: full-width
 
-for mu, sigma in zip(alphas, betas):
-    Beta(mu, sigma).plot_cdf()
+:::::{tab-item} Parameters $\alpha$ and $\beta$
+```{jupyter-execute}
+:hide-code:
+
+from preliz import Beta, style
+style.use('preliz-doc')
+alphas = [.5, 5., 2.]
+betas = [.5, 5., 5.]
+for alpha, beta in zip(alphas, betas):
+    ax = Beta(alpha, beta).plot_cdf()
 ```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\sigma$  
+```{jupyter-execute}
+:hide-code:
+
+from preliz import Beta, style
+style.use('preliz-doc')
+mus = [0.5, 0.5, 0.286]
+sigmas = [0.3536, 0.1507, 0.1598]
+for mu, sigma in zip(mus, sigmas):
+    ax = Beta(mu=mu, sigma=sigma).plot_cdf()
+```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\nu$
+```{jupyter-execute}
+:hide-code:
+
+from preliz import Beta, style
+style.use('preliz-doc')
+mus = [0.5, 0.5, 0.286]
+nus = [1.0, 10.0, 7.0]
+for mu, nu in zip(mus, nus):
+    ax = Beta(mu=mu, nu=nu).plot_cdf()
+```
+:::::
+::::::
 
 
 ## Key properties and parameters:
