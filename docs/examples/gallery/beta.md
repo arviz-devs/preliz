@@ -35,6 +35,7 @@ where $\mu$ is the mean of the distribution and $\nu$ is the concentration param
 :class: full-width
 
 :::::{tab-item} Parameters $\alpha$ and $\beta$
+:sync: alpha-beta
 ```{jupyter-execute}
 :hide-code:
 
@@ -49,11 +50,11 @@ ax.set_ylim(0, 5);
 :::::
 
 :::::{tab-item} Parameters $\mu$ and $\sigma$  
+:sync: mu-sigma
+
 ```{jupyter-execute}
 :hide-code:
 
-from preliz import Beta, style
-style.use('preliz-doc')
 mus = [0.5, 0.5, 0.286]
 sigmas = [0.3536, 0.1507, 0.1598]
 for mu, sigma in zip(mus, sigmas):
@@ -63,12 +64,11 @@ ax.set_ylim(0, 5);
 :::::
 
 :::::{tab-item} Parameters $\mu$ and $\nu$
+:sync: mu-nu
+
 ```{jupyter-execute}
 :hide-code:
 
-from preliz import Beta, style
-style.use('preliz-doc')
-mus = [0.5, 0.5, 0.286]
 nus = [1.0, 10.0, 7.0]
 for mu, nu in zip(mus, nus):
     ax = Beta(mu=mu, nu=nu).plot_pdf()
@@ -83,39 +83,30 @@ ax.set_ylim(0, 5);
 :class: full-width
 
 :::::{tab-item} Parameters $\alpha$ and $\beta$
+:sync: alpha-beta
+
 ```{jupyter-execute}
 :hide-code:
-
-from preliz import Beta, style
-style.use('preliz-doc')
-alphas = [.5, 5., 2.]
-betas = [.5, 5., 5.]
 for alpha, beta in zip(alphas, betas):
     ax = Beta(alpha, beta).plot_cdf()
 ```
 :::::
 
 :::::{tab-item} Parameters $\mu$ and $\sigma$  
+:sync: mu-sigma
+
 ```{jupyter-execute}
 :hide-code:
-
-from preliz import Beta, style
-style.use('preliz-doc')
-mus = [0.5, 0.5, 0.286]
-sigmas = [0.3536, 0.1507, 0.1598]
 for mu, sigma in zip(mus, sigmas):
     ax = Beta(mu=mu, sigma=sigma).plot_cdf()
 ```
 :::::
 
 :::::{tab-item} Parameters $\mu$ and $\nu$
+:sync: mu-nu
+
 ```{jupyter-execute}
 :hide-code:
-
-from preliz import Beta, style
-style.use('preliz-doc')
-mus = [0.5, 0.5, 0.286]
-nus = [1.0, 10.0, 7.0]
 for mu, nu in zip(mus, nus):
     ax = Beta(mu=mu, nu=nu).plot_cdf()
 ```
