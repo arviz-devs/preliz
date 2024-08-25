@@ -14,17 +14,31 @@ The Beta distribution is a continuous probability distribution bounded between 0
 
 The Beta distribution can adopt a wide range of "shapes" including uniform, U-shape, normal-like, exponential-like, and many others, always restricted to the unit interval. This flexibility makes it a versatile choice for modeling random variables that represent proportions, probabilities, or rates. For example, the Beta distribution is commonly used to model the uncertainty of the true proportion of successes in a series of Bernoulli trials, where $\alpha$ and $\beta$ represent the number of successes and failures, respectively.
 
+## Parametrization
+
+The Beta distribution has 3 alternative parameterizations. In terms of $\alpha$ and $\beta$, $\mu$ and $\sigma$, and $\mu$ and $\nu$. 
+
+The link between the parameters is given by:
+
+$$
+\begin{align*}
+\alpha & = \mu \nu \\
+\beta & = (1 - \mu) \nu
+\end{align*}
+$$
+
+where $\mu$ is the mean of the distribution and $\nu$ is the concentration parameter.
+
 ## Probability Density Function (PDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Beta Distribution PDF
----
+::::::{tab-set}
+:class: full-width
 
-import matplotlib.pyplot as plt
+:::::{tab-item} Parameters $\alpha$ and $\beta$
+:sync: alpha-beta
+```{jupyter-execute}
+:hide-code:
+
 from preliz import Beta, style
 style.use('preliz-doc')
 alphas = [.5, 5., 2.]
@@ -33,20 +47,71 @@ for alpha, beta in zip(alphas, betas):
     ax = Beta(alpha, beta).plot_pdf()
 ax.set_ylim(0, 5);
 ```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\sigma$  
+:sync: mu-sigma
+
+```{jupyter-execute}
+:hide-code:
+
+mus = [0.5, 0.5, 0.286]
+sigmas = [0.3536, 0.1507, 0.1598]
+for mu, sigma in zip(mus, sigmas):
+    ax = Beta(mu=mu, sigma=sigma).plot_pdf()
+ax.set_ylim(0, 5);
+```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\nu$
+:sync: mu-nu
+
+```{jupyter-execute}
+:hide-code:
+
+nus = [1.0, 10.0, 7.0]
+for mu, nu in zip(mus, nus):
+    ax = Beta(mu=mu, nu=nu).plot_pdf()
+ax.set_ylim(0, 5);
+```
+:::::
+::::::
 
 ## Cumulative Distribution Function (CDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Beta Distribution CDF
----
+::::::{tab-set}
+:class: full-width
 
-for mu, sigma in zip(alphas, betas):
-    Beta(mu, sigma).plot_cdf()
+:::::{tab-item} Parameters $\alpha$ and $\beta$
+:sync: alpha-beta
+
+```{jupyter-execute}
+:hide-code:
+for alpha, beta in zip(alphas, betas):
+    ax = Beta(alpha, beta).plot_cdf()
 ```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\sigma$  
+:sync: mu-sigma
+
+```{jupyter-execute}
+:hide-code:
+for mu, sigma in zip(mus, sigmas):
+    ax = Beta(mu=mu, sigma=sigma).plot_cdf()
+```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\nu$
+:sync: mu-nu
+
+```{jupyter-execute}
+:hide-code:
+for mu, nu in zip(mus, nus):
+    ax = Beta(mu=mu, nu=nu).plot_cdf()
+```
+:::::
+::::::
 
 
 ## Key properties and parameters:
