@@ -47,7 +47,7 @@ for mu, alpha in zip(mus, alphas):
 ```
 :::::
 
-:::::{tab-item} Parameters $\mu$ and $\sigma$  
+:::::{tab-item} Parameters $n$ and $p$  
 :sync: n-p
 
 ```{jupyter-execute}
@@ -76,23 +76,13 @@ for mu, alpha in zip(mus, alphas):
 ```
 :::::
 
-:::::{tab-item} Parameters $\mu$ and $\sigma$  
+:::::{tab-item} Parameters $n$ and $p$  
 :sync: n-p
 
 ```{jupyter-execute}
 :hide-code:
 for mu, sigma in zip(mus, sigmas):
     ax = Beta(mu=mu, sigma=sigma).plot_cdf()
-```
-:::::
-
-:::::{tab-item} Parameters $\mu$ and $\nu$
-:sync: mu-nu
-
-```{jupyter-execute}
-:hide-code:
-for n, p in zip(ns, ps):
-    NegativeBinomial(n=n, p=p).plot_cdf(support=(0, 20))
 ```
 :::::
 ::::::
