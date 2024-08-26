@@ -396,7 +396,7 @@ Discrete Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.bernoulli.Bernoulli
+      :link: ./examples/gallery/bernoulli.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -492,7 +492,7 @@ Discrete Distributions
       Hypergeometric
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.negativebinomial.NegativeBinomial
+      :link: ./examples/gallery/negativebinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
