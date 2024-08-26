@@ -81,8 +81,8 @@ for mu, alpha in zip(mus, alphas):
 
 ```{jupyter-execute}
 :hide-code:
-for mu, sigma in zip(mus, sigmas):
-    ax = Beta(mu=mu, sigma=sigma).plot_cdf()
+for n, p in zip(ns, ps):
+    NegativeBinomial(n=n, p=p).plot_cdf(support=(0, 20))
 ```
 :::::
 ::::::
