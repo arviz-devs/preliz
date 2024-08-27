@@ -63,7 +63,7 @@ $$
 **Cumulative Distribution Function (CDF):**
 
 $$
-f(x \mid \mu) = \frac{\Gamma(x + 1, \mu)}{x!}
+F(x \mid \mu) = \frac{\Gamma(x + 1, \mu)}{x!}
 $$
 
 where $\Gamma(x + 1, \mu)$ is the [upper incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
