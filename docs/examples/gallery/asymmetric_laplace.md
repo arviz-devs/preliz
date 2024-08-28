@@ -16,18 +16,32 @@ The Asymmetric Laplace distribution (ALD) is a continuous probability distributi
 
 The difference of two variates exponentially distributed with different means and rate parameters will be distributed according to the ALD. When the two rate parameters are equal, the difference will be distributed according to the Laplace distribution.
 
-The Asymmetric Laplace distribution, with parameters  $\mu$, $b$ and $q$, is commonly used for performing quantile regression in a Bayesian inference context, with $q$ indicating the desired quantile. 
+The ALD, with parameters  $\mu$, $b$ and $q$, is commonly used for performing quantile regression in a Bayesian inference context, with $q$ indicating the desired quantile. 
+
+## Parametrization
+
+The ALD has 2 alternative parametrizations. In terms of $\kappa$, $\mu$ and $b$, or $q$, $\mu$ and $b$.
+
+The link between the 2 alternatives is given by
+
+$$
+\begin{align*}
+\kappa = \sqrt(\frac{q}{1-q})
+\end{align*}
+$$
+
+where $\kappa$ and $q$ are symmetry parameters, $\mu$ is the location parameter and $b$ is the scale parameter.
 
 ## Probability Density Function (PDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: AsymmetricLaplace Distribution PDF
----
+::::::{tab-set}
+:class: full-width
 
+:::::{tab-item} Parameters $\kappa$, $\mu$ and $b$
+:sync: kappa-mu-b
+
+```{jupyter-execute}
+:hide-code:
 
 from preliz import AsymmetricLaplace, style
 style.use('preliz-doc')
@@ -37,21 +51,46 @@ bs = [1., 1., 1.]
 for kappa, mu, b in zip(kappas, mus, bs):
     AsymmetricLaplace(kappa, mu, b).plot_pdf(support=(-10, 10))
 ```
+:::::
+
+:::::{tab-item} Parameters $q$, $\mu$ and $b$
+:sync: q-mu-b
+
+```{jupyter-execute}
+:hide-code:
+
+qs = [.5, .8, .2]
+for q, mu, b in zip(qs, mus, bs):
+    AsymmetricLaplace(q=q, mu=mu, b=b).plot_pdf(support=(-10, 10))
+```
+:::::
+::::::
 
 ## Cumulative Distribution Function (CDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: AsymmetricLaplace Distribution CDF
----
+::::::{tab-set}
+:class: full-width
 
+:::::{tab-item} Parameters $\kappa$, $\mu$ and $b$
+:sync: kappa-mu-b
+
+```{jupyter-execute}
+:hide-code:
 for kappa, mu, b in zip(kappas, mus, bs):
     AsymmetricLaplace(kappa, mu, b).plot_cdf(support=(-10, 10))
 ```
+:::::
 
+:::::{tab-item} Parameters $q$, $\mu$ and $b$
+:sync: q-mu-b
+
+```{jupyter-execute}
+:hide-code:
+for q, mu, b in zip(qs, mus, bs):
+    AsymmetricLaplace(q=q, mu=mu, b=b).plot_cdf(support=(-10, 10))
+```
+:::::
+::::::
 
 ## Key properties and parameters:
 
