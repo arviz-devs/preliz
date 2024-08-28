@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Censored Distribution
 
+<audio controls> <source src="../../_static/censored.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 This is not a distribution per se, but a modifier of univariate distributions.
 
 A censored distribution arises when the observed data is limited to a certain range, and values outside this range are not recorded. For instance, in a study aiming to measure the impact of a drug on mortality rates it may be known that an individual's age at death is at least 75 years (but may be more). Such a situation could occur if the individual withdrew from the study at age 75, or if the individual is currently alive at the age of 75. Censoring can also happen when a value falls outside the range of a measuring instrument. For example, if a bathroom scale only measures up to 140 kg, and a 160-kg person is weighed, the observer would only know that the individual's weight is at least 140 kg.

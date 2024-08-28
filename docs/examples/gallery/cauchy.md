@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Cauchy Distribution
 
+<audio controls> <source src="../../_static/cauchy.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The Cauchy distribution is a continuous probability distribution with a bell-shaped curve and heavy tails. It is defined by two parameters: the location parameter ($\alpha$), which specifies the peak of the distribution, and the scale parameter ($\beta$) which determines the width. The Cauchy distribution has no defined mean or variance because the tails of the distribution decay so slowly that the integrals defining the mean and variance do not converge, making it an example of a distribution with undefined moments (often termed a "pathological" distribution).
 
 In physics, the Cauchy distribution is also known as the Lorentz distribution, Cauchy–Lorentz distribution, Lorentzian function, or Breit–Wigner distribution. It is used to describe the shape of spectral lines in spectroscopy. Specifically, the intercept on the x-axis of a beam of light coming from a point with location and scale parameters ($\alpha$, $\beta$) is modeled as Cauchy distributed. This distribution is particularly suited for such applications due to its heavy tails, which accurately represent the likelihood of observing extreme deviations in the spectral line shape.

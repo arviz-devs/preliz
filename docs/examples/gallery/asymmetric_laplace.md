@@ -10,7 +10,9 @@ kernelspec:
 ---
 # Asymmetric Laplace Distribution
 
-The Asymmetric Laplace distribution (ALD) is a continuous probability distribution. It is a generalization of the Laplace distribution. Just as the Laplace distribution consists of two exponential distributions of equal scale back-to-back about $x = \mu$, the ALD consists of two exponential distributions of unequal scale back to back about $x = \mu$, adjusted to assure continuity and normalization. 
+<audio controls> <source src="../../_static/asymmetriclaplace.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
+The Asymmetric Laplace distribution (ALD) is a continuous probability distribution. It is a generalization of the Laplace distribution. The ALD consists of two exponential distributions of unequal scale back to back about $x = \mu$, adjusted to assure continuity and normalization. 
 
 The difference of two variates exponentially distributed with different means and rate parameters will be distributed according to the ALD. When the two rate parameters are equal, the difference will be distributed according to the Laplace distribution.
 
@@ -86,7 +88,7 @@ $$
 :class: seealso
 
 **Related Distributions:**
-- [Laplace](laplace.md) - The Asymmetric Laplace distribution is a generalization of the Laplace distribution.
+- [Laplace](laplace.md) - The Asymmetric Laplace distribution is a generalization of the Laplace distribution, for the latter, the two scale parameters are equal.
 ```
 
 ## References

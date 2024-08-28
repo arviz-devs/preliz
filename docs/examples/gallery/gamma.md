@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Gamma Distribution
 
+<audio controls> <source src="../../_static/gamma.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The gamma distribution is a continuous probability distribution that describes the time until a specified number of events occur in a Poisson process, in which $\alpha$ events occur continuously and independently at a constant average rate $\beta$. The gamma distribution is characterized by two parameters: the shape parameter $\alpha$ and the rate parameter $\beta$.
 
 The gamma distribution is widely used in many settings, including modeling the time until a specified number of decays of a radioactive atom, the time until a specified number of seizures in patients with epilepsy, the time until a specified number of failures of a machine, and the time until a specified number of changes in the price of a stock. 

@@ -10,6 +10,8 @@ kernelspec:
 ---
 # NegativeBinomial Distribution
 
+<audio controls> <source src="../../_static/negativebinomial.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The NegativeBinomial distribution describes a Poisson random variable whose rate parameter is Gamma distributed. It is commonly used as an alternative to the Poisson distribution when the variance is greater than the mean (overdispersed data).
 
 

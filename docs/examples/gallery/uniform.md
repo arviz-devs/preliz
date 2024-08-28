@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Uniform Distribution
 
+<audio controls> <source src="../../_static/uniform.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The Uniform distribution is a continuous probability distribution bounded between two real numbers, $lower$ and $upper$, representing the lower and upper bounds, respectively.
 
 The probability density of the Uniform distribution is constant between $lower$ and $upper$ and zero elsewhere. Some experiments of physical origin exhibit this kind of behaviour. For instance, if we record, for a long time, the times at which radioactive particles are emitted within each hour, the outcomes will be uniform on the interval [0, 60] minutes interval.

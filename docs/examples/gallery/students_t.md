@@ -11,6 +11,8 @@ kernelspec:
 
 # Student's t Distribution
 
+<audio controls> <source src="../../_static/studentt.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The Student's t distribution, also known as the t-distribution, is a continuous probability distribution that resembles the normal distribution but with heavier tails. It is characterized by its bell-shaped curve, symmetric around the mean, and can defined by three parameters: the degrees of freedom ($\nu$), the location parameter ($\mu$), and the scale parameter ($\sigma$). The smaller the value of ($\nu$), the heavier the tails of the distribution.
 
 It is often used in Bayesian analysis particulary as a robust alternative to the Normal due to the possibility of having heavier tails.
