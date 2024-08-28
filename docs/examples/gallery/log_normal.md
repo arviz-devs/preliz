@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Log-Normal Distribution
 
+<audio controls> <source src="../../_static/lognormal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The log-normal distribution is a continuous probability distribution of a random variable whose logarithm is normally distributed. Thus, if a random variable $X$ follows a log-normal distribution, then $ Y = \log(X)$ is normally distributed. It has a right-skewed shape and is defined for positive values of $x$. It is is characterized by two parameters: $\mu$ and $\sigma$, which are the mean and standard deviation of the log-transformed variable, respectively, not the original variable.
 
 The log-normal distribution is commonly used to model variables that are positive and result from the product of many small independent factors (instead of the sum of factors, as in the normal distribution). This property makes it a widespread choice for modeling quantities in many fields of knowledge, including biology, engineering, medicine, finance and others. For example, In hydrology, the log-normal distribution is used to model the distribution of annual maximum rainfall, river discharge, and other hydrological variables.

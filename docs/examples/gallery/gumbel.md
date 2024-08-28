@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Gumbel Distribution
 
+<audio controls> <source src="../../_static/gumbel.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The Gumbel distribution, also known as the type-I Generalized Extreme Value (GEV) distribution, is a continuous probability distribution that describes the distribution of the maximum (or minimum) of a number of samples of various different random variables, particularly the exponential and normal distributions. It is characterized by two parameters: the location parameter $\mu$ and the scale parameter $\beta$.
 
 The Gumbel distribution is commonly used in the fields of hydrology, meteorology, and environmental science to model extreme events such as floods, earthquakes, and wind speeds.

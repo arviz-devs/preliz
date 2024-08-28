@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Truncated Distribution
 
+<audio controls> <source src="../../_static/truncated.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 This is not a distribution per se, but a modifier of univariate distributions. 
 
 Truncated distributions arise in cases where the ability to record, or even to know about, occurrences is limited to values which lie above or below a given threshold or within a specified range. For example, if the dates of birth of children in a school are examined, these would typically be subject to truncation relative to those of all children in the area given that the school accepts only children in a given age range on a specific date. There would be no information about how many children in the locality had dates of birth before or after the school's cutoff dates if only a direct approach to the school were used to obtain information. 
