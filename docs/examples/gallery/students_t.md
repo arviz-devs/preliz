@@ -17,18 +17,30 @@ The Student's t distribution, also known as the t-distribution, is a continuous 
 
 It is often used in Bayesian analysis particulary as a robust alternative to the Normal due to the possibility of having heavier tails.
 
+## Parametrization
+
+The Student's t distribution has two alternative parameterizations. In terms of $\nu$, $\mu$, and $\sigma$, or in terms of $\nu$, $\mu$ and $\lambda$.
+
+The link between the 2 alternatives is given by:
+
+$$
+\begin{align*}
+\lambda & = \frac{1}{\sigma^2}
+\end{align*}
+$$
+
+where $\sigma$ is the standard deviation as $\nu$ increases, and $\lambda$ is the precision as $\nu$ increases.
+
 
 ## Probability Density Function (PDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Student's t Distribution PDF
----
+::::::{tab-set}
+:class: full-width
 
-import matplotlib.pyplot as plt
+:::::{tab-item} Parameters $\nu$, $\mu$, and $\sigma$
+:sync: nu-mu-sigma
+```{jupyter-execute}
+:hide-code:
 
 from preliz import StudentT, style
 style.use('preliz-doc')
@@ -37,22 +49,46 @@ mus = [0., 0.,  -4.]
 sigmas = [1., 1., 2.]
 for nu, mu, sigma in zip(nus, mus, sigmas):
     StudentT(nu, mu, sigma).plot_pdf(support=(-10,6))
-
 ```
+:::::
+
+:::::{tab-item} Parameters $\nu$, $\mu$, and $\lambda$
+:sync: nu-mu-lambda
+```{jupyter-execute}
+:hide-code:
+
+lambdas = [1., 1., 0.25]
+for nu, mu, lam in zip(nus, mus, lambdas):
+    StudentT(nu, mu, lam=lam).plot_pdf(support=(-10,6))
+```
+:::::
+::::::
 
 ## Cumulative Distribution Function (CDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Student's t Distribution CDF
----
+::::::{tab-set}
+:class: full-width
+
+:::::{tab-item} Parameters $\nu$, $\mu$, and $\sigma$
+:sync: nu-mu-sigma
+```{jupyter-execute}
+:hide-code:
 
 for nu in nus:
     StudentT(nu, mu, sigma).plot_cdf(support=(-10,6))
 ```
+:::::
+
+:::::{tab-item} Parameters $\nu$, $\mu$, and $\lambda$
+:sync: nu-mu-lambda
+```{jupyter-execute}
+:hide-code:
+
+for nu in nus:
+    StudentT(nu, mu, lam=lam).plot_cdf(support=(-10,6))
+```
+:::::
+::::::
 
 ## Key properties and parameters:
 

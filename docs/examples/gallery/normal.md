@@ -18,17 +18,27 @@ The normal distribution is often the result of summing many small, independent e
 
 Normal priors are commonly chosen in Bayesian analysis because they represent a state of limited prior knowledge or weak information. When we assume a parameter has finite variance but lack strong prior knowledge, the normal distribution becomes a suitable choice. This is due to the normal distribution's maximum entropy property among all distributions with a specified mean and variance, ensuring it introduces the least amount of additional assumptions. 
 
+## Parametrization
+
+The normal distribution can be parametrized in terms of the mean ($\mu$) and the standard deviation ($\sigma$), or in terms of the mean and the precision ($\tau$).
+
+The link between the 2 alternatives is given by:
+
+$$
+\begin{align*}
+\tau & = \frac{1}{\sigma^2}
+\end{align*}
+$$
+
 ## Probability Density Function (PDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Normal Distribution PDF
----
+::::::{tab-set}
+:class: full-width
 
-import matplotlib.pyplot as plt
+:::::{tab-item} Parameters $\mu$ and $\sigma$
+:sync: mu-sigma
+```{jupyter-execute}
+:hide-code:
 
 from preliz import Normal, style
 style.use('preliz-doc')
@@ -37,21 +47,46 @@ sigmas = [1, 0.5, 1]
 for mu, sigma in zip(mus, sigmas):
     Normal(mu, sigma).plot_pdf()
 ```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\tau$
+:sync: mu-tau
+
+```{jupyter-execute}
+:hide-code:
+
+taus = [1., 4. , 1.]
+for mu, tau in zip(mus, taus):
+    Normal(mu, tau=tau).plot_pdf()
+```
+:::::
+::::::
 
 ## Cumulative Distribution Function (CDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Normal Distribution CDF
----
+::::::{tab-set}
+:class: full-width
+
+:::::{tab-item} Parameters $\mu$ and $\sigma$
+:sync: mu-sigma
+```{jupyter-execute}
+:hide-code:
 
 for mu, sigma in zip(mus, sigmas):
     Normal(mu, sigma).plot_cdf()
 ```
+:::::
 
+:::::{tab-item} Parameters $\mu$ and $\tau$
+:sync: mu-tau
+```{jupyter-execute}
+:hide-code:
+
+for mu, tau in zip(mus, taus):
+    Normal(mu, tau=tau).plot_cdf()
+```
+:::::
+::::::
 
 ## Key properties and parameters:
 
