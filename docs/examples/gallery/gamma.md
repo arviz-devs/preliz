@@ -18,16 +18,30 @@ The gamma distribution is widely used in many settings, including modeling the t
 
 The gamma distribution is used as a conjugate prior for the exponential distribution and for the precision of the normal distribution. It can also used as prior for scale parameters, in particular when there is interest in avoiding values close to zero or one wants to include more information than with other prior commonly used for scale parameter like the halfnormal or the exponential.
 
+## Parametrization
+
+The gamma distribution has two alternative parameterizations. In terms of $\alpha$ and $\beta$, and $\mu$ and $\sigma$.
+
+The link between the 2 alternatives is given by:
+
+$$
+\begin{align*}
+\alpha & = \frac{\mu^2}{\sigma^2} \\
+\beta & = \frac{\mu}{\sigma^2}
+\end{align*}
+$$
+
+where $\mu$ is the mean of the distribution and $\sigma$ is the standard deviation.
+
 ## Probability Density Function (PDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Gamma Distribution PDF
----
+::::::{tab-set}
+:class: full-width
 
+:::::{tab-item} Parameters $\alpha$ and $\beta$
+:sync: alpha-beta
+```{jupyter-execute}
+:hide-code:
 
 from preliz import Gamma, style
 style.use('preliz-doc')
@@ -37,20 +51,51 @@ betas = [0.5, 1., 1.]
 for alpha, beta in zip(alphas, betas):
     Gamma(alpha, beta).plot_pdf()
 ```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\sigma$
+:sync: mu-sigma
+
+```{jupyter-execute}
+:hide-code:
+
+mus = [2, 3, 7.5]
+sigmas = [2, 1.732, 2.739]
+
+
+for mu, sigma in zip(mus, sigmas):
+    Gamma(mu=mu, sigma=sigma).plot_pdf()
+```
+:::::
+::::::
+
 
 ## Cumulative Distribution Function (CDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Gamma Distribution CDF
----
+::::::{tab-set}
+:class: full-width
+
+:::::{tab-item} Parameters $\alpha$ and $\beta$
+:sync: alpha-beta
+```{jupyter-execute}
+:hide-code:
 
 for alpha, beta in zip(alphas, betas):
     Gamma(alpha, beta).plot_cdf()
 ```
+:::::
+
+:::::{tab-item} Parameters $\mu$ and $\sigma$
+:sync: mu-sigma
+
+```{jupyter-execute}
+:hide-code:
+
+for mu, sigma in zip(mus, sigmas):
+    Gamma(mu=mu, sigma=sigma).plot_cdf()
+```
+:::::
+::::::
 
 ## Key properties and parameters:
 

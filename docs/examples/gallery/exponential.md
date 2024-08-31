@@ -17,18 +17,27 @@ The exponential distribution is a continuous probability distribution that descr
 Many real-world phenomena can be modeled using the exponential distribution across various fields. For example, it is used in physics to model the time between decays of a radioactive atom, in medicine to model the time between seizures in patients with epilepsy, in engineering to model the time between failures of a machine, and in finance to model the time between changes in the price of a stock.
 
 In Bayesian modeling, the exponential distribution is often used as a prior distribution for scale parameters, which must always be positive.
+## Parametrization
+
+The exponential distribution can be parametrized in terms of the rate parameter $\lambda$ or the scale parameter $\beta$.
+
+The link between the 2 alternatives is given by:
+
+$$
+\begin{align*}
+\beta & = \frac{1}{\lambda}
+\end{align*}
+$$
 
 ## Probability Density Function (PDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Exponential Distribution PDF
----
+::::::{tab-set} 
+:class: full-width
 
-import matplotlib.pyplot as plt
+:::::{tab-item} Parameter $\lambda$
+:sync: rate
+```{jupyter-execute}
+:hide-code:
 
 from preliz import Exponential, style
 style.use('preliz-doc')
@@ -37,20 +46,46 @@ lambdas = [0.5, 1., 2.]
 for lam in lambdas:
     Exponential(lam).plot_pdf(support=(0, 5))
 ```
+:::::
+
+:::::{tab-item} Parameter $\beta$
+:sync: scale
+```{jupyter-execute}
+:hide-code:
+
+betas = [2., 1., 0.5]
+for beta in betas:
+    Exponential(beta=beta).plot_pdf(support=(0, 5))
+```
+:::::
+::::::
+
 
 ## Cumulative Distribution Function (CDF):
 
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Exponential Distribution CDF
----
+::::::{tab-set}
+:class: full-width
+
+:::::{tab-item} Parameter $\lambda$
+:sync: rate
+```{jupyter-execute}
+:hide-code:
 
 for lam in lambdas:
     Exponential(lam).plot_cdf(support=(0, 5))
 ```
+:::::
+
+:::::{tab-item} Parameter $\beta$
+:sync: scale
+```{jupyter-execute}
+:hide-code:
+
+for beta in betas:
+    Exponential(beta=beta).plot_cdf(support=(0, 5))
+```
+:::::
+::::::
 
 ## Key properties and parameters:
 
