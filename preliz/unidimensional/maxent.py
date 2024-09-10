@@ -91,6 +91,9 @@ def maxent(
     if distribution is None:
         distribution = Normal()
 
+    if distribution.is_frozen:
+        raise ValueError("All parameters are fixed, at least one should be free")
+
     distribution._check_endpoints(lower, upper)
 
     if distribution.kind == "discrete":
