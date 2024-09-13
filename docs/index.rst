@@ -32,6 +32,8 @@ distributions by offering a set of tools for the various facets of prior elicita
 elicitation on the parameter space to predictive elicitation on the observed space. The goal is to be compatible with probabilistic programming
 languages (PPL) in the Python ecosystem like PyMC and PyStan, while remaining agnostic of any specific PPL.
 
+A good companion for PreliZ is `PriorDB <https://n-kall.github.io/priorDB/>`_, a database of prior distributions for Bayesian analysis. 
+It is a community-driven project that aims to provide a comprehensive collection of prior distributions for a wide range of models and applications. 
 
 The Zen of PreliZ
 -----------------
@@ -50,7 +52,8 @@ The Zen of PreliZ
 
 Dependencies
 ============
-PreliZ is tested on Python 3.10+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See [pyproject.toml](https://github.com/arviz-devs/preliz/blob/main/pyproject.toml) for version information.
+PreliZ is tested on Python 3.10+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
+
 
 
 Installation
