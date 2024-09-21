@@ -4,7 +4,6 @@ channels:
   - conda-forge
 dependencies:
   - python >= 3.10
-  - arviz
   - matplotlib>=3.5
   - numba>=0.59
   - numpy>=1.22
