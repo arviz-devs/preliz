@@ -252,7 +252,7 @@ def nb_entropy(alpha, beta):
 
 @nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, alpha, beta):
-    if x < 0 or x > 1:
+    if x <= 0 or x >= 1:
         return -np.inf
     else:
         beta_ = gammaln(alpha) + gammaln(beta) - gammaln(alpha + beta)

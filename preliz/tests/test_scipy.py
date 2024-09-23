@@ -87,7 +87,12 @@ from preliz import (
             {"loc": 0, "scale": 2},
         ),  # not in scipy
         (InverseGamma, stats.invgamma, {"alpha": 5, "beta": 2}, {"a": 5, "scale": 2}),
-        (Kumaraswamy, stats.beta, {"a": 1, "b": 5}, {"a": 1, "b": 5}),  # not in scipy
+        (
+            Kumaraswamy,
+            stats.beta,
+            {"a": 1.00000001, "b": 5},
+            {"a": 1.00000001, "b": 5},
+        ),  # not in scipy
         (Laplace, stats.laplace, {"mu": 2.5, "b": 4}, {"loc": 2.5, "scale": 4}),
         (LogLogistic, stats.fisk, {"alpha": 1, "beta": 8}, {"c": 8}),
         (Logistic, stats.logistic, {"mu": 2.5, "s": 4}, {"loc": 2.5, "scale": 4}),

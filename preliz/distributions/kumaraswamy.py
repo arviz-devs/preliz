@@ -173,7 +173,7 @@ def nb_entropy(a, b):
 
 @nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, a, b):
-    if x < 0 or x > 1:
+    if x <= 0 or x >= 1:
         return -np.inf
     else:
         return np.log(a * b) + xlogy((a - 1), x) + xlog1py((b - 1), -(x**a))

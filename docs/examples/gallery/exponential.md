@@ -91,7 +91,7 @@ for beta in betas:
 
 ```{eval-rst}
 ========  ==========================================
-Support   :math:`x \in (0, \infty)`
+Support   :math:`x \in [0, \infty)`
 Mean      :math:`\frac{1}{\lambda}`
 Variance  :math:`\frac{1}{\lambda^2}`
 ========  ==========================================
