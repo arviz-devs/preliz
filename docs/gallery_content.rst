@@ -115,7 +115,7 @@ Continuous Distributions
       Gumbel
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.halfcauchy.HalfCauchy
+      :link: ./examples/gallery/halfcauchy.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
