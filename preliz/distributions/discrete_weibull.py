@@ -4,7 +4,7 @@ import numba as nb
 import numpy as np
 
 from .distributions import Discrete
-from ..internal.distribution_helper import eps, all_not_none
+from ..internal.distribution_helper import eps, all_not_none, num_skewness, num_kurtosis
 from ..internal.optimization import optimize_moments, optimize_ml
 from ..internal.special import cdf_bounds, ppf_bounds_disc
 
@@ -119,18 +119,10 @@ class DiscreteWeibull(Discrete):
         return self.var() ** 0.5
 
     def skewness(self):
-        mean = self.mean()
-        std = self.std()
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.sum(((x_values - mean) / std) ** 3 * pdf)
+        return num_skewness(self)
 
     def kurtosis(self):
-        mean = self.mean()
-        std = self.std()
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.sum(((x_values - mean) / std) ** 4 * pdf) - 3
+        return num_kurtosis(self)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)

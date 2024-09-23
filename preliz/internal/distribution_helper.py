@@ -1,5 +1,7 @@
 import re
+from sys import modules
 import numpy as np
+
 
 eps = np.finfo(float).eps
 
@@ -40,10 +42,9 @@ def valid_scalar_params(self, check_frozen=True):
     if self.kind not in ["discrete", "continuous"]:
         return True
 
-    if (
-        all(isinstance(param, (int, float, np.int64)) for param in self.params)
-        or self.__class__.__name__ == "Categorical"
-    ):
+    if all(
+        isinstance(param, (int, float, np.int64)) for param in self.params
+    ) or self.__class__.__name__ in ["Categorical", "Mixture"]:
         return True
 
     raise ValueError("parameters must be integers or floats")
@@ -72,6 +73,28 @@ def process_extra(input_string):
         except ValueError:
             pass
     return result_dict
+
+
+def num_skewness(dist):
+    mean = dist.mean()
+    std = dist.std()
+    x_values = dist.xvals("full")
+    pdf = dist.pdf(x_values)
+    if dist.kind == "discrete":
+        return np.sum(((x_values - mean) / std) ** 3 * pdf)
+    else:
+        return np.trapz(((x_values - mean) / std) ** 3 * pdf, x_values)
+
+
+def num_kurtosis(dist):
+    mean = dist.mean()
+    std = dist.std()
+    x_values = dist.xvals("full")
+    pdf = dist.pdf(x_values)
+    if dist.kind == "discrete":
+        return np.sum(((x_values - mean) / std) ** 4 * pdf) - 3
+    else:
+        return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
 
 
 init_vals = {
@@ -123,3 +146,40 @@ init_vals = {
     "Truncated": {"lower": -10, "upper": 10},
     "Censored": {"lower": -10, "upper": 10},
 }
+
+
+def get_distributions(dist_names=None, exclude=None):
+
+    if dist_names is None:
+        all_distributions = modules["preliz.distributions"].__all__
+    else:
+        all_distributions = dist_names
+
+    if exclude is None:
+        exclude = []
+    if exclude == "auto":
+        exclude = [
+            "Beta",
+            "BetaScaled",
+            "Triangular",
+            "TruncatedNormal",
+            "Uniform",
+            "VonMises",
+            "Categorical",
+            "DiscreteUniform",
+            "HyperGeometric",
+            "zeroInflatedBinomial",
+            "ZeroInflatedNegativeBinomial",
+            "ZeroInflatedPoisson",
+            "MvNormal",
+            "Mixture",
+        ]
+
+    distributions = []
+    for a_dist in all_distributions:
+        dist = getattr(modules["preliz.distributions"], a_dist)()
+        if dist.__class__.__name__ not in exclude:
+            distributions.append(dist)
+    if exclude:
+        return exclude, distributions
+    return distributions

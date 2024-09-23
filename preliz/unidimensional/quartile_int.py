@@ -10,7 +10,7 @@ from ..internal.plot_helper import (
     representations,
     reset_dist_panel,
 )
-from ..internal.distribution_helper import process_extra
+from ..internal.distribution_helper import process_extra, get_distributions
 
 
 class QuartileInt:
@@ -195,7 +195,7 @@ class QuartileInt:
             reset_dist_panel(self._ax_fit, yticks=False)
 
             fitted_dist = fit_to_quartile(
-                self._widgets["w_distributions"].value, q1, q2, q3, extra_pros
+                get_distributions(self._widgets["w_distributions"].value), q1, q2, q3, extra_pros
             )
 
             if fitted_dist is None:

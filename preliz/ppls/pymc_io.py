@@ -14,7 +14,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-from preliz.internal.optimization import get_distributions
+from preliz.internal.distribution_helper import get_distributions
 
 
 def backfitting(prior, p_model, var_info2):
@@ -73,7 +73,7 @@ def get_pymc_to_preliz():
     all_distributions = [
         dist
         for dist in modules["preliz.distributions"].__all__
-        if dist not in ["Truncated", "Censored", "Hurdle"]
+        if dist not in ["Truncated", "Censored", "Hurdle", "Mixture"]
     ]
     pymc_to_preliz = dict(
         zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))

@@ -293,18 +293,6 @@ def relative_error(dist, lower, upper, required_mass):
     return abs((computed_mass - required_mass) / required_mass * 100), computed_mass
 
 
-def get_distributions(dist_names):
-    """
-    Generate a subset of distributions which names agree with those in dist_names
-    """
-    dists = []
-    for name in dist_names:
-        dist = getattr(modules["preliz"], name)
-        dists.append(dist())
-
-    return dists
-
-
 def fit_to_epdf(selected_distributions, x_vals, epdf, mean, std, x_min, x_max, extra_pros):
     """
     Minimize the difference between the pdf and the epdf over a grid of values
@@ -371,11 +359,11 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     return fitted
 
 
-def fit_to_quartile(dist_names, q1, q2, q3, extra_pros):
+def fit_to_quartile(selected_distributions, q1, q2, q3, extra_pros):
     error = np.inf
     fitted_dist = None
 
-    for distribution in get_distributions(dist_names):
+    for distribution in selected_distributions:
         if distribution.__class__.__name__ in extra_pros:
             distribution._parametrization(**extra_pros[distribution.__class__.__name__])
             if distribution.__class__.__name__ == "BetaScaled":

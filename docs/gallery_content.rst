@@ -610,6 +610,18 @@ Distribution Modifiers
       Hurdle
 
    .. grid-item-card::
+      :link: ./api_reference.html#preliz.distributions.mixture.Mixture
+      :text-align: center
+      :shadow: none
+      :class-card: example-gallery
+
+      .. image:: examples/img/Mixture.png
+         :alt: Mixture
+
+      +++
+      Mixture
+
+   .. grid-item-card::
       :link: ./examples/gallery/truncated.html
       :text-align: center
       :shadow: none

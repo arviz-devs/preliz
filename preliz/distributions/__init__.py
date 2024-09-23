@@ -51,6 +51,7 @@ from .zi_negativebinomial import ZeroInflatedNegativeBinomial
 from .zi_poisson import ZeroInflatedPoisson
 
 # Transform Distributions
+from .mixture import Mixture
 from .truncated import Truncated
 from .censored import Censored
 from .hurdle import Hurdle
@@ -113,6 +114,7 @@ __all__ = (
     [s.__name__ for s in all_continuous]
     + [s.__name__ for s in all_discrete]
     + [s.__name__ for s in all_continuous_multivariate]
+    + [Mixture.__name__]
     + [Truncated.__name__]
     + [Censored.__name__]
     + [Hurdle.__name__]

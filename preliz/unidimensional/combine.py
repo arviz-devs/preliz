@@ -1,7 +1,7 @@
 import numpy as np
 
 from preliz.unidimensional.mle import mle
-from preliz.internal.optimization import get_distributions
+from preliz.internal.distribution_helper import get_distributions
 
 
 def combine(
