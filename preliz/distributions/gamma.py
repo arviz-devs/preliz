@@ -191,7 +191,7 @@ def nb_ppf(q, alpha, beta, lower, upper):
 
 @nb.vectorize(nopython=True, cache=True)
 def nb_logpdf(x, alpha, beta):
-    if x < 0:
+    if x <= 0:
         return -np.inf
     else:
         x = x / (1 / beta)

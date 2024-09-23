@@ -54,7 +54,7 @@ for nu in nus:
 
 ```{eval-rst}
 ========  ==========================================
-Support   :math:`x \in (0, \infty)`
+Support   :math:`x \in [0, \infty)`
 Mean      :math:`\nu`
 Variance  :math:`2\nu`
 ========  ==========================================

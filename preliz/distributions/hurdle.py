@@ -47,13 +47,12 @@ class Hurdle(DistributionTransformer):
         Expected proportion of the base distribution (0 < psi < 1)
     """
 
-    def __init__(self, dist, psi, **kwargs):
+    def __init__(self, dist, psi=None, **kwargs):
         self.dist = dist
-        self.psi = psi
         super().__init__()
-        self._parametrization(**kwargs)
+        self._parametrization(psi, **kwargs)
 
-    def _parametrization(self, **kwargs):
+    def _parametrization(self, psi=None, **kwargs):
         dist_params = []
         if not kwargs:
             if hasattr(self.dist, "params"):
@@ -65,6 +64,7 @@ class Hurdle(DistributionTransformer):
             dist_params.append(value)
             setattr(self, key, value)
 
+        self.psi = psi
         self.params = (*dist_params, self.psi)
         self.param_names = (*self.dist.param_names, "psi")
         if all_not_none(*dist_params):
