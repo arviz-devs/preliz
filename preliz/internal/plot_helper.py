@@ -9,13 +9,12 @@ try:
 except ImportError:
     pass
 
-from arviz import plot_kde, plot_ecdf, hdi, extract
-from arviz.stats.density_utils import _kde_linear
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
 from matplotlib.ticker import MaxNLocator
 from .logging import disable_pymc_sampling_logs
+from .narviz import hdi, kde
 
 
 def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False, ax=None):
@@ -442,7 +441,9 @@ def bambi_plot_decorator(func, iterations, kind_plot, references, plot_func):
         model.build()
         with disable_pymc_sampling_logs():
             idata = model.prior_predictive(iterations)
-        results = extract(idata, group="prior_predictive")[model.response_name].values.T
+        results = (
+            idata["prior_predictive"].stack(sample=("chain", "draw"))[model.response_name].values.T
+        )
 
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
@@ -469,7 +470,8 @@ def pymc_plot_decorator(func, iterations, kind_plot, references, plot_func):
             obs_name = model.observed_RVs[0].name
             with disable_pymc_sampling_logs():
                 idata = sample_prior_predictive(samples=iterations)
-            results = extract(idata, group="prior_predictive")[obs_name].values.T
+            results = idata["prior_predictive"].stack(sample=("chain", "draw"))[obs_name].values.T
+
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
         if plot_func is None:
@@ -508,8 +510,8 @@ def plot_repr(results, kind_plot, references, iterations, ax):
         )
     elif kind_plot == "kde":
         for result in results:
-            ax.plot(*_kde_linear(result, grid_len=100), "0.5", alpha=alpha)
-        ax.plot(*_kde_linear(np.concatenate(results), grid_len=100), "k--")
+            ax.plot(*kde(result), "0.5", alpha=alpha)
+        ax.plot(*kde(np.concatenate(results)), "k--")
     elif kind_plot == "ecdf":
         ax.plot(
             np.sort(results, axis=1).T,
@@ -555,15 +557,13 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
                 x_lims[1] = max_
 
         if kind == "pdf":
-            plot_kde(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
+            plot_kde(sample, ax=ax, color="C0")
         elif kind == "hist":
-            bins, *_ = ax.hist(
-                sample, color="C0", bins="auto", alpha=0.5, density=True
-            )  # pylint:disable=no-member
+            bins, *_ = ax.hist(sample, color="C0", bins="auto", alpha=0.5, density=True)
             ax.set_ylim(-bins.max() * 0.05, None)
 
         elif kind == "ecdf":
-            plot_ecdf(sample, ax=ax, plot_kwargs={"color": "C0"})  # pylint:disable=no-member
+            ax.hist(sample, color="C0")
 
         plot_pointinterval(sample, ax=ax)
         ax.set_title(idx, alpha=0)
@@ -596,18 +596,17 @@ def plot_pp_mean(pp_samples, selected, references=None, kind="pdf", fig_pp_mean=
 
     if kind == "pdf":
         plot_kde(
-            sample, ax=ax_pp_mean, plot_kwargs={"color": "k", "linestyle": "--"}
-        )  # pylint:disable=no-member
+            sample,
+            ax=ax_pp_mean,
+            color="C0",
+            linestyle="--",
+        )
     elif kind == "hist":
-        bins, *_ = ax_pp_mean.hist(
-            sample, color="k", ls="--", bins="auto", alpha=0.5, density=True
-        )  # pylint:disable=no-member
+        bins, *_ = ax_pp_mean.hist(sample, color="k", ls="--", bins="auto", alpha=0.5, density=True)
         ax_pp_mean.set_ylim(-bins.max() * 0.05, None)
 
     elif kind == "ecdf":
-        plot_ecdf(
-            sample, ax=ax_pp_mean, plot_kwargs={"color": "k", "linestyle": "--"}
-        )  # pylint:disable=no-member
+        ax_pp_mean.ecdf(sample, color="k", linestyle="--")
 
     plot_pointinterval(sample, ax=ax_pp_mean)
     ax_pp_mean.set_yticks([])
@@ -628,6 +627,11 @@ def plot_references(references, ax):
                 references = [references]
             for ref in references:
                 ax.axvline(ref, ls="--", color="0.5")
+
+
+def plot_kde(sample, ax, **kwargs):
+    grid, pdf = kde(sample)
+    ax.plot(grid, pdf, **kwargs)
 
 
 def check_inside_notebook(need_widget=False):

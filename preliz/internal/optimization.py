@@ -491,3 +491,64 @@ def get_weighted_rvs(target, size, rng):
     target_rnd_choices = np.random.choice(len(targets), size=size, p=weights)
     samples = [target.rvs(size, random_state=rng) for target in targets]
     return np.choose(target_rnd_choices, samples)
+
+
+def _root(n_p, k_sq, a_sq, x):
+    def _fixed_point(t_s, x_len, k_sq, a_sq):
+        """Calculate t-zeta*gamma^[l](t).
+
+        Implementation of the function t-zeta*gamma^[l](t) derived from equation (30) in [1].
+
+        References
+        ----------
+        .. [1] Kernel density estimation via diffusion.
+        Z. I. Botev, J. F. Grotowski, and D. P. Kroese.
+        Ann. Statist. 38 (2010), no. 5, 2916--2957.
+        """
+        k_sq = np.asarray(k_sq, dtype=np.float64)
+        a_sq = np.asarray(a_sq, dtype=np.float64)
+
+        k_o = 7
+        func = np.sum(np.power(k_sq, k_o) * a_sq * np.exp(-k_sq * np.pi**2 * t_s))
+        func *= 0.5 * np.pi ** (2.0 * k_o)
+
+        for ite in np.arange(k_o - 1, 2 - 1, -1):
+            c_1 = (1 + 0.5 ** (ite + 0.5)) / 3
+            c_2 = np.prod(np.arange(1.0, 2 * ite + 1, 2, dtype=np.float64))
+            c_2 /= (np.pi / 2) ** 0.5
+            t_j = np.power((c_1 * (c_2 / (x_len * func))), (2.0 / (3.0 + 2.0 * ite)))
+            func = np.sum(k_sq**ite * a_sq * np.exp(-k_sq * np.pi**2.0 * t_j))
+            func *= 0.5 * np.pi ** (2 * ite)
+
+        out = t_s - (2 * x_len * np.pi**0.5 * func) ** (-0.4)
+        return out
+
+    # The right bound is at most 0.01
+    found = False
+    n_p = max(min(1050, n_p), 50)
+    tol = 10e-12 + 0.01 * (n_p - 50) / 1000
+
+    while not found:
+        try:
+            band_w, res = brentq(
+                _fixed_point, 0, 0.01, args=(n_p, k_sq, a_sq), full_output=True, disp=False
+            )
+            found = res.converged
+        except ValueError:
+            band_w = 0
+            tol *= 2.0
+            found = False
+        if band_w <= 0 or tol >= 1:
+            band_w = (_bw_silverman(x) / np.ptp(x)) ** 2
+            return band_w
+    return band_w
+
+
+def _bw_silverman(x, x_std=None):  # pylint: disable=unused-argument
+    """Silverman's Rule."""
+    x_std = np.std(x)
+    q75, q25 = np.percentile(x, [75, 25])
+    x_iqr = q75 - q25
+    a = min(x_std, x_iqr / 1.34)
+    band_w = 0.9 * a * len(x) ** (-0.2)
+    return band_w
