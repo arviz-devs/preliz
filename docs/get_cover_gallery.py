@@ -14,7 +14,7 @@ rng = np.random.default_rng(247)
 init_vals["Hurdle"] = None
 for name, params in init_vals.items():
     color = f"C{rng.integers(0, 4)}"
-    _, ax = plt.subplots(figsize=(6, 4))
+    _, ax = plt.subplots(figsize=(3.5, 2.3))
     dist = getattr(distributions, name)
     if name in ["Truncated", "Censored"]:
         dist(Gamma(mu=2, sigma=1), -np.inf, 2).plot_pdf(legend=False, ax=ax, color=color)
