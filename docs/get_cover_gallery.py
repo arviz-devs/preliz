@@ -12,6 +12,7 @@ style.use("preliz-doc")
 rng = np.random.default_rng(247)
 
 init_vals["Hurdle"] = None
+init_vals["SkewStudentT"] = {"mu": 0.0, "sigma": 1, "a": 2.5, "b": 1.5}
 for name, params in init_vals.items():
     color = f"C{rng.integers(0, 4)}"
     _, ax = plt.subplots(figsize=(3.5, 2.3))
