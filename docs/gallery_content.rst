@@ -127,7 +127,7 @@ Continuous Distributions
       Half-Cauchy
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.halfnormal.HalfNormal
+      :link: ./examples/gallery/halfnormal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
