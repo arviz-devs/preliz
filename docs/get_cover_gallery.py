@@ -45,7 +45,6 @@ for name, params in init_vals.items():
     ax.spines[["left"]].set_visible(False)
 
     if name in ["Categorical"]:
-        # ax.spines[["bottom"]].set_visible(False)
         ax.set_xticks([0, 1, 2], labels=["♣", "♥", "♦"])
     else:
         if name in ["BetaScaled", "Truncated", "Censored", "Pareto"]:
