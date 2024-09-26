@@ -68,8 +68,8 @@ $$
 
 **Common Alternatives:**
 
-- [Half-Student's t](half_students_t.md) - The Half-Cauchy distribution is a special case of the Half-Student's t-distribution with $\nu=1$.
-- [Half-Normal](half_normal.md) - A distribution that considers only the positive half of the normal distribution.
+- [Half-Student's t](halfstudentt.md) - The Half-Cauchy distribution is a special case of the Half-Student's t-distribution with $\nu=1$.
+- [Half-Normal](halfnormal.md) - A distribution that considers only the positive half of the normal distribution.
 
 **Related Distributions:**
 

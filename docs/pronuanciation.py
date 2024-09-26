@@ -10,6 +10,7 @@ names = {
         "Exponential",
         "HalfCauchy",
         "HalfNormal",
+        "HalfStudentT",
         "Hurdle",
         "InverseGamma",
         "Logistic",

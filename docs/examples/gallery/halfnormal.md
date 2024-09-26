@@ -121,7 +121,7 @@ where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 **Related Distributions:**
 
 - [Normal](normal.md) - The parent distribution from which the Half-Normal is derived.
-- [Half-Student's t](half_students_t.md) - As $\nu \to \infty$, the Half-Student's t-distribution converges to the Half-Normal distribution.
+- [Half-Student's t](halfstudentt.md) - As $\nu \to \infty$, the Half-Student's t-distribution converges to the Half-Normal distribution.
 - [Truncated Normal](truncated_normal.md) - A Half-Normal distribution can be considered a special case of the Truncated Normal distribution with mean $0$ and lower bound $0$.
 ```
 

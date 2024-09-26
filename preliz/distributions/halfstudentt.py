@@ -46,17 +46,17 @@ class HalfStudentT(Continuous):
     Support   :math:`x \in [0, \infty)`
     Mean      .. math::
                   2\sigma\sqrt{\frac{\nu}{\pi}}\
-                  \frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
+                  \frac{\Gamma\left(\frac{\nu+1}{2}\right)}
                   {\Gamma\left(\frac{\nu}{2}\right)(\nu-1)}\, \text{for } \nu > 2
     Variance  .. math::
                   \sigma^2\left(\frac{\nu}{\nu - 2}-\
-                  \frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}\
+                  \frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}
                   {\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right) \text{for } \nu > 2\, \infty\
                   \text{for } 1 < \nu \le 2\, \text{otherwise undefined}
     ========  ==========================================
 
     HalfStudentT distribution has 2 alternative parameterizations. In terms of nu and
-    sigma (standard deviation as nu increases) or nu lam (precision as nu increases).
+    sigma (standard deviation as nu increases) or nu and lam (precision as nu increases).
 
     The link between the 2 alternatives is given by
 

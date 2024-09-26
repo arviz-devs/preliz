@@ -139,7 +139,7 @@ Continuous Distributions
       Half-Normal
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.halfstudentt.HalfStudentT
+      :link: ./examples/gallery/halfstudentt.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
