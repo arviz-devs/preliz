@@ -134,7 +134,7 @@ where $\gamma$ is the [lower incomplete gamma function](https://en.wikipedia.org
 
 **Related Distributions:**
 
-- [Inverse Gamma Distribution](inverse-gamma.md) - The reciprocal of a gamma-distributed random variable.
+- [Inverse Gamma Distribution](inversegamma.md) - The reciprocal of a gamma-distributed random variable.
 - [Poisson Distribution](poisson.md) - While the Gamma distribution models the time until a specified number of events occur in a Poisson process, the Poisson distribution models the number of events in fixed intervals of time or space.
 - [Negative Binomial Distribution](negative-binomial.md) - The discrete counterpart of the Gamma distribution, modeling the number of trials needed to achieve a specified number of successes in a sequence of Bernoulli trials.
 ```
