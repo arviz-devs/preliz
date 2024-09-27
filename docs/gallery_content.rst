@@ -151,7 +151,7 @@ Continuous Distributions
       Half-Student's t
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.inversegamma.InverseGamma
+      :link: ./examples/gallery/inversegamma.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
