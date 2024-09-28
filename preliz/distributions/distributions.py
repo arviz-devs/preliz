@@ -222,7 +222,6 @@ class Distribution:
         if valid_scalar_params(self):
             lower_tail, upper_tail = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
             if self.kind == "continuos" and fmt != "none":
-                print("hi!")
                 lower_tail = float(f"{lower_tail:{fmt}}")
                 upper_tail = float(f"{upper_tail:{fmt}}")
             elif self.kind == "discrete":
@@ -271,22 +270,48 @@ class Distribution:
         -------
         PyMC distribution
         """
+        pymc_dist = None
+
         try:
             import pymc.distributions as pm_dists
             from pymc.model import Model
 
             model = Model.get_context(error_if_none=False)
 
-            if model is None:
-                return getattr(pm_dists, self.__class__.__name__).dist(**self.params_dict, **kwargs)
+            if self.__class__.__name__ == "Hurdle":
+                preliz_name = self.__class__.__name__ + self.dist.__class__.__name__
             else:
-                return getattr(pm_dists, self.__class__.__name__)(
-                    name, **self.params_dict, **kwargs
-                )
+                preliz_name = self.__class__.__name__
+            pymc_class = getattr(pm_dists, preliz_name)
+
+            if model is None:
+                if self.__class__.__name__ in ["Truncated", "Censored"]:
+                    pymc_dist = pymc_class.dist(
+                        self.dist.to_pymc(),
+                        lower=self.params_dict["lower"],
+                        upper=self.params_dict["upper"],
+                        **kwargs,
+                    )
+                else:
+                    pymc_dist = pymc_class.dist(**self.params_dict, **kwargs)
+            else:
+                if self.__class__.__name__ in ["Truncated", "Censored"]:
+                    pymc_dist = pymc_class(
+                        name,
+                        getattr(pm_dists, self.dist.__class__.__name__).dist(
+                            **self.dist.params_dict
+                        ),
+                        lower=self.params_dict["lower"],
+                        upper=self.params_dict["upper"],
+                        **kwargs,
+                    )
+                else:
+                    pymc_dist = pymc_class(name, **self.params_dict, **kwargs)
+
         except ImportError:
             pass
 
-        return None
+        return pymc_dist
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """

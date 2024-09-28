@@ -50,6 +50,9 @@ from preliz.distributions import (
     ZeroInflatedPoisson,
     Dirichlet,
     MvNormal,
+    Truncated,
+    Censored,
+    Hurdle,
 )
 
 
@@ -299,7 +302,14 @@ def test_plot_interactive(capsys, a_few_poissons):
 def test_to_pymc():
     with Model() as model:
         Gamma(1, 1).to_pymc("a", shape=(2, 2))
+        Hurdle(Gamma(1, 1), psi=0.5).to_pymc("b", shape=1)
+        Truncated(Gamma(1, 1), lower=1).to_pymc("c")
 
     assert model.basic_RVs[0].name == "a"
     assert model.basic_RVs[0].ndim == 2
+    assert model.basic_RVs[1].name == "b"
+    assert model.basic_RVs[1].ndim == 1
+    assert model.basic_RVs[2].name == "c"
+    assert model.basic_RVs[2].ndim == 0
     assert Normal(0, 1).to_pymc(shape=2).ndim == 1
+    assert Censored(Normal(0, 1), lower=0).to_pymc().ndim == 0
