@@ -222,7 +222,6 @@ class Distribution:
         if valid_scalar_params(self):
             lower_tail, upper_tail = self.ppf([(1 - mass) / 2, 1 - (1 - mass) / 2])
             if self.kind == "continuos" and fmt != "none":
-                print("hi!")
                 lower_tail = float(f"{lower_tail:{fmt}}")
                 upper_tail = float(f"{upper_tail:{fmt}}")
             elif self.kind == "discrete":
@@ -306,7 +305,6 @@ class Distribution:
                         upper=self.params_dict["upper"],
                         **kwargs,
                     )
-                    print(pymc_dist)
                 else:
                     pymc_dist = pymc_class(name, **self.params_dict, **kwargs)
 
