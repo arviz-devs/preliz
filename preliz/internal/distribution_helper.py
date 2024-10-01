@@ -64,11 +64,13 @@ def process_extra(input_string):
         name = match[0]
         args = match[1].split(",")
         arg_dict = {}
-        for arg in args:
-            key, value = arg.split("=")
-            arg_dict[key.strip()] = float(value)
-        result_dict[name] = arg_dict
-
+        try:
+            for arg in args:
+                key, value = arg.split("=")
+                arg_dict[key.strip()] = float(value)
+            result_dict[name] = arg_dict
+        except ValueError:
+            pass
     return result_dict
 
 

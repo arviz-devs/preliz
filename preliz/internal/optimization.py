@@ -315,7 +315,10 @@ def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max, e
     fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:
         if dist.__class__.__name__ in extra_pros:
-            dist._parametrization(**extra_pros[dist.__class__.__name__])
+            try:
+                dist._parametrization(**extra_pros[dist.__class__.__name__])
+            except TypeError:
+                pass
         if dist.__class__.__name__ == "BetaScaled":
             update_bounds_beta_scaled(dist, x_min, x_max)
 
