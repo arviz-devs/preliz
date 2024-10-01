@@ -1,3 +1,33 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/arviz-devs/preliz/releases/tag/0.10.0) - 01 Oct 2024
+
+## What's Changed
+
+### New Features
+* Extend "to_pymc" to transformed variables by [@aloctavodia](https://github.com/aloctavodia) in https://github.com/arviz-devs/preliz/pull/544
+* Roulette is a class now and fitted distribution can be accessed with the attribute `.dist`  by [@aloctavodia](https://github.com/aloctavodia) in https://github.com/arviz-devs/preliz/pull/546
+
+### Maintenance and bug fixes
+
+* Fix bounds and psi param for Hurdle by [@aloctavodia](https://github.com/aloctavodia) in https://github.com/arviz-devs/preliz/pull/537
+* Remove ArviZ dependency by [@aloctavodia](https://github.com/aloctavodia) in https://github.com/arviz-devs/preliz/pull/536
+* PPA: several fixes by [@aloctavodia](https://github.com/aloctavodia) in https://github.com/arviz-devs/preliz/pull/549
+
+### Documentation
+* Add reference to PriorDB by [@aloctavodia](https://github.com/aloctavodia) in https://github.com/arviz-devs/preliz/pull/535
+* Distribution Gallery: Add HalfCauchy by [@aleicazatti](https://github.com/aleicazatti) in https://github.com/arviz-devs/preliz/pull/538
+* Distribution Gallery: Add HalfNormal by [@aleicazatti](https://github.com/aleicazatti) in https://github.com/arviz-devs/preliz/pull/540
+* Distribution Gallery: Add HalfStudentT by [@aleicazatti](https://github.com/aleicazatti) in https://github.com/arviz-devs/preliz/pull/541
+* Distributions Gallery: Add InverseGamma by [@aleicazatti](https://github.com/aleicazatti) in https://github.com/arviz-devs/preliz/pull/542
+* Distribution Gallery: Add Kumaraswamy by [@aleicazatti](https://github.com/aleicazatti) in https://github.com/arviz-devs/preliz/pull/548
+* Add bounds to gallery images by [@aloctavodia](https://github.com/aloctavodia) in https://github.com/arviz-devs/preliz/pull/539
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.9.1...0.10.0
+
+[Changes][0.10.0]
+
+
 <a name="0.9.1"></a>
 # [0.9.1](https://github.com/arviz-devs/preliz/releases/tag/0.9.1) - 10 Sep 2024
 
@@ -581,6 +611,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.10.0]: https://github.com/arviz-devs/preliz/compare/0.9.1...0.10.0
 [0.9.1]: https://github.com/arviz-devs/preliz/compare/0.9.0...0.9.1
 [0.9.0]: https://github.com/arviz-devs/preliz/compare/0.8.1...0.9.0
 [0.8.1]: https://github.com/arviz-devs/preliz/compare/0.8.0...0.8.1
