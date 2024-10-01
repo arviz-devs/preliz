@@ -152,7 +152,7 @@ where $B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia
 
 **Common Alternatives:**
 
-- [Kumaraswamy](Kumaraswamy.md) -  It is similar to the Beta distribution, but with closed form expression for its probability density function, cumulative distribution function and quantile function.
+- [Kumaraswamy](kumaraswamy.md) -  It is similar to the Beta distribution, but with closed form expression for its probability density function, cumulative distribution function and quantile function.
 
 **Related Distributions:**
 - [Beta Scaled](beta_scaled.md) - A Beta distribution defined on an arbitrary range.
