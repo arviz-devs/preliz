@@ -543,18 +543,9 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
 
     for ax, idx in zip(axes, pp_samples_idxs):
         ax.clear()
-        plot_references(references, ax)
         ax.relim()
 
         sample = pp_samples[idx]
-
-        if sharex:
-            min_ = sample.min()
-            max_ = sample.max()
-            if min_ < x_lims[0]:
-                x_lims[0] = min_
-            if max_ > x_lims[1]:
-                x_lims[1] = max_
 
         if kind == "pdf":
             plot_kde(sample, ax=ax, color="C0")
@@ -563,9 +554,18 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
             ax.set_ylim(-bins.max() * 0.05, None)
 
         elif kind == "ecdf":
-            ax.hist(sample, color="C0")
+            ax.ecdf(sample, color="C0")
 
         plot_pointinterval(sample, ax=ax)
+        plot_references(references, ax)
+
+        if sharex:
+            min_, max_ = ax.get_xlim()
+            if min_ < x_lims[0]:
+                x_lims[0] = min_
+            if max_ > x_lims[1]:
+                x_lims[1] = max_
+
         ax.set_title(idx, alpha=0)
         ax.set_yticks([])
 
@@ -586,13 +586,12 @@ def plot_pp_mean(pp_samples, selected, references=None, kind="pdf", fig_pp_mean=
         ax_pp_mean = fig_pp_mean.axes[0]
 
     ax_pp_mean.clear()
+    ax_pp_mean.relim()
 
     if np.any(selected):
         sample = pp_samples[selected].ravel()
     else:
         sample = pp_samples.ravel()
-
-    plot_references(references, ax_pp_mean)
 
     if kind == "pdf":
         plot_kde(
@@ -609,6 +608,7 @@ def plot_pp_mean(pp_samples, selected, references=None, kind="pdf", fig_pp_mean=
         ax_pp_mean.ecdf(sample, color="k", linestyle="--")
 
     plot_pointinterval(sample, ax=ax_pp_mean)
+    plot_references(references, ax_pp_mean)
     ax_pp_mean.set_yticks([])
     fig_pp_mean.canvas.draw()
 

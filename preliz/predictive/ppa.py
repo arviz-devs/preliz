@@ -64,7 +64,7 @@ def ppa(
     with output:
         references_widget = widgets.Text(
             value=str(references),
-            placeholder="Int, Float or tuple",
+            placeholder="Int, Float, tuple or dict",
             description="references: ",
             disabled=False,
             layout=widgets.Layout(width="230px", margin="0 20px 0 0"),
@@ -90,13 +90,25 @@ def ppa(
 
         def kind_(_):
             kind = radio_buttons_kind.value
+            try:
+                filter_dists.references = ast.literal_eval(references_widget.value)
+            except (ValueError, SyntaxError):
+                filter_dists.references = None
+
             plot_pp_samples(
                 filter_dists.pp_samples,
                 filter_dists.display_pp_idxs,
-                ast.literal_eval(references_widget.value),
+                filter_dists.references,
                 kind,
                 check_button_sharex.value,
                 filter_dists.fig,
+            )
+            plot_pp_mean(
+                filter_dists.pp_samples,
+                list(filter_dists.selected),
+                filter_dists.references,
+                kind,
+                filter_dists.fig_pp_mean,
             )
 
         references_widget.observe(kind_, names=["value"])
@@ -140,6 +152,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         self.prior_samples = None  # prior samples used for backfitting
         self.display_pp_idxs = None  # indices of the pp_samples to be displayed
         self.pp_octiles = None  # octiles computed from pp_samples
+        self.ref_octiles = None  # octiles computed from the target distribution
         self.kdt = None  # KDTree used to find similar distributions
         self.model = None  # parsed model used for backfitting
         self.clicked = []  # axes clicked by the user
@@ -170,7 +183,9 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         self.pp_octiles, self.kdt = self.compute_octiles()
         self.display_pp_idxs = self.initialize_subsamples(self.target)
         self.fig, self.axes = plot_pp_samples(
-            self.pp_samples, self.display_pp_idxs, self.references
+            self.pp_samples,
+            self.display_pp_idxs,
+            self.references,
         )
         self.fig_pp_mean = plot_pp_mean(self.pp_samples, self.selected, self.references)
 
@@ -180,7 +195,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         elif isinstance(self.target, Distribution):
             ref_sample = self.target.rvs(self.pp_samples.shape[1])
 
-        self.pp_samples = np.vstack([ref_sample, self.pp_samples])
+        self.ref_octiles = np.quantile(ref_sample, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875])
 
     def compute_octiles(self):
         """
@@ -235,14 +250,14 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
                     if new != self.draws:
                         pp_idxs_to_display.append(new)
             else:
-                new = 0
+                new = -1
                 pp_idxs_to_display.append(new)
 
                 for _ in range(9):
                     nearest_neighbor = 2
                     while new in pp_idxs_to_display:
                         distance, new = self.kdt.query(
-                            self.pp_octiles[pp_idxs_to_display[-1]], [nearest_neighbor], workers=-1
+                            self.ref_octiles, [nearest_neighbor], workers=-1
                         )
                         new = new.item()
                         nearest_neighbor += 1
