@@ -163,7 +163,7 @@ Continuous Distributions
       Inverse Gamma
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.kumaraswamy.Kumaraswamy
+      :link: ./examples/gallery/kumaraswamy.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
