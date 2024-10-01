@@ -16,7 +16,7 @@ from .unidimensional import *
 from .multidimensional import *
 
 
-__version__ = "0.9.1"
+__version__ = "0.10.0"
 
 _log = logging.getLogger("preliz")
 
