@@ -92,7 +92,7 @@ def ppa(
             kind = radio_buttons_kind.value
             try:
                 filter_dists.references = ast.literal_eval(references_widget.value)
-            except:
+            except (ValueError, SyntaxError):
                 filter_dists.references = None
 
             plot_pp_samples(
@@ -194,7 +194,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         elif isinstance(self.target, Distribution):
             ref_sample = self.target.rvs(self.pp_samples.shape[1])
 
-        self.pp_samples = np.vstack([ref_sample, self.pp_samples])
+        self.ref_octiles = np.quantile(ref_sample, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875])
 
     def compute_octiles(self):
         """
@@ -249,14 +249,14 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
                     if new != self.draws:
                         pp_idxs_to_display.append(new)
             else:
-                new = 0
+                new = -1
                 pp_idxs_to_display.append(new)
 
                 for _ in range(9):
                     nearest_neighbor = 2
                     while new in pp_idxs_to_display:
                         distance, new = self.kdt.query(
-                            self.pp_octiles[pp_idxs_to_display[-1]], [nearest_neighbor], workers=-1
+                            self.ref_octiles, [nearest_neighbor], workers=-1
                         )
                         new = new.item()
                         nearest_neighbor += 1

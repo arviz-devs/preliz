@@ -17,6 +17,7 @@ def back_fitting(model, subset, new_families=True):
     string = "Your selection is consistent with the priors (original families):\n"
 
     for name, dist in model.items():
+        print(name, np.mean(subset[name]))
         dist._fit_mle(subset[name])
         string += f"{name} = {repr_to_matplotlib(dist)}\n"
 
