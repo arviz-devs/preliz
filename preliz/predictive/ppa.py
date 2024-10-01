@@ -152,6 +152,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         self.prior_samples = None  # prior samples used for backfitting
         self.display_pp_idxs = None  # indices of the pp_samples to be displayed
         self.pp_octiles = None  # octiles computed from pp_samples
+        self.ref_octiles = None  # octiles computed from the target distribution
         self.kdt = None  # KDTree used to find similar distributions
         self.model = None  # parsed model used for backfitting
         self.clicked = []  # axes clicked by the user
