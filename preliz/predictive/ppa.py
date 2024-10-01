@@ -64,7 +64,7 @@ def ppa(
     with output:
         references_widget = widgets.Text(
             value=str(references),
-            placeholder="Int, Float or tuple",
+            placeholder="Int, Float, tuple or dict",
             description="references: ",
             disabled=False,
             layout=widgets.Layout(width="230px", margin="0 20px 0 0"),
@@ -90,13 +90,25 @@ def ppa(
 
         def kind_(_):
             kind = radio_buttons_kind.value
+            try:
+                filter_dists.references = ast.literal_eval(references_widget.value)
+            except:
+                filter_dists.references = None
+
             plot_pp_samples(
                 filter_dists.pp_samples,
                 filter_dists.display_pp_idxs,
-                ast.literal_eval(references_widget.value),
+                filter_dists.references,
                 kind,
                 check_button_sharex.value,
                 filter_dists.fig,
+            )
+            plot_pp_mean(
+                filter_dists.pp_samples,
+                list(filter_dists.selected),
+                filter_dists.references,
+                kind,
+                filter_dists.fig_pp_mean,
             )
 
         references_widget.observe(kind_, names=["value"])
@@ -170,7 +182,9 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         self.pp_octiles, self.kdt = self.compute_octiles()
         self.display_pp_idxs = self.initialize_subsamples(self.target)
         self.fig, self.axes = plot_pp_samples(
-            self.pp_samples, self.display_pp_idxs, self.references
+            self.pp_samples,
+            self.display_pp_idxs,
+            self.references,
         )
         self.fig_pp_mean = plot_pp_mean(self.pp_samples, self.selected, self.references)
 
