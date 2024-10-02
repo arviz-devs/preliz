@@ -175,7 +175,7 @@ Continuous Distributions
       Kumaraswamy
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.laplace.Laplace
+      :link: ./examples/gallery/laplace.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
