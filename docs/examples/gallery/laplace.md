@@ -16,7 +16,7 @@ The Laplace or Laplacian distribution is a continuous probability distribution n
 
 The Laplace distribution is characterized by two parameters: the location parameter $\mu$ and the scale parameter $b$.
 
-The Laplace distribution is widely used due to its ability to model sharp peaks and heavy tails. In signal processing, it models coefficients in speech recognition and image compression. It is essential for ensuring differential privacy by adding noise to statistical database queries. In regression analysis, the Lasso regression can be thought of as a Bayesian regression with a Laplacian prior for the coefficients. It is also used in hydrology, finance, and other fields to model extreme events and outliers.
+The Laplace distribution is widely used due to its ability to model sharp peaks and heavy tails. In signal processing, it models coefficients in speech recognition and image compression. In regression analysis, the Lasso regression can be thought of as a Bayesian regression with a Laplacian prior for the coefficients, altought sparsity is better achieved with priors such as horseshoe instead of Laplace. It is also used in hydrology, finance, and other fields to model extreme events and outliers.
 
 ## Probability Density Function (PDF):
 
