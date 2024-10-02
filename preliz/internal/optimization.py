@@ -77,18 +77,18 @@ def optimize_quartile(dist, x_vals, none_idx, fixed):
     return opt
 
 
-def optimize_cdf(dist, x_vals, ecdf, none_idx, fixed):
-    def func(params, dist, x_vals, ecdf):
+def optimize_pdf(dist, x_vals, epdf, none_idx, fixed):
+    def func(params, dist, x_vals, epdf):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
-        loss = dist.cdf(x_vals) - ecdf
+        loss = dist.pdf(x_vals) - epdf
         return loss
 
     init_vals = np.array(dist.params)[none_idx]
     bounds = np.array(dist.params_support)[none_idx]
     bounds = list(zip(*bounds))
 
-    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, ecdf), bounds=bounds)
+    opt = least_squares(func, x0=init_vals, args=(dist, x_vals, epdf), bounds=bounds)
     params = get_params(dist, opt["x"], none_idx, fixed)
     dist._parametrization(**params)
     loss = opt["cost"]
@@ -305,9 +305,9 @@ def get_distributions(dist_names):
     return dists
 
 
-def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max, extra_pros):
+def fit_to_epdf(selected_distributions, x_vals, epdf, mean, std, x_min, x_max, extra_pros):
     """
-    Minimize the difference between the cdf and the ecdf over a grid of values
+    Minimize the difference between the pdf and the epdf over a grid of values
     defined by x_min and x_max
 
     Note: This function is intended to be used with pz.roulette
@@ -325,7 +325,7 @@ def fit_to_ecdf(selected_distributions, x_vals, ecdf, mean, std, x_min, x_max, e
         if dist._check_endpoints(x_min, x_max, raise_error=False):
             none_idx, fixed = get_fixed_params(dist)
             dist._fit_moments(mean, std)  # pylint:disable=protected-access
-            loss = optimize_cdf(dist, x_vals, ecdf, none_idx, fixed)
+            loss = optimize_pdf(dist, x_vals, epdf, none_idx, fixed)
 
             fitted.update(loss, dist)
 
