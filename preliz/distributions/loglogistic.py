@@ -30,10 +30,10 @@ class LogLogistic(Continuous):
 
         from preliz import LogLogistic, style
         style.use('preliz-doc')
-        mus = [1, 1, 2]
-        sigmas = [4, 8, 8]
-        for mu, sigma in zip(mus, sigmas):
-            LogLogistic(mu, sigma).plot_pdf(support=(0, 6))
+        alphas = [1, 1, 2]
+        betas = [4, 8, 8]
+        for alpha, beta in zip(alphas, betas):
+            LogLogistic(alpha,beta).plot_pdf(support=(0, 6))
 
     ========  ==========================================================================
     Support   :math:`x \in [0, \infty)`

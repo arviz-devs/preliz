@@ -211,7 +211,7 @@ Continuous Distributions
       Logistic
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.loglogistic.LogLogistic
+      :link: ./examples/gallery/log_logistic.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
