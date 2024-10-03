@@ -9,7 +9,7 @@ try:
 except ImportError:
     pass
 
-from ..internal.optimization import fit_to_ecdf, get_distributions
+from ..internal.optimization import fit_to_epdf, get_distributions
 from ..internal.plot_helper import check_inside_notebook, representations
 from ..internal.distribution_helper import process_extra
 from ..distributions import all_discrete, all_continuous
@@ -36,9 +36,10 @@ class Roulette:
             Number of columns for the grid. Defaults to 11.
         dist_names: list
             List of distributions names to be used in the elicitation.
-            For example: ["Normal", "StudentT"].
-            Default to None, almost all 1D distributions available in PreliZ will be used,
-            with some exceptions like Uniform or Cauchy.
+            Defaults to None, the pre-selected distribution are ["Normal", "BetaScaled",
+            "Gamma", "LogNormal", "StudentT"] but almost all 1D PreliZ's distributions
+            are available to be selected from the menu with some exceptions like Uniform
+            or Cauchy.
         params: Optional[str]:
             Extra parameters to be passed to the distributions. The format is a string with the
             PreliZ's distribution name followed by the argument to fix.
@@ -49,7 +50,11 @@ class Roulette:
 
         Returns
         -------
-        PreliZ distribution
+        Roulette object
+            The object has many attributes, but the most important are:
+            - dist: The fitted distribution
+            - inputs: A tuple with the x values, the empirical pdf, the total
+            chips, the x_min, the x_max, the number of rows and the number of columns.
 
         References
         ----------
@@ -65,7 +70,7 @@ class Roulette:
         self._figsize = figsize
         self._w_extra = params
         self.dist = None
-        self._hist = None
+        self.inputs = None
 
         check_inside_notebook(need_widget=True)
 
@@ -151,7 +156,7 @@ class Roulette:
     def _on_leave_fig(self):
         extra_pros = process_extra(self._widgets["w_extra"].value)
 
-        x_vals, ecdf, probs, mean, std, filled_columns = self._weights_to_ecdf()
+        x_vals, epdf, mean, std, filled_columns = self._weights_to_pdf()
 
         fitted_dist = None
         if filled_columns > 1:
@@ -159,10 +164,10 @@ class Roulette:
 
             if selected_distributions:
                 self._reset_dist_panel(yticks=False)
-                fitted_dist = fit_to_ecdf(
+                fitted_dist = fit_to_epdf(
                     selected_distributions,
                     x_vals,
-                    ecdf,
+                    epdf,
                     mean,
                     std,
                     self._x_min,
@@ -178,20 +183,27 @@ class Roulette:
             self._reset_dist_panel(yticks=True)
         self._fig.canvas.draw()
 
-        self.hist = (x_vals, probs)
+        self.inputs = (
+            x_vals,
+            epdf,
+            sum(self._grid._weights.values()),
+            self._x_min,
+            self._x_max,
+            self._nrows,
+            self._ncols,
+        )
         self.dist = fitted_dist
 
-    def _weights_to_ecdf(self):
+    def _weights_to_pdf(self):
         step = (self._x_max - self._x_min) / (self._ncols - 1)
         x_vals = [(k + 0.5) * step + self._x_min for k, v in self._grid._weights.items() if v != 0]
         total = sum(self._grid._weights.values())
-        probabilities = [v / total for v in self._grid._weights.values() if v != 0]
-        cum_sum = np.cumsum(probabilities)
+        epdf = [v / total for v in self._grid._weights.values() if v != 0]
 
-        mean = sum(value * prob for value, prob in zip(x_vals, probabilities))
-        std = (sum(prob * (value - mean) ** 2 for value, prob in zip(x_vals, probabilities))) ** 0.5
+        mean = sum(prob * value for value, prob in zip(x_vals, epdf))
+        std = (sum(prob * (value - mean) ** 2 for value, prob in zip(x_vals, epdf))) ** 0.5
 
-        return x_vals, cum_sum, probabilities, mean, std, len(x_vals)
+        return x_vals, epdf, mean, std, len(x_vals)
 
     def _update_grid(self):
         self._ax_grid.cla()
