@@ -1,3 +1,5 @@
+import numpy as np
+
 from preliz.internal.distribution_helper import process_extra
 from preliz.internal.optimization import fit_to_epdf, get_distributions
 
@@ -33,10 +35,14 @@ def combine_roulette(responses, weights=None, dist_names=None, params=None):
         extra_pros = []
 
     if weights is None:
-        weights = [1 / len(responses)] * len(responses)
+        weights = np.full(len(responses), 1 / len(responses))
+    else:
+        weights = np.array(weights, dtype=float)
 
-    if sum(weights) != 1:
-        weights = [w / sum(weights) for w in weights]
+    if np.any(weights <= 0):
+        raise ValueError("The weights must be positive.")
+
+    weights /= weights.sum()
 
     if not all(records[3:] == responses[0][3:] for records in responses):
         raise ValueError(
@@ -67,16 +73,14 @@ def combine_roulette(responses, weights=None, dist_names=None, params=None):
         var += pdf_i * (x_i - mean) ** 2
     std = var**0.5
 
-    x_vals = list(new_pdf.keys())
-    epdf = list(new_pdf.values())
     # Assuming all the elicited distributions have the same x_min and x_max
     x_min = responses[0][3]
     x_max = responses[0][4]
 
     fitted_dist = fit_to_epdf(
         get_distributions(dist_names),
-        x_vals,
-        epdf,
+        list(new_pdf.keys()),
+        list(new_pdf.values()),
         mean,
         std,
         x_min,
