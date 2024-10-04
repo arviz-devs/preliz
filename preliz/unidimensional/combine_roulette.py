@@ -39,7 +39,7 @@ def combine_roulette(responses, weights=None, dist_names=None, params=None):
     else:
         weights = np.array(weights, dtype=float)
 
-    if np.any(weights <= 0):
+    if np.any(weights < 0):
         raise ValueError("The weights must be positive.")
 
     weights /= weights.sum()
