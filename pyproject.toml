@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dynamic = ["version"]
-description = "The place for all your prior elicitation needs."
+description = "Exploring and eliciting probability distributions."
 dependencies = [
   "matplotlib>=3.5",
   "numba>=0.59",
