@@ -1,7 +1,7 @@
 <img src="https://raw.githubusercontent.com/arviz-devs/preliz/main/docs/logos/PreliZ.png#gh-light-mode-only" width=200></img>
 <img src="https://raw.githubusercontent.com/arviz-devs/preliz/main/docs/logos/PreliZ_white.png#gh-dark-mode-only" width=200></img>
 
-A tool-box for prior elicitation.
+Exploring and eliciting probability distributions
 
 [![PyPi version](https://badge.fury.io/py/preliz.svg)](https://badge.fury.io/py/preliz)
 [![Build Status](https://github.com/arviz-devs/preliz/actions/workflows/test.yml/badge.svg)](https://github.com/arviz-devs/preliz/actions/workflows/test.yml)
