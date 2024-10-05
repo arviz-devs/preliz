@@ -1,4 +1,4 @@
-A tool-box for prior elicitation
+Exploring and eliciting probability distributions
 ===================================================
 
 |PyPI version|
