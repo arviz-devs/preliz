@@ -1,6 +1,7 @@
 import logging
-import numpy as np
+import warnings
 
+import numpy as np
 from ..internal.optimization import fit_to_sample
 from ..internal.distribution_helper import valid_distribution
 
@@ -15,8 +16,11 @@ def mle(
     ax=None,
 ):
     """
-    Find the maximum likelihood distribution with given a list of distributions
+    Find the maximum likelihood distribution given a list of distributions
     and one sample.
+
+    AIC with a correction for small sample sizes is used to compare the fits.
+    See https://doi.org/10.1177/0049124104268
 
     Parameters
     ----------
@@ -51,10 +55,17 @@ def mle(
 
     idx = np.argsort(fitted.losses)
 
+    if all(dist is None or not dist.is_frozen for dist in fitted.distributions):
+        warnings.warn(
+            """
+                      No distribution was fitted. This is likely because the support of the
+                      distributions is incompatible with the sampled values."""
+        )
+
     if plot:
         plot_idx = idx[:plot]
         for dist in fitted.distributions[plot_idx]:
-            if dist is not None:
+            if dist is not None and dist.is_frozen:
                 ax = dist.plot_pdf(plot_kwargs)
 
     return idx, ax

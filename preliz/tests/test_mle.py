@@ -1,5 +1,6 @@
 import pytest
 from numpy.testing import assert_allclose
+import matplotlib.pyplot as plt
 
 import preliz as pz
 
@@ -120,7 +121,7 @@ def test_auto_recover(distribution, params):
                 tol = 1
             else:
                 tol = 0.5
-            pz.mle([dist], sample)
+            pz.mle([dist], sample, plot=0)
             assert_allclose(dist.params, params, atol=tol)
             break
         except AssertionError:
@@ -130,15 +131,22 @@ def test_auto_recover(distribution, params):
 
 
 def test_recover_right():
+
     dists = [Normal(), Gamma(), Poisson()]
     sample = Normal(0, 1).rvs(10000)
-    pz.mle(dists, sample)
-    assert dists[0].__class__.__name__ == "Normal"
+    idx, ax = pz.mle(dists, sample, plot=0)
+    assert len(idx) == len(dists)
+    assert idx[0] == 0
+    assert ax is None
 
+    plt.figure()
     sample = Gamma(2, 10).rvs(10000)
-    pz.mle(dists, sample)
-    assert dists[1].__class__.__name__ == "Gamma"
+    idx, ax = pz.mle(dists, sample)
+    assert idx[0] == 1
+    assert len(ax.get_legend().legend_handles) == 1
 
+    plt.figure()
     sample = Poisson(10).rvs(10000)
-    pz.mle(dists, sample)
-    assert dists[2].__class__.__name__ == "Poisson"
+    idx, ax = pz.mle(dists, sample, plot=3)
+    assert idx[0] == 2
+    assert len(ax.get_legend().legend_handles) == 3

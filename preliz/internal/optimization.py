@@ -347,7 +347,6 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
             dist._fit_mle(sample)  # pylint:disable=protected-access
             corr = get_penalization(sample_size, dist)
             loss = dist._neg_logpdf(sample) + corr
-
         fitted.update(loss, dist)
 
     return fitted
@@ -395,7 +394,7 @@ def get_penalization(n, dist):
 
     Burnham, K. P.; Anderson, D. R. (2004),
     "Multimodel inference: understanding AIC and BIC in Model Selection"
-    shorturl.at/IUWX6
+    https://doi.org/10.1177/0049124104268
     """
     k = len(dist.params)
     return k + ((k + 1) * k) / (-k + n - 1)
