@@ -12,9 +12,9 @@ kernelspec:
 
 <audio controls> <source src="../../_static/logitnormal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-The logit-normal distribution, also known as the logistic normal distribution, is a continuous probability distribution of a random variable whose [logit](https://en.wikipedia.org/wiki/Logit) (or log-odds) is normally distributed. Thus, if a random variable $X$ follows a logit-normal distribution, then $ Y = \text{logit}(X) = \log\left(\frac{X}{1-X}\right)$ is normally distributed. It is defined for values of $x$ between 0 and 1. It is characterized by two parameters: $\mu$ and $\sigma$, which are the mean and standard deviation of the logit-transformed variable, respectively, not the original variable.
+The logit-normal distribution is a continuous probability distribution of a random variable whose [logit](https://en.wikipedia.org/wiki/Logit) (or log-odds) is normally distributed. Thus, if a random variable $X$ follows a logit-normal distribution, then $ Y = \text{logit}(X) = \log\left(\frac{X}{1-X}\right)$ is normally distributed. It is defined for values of $x$ between 0 and 1. It is characterized by two parameters: $\mu$ and $\sigma$, which are the mean and standard deviation of the logit-transformed variable, respectively, not the original variable.
 
-The logit-normal distribution is useful in modeling proportions or ratios. In Bayesian modeling the logit-normal distribution is sometimes used as an alternative to Dirichlet priors for BART (Bayesian Additive Regression Trees), as it allows for a more flexible correlation structure between the predictors. 
+The logit-normal distribution is useful in modeling proportions or ratios. 
 
 ## Parametrization
 
