@@ -130,6 +130,7 @@ where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 
 - [Half Normal](half_normal.md) - Considers only the positive half of the Normal distribution.
 - [Log Normal](log_normal.md) - If a random variable follows a LogNormal distribution, its natural logarithm will be Normally distributed. It is suitable for modelling positive and right-skewed data or parameters.
+- [Logit Normal](logit_normal.md) - If a random variable follows a LogitNormal distribution, its logit will be Normally distributed. It is suitable for modelling data that is bounded between 0 and 1.
 - [Von Mises](vonmises.md) - Close to a wrapped Normal on the circle. Suitable for data on a circular scale, like angles or time of day.
 
 ```

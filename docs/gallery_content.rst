@@ -223,7 +223,7 @@ Continuous Distributions
       Log-Logistic
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.logitnormal.LogitNormal
+      :link: ./examples/gallery/logit_normal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
