@@ -235,7 +235,7 @@ Continuous Distributions
       Logit-Normal
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.moyal.Moyal
+      :link: ./examples/gallery/moyal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
