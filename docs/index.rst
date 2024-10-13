@@ -140,6 +140,7 @@ Contents
    examples/observed_space_examples
    gallery_content
    api_reference
+   changelog
 
 Indices
 =======
