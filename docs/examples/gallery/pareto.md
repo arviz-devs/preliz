@@ -85,4 +85,4 @@ $$
 ## References
 
 - [Wikipedia - Pareto Distribution](https://en.wikipedia.org/wiki/Pareto_distribution)
-```
+
