@@ -121,13 +121,9 @@ $$
 
 - [Poisson](poisson.md) - While the Exponential distribution models the time between events in a Poisson process, the Poisson distribution models the number of events in fixed intervals of time or space.
 - [Geometric](geometric.md) - The discrete counterpart of the Exponential distribution, modeling the number of trials needed to achieve the first success in a sequence of Bernoulli trials.
+- [Pareto](pareto.md) - If X is exponentially distributed with rate parameter $\lambda$, then $m\e^X$ is Pareto distributed with shape parameter $\alpha = \lambda$ and scale parameter $m$.
 ```
 
 ## References
 
 - [Wikipedia - Exponential](https://en.wikipedia.org/wiki/Exponential_distribution)
-
-
-
-
-
