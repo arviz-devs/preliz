@@ -12,11 +12,10 @@ kernelspec:
 
 <audio controls> <source src="../../_static/pareto.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-The Pareto distribution is a continuous probability distribution that was introduced by the Italian scientist Vilfredo Pareto (1848–1923). It is a power-law probability distribution that is characterized by a heavy right tail. It is defined by two parameters: the scale parameter $m$ and the shape parameter $\alpha$.
+The Pareto distribution is a continuous probability distribution, known for following a power-law and having a heavy right tail. It is defined by two parameters: the scale parameter $m$ and the shape parameter $\alpha$.
 
 It was originally used to describe the distribution of wealth in society where a small proportion of the population holds a large proportion of the wealth (the "80-20 rule"). It has since been used in various fields to describe a wide range of phenomena where events get rarer at greater magnitudes.
 
-In Bayesian modeling, it plays a key role in Pareto Smoothed Importance Sampling (PSIS) for stabilizing importance weights. PSIS is used in model evaluation methods like PSIS-LOO (Leave-One-Out Cross-Validation) where LOO applies a smoothing procedure that uses values from an estimated Pareto distribution to replace the largest importance weights, making LOO more robust. Moreover, the estimated $\hat{k}$ parameter of the Pareto distribution can be used as a  diagnostic tool to assess the reliability of the importance weights.
 
 ## Probability Density Function (PDF):
 
