@@ -33,7 +33,7 @@ class Pareto(Continuous):
     ========  =============================================================
     Support   :math:`x \in [m, \infty)`
     Mean      :math:`\dfrac{\alpha m}{\alpha - 1}` for :math:`\alpha \ge 1`
-    Variance  :math:`\dfrac{m \alpha}{(\alpha - 1)^2 (\alpha - 2)}` for :math:`\alpha > 2`
+    Variance  :math:`\dfrac{m^2 \alpha}{(\alpha - 1)^2 (\alpha - 2)}` for :math:`\alpha > 2`
     ========  =============================================================
 
     Parameters

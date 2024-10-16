@@ -259,7 +259,7 @@ Continuous Distributions
       Normal
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.pareto.Pareto
+      :link: ./examples/gallery/pareto.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
