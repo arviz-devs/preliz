@@ -35,9 +35,9 @@ class Rice(Continuous):
 
     ========  ==============================================================
     Support   :math:`x \in (0, \infty)`
-    Mean      :math:`\sigma {\sqrt  {\pi /2}}\,\,L_{{1/2}}(-\nu ^{2}/2\sigma ^{2})`
-    Variance  :math:`2\sigma ^{2}+\nu ^{2}-{\frac  {\pi \sigma ^{2}}{2}}L_{{1/2}}^{2}
-                        \left({\frac  {-\nu ^{2}}{2\sigma ^{2}}}\right)`
+    Mean      :math:`\sigma \sqrt{\pi /2} L_{1/2}(-\nu^2 / 2\sigma^2)`
+    Variance  :math:`2\sigma^2 + \nu^2 - \frac{\pi \sigma^2}{2}`
+              :math:`L_{1/2}^2\left(\frac{-\nu^2}{2\sigma^2}\right)`
     ========  ==============================================================
 
     Rice distribution has 2 alternative parameterizations. In terms of nu and sigma
