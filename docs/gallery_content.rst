@@ -271,7 +271,7 @@ Continuous Distributions
       Pareto
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.rice.Rice
+      :link: ./examples/gallery/rice.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
