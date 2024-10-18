@@ -12,7 +12,7 @@ kernelspec:
 
 <audio controls> <source src="../../_static/rice.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-The Rice distribution is the probability distribution of the magnitude of a circularly-symmetric bivariate normal random variable, possibly with non-zero mean (noncentral). The Rice distribution is characterized by two parameters: $v$, which represents the non-centrality parameter, and $\sigma$, the scale parameter. 
+The Rice distribution is the probability distribution of the magnitude of a circularly-symmetric bivariate normal random variable. It's characterized by two parameters: $v$, which represents the non-centrality parameter, and $\sigma$, the scale parameter. 
 
 The Rice distribution is often used in signal processing, particularly in the analysis of noisy signals, such as radar and communication systems.
 
