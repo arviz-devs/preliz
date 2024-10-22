@@ -12,7 +12,7 @@ kernelspec:
 
 <audio controls> <source src="../../_static/skewnormal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-The skew-normal distribution is a continuous probability distribution that generalizes the normal distribution by introducing a skewness parameter ($\alpha$). This parameter allows the distribution to be asymmetric around its mean, with the skewness determining the direction and degree of the asymmetry. When $\alpha = 0$, the skew-normal distribution reduces to the normal distribution.
+The skew-normal distribution is a continuous probability distribution that generalizes the normal distribution by introducing a skewness parameter ($\alpha$). This parameter allows the distribution to be asymmetric around its mean, with $\alpha$ determining the direction and degree of the asymmetry. When $\alpha = 0$, the skew-normal distribution reduces to the normal distribution.
 
 The skew-normal distribution is often used to model data that exhibit skewness, such as financial returns, income distributions, and reaction times. In these cases, the skew-normal distribution provides a flexible framework to capture the asymmetry in the data, which is not possible with the normal distribution.
 
