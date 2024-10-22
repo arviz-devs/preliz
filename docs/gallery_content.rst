@@ -283,7 +283,7 @@ Continuous Distributions
       Rice
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.skewnormal.SkewNormal
+      :link: ./examples/gallery/skewnormal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
