@@ -29,6 +29,8 @@ def mle(
         updated inplace.
     sample : list or 1D array-like
         Data used to estimate the distribution parameters.
+    ignore_support : bool
+
     plot : int
         Number of distributions to plots. Defaults to ``1`` (i.e. plot the best match)
         If larger than the number of passed distributions it will plot all of them.

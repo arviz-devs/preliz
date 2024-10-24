@@ -30,7 +30,7 @@ bmb_data = pd.DataFrame(
         "x1": np.random.normal(size=117),
     }
 )
-bmb_prior = {"Intercept": bmb.Prior("HalfStudentT", nu=1)}
+bmb_prior = {"Intercept": bmb.Prior("Normal", mu=0, sigma=1)}
 bmb_model = bmb.Model("y ~ x + x1", bmb_data, priors=bmb_prior)
 bmb_idata = bmb_model.fit(tune=200, draws=200, random_seed=2945)
 

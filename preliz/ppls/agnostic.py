@@ -1,6 +1,9 @@
 """Functions to communicate with PPLs."""
 
+from copy import copy
 import logging
+import numpy as np
+
 
 from preliz.internal.parser import get_engine
 from preliz.distributions import Gamma, Normal, HalfNormal
@@ -48,14 +51,15 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
 
     if alternative is None:
         for var, dist in model_info.items():
-            dist._fit_mle(posterior[var].values)
+            idx, _ = mle([dist], posterior[var].values, plot=False)
             new_priors[var] = dist
     else:
         for var, dist in model_info.items():
             dists = [dist]
 
             if alternative == "auto":
-                dists += [Normal(), HalfNormal(), Gamma()]
+                alt = [Normal(), HalfNormal(), Gamma()]
+                dists += [a for a in alt if dist.__class__.__name__ != a.__class__.__name__]
             elif isinstance(alternative, list):
                 dists += alternative
             elif isinstance(alternative, dict):
@@ -63,6 +67,7 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
 
             idx, _ = mle(dists, posterior[var].values, plot=False)
             new_priors[var] = dists[idx[0]]
+
     if engine == "bambi":
         new_model = write_bambi_string(new_priors, var_info2)
     elif engine == "pymc":
