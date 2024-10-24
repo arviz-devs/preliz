@@ -1,8 +1,6 @@
 """Functions to communicate with PPLs."""
 
-from copy import copy
 import logging
-import numpy as np
 
 
 from preliz.internal.parser import get_engine

@@ -337,7 +337,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     Maximize the likelihood given a sample
     """
     fitted = Loss(len(selected_distributions))
-    for dist in selected_distributions:
+    for dist in selected_distributions:  # pylint: disable=too-many-nested-blocks
         if dist.__class__.__name__ in ["BetaScaled", "TruncatedNormal"]:
             update_bounds_beta_scaled(dist, x_min, x_max)
 
