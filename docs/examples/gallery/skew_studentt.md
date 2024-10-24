@@ -13,9 +13,9 @@ kernelspec:
 
 <audio controls> <source src="../../_static/skewstudentt.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-The skew-Student's t distribution is a continuous probability distribution that generalizes the Student's t distribution by allowing for non-zero skewness. There are several definitions of the skew-Student's t distribution. Here, we use the definition proposed by Jones and Faddy (2003) that is defined in terms of four parameters: the location parameter ($\mu$), the scale parameter ($\sigma$), and two shape parameters ($a$ and $b$). 
+The skew-Student's t distribution is a continuous probability distribution that generalizes the Student's t distribution by allowing for non-zero skewness. It is used in various fields when data is skewed and has heavy tails. 
 
-The skewness parameters make the skew-Student's t distribution more flexible than the Student's t distribution. It is used in various fields when data is skewed and has heavy tails.
+There are several definitions of the skew-Student's t distribution. Here, we use the definition proposed by Jones and Faddy (2003) that is defined in terms of four parameters: the location parameter ($\mu$), the scale parameter ($\sigma$), and two shape parameters ($a$ and $b$). 
 
 ## Parametrization
 
@@ -29,9 +29,9 @@ $$
 \end{align*}
 $$
 
-The parameter $\lambda$ converges to the precision as $a$ and $b$ approach close. 
-
 If $a > b$, the skew-Student's t distribution is positively skewed (skewed to the right). If $a < b$, the skew-Student's t distribution is negatively skewed (skewed to the left). If $a = b$, the skew-Student's t distribution reduces to the Student's t distribution with $\nu = 2a$.
+
+The parameter $\sigma$ convergences to the standard deviation and $\lambda$ converges to the precision as $a$ and $b$ approach close, and the value of $a$ gets larger.
 
 ## Probability Density Function (PDF):
 
