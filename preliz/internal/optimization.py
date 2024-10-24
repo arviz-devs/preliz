@@ -337,16 +337,35 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
     Maximize the likelihood given a sample
     """
     fitted = Loss(len(selected_distributions))
-    sample_size = len(sample)
-    for dist in selected_distributions:
+    for dist in selected_distributions:  # pylint: disable=too-many-nested-blocks
         if dist.__class__.__name__ in ["BetaScaled", "TruncatedNormal"]:
             update_bounds_beta_scaled(dist, x_min, x_max)
 
         loss = np.inf
         if dist._check_endpoints(x_min, x_max, raise_error=False):
-            dist._fit_mle(sample)  # pylint:disable=protected-access
-            corr = get_penalization(sample_size, dist)
-            loss = dist._neg_logpdf(sample) + corr
+            if sample.ndim > 1:
+                dists = []
+                neg_logpdf = 0
+                for s in sample:
+                    dist_i = copy(dist)
+                    dist_i._fit_mle(s)
+                    neg_logpdf += dist_i._neg_logpdf(s)
+                    dists.append(dist_i)
+                new_dict = {}
+                for d in dists:
+                    params = d.params_dict
+                    for k, v in params.items():
+                        if k in new_dict:
+                            new_dict[k].append(v)
+                        else:
+                            new_dict[k] = [v]
+
+                dist._parametrization(**{k: np.asarray(v) for k, v in new_dict.items()})
+            else:
+                dist._fit_mle(sample)  # pylint:disable=protected-access
+                neg_logpdf = dist._neg_logpdf(sample)
+            corr = get_penalization(sample.size, dist)
+            loss = neg_logpdf + corr
         fitted.update(loss, dist)
 
     return fitted

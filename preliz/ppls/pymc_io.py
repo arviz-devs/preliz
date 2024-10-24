@@ -2,6 +2,7 @@
 
 # pylint: disable=protected-access
 from sys import modules
+from copy import copy
 
 import numpy as np
 
@@ -126,7 +127,7 @@ def get_model_information(model):  # pylint: disable=too-many-locals
         name = (
             r_v.owner.op.name if r_v.owner.op.name else str(r_v.owner.op).split("RV", 1)[0].lower()
         )
-        dist = pymc_to_preliz[name]
+        dist = copy(pymc_to_preliz[name])
         p_model[r_v.name] = dist
         if nc_parents:
             idxs = [free_rvs.index(var_) for var_ in nc_parents]
