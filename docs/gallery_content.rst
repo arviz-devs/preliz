@@ -307,7 +307,7 @@ Continuous Distributions
       Student's t
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.skew_studentt.SkewStudentT
+      :link: ./examples/gallery/skew_studentt.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
