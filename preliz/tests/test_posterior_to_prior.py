@@ -26,9 +26,9 @@ def test_p2p_pymc():
 
 bmb_data = pd.DataFrame(
     {
-        "y": pz.Normal(0, 1).rvs(117, random_state=SEED),
-        "x": pz.Normal(0, 1).rvs(117, random_state=SEED),
-        "x1": pz.Normal(0, 1).rvs(117, random_state=SEED),
+        "y": pz.Normal(0, 1).rvs(117, random_state=SEED + 1),
+        "x": pz.Normal(0, 1).rvs(117, random_state=SEED + 2),
+        "x1": pz.Normal(0, 1).rvs(117, random_state=SEED + 3),
     }
 )
 bmb_prior = {"Intercept": bmb.Prior("Normal", mu=0, sigma=1)}
