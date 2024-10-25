@@ -1,17 +1,18 @@
 import pandas as pd
-import numpy as np
 import pymc as pm
 import bambi as bmb
 import preliz as pz
 
 
-data = pz.Normal(0, 1).rvs(200)
+SEED = 2945
+
+data = pz.Normal(0, 1).rvs(200, random_state=SEED)
 
 with pm.Model() as model:
     a = pm.Normal("a", mu=0, sigma=1)
-    b = pm.HalfNormal("b", sigma=1)
-    y = pm.Normal("y", mu=a, sigma=b, observed=data)
-    idata = pm.sample(tune=200, draws=500, random_seed=2945)
+    b = pm.HalfNormal("b", sigma=[1, 1], shape=2)
+    y = pm.Normal("y", mu=a, sigma=b[0], observed=data)  # pylint:disable = unsubscriptable-object
+    idata = pm.sample(tune=200, draws=500, random_seed=SEED)
 
 
 def test_p2p_pymc():
@@ -25,14 +26,14 @@ def test_p2p_pymc():
 
 bmb_data = pd.DataFrame(
     {
-        "y": np.random.normal(size=117),
-        "x": np.random.normal(size=117),
-        "x1": np.random.normal(size=117),
+        "y": pz.Normal(0, 1).rvs(117, random_state=SEED + 1),
+        "x": pz.Normal(0, 1).rvs(117, random_state=SEED + 2),
+        "x1": pz.Normal(0, 1).rvs(117, random_state=SEED + 3),
     }
 )
 bmb_prior = {"Intercept": bmb.Prior("Normal", mu=0, sigma=1)}
 bmb_model = bmb.Model("y ~ x + x1", bmb_data, priors=bmb_prior)
-bmb_idata = bmb_model.fit(tune=200, draws=200, random_seed=2945)
+bmb_idata = bmb_model.fit(tune=200, draws=200, random_seed=SEED)
 
 
 def test_p2p_bambi():
