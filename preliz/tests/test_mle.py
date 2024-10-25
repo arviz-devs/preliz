@@ -139,6 +139,13 @@ def test_recover_right():
     assert idx[0] == 0
     assert ax is None
 
+    dists = [pz.Normal(), pz.Gamma(), pz.Poisson()]
+    sample = pz.Normal(10, 0.5).rvs((2, 10000), random_state=123)
+    idx, ax = pz.mle(dists, sample, plot=0)
+    all(d.params[0].size == 2 for d in dists)
+    assert idx[0] == 0
+    assert ax is None
+
     plt.figure()
     sample = Gamma(2, 10).rvs(10000)
     idx, ax = pz.mle(dists, sample)

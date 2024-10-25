@@ -17,7 +17,8 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
     Fit a posterior from a model to its prior
 
     The fit is based on maximum likelihood of each posterior marginal to the prior
-    in the model. It is expected that the posterior was computed from the model.
+    in the model. Thus possible correlations between parameters in the posteriors
+    will not be preserved. It is expected that the posterior was computed from the model.
 
     Parameters
     ----------
