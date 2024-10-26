@@ -78,7 +78,9 @@ class QuartileInt:
                 self._widgets["w_extra"],
             ]
         )
-        display(widgets.HBox([controls, self._widgets["w_repr"], self._widgets["w_distributions"]]))
+        display(  # pylint:disable=undefined-variable
+            widgets.HBox([controls, self._widgets["w_repr"], self._widgets["w_distributions"]])
+        )
 
     def _get_widgets(self):
         width_entry_text = widgets.Layout(width="150px")
