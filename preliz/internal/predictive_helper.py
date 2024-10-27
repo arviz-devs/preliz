@@ -50,6 +50,7 @@ def get_distributions():
         "ZeroInflatedNegativeBinomial",
         "ZeroInflatedPoisson",
         "MvNormal",
+        "Mixture",
     ]
     all_distributions = modules["preliz.distributions"].__all__
     distributions = []

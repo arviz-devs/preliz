@@ -50,6 +50,7 @@ class QuartileInt:
         self._q1 = q1
         self._q2 = q2
         self._q3 = q3
+        self.dist = None
         self._dist_names = dist_names
         self._figsize = figsize
 
@@ -70,6 +71,7 @@ class QuartileInt:
                 lambda event: self._match_distribution(),
             )
 
+        self._match_distribution()
         controls = widgets.VBox(
             [
                 self._widgets["w_q1"],
@@ -206,11 +208,14 @@ class QuartileInt:
 
         self._fig.canvas.draw()
 
-        return fitted_dist
+        self.dist = fitted_dist
 
     def _setup_observers(self):
-        self._widgets["w_repr"].observe(self._match_distribution)
-        self._widgets["w_distributions"].observe(self._match_distribution)
-        self._widgets["w_q1"].observe(self._match_distribution)
-        self._widgets["w_q2"].observe(self._match_distribution)
-        self._widgets["w_q3"].observe(self._match_distribution)
+        def _match_distribution_(_):
+            self._match_distribution()
+
+        self._widgets["w_repr"].observe(_match_distribution_)
+        self._widgets["w_distributions"].observe(_match_distribution_)
+        self._widgets["w_q1"].observe(_match_distribution_)
+        self._widgets["w_q2"].observe(_match_distribution_)
+        self._widgets["w_q3"].observe(_match_distribution_)

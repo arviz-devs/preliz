@@ -373,6 +373,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
 
 def fit_to_quartile(dist_names, q1, q2, q3, extra_pros):
     error = np.inf
+    fitted_dist = None
 
     for distribution in get_distributions(dist_names):
         if distribution.__class__.__name__ in extra_pros:
