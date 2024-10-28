@@ -319,7 +319,7 @@ Continuous Distributions
       Skew-Student's t
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.triangular.Triangular
+      :link: ./examples/gallery/triangular.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
