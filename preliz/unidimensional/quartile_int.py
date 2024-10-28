@@ -13,7 +13,7 @@ from ..internal.plot_helper import (
 from ..internal.distribution_helper import process_extra
 
 
-def quartile_int(q1=1, q2=2, q3=3, dist_names=None, figsize=None):
+class QuartileInt:
     """
     Prior elicitation for 1D distributions from quartiles.
 
@@ -46,171 +46,176 @@ def quartile_int(q1=1, q2=2, q3=3, dist_names=None, figsize=None):
     * See quartile mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
     """
 
-    check_inside_notebook(need_widget=True)
+    def __init__(self, q1=1, q2=2, q3=3, dist_names=None, figsize=None):
+        self._q1 = q1
+        self._q2 = q2
+        self._q3 = q3
+        self.dist = None
+        self._dist_names = dist_names
+        self._figsize = figsize
 
-    w_q1, w_q2, w_q3, w_extra, w_repr, w_distributions = get_widgets(q1, q2, q3, dist_names)
+        check_inside_notebook(need_widget=True)
+        self._widgets = self._get_widgets()
 
-    output = widgets.Output()
+        self._output = widgets.Output()
 
-    with output:
+        with self._output:
+            if self._figsize is None:
+                self._figsize = (8, 6)
 
-        if figsize is None:
-            figsize = (8, 6)
+            self._fig, self._ax_fit = create_figure(self._figsize)
+            self._setup_observers()
 
-        fig, ax_fit = create_figure(figsize)
-
-        def match_distribution_(_):
-            match_distribution(
-                fig.canvas,
-                w_distributions.value,
-                w_repr.value,
-                w_q1.value,
-                w_q2.value,
-                w_q3.value,
-                w_extra.value,
-                ax_fit,
+            self._fig.canvas.mpl_connect(
+                "button_release_event",
+                lambda event: self._match_distribution(),
             )
 
-        w_repr.observe(match_distribution_)
-        w_distributions.observe(match_distribution_)
-        w_q1.observe(match_distribution_)
-        w_q2.observe(match_distribution_)
-        w_q3.observe(match_distribution_)
-
-        fig.canvas.mpl_connect(
-            "button_release_event",
-            lambda event: match_distribution(
-                fig.canvas,
-                w_distributions.value,
-                w_repr.value,
-                w_q1.value,
-                w_q2.value,
-                w_q3.value,
-                w_extra.value,
-                ax_fit,
-            ),
+        self._match_distribution()
+        controls = widgets.VBox(
+            [
+                self._widgets["w_q1"],
+                self._widgets["w_q2"],
+                self._widgets["w_q3"],
+                self._widgets["w_extra"],
+            ]
+        )
+        display(  # pylint:disable=undefined-variable
+            widgets.HBox([controls, self._widgets["w_repr"], self._widgets["w_distributions"]])
         )
 
-    controls = widgets.VBox([w_q1, w_q2, w_q3, w_extra])
+    def _get_widgets(self):
+        width_entry_text = widgets.Layout(width="150px")
+        width_repr_text = widgets.Layout(width="250px")
+        width_distribution_text = widgets.Layout(width="150px", height="125px")
 
-    display(widgets.HBox([controls, w_repr, w_distributions]))  # pylint:disable=undefined-variable
+        w_q1 = widgets.FloatText(
+            value=self._q1,
+            step=0.1,
+            description="q1",
+            disabled=False,
+            layout=width_entry_text,
+        )
 
+        w_q2 = widgets.FloatText(
+            value=self._q2,
+            step=0.1,
+            description="q2",
+            disabled=False,
+            layout=width_entry_text,
+        )
 
-def match_distribution(canvas, dist_names, kind_plot, q1, q2, q3, extra, ax):
-    q1 = float(q1)
-    q2 = float(q2)
-    q3 = float(q3)
-    extra_pros = process_extra(extra)
-    fitted_dist = None
+        w_q3 = widgets.FloatText(
+            value=self._q3,
+            step=0.1,
+            description="q3",
+            disabled=False,
+            layout=width_entry_text,
+        )
 
-    if q1 < q2 < q3:
-        reset_dist_panel(ax, yticks=False)
+        w_extra = widgets.Textarea(
+            value="",
+            placeholder="Pass extra parameters",
+            description="params:",
+            disabled=False,
+            layout=width_repr_text,
+        )
 
-        fitted_dist = fit_to_quartile(dist_names, q1, q2, q3, extra_pros)
+        w_repr = widgets.RadioButtons(
+            options=["pdf", "cdf", "ppf"],
+            value="pdf",
+            description="",
+            disabled=False,
+            layout=width_repr_text,
+        )
 
-        if fitted_dist is None:
-            ax.set_title("domain error")
+        if self._dist_names is None:
+
+            default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
+
+            self._dist_names = [
+                "AsymmetricLaplace",
+                "BetaScaled",
+                "ChiSquared",
+                "ExGaussian",
+                "Exponential",
+                "Gamma",
+                "Gumbel",
+                "HalfNormal",
+                "HalfStudentT",
+                "InverseGamma",
+                "Laplace",
+                "LogNormal",
+                "Logistic",
+                "LogitNormal",
+                "Moyal",
+                "Normal",
+                "Pareto",
+                "Rice",
+                "SkewNormal",
+                "StudentT",
+                "Triangular",
+                "VonMises",
+                "Wald",
+                "Weibull",
+                "BetaBinomial",
+                "DiscreteWeibull",
+                "Geometric",
+                "NegativeBinomial",
+                "Poisson",
+            ]
         else:
-            representations(fitted_dist, kind_plot, ax)
-    else:
-        reset_dist_panel(ax, yticks=True)
-        ax.set_title("quantiles must follow the order: q1 < q2 < q3 ")
+            default_dist = self._dist_names
 
-    canvas.draw()
+        w_distributions = widgets.SelectMultiple(
+            options=self._dist_names,
+            value=default_dist,
+            description="",
+            disabled=False,
+            layout=width_distribution_text,
+        )
 
-    return fitted_dist
+        return {
+            "w_q1": w_q1,
+            "w_q2": w_q2,
+            "w_q3": w_q3,
+            "w_extra": w_extra,
+            "w_repr": w_repr,
+            "w_distributions": w_distributions,
+        }
 
+    def _match_distribution(self):
+        q1 = float(self._widgets["w_q1"].value)
+        q2 = float(self._widgets["w_q2"].value)
+        q3 = float(self._widgets["w_q3"].value)
+        extra_pros = process_extra(self._widgets["w_extra"].value)
+        fitted_dist = None
 
-def get_widgets(q1, q2, q3, dist_names=None):
+        if q1 < q2 < q3:
+            reset_dist_panel(self._ax_fit, yticks=False)
 
-    width_entry_text = widgets.Layout(width="150px")
-    width_repr_text = widgets.Layout(width="250px")
-    width_distribution_text = widgets.Layout(width="150px", height="125px")
+            fitted_dist = fit_to_quartile(
+                self._widgets["w_distributions"].value, q1, q2, q3, extra_pros
+            )
 
-    w_q1 = widgets.FloatText(
-        value=q1,
-        step=0.1,
-        description="q1",
-        disabled=False,
-        layout=width_entry_text,
-    )
+            if fitted_dist is None:
+                self._ax_fit.set_title("domain error")
+            else:
+                representations(fitted_dist, self._widgets["w_repr"].value, self._ax_fit)
+        else:
+            reset_dist_panel(self._ax_fit, yticks=True)
+            self._ax_fit.set_title("quantiles must follow the order: q1 < q2 < q3 ")
 
-    w_q2 = widgets.FloatText(
-        value=q2,
-        step=0.1,
-        description="q2",
-        disabled=False,
-        layout=width_entry_text,
-    )
+        self._fig.canvas.draw()
 
-    w_q3 = widgets.FloatText(
-        value=q3,
-        step=0.1,
-        description="q3",
-        disabled=False,
-        layout=width_entry_text,
-    )
+        self.dist = fitted_dist
 
-    w_extra = widgets.Textarea(
-        value="",
-        placeholder="Pass extra parameters",
-        description="params:",
-        disabled=False,
-        layout=width_repr_text,
-    )
+    def _setup_observers(self):
+        def _match_distribution_(_):
+            self._match_distribution()
 
-    w_repr = widgets.RadioButtons(
-        options=["pdf", "cdf", "ppf"],
-        value="pdf",
-        description="",
-        disabled=False,
-        layout=width_repr_text,
-    )
-
-    if dist_names is None:
-
-        default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
-
-        dist_names = [
-            "AsymmetricLaplace",
-            "BetaScaled",
-            "ChiSquared",
-            "ExGaussian",
-            "Exponential",
-            "Gamma",
-            "Gumbel",
-            "HalfNormal",
-            "HalfStudentT",
-            "InverseGamma",
-            "Laplace",
-            "LogNormal",
-            "Logistic",
-            "LogitNormal",
-            "Moyal",
-            "Normal",
-            "Pareto",
-            "Rice",
-            "SkewNormal",
-            "StudentT",
-            "Triangular",
-            "VonMises",
-            "Wald",
-            "Weibull",
-            "BetaBinomial",
-            "DiscreteWeibull",
-            "Geometric",
-            "NegativeBinomial",
-            "Poisson",
-        ]
-    else:
-        default_dist = dist_names
-
-    w_distributions = widgets.SelectMultiple(
-        options=dist_names,
-        value=default_dist,
-        description="",
-        disabled=False,
-        layout=width_distribution_text,
-    )
-
-    return w_q1, w_q2, w_q3, w_extra, w_repr, w_distributions
+        self._widgets["w_repr"].observe(_match_distribution_)
+        self._widgets["w_distributions"].observe(_match_distribution_)
+        self._widgets["w_q1"].observe(_match_distribution_)
+        self._widgets["w_q2"].observe(_match_distribution_)
+        self._widgets["w_q3"].observe(_match_distribution_)
