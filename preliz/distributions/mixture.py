@@ -11,6 +11,28 @@ class Mixture(DistributionTransformer):
     Mixture distribution
 
     This is not a distribution per se, but a modifier of univariate distributions.
+
+    Given a series of base distributions with probability density mass/function ($p_i$).
+    The pdf/pmf of a mixture distribution is:
+
+    .. math::
+
+        f(x) = \sum_{i=1}^n \, w_i \, p_i(x)
+
+    .. plot::
+        :context: close-figs
+
+        from preliz import Normal, Mixture, style
+        style.use('preliz-doc')
+        Mixture([Normal(0, 0.5), Normal(2, 0.5)], [0.2, 0.8]).plot_pdf()
+
+    Parameters
+    ----------
+    dists: List of PreliZ distributions
+        Univariate PreliZ distribution which will be the components of the mixture.
+        They should be all discrete or all continuous.
+    weights: list of floats
+        Weights must >= 0. If the weights do not sum to 1, they will be normalized.
     """
 
     def __init__(self, dists, weights=None):
