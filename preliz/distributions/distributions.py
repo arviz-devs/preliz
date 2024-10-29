@@ -828,14 +828,6 @@ class DistributionTransformer(Distribution):
                 n_points = 200
             return discrete_xvals(lower_ep, upper_ep, n_points)
 
-    # def skewness(self):
-    #     """Skewness of the distribution. Not implemented."""
-    #     return NotImplemented
-
-    # def kurtosis(self):
-    #     """Kurtosis of the distribution. Not implemented."""
-    #     return NotImplemented
-
 
 def continuous_xvals(lower_ep, upper_ep, n_points):
     return np.linspace(lower_ep, upper_ep, n_points)
