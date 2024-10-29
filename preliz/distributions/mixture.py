@@ -28,11 +28,11 @@ class Mixture(DistributionTransformer):
 
     Parameters
     ----------
-    dists: List of PreliZ distributions
-        Univariate PreliZ distribution which will be the components of the mixture.
-        They should be all discrete or all continuous.
+    dists: List of Univariate PreliZ distributions
+        Components of the mixture. They should be all discrete or all continuous.
     weights: list of floats
-        Weights must >= 0. If the weights do not sum to 1, they will be normalized.
+        Weights must be larger or equal to 0 and their sum must be positive. 
+        If the weights do not sum up to 1, they will be normalized.
     """
 
     def __init__(self, dists, weights=None):
