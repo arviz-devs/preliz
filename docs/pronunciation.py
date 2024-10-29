@@ -17,6 +17,7 @@ names = {
         "LogLogistic",
         "LogitNormal",
         "LogNormal",
+        "Mixture",
         "Normal",
         "Rice",
         "SkewNormal",

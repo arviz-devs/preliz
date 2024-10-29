@@ -12,6 +12,7 @@ style.use("preliz-doc")
 rng = np.random.default_rng(247)
 
 init_vals["Hurdle"] = None
+init_vals["Mixture"] = None
 init_vals["SkewStudentT"] = {"mu": 0.0, "sigma": 1, "a": 2.5, "b": 1.5}
 for name, params in init_vals.items():
     color = f"C{rng.integers(0, 4)}"
@@ -21,8 +22,14 @@ for name, params in init_vals.items():
         dist(Gamma(mu=2, sigma=1), -np.inf, 2).plot_pdf(legend=False, ax=ax, color=color)
         ax.get_lines()[0].set_alpha(0)
         ax.get_lines()[1].set_linewidth(4)
-    elif name in ["Hurdle"]:
+    elif name == "Hurdle":
         dist(Gamma(mu=2, sigma=1), 0.8).plot_pdf(legend=False, ax=ax, color=color)
+        ax.get_lines()[0].set_alpha(0)
+        ax.get_lines()[1].set_linewidth(4)
+    elif name == "Mixture":
+        dist([Gamma(mu=1, sigma=0.5), Gamma(mu=3, sigma=1)], [0.5, 0.5]).plot_pdf(
+            legend=False, ax=ax, color=color
+        )
         ax.get_lines()[0].set_alpha(0)
         ax.get_lines()[1].set_linewidth(4)
     else:
@@ -48,7 +55,7 @@ for name, params in init_vals.items():
     if name in ["Categorical"]:
         ax.set_xticks([0, 1, 2], labels=["♣", "♥", "♦"])
     else:
-        if name in ["BetaScaled", "Truncated", "Censored", "Pareto"]:
+        if name in ["BetaScaled", "Truncated", "Censored", "Pareto", "Mixture"]:
             l_b, u_b = (-np.inf, np.inf)
         elif name == "Hurdle":
             l_b, u_b = (0, np.inf)
@@ -62,7 +69,7 @@ for name, params in init_vals.items():
 
         pos = ax.get_ylim()[0]
 
-        # The boundaries depended on the parameterization
+        # The boundaries depends on the parameterization
         if name in [
             "BetaScaled",
             "TruncatedNormal",
@@ -74,6 +81,7 @@ for name, params in init_vals.items():
             "HyperGeometric",
             "Censored",
             "Hurdle",
+            "Mixture",
             "Truncated",
         ]:
             marker_0 = marker_1 = "*"

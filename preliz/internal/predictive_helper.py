@@ -1,5 +1,3 @@
-from sys import modules
-
 import numpy as np
 
 
@@ -8,6 +6,7 @@ from .plot_helper import (
 )
 
 from ..unidimensional import mle
+from .distribution_helper import get_distributions
 
 
 def back_fitting(model, subset, new_families=True):
@@ -23,7 +22,7 @@ def back_fitting(model, subset, new_families=True):
     if new_families:
         string += "\nYour selection is consistent with the priors (new families):\n"
 
-        exclude, distributions = get_distributions()
+        exclude, distributions = get_distributions(None, exclude="auto")
         for name, dist in model.items():
             if dist.__class__.__name__ in exclude:
                 dist._fit_mle(subset[name])
@@ -33,31 +32,6 @@ def back_fitting(model, subset, new_families=True):
             string += f"{name} = {repr_to_matplotlib(dist)}\n"
 
     return string, np.concatenate([dist.params for dist in model.values()])
-
-
-def get_distributions():
-    exclude = [
-        "Beta",
-        "BetaScaled",
-        "Triangular",
-        "TruncatedNormal",
-        "Uniform",
-        "VonMises",
-        "Categorical",
-        "DiscreteUniform",
-        "HyperGeometric",
-        "zeroInflatedBinomial",
-        "ZeroInflatedNegativeBinomial",
-        "ZeroInflatedPoisson",
-        "MvNormal",
-    ]
-    all_distributions = modules["preliz.distributions"].__all__
-    distributions = []
-    for a_dist in all_distributions:
-        dist = getattr(modules["preliz.distributions"], a_dist)()
-        if dist.__class__.__name__ not in exclude:
-            distributions.append(dist)
-    return exclude, distributions
 
 
 def select_prior_samples(selected, prior_samples, model):

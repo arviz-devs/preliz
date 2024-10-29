@@ -2,7 +2,7 @@
 import numpy as np
 
 from preliz.distributions.distributions import DistributionTransformer
-from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.distribution_helper import all_not_none, num_skewness, num_kurtosis
 
 
 class Truncated(DistributionTransformer):
@@ -105,24 +105,10 @@ class Truncated(DistributionTransformer):
         return self.var() ** 0.5
 
     def skewness(self):
-        mean = self.mean()
-        std = self.std()
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        if self.kind == "discrete":
-            return np.sum(((x_values - mean) / std) ** 3 * pdf)
-        else:
-            return np.trapz(((x_values - mean) / std) ** 3 * pdf, x_values)
+        return num_skewness(self)
 
     def kurtosis(self):
-        mean = self.mean()
-        std = self.std()
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        if self.kind == "discrete":
-            return np.sum(((x_values - mean) / std) ** 4 * pdf) - 3
-        else:
-            return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
+        return num_kurtosis(self)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)

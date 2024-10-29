@@ -43,8 +43,14 @@ class Distribution:
         name = self.__class__.__name__
         if name in ["Truncated", "Censored", "Hurdle"]:
             name += self.dist.__class__.__name__
+        if name == "Mixture":
+            name = "Mixture" + "".join([dist.__class__.__name__ for dist in self.dist]) + "\n"
+
         if self.is_frozen:
-            bolded_name = "\033[1m" + name + "\033[0m"
+            if "Mixture" in name:
+                bolded_name = "\033[1m" + name.strip() + "\033[0m" + "\n"
+            else:
+                bolded_name = "\033[1m" + name + "\033[0m"
 
             description = "".join(
                 f"{n}={v:.3g}, "
@@ -793,7 +799,8 @@ class DistributionTransformer(Distribution):
 
     def __init__(self):
         super().__init__()
-        self.kind = self.dist.kind
+        if not isinstance(self.dist, list):
+            self.kind = self.dist.kind
 
     def xvals(self, support, n_points=None):
         """Provide x values in the support of the distribution. This is useful for example when
@@ -821,23 +828,18 @@ class DistributionTransformer(Distribution):
                 n_points = 200
             return discrete_xvals(lower_ep, upper_ep, n_points)
 
-    def skewness(self):
-        """Skewness of the distribution. Not implemented."""
-        return NotImplemented
-
-    def kurtosis(self):
-        """Kurtosis of the distribution. Not implemented."""
-        return NotImplemented
-
 
 def continuous_xvals(lower_ep, upper_ep, n_points):
     return np.linspace(lower_ep, upper_ep, n_points)
 
 
 def discrete_xvals(lower_ep, upper_ep, n_points):
+    upper_ep = int(upper_ep)
+    lower_ep = int(lower_ep)
     range_x = upper_ep - lower_ep
     if range_x <= n_points:
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
     else:
         x_vals = np.linspace(lower_ep, upper_ep + 1, n_points, dtype=int)
+
     return x_vals

@@ -39,7 +39,14 @@ def test_continuous_plot_pdf_cdf_ppf(two_dist, kwargs):
 
 def test_plot_interactive():
     for idx, distribution in enumerate(pz.distributions.__all__):
-        if distribution not in ["Dirichlet", "MvNormal", "Truncated", "Censored", "Hurdle"]:
+        if distribution not in [
+            "Dirichlet",
+            "MvNormal",
+            "Truncated",
+            "Censored",
+            "Hurdle",
+            "Mixture",
+        ]:
             dist = getattr(pz.distributions, distribution)
             kind = ["pdf", "cdf", "ppf"][idx % 3]
             xy_lim = ["auto", "both"][idx % 2]

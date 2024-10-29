@@ -9,9 +9,9 @@ try:
 except ImportError:
     pass
 
-from ..internal.optimization import fit_to_epdf, get_distributions
+from ..internal.optimization import fit_to_epdf
 from ..internal.plot_helper import check_inside_notebook, representations
-from ..internal.distribution_helper import process_extra
+from ..internal.distribution_helper import process_extra, get_distributions
 from ..distributions import all_discrete, all_continuous
 
 
