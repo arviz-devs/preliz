@@ -13,8 +13,9 @@ class Mixture(DistributionTransformer):
     This is not a distribution per se, but a modifier of univariate distributions.
     """
 
-    def __init__(self, dists, weights=None, **kwargs):
+    def __init__(self, dists, weights=None):
         self.dist = dists
+        self.weights = None
         super().__init__()
         if all(dist.kind == "discrete" for dist in self.dist):
             self.kind = "discrete"
@@ -23,9 +24,9 @@ class Mixture(DistributionTransformer):
         else:
             raise ValueError("mixture of discrete and continuous distributions are not supported")
 
-        self._parametrization(weights, **kwargs)
+        self._parametrization(weights)
 
-    def _parametrization(self, weights=None, **kwargs):
+    def _parametrization(self, weights=None):
         self.params = []
         self.param_names = []
         self.params_support = []
@@ -112,10 +113,10 @@ class Mixture(DistributionTransformer):
         random_state = np.random.default_rng(random_state)
         dist_idx = random_state.choice(len(self.dist), size=size, p=self.weights)
         samples = []
-        for idx in range(len(self.dist)):
+        for idx, dist in enumerate(self.dist):
             n_samples = np.sum(dist_idx == idx)
             if n_samples:
-                samples.append(self.dist[idx].rvs(n_samples, random_state=random_state))
+                samples.append(dist.rvs(n_samples, random_state=random_state))
         return np.concatenate(samples)
 
     def _fit_moments(self, mean, sigma):
