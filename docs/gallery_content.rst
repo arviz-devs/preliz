@@ -331,7 +331,7 @@ Continuous Distributions
       Triangular
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.truncatednormal.TruncatedNormal
+      :link: ./examples/gallery/truncated_normal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
