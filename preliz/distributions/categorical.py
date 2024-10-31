@@ -85,37 +85,22 @@ class Categorical(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        """
-        Compute the probability density function (PDF) at a given point x.
-        """
         x = np.atleast_1d(x)
         return nb_pdf(x, self.p)
 
     def cdf(self, x):
-        """
-        Compute the cumulative distribution function (CDF) at a given point x.
-        """
         x = np.atleast_1d(x)
         return nb_cdf(x, self.p)
 
     def ppf(self, q):
-        """
-        Compute the percent point function (PPF) at a given probability q.
-        """
         q = np.atleast_1d(q)
         return nb_ppf(q, self.p)
 
     def logpdf(self, x):
-        """
-        Compute the log probability density function (log PDF) at a given point x.
-        """
         x = np.atleast_1d(x)
         return nb_logpdf(x, self.p)
 
     def _neg_logpdf(self, x):
-        """
-        Compute the neg log_pdf sum for the array x.
-        """
         return nb_neg_logpdf(x, self.p)
 
     def entropy(self):

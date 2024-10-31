@@ -130,6 +130,86 @@ class Distribution:
         else:
             return None
 
+    def rvs(self, size=None, random_state=None):
+        """Random sample
+
+        Parameters
+        ----------
+        size : int or tuple of ints, optional
+            Defining number of random variates. Defaults to 1.
+        random_state : {None, int, numpy.random.Generator, numpy.random.RandomState}
+            Defaults to None
+        """
+        return self.rvs(size, random_state)
+
+    def pdf(self, x):
+        """Probability density/mass function.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the pdf
+        """
+        return self.pdf(x)
+
+    def cdf(self, x):
+        """Cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the cdf
+        """
+        return self.cdf(x)
+
+    def ppf(self, q):
+        """Percent point function (inverse of cdf).
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the inverse of the cdf
+        """
+        return self.ppf(q)
+
+    def logpdf(self, x):
+        """Log probability density/mass function.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the logpdf
+        """
+        return self.pdf(x)
+
+    def entropy(self):
+        """Entropy"""
+        return self.entropy()
+
+    def mean(self):
+        """Mean."""
+        return self.mean()
+
+    def median(self):
+        """Median."""
+        return self.median()
+
+    def std(self):
+        """Standard deviation."""
+        return self.std()
+
+    def var(self):
+        """Variance"""
+        return self.var()
+
+    def skewness(self):
+        """Skewness."""
+        return self.skewness()
+
+    def kurtosis(self):
+        """Excess kurtosis."""
+        return self.kurtosis()
+
     def moments(self, types="mvsk"):
         """
         Compute moments of the distribution.
@@ -141,7 +221,8 @@ class Distribution:
         types : str
             The type of moments to compute. Default is 'mvsk'
             where 'm' = mean, 'v' = variance, 's' = skewness, and 'k' = kurtosis.
-            Valid combinations are any subset of 'mvsk'.
+            To compute the standard deviation use 'd'
+            Valid combinations are any subset of 'mvdsk'.
         """
         moments = []
         for m_t in types:
