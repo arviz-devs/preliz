@@ -52,7 +52,7 @@ The Zen of PreliZ
 
 Dependencies
 ============
-PreliZ is tested on Python 3.10+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
+PreliZ is tested on Python 3.11+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
 
 
 

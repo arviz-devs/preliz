@@ -66,36 +66,21 @@ class Cauchy(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        """
-        Compute the probability density function (PDF) at a given point x.
-        """
         x = np.asarray(x)
         return np.exp(nb_logpdf(x, self.alpha, self.beta))
 
     def cdf(self, x):
-        """
-        Compute the cumulative distribution function (CDF) at a given point x.
-        """
         x = np.asarray(x)
         return nb_cdf(x, self.alpha, self.beta)
 
     def ppf(self, q):
-        """
-        Compute the percent point function (PPF) at a given probability q.
-        """
         q = np.asarray(q)
         return nb_ppf(q, self.alpha, self.beta, -np.inf, np.inf)
 
     def logpdf(self, x):
-        """
-        Compute the log probability density function (log PDF) at a given point x.
-        """
         return nb_logpdf(x, self.alpha, self.beta)
 
     def _neg_logpdf(self, x):
-        """
-        Compute the neg log_pdf sum for the array x.
-        """
         return nb_neg_logpdf(x, self.alpha, self.beta)
 
     def entropy(self):
@@ -127,7 +112,7 @@ class Cauchy(Continuous):
     def _fit_moments(self, mean, sigma):
         self._update(mean, sigma)
 
-    def _fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample):
         optimize_ml(self, sample)
 
 

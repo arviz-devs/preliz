@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "preliz"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = {file = "LICENSE"}
 authors = [
     {name = "ArviZ team", email = "arviz.devs@gmail.com"}
@@ -18,17 +18,17 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dynamic = ["version"]
 description = "Exploring and eliciting probability distributions."
 dependencies = [
-  "matplotlib>=3.5",
+  "matplotlib>=3.7",
   "numba>=0.59",
-  "numpy>=1.22",
-  "scipy>=1.9.1, <1.13"
+  "numpy>=1.24",
+  "scipy>=1.10, <1.13"
 ]
 
 [tool.flit.module]

@@ -68,34 +68,19 @@ class VonMises(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        """
-        Compute the probability density function (PDF) at a given point x.
-        """
         x = np.asarray(x)
         return np.exp(self.logpdf(x))
 
     def cdf(self, x):
-        """
-        Compute the cumulative distribution function (CDF) at a given point x.
-        """
         return nb_cdf(x, self.pdf)
 
     def ppf(self, q):
-        """
-        Compute the percent point function (PPF) at a given probability q.
-        """
         return nb_ppf(q, self.pdf)
 
     def logpdf(self, x):
-        """
-        Compute the log probability density function (log PDF) at a given point x.
-        """
         return nb_logpdf(x, self.mu, self.kappa)
 
     def _neg_logpdf(self, x):
-        """
-        Compute the neg log_pdf sum for the array x.
-        """
         return nb_neg_logpdf(x, self.mu, self.kappa)
 
     def entropy(self):

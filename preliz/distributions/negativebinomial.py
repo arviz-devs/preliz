@@ -116,36 +116,21 @@ class NegativeBinomial(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        """
-        Compute the probability density function (PDF) at a given point x.
-        """
         x = np.asarray(x)
         return np.exp(nb_logpdf(x, self.n, self.p))
 
     def cdf(self, x):
-        """
-        Compute the cumulative distribution function (CDF) at a given point x.
-        """
         x = np.asarray(x)
         return nb_cdf(x, self.n, self.p, self.support[0], self.support[1])
 
     def ppf(self, q):
-        """
-        Compute the percent point function (PPF) at a given probability q.
-        """
         q = np.asarray(q)
         return nb_ppf(q, self.n, self.p, self.support[0], self.support[1])
 
     def logpdf(self, x):
-        """
-        Compute the log probability density function (log PDF) at a given point x.
-        """
         return nb_logpdf(x, self.n, self.p)
 
     def _neg_logpdf(self, x):
-        """
-        Compute the neg log_pdf sum for the array x.
-        """
         return nb_neg_logpdf(x, self.n, self.p)
 
     def entropy(self):

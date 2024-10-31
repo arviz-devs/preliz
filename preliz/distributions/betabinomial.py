@@ -79,16 +79,10 @@ class BetaBinomial(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        """
-        Compute the probability density function (PDF) at a given point x.
-        """
         x = np.asarray(x)
         return np.exp(self.logpdf(x))
 
     def cdf(self, x):
-        """
-        Compute the cumulative distribution function (CDF) at a given point x.
-        """
         if isinstance(x, (np.ndarray, list, tuple)):
             cdf_values = np.zeros_like(x, dtype=float)
             for i, val in enumerate(x):
@@ -100,22 +94,13 @@ class BetaBinomial(Discrete):
             return cdf_bounds(np.sum(self.pdf(x_vals)), x, *self.support)
 
     def ppf(self, q):
-        """
-        Compute the percent point function (PPF) at a given probability q.
-        """
         q = np.asarray(q)
         return find_ppf(self, q)
 
     def logpdf(self, x):
-        """
-        Compute the log probability density function (log PDF) at a given point x.
-        """
         return nb_logpdf(x, self.alpha, self.beta, self.n, *self.support)
 
     def _neg_logpdf(self, x):
-        """
-        Compute the neg log_pdf sum for the array x.
-        """
         return nb_neg_logpdf(x, self.alpha, self.beta, self.n, *self.support)
 
     def entropy(self):
