@@ -19,7 +19,7 @@ from ..internal.plot_helper import (
     plot_pp_mean,
 )
 from ..internal.parser import get_prior_pp_samples, from_preliz, from_bambi
-from ..internal.predictive_helper import back_fitting, select_prior_samples
+from ..internal.predictive_helper import back_fitting_ppa, select_prior_samples
 from ..distributions import Normal
 from ..distributions.distributions import Distribution
 
@@ -386,7 +386,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         if len(selected) > 4:
             subsample = select_prior_samples(selected, self.prior_samples, self.model)
 
-            string, _ = back_fitting(self.model, subsample, new_families=False)
+            string, _ = back_fitting_ppa(self.model, subsample, new_families=False)
 
             self.fig.clf()
             plt.text(0.05, 0.5, string, fontsize=14)
