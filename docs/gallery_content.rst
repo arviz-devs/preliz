@@ -355,7 +355,7 @@ Continuous Distributions
       Uniform
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.vonmises.VonMises
+      :link: ./examples/gallery/vonmises.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
