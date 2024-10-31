@@ -126,7 +126,7 @@ class Laplace(Continuous):
         b = (sigma / 2) * (2**0.5)
         self._update(mean, b)
 
-    def _fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample):
         mu, b = nb_fit_mle(sample)
         self._update(mu, b)
 

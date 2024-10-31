@@ -127,7 +127,7 @@ class Cauchy(Continuous):
     def _fit_moments(self, mean, sigma):
         self._update(mean, sigma)
 
-    def _fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample):
         optimize_ml(self, sample)
 
 

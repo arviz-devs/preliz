@@ -145,7 +145,7 @@ class Exponential(Continuous):
         lam = 1 / mean
         self._update(lam)
 
-    def _fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample):
         mean = mean_sample(sample)
         self._update(1 / mean)
 

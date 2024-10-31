@@ -126,7 +126,7 @@ class Logistic(Continuous):
         s = (3 * sigma**2 / np.pi**2) ** 0.5
         self._update(mean, s)
 
-    def _fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample):
         optimize_ml(self, sample)
 
 

@@ -210,7 +210,7 @@ class HalfStudentT(Continuous):
             sigma = sigma / (1 - 2 / np.pi) ** 0.5
         self._update(nu, sigma)
 
-    def _fit_mle(self, sample, **kwargs):
+    def _fit_mle(self, sample):
         optimize_ml(self, sample)
 
 
