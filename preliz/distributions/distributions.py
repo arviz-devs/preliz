@@ -3,6 +3,7 @@ Parent classes for all families.
 """
 # pylint: disable=no-member
 # pylint: disable=import-outside-toplevel
+# pylint: disable=too-many-public-methods
 from collections import namedtuple
 from copy import copy
 import warnings
