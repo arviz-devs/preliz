@@ -313,3 +313,10 @@ def test_to_pymc():
     assert model.basic_RVs[2].ndim == 0
     assert Normal(0, 1).to_pymc(shape=2).ndim == 1
     assert Censored(Normal(0, 1), lower=0).to_pymc().ndim == 0
+
+
+def test_to_bambi():
+    bambi_prior = Gamma(mu=2, sigma=1).to_bambi()
+    assert bambi_prior.name == "Gamma"
+    assert bambi_prior.args["mu"] == 2
+    assert bambi_prior.args["sigma"] == 1
