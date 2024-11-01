@@ -315,8 +315,6 @@ class Distribution:
         -------
         PyMC distribution
         """
-        pymc_dist = None
-
         try:
             import pymc.distributions as pm_dists
             from pymc.model import Model
