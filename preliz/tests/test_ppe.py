@@ -17,9 +17,8 @@ np.random.seed(42)
             "sigma_z": 10,
             "target": pz.Normal(mu=174, sigma=20),
             "X": np.random.normal(0, 10, 120),
-            "new_mu_x": 173.998287,
-            "new_sigma_x": 1.946641,
-            "new_sigma_z": 19.926345,
+            "new_x": 174,
+            "new_z": 2.9,
         },
         {
             "mu_x": [0, 1],
@@ -27,9 +26,8 @@ np.random.seed(42)
             "sigma_z": 10,
             "target": pz.Normal(mu=174, sigma=20),
             "X": np.random.normal(0, 10, 120),
-            "new_mu_x": (174.089111, 173.908702),
-            "new_sigma_x": (2.679288, 2.760424),
-            "new_sigma_z": 19.83069,
+            "new_x": [174, 174],
+            "new_z": 2.9,
         },
         {
             "mu_x": 0,
@@ -37,13 +35,12 @@ np.random.seed(42)
             "sigma_z": 10,
             "target": [(pz.Normal(mu=174, sigma=20), 0.5), (pz.Normal(mu=176, sigma=19.5), 0.5)],
             "X": np.random.normal(0, 10, 120),
-            "new_mu_x": 174.852283,
-            "new_sigma_x": 1.794118,
-            "new_sigma_z": 19.683396,
+            "new_x": 175,
+            "new_z": 2.9,
         },
         {
             "mu_x": [0, 1],
-            "sigma_x": [10, 10],
+            "sigma_x": 10,
             "sigma_z": 10,
             "target": [
                 (pz.Normal(mu=174, sigma=20), 0.5),
@@ -51,25 +48,28 @@ np.random.seed(42)
                 (pz.StudentT(mu=174, sigma=20, nu=3), 0.1),
             ],
             "X": np.random.normal(0, 10, 120),
-            "new_mu_x": (174.75759, 174.775254),
-            "new_sigma_x": (2.728134, 2.978235),
-            "new_sigma_z": 21.247561,
+            "new_x": [175, 175],
+            "new_z": 3,
         },
     ],
 )
 def test_ppe(params):
-    Y = 2 + np.random.normal(params["X"], 1)
+    Y = np.zeros_like(params["X"])
     target = params.pop("target")
     with pm.Model() as model:
-        x = pm.Normal("x", mu=params["mu_x"], sigma=params["sigma_x"])
-        z = pm.HalfNormal("z", params["sigma_z"])
+        x = pm.Normal("x", shape=1 if isinstance(params["mu_x"], int) else 2)
+        z = pm.HalfNormal("z")
         x_idx = (
-            x
-            if max(np.asarray(params["mu_x"]).size, np.asarray(params["sigma_x"]).size) == 1
-            else x[np.repeat(np.arange(2), Y.size / 2)]
+            x if np.asarray(params["mu_x"]).size == 1 else x[np.repeat(np.arange(2), Y.size / 2)]
         )
         pm.Normal("y", x_idx, z, observed=Y)
-    _, new_prior, _ = pz.ppe(model, target)
-    assert_allclose(new_prior["x"].mu, params["new_mu_x"], 1)
-    assert_allclose(new_prior["x"].sigma, params["new_sigma_x"], 1)
-    assert_allclose(new_prior["z"].sigma, params["new_sigma_z"], 1)
+
+    new_prior = (
+        pz.ppe(model, target, method="projective").replace("\x1b[1m", "").replace("\x1b[0m", "")
+    )
+    exec_context = {}
+    exec(new_prior, globals(), exec_context)
+    model = exec_context.get("model")
+    initial = model.initial_point()
+    assert_allclose(initial["x"], params["new_x"])
+    assert_allclose(initial["z_log__"], params["new_z"], atol=0.1)

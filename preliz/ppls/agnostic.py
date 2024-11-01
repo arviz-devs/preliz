@@ -7,7 +7,7 @@ from preliz.internal.parser import get_engine
 from preliz.distributions import Gamma, Normal, HalfNormal
 from preliz.unidimensional.mle import mle
 from preliz.ppls.pymc_io import get_model_information, write_pymc_string
-from preliz.ppls.bambi_io import get_bmb_model_information, write_bambi_string
+from preliz.ppls.bambi_io import get_pymc_model, write_bambi_string
 
 _log = logging.getLogger("preliz")
 
@@ -41,10 +41,23 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
     """
     _log.info(""""This is an experimental method under development, use with caution.""")
     engine = get_engine(model) if engine == "auto" else engine
+
     if engine == "bambi":
-        _, _, model_info, _, var_info2, *_ = get_bmb_model_information(model)
+        model = get_pymc_model(model)
+
+    _, _, preliz_model, _, untransformed_var_info, *_ = get_model_information(model)
+
+    new_priors = back_fitting_idata(idata, preliz_model, alternative)
+
+    if engine == "bambi":
+        new_model = write_bambi_string(new_priors, untransformed_var_info)
     elif engine == "pymc":
-        _, _, model_info, _, var_info2, *_ = get_model_information(model)
+        new_model = write_pymc_string(new_priors, untransformed_var_info)
+
+    return new_model
+
+
+def back_fitting_idata(idata, model_info, alternative):
     new_priors = {}
     posterior = idata.posterior.stack(sample=("chain", "draw"))
 
@@ -66,10 +79,4 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
 
             idx, _ = mle(dists, posterior[var].values, plot=False)
             new_priors[var] = dists[idx[0]]
-
-    if engine == "bambi":
-        new_model = write_bambi_string(new_priors, var_info2)
-    elif engine == "pymc":
-        new_model = write_pymc_string(new_priors, var_info2)
-
-    return new_model
+    return new_priors

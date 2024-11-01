@@ -9,7 +9,7 @@ from ..unidimensional import mle
 from .distribution_helper import get_distributions
 
 
-def back_fitting(model, subset, new_families=True):
+def back_fitting_ppa(model, subset, new_families=True):
     """
     Use MLE to fit a subset of the prior samples to the marginal prior distributions
     """

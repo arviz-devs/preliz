@@ -253,30 +253,41 @@ def optimize_hdi(dist, mass):
 
 
 def optimize_pymc_model(
-    fmodel, target, draws, prior, initial_guess, bounds, var_info, p_model, rng
+    fmodel,
+    target,
+    num_draws,
+    bounds,
+    initial_guess,
+    prior,
+    preliz_model,
+    transformed_var_info,
+    rng,
 ):
-    for _ in range(400):
+    for idx in range(401):
         # can we sample systematically from these and less random?
         # This should be more flexible and allow other targets than just
-        # a preliz distribution
+        # a PreliZ distribution
         if isinstance(target, list):
-            obs = get_weighted_rvs(target, draws, rng)
+            obs = get_weighted_rvs(target, num_draws, rng)
         else:
-            obs = target.rvs(draws, random_state=rng)
+            obs = target.rvs(num_draws, random_state=rng)
         result = minimize(
             fmodel,
             initial_guess,
             tol=0.001,
             method="SLSQP",
-            args=(obs, var_info, p_model),
+            args=(obs, transformed_var_info, preliz_model),
             bounds=bounds,
         )
-
         optimal_params = result.x
+        # To help minimize the effect of priors
+        # We don't save the first result and insteas we use it as the initial guess
+        # for the next optimization
+        # Updating the initial guess also helps to provides more spread samples
         initial_guess = optimal_params
-
-        for key, param in zip(prior.keys(), optimal_params):
-            prior[key].append(param)
+        if idx:
+            for key, param in zip(prior.keys(), optimal_params):
+                prior[key].append(param)
 
     # convert to numpy arrays
     for key, value in prior.items():

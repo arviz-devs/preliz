@@ -17,29 +17,29 @@ except ModuleNotFoundError:
 from preliz.internal.distribution_helper import get_distributions
 
 
-def backfitting(prior, p_model, var_info2):
+def back_fitting_pymc(prior, preliz_model, untransformed_var_info):
     """
     Fit the samples from prior into user provided model's prior.
     from the perspective of ppe "prior" is actually an approximated posterior
     but from the users perspective is its prior.
-    We need to "backfitted" because we can not use arbitrary samples as priors.
+    We need to "backfit" because we can not use arbitrary samples as priors.
     We need probability distributions.
     """
     new_priors = {}
-    for key, size_inf in var_info2.items():
+    for key, size_inf in untransformed_var_info.items():
         if not size_inf[2]:
             size = size_inf[1]
             if size > 1:
                 params = []
                 for i in range(size):
                     value = prior[f"{key}__{i}"]
-                    dist = p_model[key]
+                    dist = preliz_model[key]
                     dist._fit_mle(value)
                     params.append(dist.params)
                 dist._parametrization(*[np.array(x) for x in zip(*params)])
             else:
                 value = prior[key]
-                dist = p_model[key]
+                dist = preliz_model[key]
                 dist._fit_mle(value)
 
             new_priors[key] = dist
@@ -81,7 +81,7 @@ def get_pymc_to_preliz():
     return pymc_to_preliz
 
 
-def get_guess(model, free_rvs):
+def get_initial_guess(model, free_rvs):
     """
     Get initial guess for optimization routine.
     """
@@ -104,17 +104,32 @@ def get_guess(model, free_rvs):
 
 def get_model_information(model):  # pylint: disable=too-many-locals
     """
-    Get information from the PyMC model.
+    Get information from a PyMC model.
 
-    This needs some love. We even have a variable named var_info,
-    and another one var_info2!
+    Parameters
+    ----------
+    model : a PyMC model
+
+    Returns
+    -------
+    bounds : a list of tuples with the support of each marginal distribution in the model
+    prior : a dictionary with a key for each marginal distribution in the model and an empty
+        list as value. This will be filled with the samples from a backfitting procedure.
+    preliz_model : a dictionary with a key for each marginal distribution in the model and the
+        corresponding PreliZ distribution as value
+    transformed_var_info : a dictionary with a key for each transformed variable in the model
+        and a tuple with the shape, size and the indexes of the non-constant parents as value
+    untransformed_var_info : same as `transformed_var_info` but the keys are untransformed
+        variable names
+    num_draws : the number of observed samples
+    free_rvs : a list with the free random variables in the model
     """
 
     bounds = []
     prior = {}
-    p_model = {}
-    var_info = {}
-    var_info2 = {}
+    preliz_model = {}
+    transformed_var_info = {}
+    untransformed_var_info = {}
     free_rvs = []
     pymc_to_preliz = get_pymc_to_preliz()
     rvs_to_values = model.rvs_to_values
@@ -128,13 +143,13 @@ def get_model_information(model):  # pylint: disable=too-many-locals
             r_v.owner.op.name if r_v.owner.op.name else str(r_v.owner.op).split("RV", 1)[0].lower()
         )
         dist = copy(pymc_to_preliz[name])
-        p_model[r_v.name] = dist
+        preliz_model[r_v.name] = dist
         if nc_parents:
             idxs = [free_rvs.index(var_) for var_ in nc_parents]
             # the keys are the name of the (transformed) variable
-            var_info[rvs_to_values[r_v].name] = (shape, size, idxs)
+            transformed_var_info[rvs_to_values[r_v].name] = (shape, size, idxs)
             # the keys are the name of the (untransformed) variable
-            var_info2[r_v.name] = (shape, size, idxs)
+            untransformed_var_info[r_v.name] = (shape, size, idxs)
         else:
             free_rvs.append(r_v)
 
@@ -147,13 +162,21 @@ def get_model_information(model):  # pylint: disable=too-many-locals
                 prior[r_v.name] = []
 
             # the keys are the name of the (transformed) variable
-            var_info[rvs_to_values[r_v].name] = (shape, size, nc_parents)
+            transformed_var_info[rvs_to_values[r_v].name] = (shape, size, nc_parents)
             # the keys are the name of the (untransformed) variable
-            var_info2[r_v.name] = (shape, size, nc_parents)
+            untransformed_var_info[r_v.name] = (shape, size, nc_parents)
 
-    draws = model.observed_RVs[0].eval().size
+    num_draws = model.observed_RVs[0].eval().size
 
-    return bounds, prior, p_model, var_info, var_info2, draws, free_rvs
+    return (
+        bounds,
+        prior,
+        preliz_model,
+        transformed_var_info,
+        untransformed_var_info,
+        num_draws,
+        free_rvs,
+    )
 
 
 def write_pymc_string(new_priors, var_info):
