@@ -369,10 +369,29 @@ class Distribution:
                 else:
                     pymc_dist = pymc_class(name, **self.params_dict, **kwargs)
 
-        except ImportError:
-            pass
+            return pymc_dist
 
-        return pymc_dist
+        except ImportError:
+            raise ImportError("This function requires PyMC") from None
+
+    def to_bambi(self, **kwargs):
+        """
+        Convert the PreliZ distribution to a Bambi Prior.
+
+        kwargs : PyMC distributions properties
+            kwargs are used to specify properties such as shape or dims
+
+        Returns
+        -------
+        Bambi Prior
+        """
+        try:
+            from bambi import Prior
+
+            return Prior(self.__class__.__name__, **self.params_dict, **kwargs)
+
+        except ImportError:
+            raise ImportError("This function requires Bambi") from None
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """
