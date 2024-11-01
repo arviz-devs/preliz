@@ -119,7 +119,8 @@ def get_model_information(model):  # pylint: disable=too-many-locals
         corresponding PreliZ distribution as value
     transformed_var_info : a dictionary with a key for each transformed variable in the model
         and a tuple with the shape, size and the indexes of the non-constant parents as value
-    untransformed_var_info : same as `transformed_var_info` but the keys are untransformed variable names
+    untransformed_var_info : same as `transformed_var_info` but the keys are untransformed
+        variable names
     num_draws : the number of observed samples
     free_rvs : a list with the free random variables in the model
     """
