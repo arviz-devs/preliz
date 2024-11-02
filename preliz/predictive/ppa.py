@@ -1,8 +1,8 @@
 """Prior predictive check assistant."""
 
-import logging
 import ast
 from random import shuffle
+import warnings
 
 try:
     import ipywidgets as widgets
@@ -23,8 +23,6 @@ from preliz.ppls.bambi_io import from_bambi
 from preliz.internal.predictive_helper import back_fitting_ppa, select_prior_samples
 from preliz.distributions import Normal
 from preliz.distributions.distributions import Distribution
-
-_log = logging.getLogger("preliz")
 
 
 def ppa(
@@ -64,7 +62,7 @@ def ppa(
     """
     check_inside_notebook(need_widget=True)
 
-    _log.info(""""This is an experimental method under development, use with caution.""")
+    warnings.warn(""""This is an experimental method under development, use with caution.""")
 
     filter_dists = FilterDistribution(
         fmodel, draws, references, boundaries, target, new_families, engine
