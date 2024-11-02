@@ -1,9 +1,5 @@
-import logging
-
-from ..distributions import Beta
-from ..internal.optimization import optimize_beta_mode
-
-_log = logging.getLogger("preliz")
+from preliz.distributions.beta import Beta
+from preliz.internal.optimization import optimize_beta_mode
 
 
 def beta_mode(lower, upper, mode, mass=0.94, plot=True, plot_kwargs=None, ax=None):

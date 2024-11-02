@@ -1,8 +1,8 @@
 """Methods to communicate with PyMC."""
 
 # pylint: disable=protected-access
-from sys import modules
 from copy import copy
+from sys import modules
 
 import numpy as np
 

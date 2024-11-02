@@ -1,10 +1,8 @@
-import logging
+import warnings
 
-from ..distributions import Normal
-from ..internal.distribution_helper import valid_distribution
-from ..internal.optimization import relative_error, optimize_max_ent, get_fixed_params
-
-_log = logging.getLogger("preliz")
+from preliz.distributions.normal import Normal
+from preliz.internal.distribution_helper import valid_distribution
+from preliz.internal.optimization import relative_error, optimize_max_ent, get_fixed_params
 
 
 def maxent(
@@ -98,9 +96,9 @@ def maxent(
 
     if distribution.kind == "discrete":
         if not end_points_ints(lower, upper):
-            _log.info(
-                "%s distribution is discrete, but the provided bounds are not integers",
-                distribution.__class__.__name__,
+            warnings.warn(
+                f"\n{distribution.__class__.__name__} distribution is discrete, "
+                "but the provided bounds are not integers"
             )
 
     # Find which parameters has been fixed
@@ -124,10 +122,9 @@ def maxent(
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)
 
     if r_error > 0.01:
-        _log.info(
-            " The requested mass is %.3g, but the computed one is %.3g",
-            mass,
-            computed_mass,
+        warnings.warn(
+            f"\nThe requested mass is {mass:.3g},\n" f"but the computed one is {computed_mass:.3g}",
+            stacklevel=2,
         )
 
     if plot:

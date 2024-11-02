@@ -3,13 +3,12 @@ try:
     from ipywidgets import VBox, HBox, interactive_output
 except ImportError:
     pass
-from preliz.internal.parser import inspect_source, parse_function_for_pred_textboxes
-from preliz.internal.plot_helper import (
-    get_textboxes,
-    plot_decorator,
-    pymc_plot_decorator,
-    bambi_plot_decorator,
+from preliz.ppls.agnostic import (
+    inspect_source,
+    parse_function_for_pred_textboxes,
+    ppl_plot_decorator,
 )
+from preliz.internal.plot_helper import get_textboxes
 
 
 def predictive_explorer(
@@ -46,12 +45,7 @@ def predictive_explorer(
     source, signature, engine = inspect_source(fmodel)
     model = parse_function_for_pred_textboxes(source, signature, engine)
     textboxes = get_textboxes(signature, model)
-    if engine == "pymc":
-        new_fmodel = pymc_plot_decorator(fmodel, samples, kind_plot, references, plot_func)
-    elif engine == "bambi":
-        new_fmodel = bambi_plot_decorator(fmodel, samples, kind_plot, references, plot_func)
-    else:
-        new_fmodel = plot_decorator(fmodel, samples, kind_plot, references, plot_func)
+    new_fmodel = ppl_plot_decorator(fmodel, samples, kind_plot, references, plot_func, engine)
     out = interactive_output(new_fmodel, textboxes)
     default_names = ["__set_xlim__", "__x_min__", "__x_max__", "__resample__"]
     default_controls = [textboxes[name] for name in default_names]

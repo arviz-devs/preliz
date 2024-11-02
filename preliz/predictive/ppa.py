@@ -13,21 +13,28 @@ import numpy as np
 from scipy.spatial import KDTree
 
 
-from ..internal.plot_helper import (
+from preliz.internal.plot_helper import (
     check_inside_notebook,
     plot_pp_samples,
     plot_pp_mean,
 )
-from ..internal.parser import get_prior_pp_samples, from_preliz, from_bambi
-from ..internal.predictive_helper import back_fitting_ppa, select_prior_samples
-from ..distributions import Normal
-from ..distributions.distributions import Distribution
+from preliz.ppls.agnostic import get_prior_pp_samples, from_preliz
+from preliz.ppls.bambi_io import from_bambi
+from preliz.internal.predictive_helper import back_fitting_ppa, select_prior_samples
+from preliz.distributions import Normal
+from preliz.distributions.distributions import Distribution
 
 _log = logging.getLogger("preliz")
 
 
 def ppa(
-    fmodel, draws=2000, references=0, boundaries=(-np.inf, np.inf), target=None, engine="preliz"
+    fmodel,
+    draws=2000,
+    references=0,
+    boundaries=(-np.inf, np.inf),
+    target=None,
+    new_families=True,
+    engine="preliz",
 ):
     """
     Prior predictive check assistant.
@@ -49,6 +56,9 @@ def ppa(
         Target distribution. The first shown distributions will be selected to be as close
         as possible to `target`. Available options are, a PreliZ distribution or a 2-tuple with
         the first element representing the mean and the second the standard deviation.
+    new_families : bool
+        If True, the method will return the best fitting distribution from a set of common
+        distributions
     engine : str
         Library used to define the model. Either `preliz` or `bambi`. Defaults to `preliz`
     """
@@ -56,7 +66,9 @@ def ppa(
 
     _log.info(""""This is an experimental method under development, use with caution.""")
 
-    filter_dists = FilterDistribution(fmodel, draws, references, boundaries, target, engine)
+    filter_dists = FilterDistribution(
+        fmodel, draws, references, boundaries, target, new_families, engine
+    )
     filter_dists()
 
     output = widgets.Output()
@@ -140,13 +152,14 @@ def ppa(
 
 
 class FilterDistribution:  # pylint:disable=too-many-instance-attributes
-    def __init__(self, fmodel, draws, references, boundaries, target, engine):
+    def __init__(self, fmodel, draws, references, boundaries, target, new_families, engine):
         self.fmodel = fmodel
         self.source = ""  # string representation of the model
         self.draws = draws
         self.references = references
         self.boundaries = boundaries
         self.target = target
+        self.new_families = new_families
         self.engine = engine
         self.pp_samples = None  # prior predictive samples
         self.prior_samples = None  # prior samples used for backfitting
@@ -173,6 +186,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         elif self.engine == "bambi":
             self.fmodel, variables, self.model = from_bambi(self.fmodel, self.draws)
 
+        print(variables, self.model)
         self.pp_samples, self.prior_samples = get_prior_pp_samples(
             self.fmodel, variables, self.draws, self.engine
         )
@@ -386,7 +400,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
         if len(selected) > 4:
             subsample = select_prior_samples(selected, self.prior_samples, self.model)
 
-            string, _ = back_fitting_ppa(self.model, subsample, new_families=False)
+            string, _ = back_fitting_ppa(self.model, subsample, new_families=self.new_families)
 
             self.fig.clf()
             plt.text(0.05, 0.5, string, fontsize=14)

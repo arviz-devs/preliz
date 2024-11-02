@@ -5,7 +5,6 @@ import sys
 try:
     from IPython import get_ipython
     from ipywidgets import FloatSlider, IntSlider, FloatText, IntText, Checkbox, ToggleButton
-    from pymc import sample_prior_predictive
 except ImportError:
     pass
 
@@ -13,8 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
 from matplotlib.ticker import MaxNLocator
-from .logging import disable_pymc_sampling_logs
-from .narviz import hdi, kde
+from preliz.internal.narviz import hdi, kde
 
 
 def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False, ax=None):
@@ -417,63 +415,6 @@ def plot_decorator(func, iterations, kind_plot, references, plot_func):
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
 
-        if plot_func is None:
-            plot_repr(results, kind_plot, references, iterations, ax)
-        else:
-            plot_func(results, ax)
-
-    return looper
-
-
-def bambi_plot_decorator(func, iterations, kind_plot, references, plot_func):
-    def looper(*args, **kwargs):
-        kwargs.pop("__resample__")
-        x_min = kwargs.pop("__x_min__")
-        x_max = kwargs.pop("__x_max__")
-        if not kwargs.pop("__set_xlim__"):
-            x_min = None
-            x_max = None
-            auto = True
-        else:
-            auto = False
-
-        model = func(*args, **kwargs)
-        model.build()
-        with disable_pymc_sampling_logs():
-            idata = model.prior_predictive(iterations)
-        results = (
-            idata["prior_predictive"].stack(sample=("chain", "draw"))[model.response_name].values.T
-        )
-
-        _, ax = plt.subplots()
-        ax.set_xlim(x_min, x_max, auto=auto)
-        if plot_func is None:
-            plot_repr(results, kind_plot, references, iterations, ax)
-        else:
-            plot_func(results, ax)
-
-    return looper
-
-
-def pymc_plot_decorator(func, iterations, kind_plot, references, plot_func):
-    def looper(*args, **kwargs):
-        kwargs.pop("__resample__")
-        x_min = kwargs.pop("__x_min__")
-        x_max = kwargs.pop("__x_max__")
-        if not kwargs.pop("__set_xlim__"):
-            x_min = None
-            x_max = None
-            auto = True
-        else:
-            auto = False
-        with func(*args, **kwargs) as model:
-            obs_name = model.observed_RVs[0].name
-            with disable_pymc_sampling_logs():
-                idata = sample_prior_predictive(samples=iterations)
-            results = idata["prior_predictive"].stack(sample=("chain", "draw"))[obs_name].values.T
-
-        _, ax = plt.subplots()
-        ax.set_xlim(x_min, x_max, auto=auto)
         if plot_func is None:
             plot_repr(results, kind_plot, references, iterations, ax)
         else:
