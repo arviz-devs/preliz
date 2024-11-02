@@ -13,10 +13,9 @@ import numpy as np
 
 
 from preliz import distributions
-from preliz.internal.distribution_helper import init_vals, get_distributions
+from preliz.internal.distribution_helper import init_vals
 from preliz.internal.plot_helper import plot_repr
-
-
+from preliz.distributions import Gamma, Normal, HalfNormal
 from preliz.unidimensional.mle import mle
 from preliz.ppls.pymc_io import get_model_information, write_pymc_string
 from preliz.ppls.bambi_io import (
@@ -33,7 +32,7 @@ except ImportError:
     pass
 
 
-def posterior_to_prior(model, idata, alternative=None, engine="auto"):
+def posterior_to_prior(model, idata, new_families=None, engine="auto"):
     """
     Fit a posterior from a model to its prior
 
@@ -46,7 +45,7 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
     model : A PyMC or a Bambi Model
     idata : InferenceData
         InferenceData with a posterior group.
-    alternative : "auto", list or dict
+    new_families : "auto", list or dict
         Defaults to None, the samples are fit to the original prior distribution.
         If "auto", the method evaluates the fit to the original prior plus a set of
         predefined distributions.
@@ -68,7 +67,7 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
 
     _, _, preliz_model, _, untransformed_var_info, *_ = get_model_information(model)
 
-    new_priors = back_fitting_idata(idata, preliz_model, alternative)
+    new_priors = back_fitting_idata(idata, preliz_model, new_families)
 
     if engine == "bambi":
         new_model = write_bambi_string(new_priors, untransformed_var_info)
@@ -78,11 +77,11 @@ def posterior_to_prior(model, idata, alternative=None, engine="auto"):
     return new_model
 
 
-def back_fitting_idata(idata, model_info, alternative):
+def back_fitting_idata(idata, model_info, new_families):
     new_priors = {}
     posterior = idata.posterior.stack(sample=("chain", "draw"))
 
-    if alternative is None:
+    if new_families is None:
         for var, dist in model_info.items():
             idx, _ = mle([dist], posterior[var].values, plot=False)
             new_priors[var] = dist
@@ -90,13 +89,13 @@ def back_fitting_idata(idata, model_info, alternative):
         for var, dist in model_info.items():
             dists = [dist]
 
-            if alternative == "auto":
-                alt = get_distributions(["Normal", "HalfNormal", "Gamma"])
+            if new_families == "auto":
+                alt = [Normal(), HalfNormal(), Gamma()]
                 dists += [a for a in alt if dist.__class__.__name__ != a.__class__.__name__]
-            elif isinstance(alternative, list):
-                dists += alternative
-            elif isinstance(alternative, dict):
-                dists += alternative.get(var, [])
+            elif isinstance(new_families, list):
+                dists += new_families
+            elif isinstance(new_families, dict):
+                dists += new_families.get(var, [])
 
             idx, _ = mle(dists, posterior[var].values, plot=False)
             new_priors[var] = dists[idx[0]]

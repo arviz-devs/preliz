@@ -108,7 +108,7 @@ def ppe(model, target, method="projective", engine="auto", random_state=0):
         with model:
             idata = fit(method="pathfinder", num_samples=1000)
 
-    new_priors = back_fitting_idata(idata, preliz_model, alternative=False)
+    new_priors = back_fitting_idata(idata, preliz_model, new_families=False)
     if engine == "bambi":
         new_model = write_bambi_string(new_priors, untransformed_var_info)
     elif engine == "pymc":
