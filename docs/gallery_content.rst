@@ -367,7 +367,7 @@ Continuous Distributions
       Von Mises
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.wald.Wald
+      :link: ./examples/gallery/wald.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
