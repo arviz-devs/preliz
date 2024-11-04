@@ -12,7 +12,7 @@ def from_precision(precision):
 
 
 def to_precision(sigma):
-    precision = 1 / sigma**2
+    precision = 1 / (eps + sigma**2)
     return precision
 
 
@@ -148,38 +148,15 @@ init_vals = {
 }
 
 
-def get_distributions(dist_names=None, exclude=None):
+def get_distributions(dist_names=None):
 
     if dist_names is None:
         all_distributions = modules["preliz.distributions"].__all__
     else:
         all_distributions = dist_names
 
-    if exclude is None:
-        exclude = []
-    if exclude == "auto":
-        exclude = [
-            "Beta",
-            "BetaScaled",
-            "Triangular",
-            "TruncatedNormal",
-            "Uniform",
-            "VonMises",
-            "Categorical",
-            "DiscreteUniform",
-            "HyperGeometric",
-            "zeroInflatedBinomial",
-            "ZeroInflatedNegativeBinomial",
-            "ZeroInflatedPoisson",
-            "MvNormal",
-            "Mixture",
-        ]
-
     distributions = []
     for a_dist in all_distributions:
         dist = getattr(modules["preliz.distributions"], a_dist)()
-        if dist.__class__.__name__ not in exclude:
-            distributions.append(dist)
-    if exclude:
-        return exclude, distributions
+        distributions.append(dist)
     return distributions

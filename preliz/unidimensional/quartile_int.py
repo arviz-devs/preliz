@@ -4,13 +4,13 @@ except ImportError:
     pass
 
 from preliz.internal.optimization import fit_to_quartile
-from ..internal.plot_helper import (
+from preliz.internal.plot_helper import (
     create_figure,
     check_inside_notebook,
     representations,
     reset_dist_panel,
 )
-from ..internal.distribution_helper import process_extra, get_distributions
+from preliz.internal.distribution_helper import process_extra, get_distributions
 
 
 class QuartileInt:

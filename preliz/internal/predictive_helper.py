@@ -1,12 +1,9 @@
 import numpy as np
 
 
-from .plot_helper import (
-    repr_to_matplotlib,
-)
-
-from ..unidimensional import mle
-from .distribution_helper import get_distributions
+from preliz.internal.plot_helper import repr_to_matplotlib
+from preliz.internal.distribution_helper import get_distributions
+from preliz.unidimensional import mle
 
 
 def back_fitting_ppa(model, subset, new_families=True):
@@ -22,14 +19,17 @@ def back_fitting_ppa(model, subset, new_families=True):
     if new_families:
         string += "\nYour selection is consistent with the priors (new families):\n"
 
-        exclude, distributions = get_distributions(None, exclude="auto")
+        # We should store this in a central place
+        # So we use the same families for other functions
+        common_cont = ["Gamma", "Exponential"]
+        common_disc = ["Poisson", "NegativeBinomial"]
         for name, dist in model.items():
-            if dist.__class__.__name__ in exclude:
-                dist._fit_mle(subset[name])
-            else:
-                idx, _ = mle(distributions, subset[name], plot=False)
-                dist = distributions[idx[0]]
-            string += f"{name} = {repr_to_matplotlib(dist)}\n"
+            if dist.kind == "continuous":
+                distributions = get_distributions(set([dist.__class__.__name__] + common_cont))
+            elif dist.kind == "discrete":
+                distributions = get_distributions(set([dist.__class__.__name__] + common_disc))
+            idx, _ = mle(distributions, subset[name], plot=False)
+            string += f"{name} = {repr_to_matplotlib(distributions[idx[0]])}\n"
 
     return string, np.concatenate([dist.params for dist in model.values()])
 

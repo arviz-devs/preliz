@@ -1,12 +1,9 @@
-import logging
-
+import warnings
 import numpy as np
 
-from ..distributions import Normal
-from ..internal.distribution_helper import valid_distribution
-from ..internal.optimization import relative_error, optimize_quartile, get_fixed_params
-
-_log = logging.getLogger("preliz")
+from preliz.distributions.normal import Normal
+from preliz.internal.distribution_helper import valid_distribution
+from preliz.internal.optimization import relative_error, optimize_quartile, get_fixed_params
 
 
 def quartile(
@@ -112,9 +109,12 @@ def quartile(
     r_error, _ = relative_error(distribution, q1, q3, 0.5)
 
     if r_error > 0.01:
-        _log.info(
-            "The expected masses are 0.25, 0.5, 0.75\n The computed ones are: %.2g, %.2g, %.2g",
-            *distribution.cdf(quartiles)
+        computed_masses = distribution.cdf(quartiles).astype(float)
+        warnings.warn(
+            f"\nThe expected masses are 0.25, 0.5, 0.75\n"
+            f"The computed ones are: {computed_masses[0]:.2g}, "
+            f"{computed_masses[1]:.2g}, {computed_masses[2]:.2g}",
+            stacklevel=2,
         )
 
     if plot:

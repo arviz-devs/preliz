@@ -5,8 +5,7 @@ import numpy as np
 
 from preliz.internal.optimization import optimize_pymc_model
 from preliz.ppls.bambi_io import get_pymc_model, write_bambi_string
-from preliz.ppls.agnostic import back_fitting_idata
-from preliz.internal.parser import get_engine
+from preliz.ppls.agnostic import back_fitting_idata, get_engine
 from preliz.ppls.pymc_io import (
     get_model_information,
     get_initial_guess,
@@ -109,7 +108,7 @@ def ppe(model, target, method="projective", engine="auto", random_state=0):
         with model:
             idata = fit(method="pathfinder", num_samples=1000)
 
-    new_priors = back_fitting_idata(idata, preliz_model, alternative=False)
+    new_priors = back_fitting_idata(idata, preliz_model, new_families=False)
     if engine == "bambi":
         new_model = write_bambi_string(new_priors, untransformed_var_info)
     elif engine == "pymc":

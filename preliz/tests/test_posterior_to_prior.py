@@ -17,10 +17,10 @@ with pm.Model() as model:
 
 def test_p2p_pymc():
     pz.posterior_to_prior(model, idata)
-    assert 'Gamma\x1b[0m("b", alpha=' in pz.posterior_to_prior(model, idata, alternative="auto")
-    pz.posterior_to_prior(model, idata, alternative=[pz.LogNormal()])
+    assert 'Gamma\x1b[0m("b", alpha=' in pz.posterior_to_prior(model, idata, new_families="auto")
+    pz.posterior_to_prior(model, idata, new_families=[pz.LogNormal()])
     assert 'Gamma\x1b[0m("b", mu=' in pz.posterior_to_prior(
-        model, idata, alternative={"b": [pz.Gamma(mu=0)]}
+        model, idata, new_families={"b": [pz.Gamma(mu=0)]}
     )
 
 
@@ -39,9 +39,9 @@ bmb_idata = bmb_model.fit(tune=200, draws=200, random_seed=SEED)
 def test_p2p_bambi():
     pz.posterior_to_prior(bmb_model, bmb_idata)
     assert 'Gamma\x1b[0m", alpha=' in pz.posterior_to_prior(
-        bmb_model, bmb_idata, alternative="auto"
+        bmb_model, bmb_idata, new_families="auto"
     )
-    pz.posterior_to_prior(bmb_model, bmb_idata, alternative=[pz.LogNormal()])
+    pz.posterior_to_prior(bmb_model, bmb_idata, new_families=[pz.LogNormal()])
     assert 'Normal\x1b[0m", mu=' in pz.posterior_to_prior(
-        bmb_model, bmb_idata, alternative={"Intercept": [pz.Normal(mu=1, sigma=1)]}
+        bmb_model, bmb_idata, new_families={"Intercept": [pz.Normal(mu=1, sigma=1)]}
     )

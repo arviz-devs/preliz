@@ -9,10 +9,10 @@ try:
 except ImportError:
     pass
 
-from ..internal.optimization import fit_to_epdf
-from ..internal.plot_helper import check_inside_notebook, representations
-from ..internal.distribution_helper import process_extra, get_distributions
-from ..distributions import all_discrete, all_continuous
+from preliz.internal.optimization import fit_to_epdf
+from preliz.internal.plot_helper import check_inside_notebook, representations
+from preliz.internal.distribution_helper import process_extra, get_distributions
+from preliz.distributions import all_discrete, all_continuous
 
 
 class Roulette:

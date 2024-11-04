@@ -1,6 +1,7 @@
 import numpy as np
 
-from preliz.internal.distribution_helper import process_extra, get_distributions
+from preliz.internal.distribution_helper import get_distributions
+from preliz.internal.distribution_helper import process_extra
 from preliz.internal.optimization import fit_to_epdf
 
 
