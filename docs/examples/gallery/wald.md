@@ -12,9 +12,9 @@ kernelspec:
 
 <audio controls> <source src="../../_static/wald.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-The Wald distribution, also known as the Inverse Gaussian distribution, is a continuous probability distribution characterized by its positive support and skewed shape. It is defined by two parameters: the mean ($\mu$) and the scale ($\lambda$).
+The Wald distribution, also known as the Inverse Gaussian distribution, is a continuous probability distribution characterized by its positive support and skewed shape. It is defined by two parameters: the mean ($\mu$) and the scale ($\lambda$). It is also used in survival analysis to model the time to an event.
 
-The Wald distribution is used to describe the first passage time of a Brownian motion with drift to a fixed boundary. It is also used in survival analysis to model the time to an event.
+The "Inverse" in the name can be misleading. The Wald distribution describes the time a particle subject to Brownian motion will drift to a certain point. Meanwhile, the Gaussian distribution gives the position of the motion at a fixed time. Only in that sense, the Wald is the "inverse" of the Gaussian.
 
 ## Parametrization
 
