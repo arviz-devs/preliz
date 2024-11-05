@@ -379,7 +379,7 @@ Continuous Distributions
       Wald
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.weibull.Weibull
+      :link: ./examples/gallery/weibull.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
