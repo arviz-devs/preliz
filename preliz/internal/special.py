@@ -462,6 +462,8 @@ def expit(x):
 def xlogy(x, y):
     if x == 0:
         return 0.0
+    if y == 0:
+        return -np.inf
     else:
         return x * np.log(y)
 
