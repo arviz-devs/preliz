@@ -14,7 +14,6 @@ kernelspec:
 
 The Beta-Binomial distribution is a discrete probability distribution derived from the Binomial distribution, with its probability of success in each trial governed by a Beta distribution. This distribution is characterized by three parameters:  $\alpha$, $\beta$, and $n$, where $\alpha$ and $\beta$ are the shape parameters of the Beta distribution and $n$ is the number of trials in the Binomial distribution.
 
-In Bayesian statistics, the Beta-Binomial distribution is commonly used as a prior for the probability of success in a Bernoulli trial. This makes it particularly useful in modeling scenarios with uncertainty in the success probability.
 
 
 ## Probability Mass Function (PMF):
