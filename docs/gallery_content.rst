@@ -408,7 +408,7 @@ Discrete Distributions
       Bernoulli
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.betabinomial.BetaBinomial
+      :link: ./examples/gallery/betabinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
