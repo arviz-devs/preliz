@@ -35,8 +35,7 @@ languages (PPL) in the Python ecosystem like PyMC and PyStan, while remaining ag
 A good companion for PreliZ is `PriorDB <https://n-kall.github.io/priorDB/>`_, a database of prior distributions for Bayesian analysis. 
 It is a community-driven project that aims to provide a comprehensive collection of prior distributions for a wide range of models and applications. 
 
-The Zen of PreliZ
------------------
+**The Zen of PreliZ**
 
 * Being open source, community-driven, diverse and inclusive.
 * Avoid fully-automated solutions, keep the human in the loop.
@@ -49,15 +48,23 @@ The Zen of PreliZ
 * Being agnostic of the underlying probabilistic programming language.
 * Being modular.
 
+Examples and references
+=======================
 
-Dependencies
-============
-PreliZ is tested on Python 3.11+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
+.. toctree::
+   :maxdepth: 1
 
-
+   examples/param_space_1d_examples
+   examples/observed_space_examples
+   gallery_content
+   api_reference
+   changelog
 
 Installation
 ============
+
+PreliZ is tested on Python 3.11+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
+
 
 For the latest release, you can install PreliZ either using pip or conda-forge:
 
@@ -89,8 +96,9 @@ Using conda-forge
 
     conda install -c conda-forge preliz
 
-Development
-===========
+
+Development version
+-------------------
 
 The latest development version can be installed from the main branch using pip:
 
@@ -99,14 +107,20 @@ The latest development version can be installed from the main branch using pip:
   pip install git+https://github.com/arviz-devs/preliz.git
 
 
+Contributing
+============
+We welcome contributions from interested individuals or groups! For information about contributing to PreliZ check out our instructions, policies, and guidelines `here <https://github.com/arviz-devs/preliz/blob/main/CONTRIBUTING.md>`_.
+
+See the `GitHub contributor page <https://github.com/arviz-devs/preliz/graphs/contributors>`_.
+
 
 Citation
 ========
 
-If you find PreliZ useful in your work, we kindly request that you cite the following paper:
+If you find PreliZ useful in your work we kindly request that you cite the following paper:
 
 ::
-  
+
   @article{Icazatti_2023,
   author = {Icazatti, Alejandro and Abril-Pla, Oriol and Klami, Arto and Martin, Osvaldo A},
   doi = {10.21105/joss.05499},
@@ -121,29 +135,7 @@ If you find PreliZ useful in your work, we kindly request that you cite the foll
   }
 
 
+Donations
+=========
 
-Contributing
-============
-We welcome contributions from interested individuals or groups! For information about contributing to PreliZ check out our instructions, policies, and guidelines `here <https://github.com/arviz-devs/preliz/blob/main/CONTRIBUTING.md>`_.
-
-Contributors
-============
-See the `GitHub contributor page <https://github.com/arviz-devs/preliz/graphs/contributors>`_.
-
-Contents
-========
-
-.. toctree::
-   :maxdepth: 2
-
-   examples/param_space_1d_examples
-   examples/observed_space_examples
-   gallery_content
-   api_reference
-   changelog
-
-Indices
-=======
-
-* :ref:`genindex`
-* :ref:`modindex`
+PreliZ, as other ArviZ-devs projects, is a non-profit project under the NumFOCUS umbrella. If you want to support PreliZ financially, you can donate `here <https://numfocus.org/donate-to-arviz>`_.
