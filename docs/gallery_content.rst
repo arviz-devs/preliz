@@ -420,7 +420,7 @@ Discrete Distributions
       Beta Binomial
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.binomial.Binomial
+      :link: ./examples/gallery/binomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
