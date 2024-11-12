@@ -14,7 +14,6 @@ kernelspec:
 
 The Binomial distribution is a discrete probability distribution that describes the number of successes in a fixed number $n$ of independent Bernoulli trials (yes/no experiments), each with the same probability of success $p$. 
 
-The Binomial distribution is frequently used to model the number of successes in a sample of size $n$ drawn with replacement from a population of size $N$ that contains a proportion $p$ of successes.
 
 ## Probability Mass Function (PMF):
 
