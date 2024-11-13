@@ -69,7 +69,7 @@ F(x \mid p) = \begin{cases}
 \end{cases}
 $$
 
-where \( p \) is the array of probabilities for each category.
+where $p$ is the array of probabilities for each category.
 
 ```{seealso}
 :class: seealso
