@@ -444,7 +444,7 @@ Discrete Distributions
       Categorical
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.discrete_uniform.DiscreteUniform
+      :link: ./examples/gallery/discrete_uniform.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
