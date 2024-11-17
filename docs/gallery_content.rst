@@ -432,7 +432,7 @@ Discrete Distributions
       Binomial
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.categorical.Categorical
+      :link: ./examples/gallery/categorical.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
