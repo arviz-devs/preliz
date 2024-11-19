@@ -229,19 +229,22 @@ def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
 def optimize_hdi(dist, mass):
     def interval_loss(params):
         cdf = dist.cdf(params)
-        loss = (cdf[1] - cdf[0]) - mass
+        loss = (cdf[1] - cdf[0] + mass_at_boundaries) - mass
         return loss
 
     def interval_short(params):
-        lower, upper = params
-        return upper - lower
+        if params[1] < params[0]:
+            return np.inf
+        return params[1] - params[0]
 
     cons = {
         "type": "eq",
         "fun": interval_loss,
     }
-    init_vals = dist.eti(mass=mass)
-    bounds = np.array([dist.support])
+    lower, upper = dist.support
+    mass_at_boundaries = dist.pdf(lower) + dist.pdf(upper)
+    init_vals = dist.eti(mass=mass, fmt="none")
+    bounds = [(lower, upper)]
     opt = minimize(interval_short, x0=init_vals, bounds=bounds, constraints=cons)
 
     lower, upper = opt.x
