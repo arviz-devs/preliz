@@ -488,6 +488,8 @@ def xlogx(x):
 def xprody(x, y):
     if np.isinf(x):
         return 0
+    if np.isinf(y):
+        return 0
     else:
         return x * y
 
