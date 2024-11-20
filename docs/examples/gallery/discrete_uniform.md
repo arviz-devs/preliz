@@ -72,7 +72,7 @@ $$
 ```{seealso}
 :class: seealso
 
-** Common Alternatives:**
+**Common Alternatives:**
 
 - [Categorical](categotical.md) - The Discrete Uniform distribution is a special case of the Categorical distribution  where all elements of $p$ are equal.
 

@@ -456,7 +456,7 @@ Discrete Distributions
       Discrete Uniform
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.discrete_weibull.DiscreteWeibull
+      :link: ./examples/gallery/discrete_weibull.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
