@@ -34,13 +34,19 @@ def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False,
         Whether to do the plot along the x-axis (default) or on the y-axis
     ax : matplotlib axis
     """
+
+    if isinstance(distribution, (np.ndarray, list, tuple)):
+        dist_type = "sample"
+    else:
+        dist_type = "preliz"
+
     if interval == "quantiles":
         if levels is None:
             levels = [0.05, 0.25, 0.5, 0.75, 0.95]
         elif len(levels) not in (5, 3, 1, 0):
             raise ValueError("levels should have 5, 3, 1 or 0 elements")
 
-        if isinstance(distribution, (np.ndarray, list, tuple)):
+        if dist_type == "sample":
             q_s = np.quantile(distribution, levels).tolist()
         else:
             q_s = distribution.ppf(levels).tolist()
@@ -52,7 +58,7 @@ def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False,
         elif len(levels) not in (2, 1):
             raise ValueError("levels should have 2 or 1 elements")
 
-        if isinstance(distribution, (np.ndarray, list, tuple)):
+        if dist_type == "sample":
             if interval == "hdi":
                 func = hdi
             if interval == "eti":
@@ -77,21 +83,32 @@ def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False,
 
     q_s_size = len(q_s)
 
-    if rotated:
-        if q_s_size == 5:
-            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", solid_capstyle="butt", lw=1.5)
-        if q_s_size > 2:
-            ax.plot([0, 0], (q_s.pop(0), q_s.pop(-1)), "k", solid_capstyle="butt", lw=4)
-        if q_s_size > 0:
-            ax.plot(0, q_s[0], "wo", mec="k")
-    else:
-        if q_s_size == 5:
-            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", solid_capstyle="butt", lw=1.5)
-        if q_s_size > 2:
-            ax.plot((q_s.pop(0), q_s.pop(-1)), [0, 0], "k", solid_capstyle="butt", lw=4)
+    if q_s_size == 5:
+        _plot_sub_iterval(q_s, lw=1.5, rotated=rotated, ax=ax)
+    if q_s_size > 2:
+        _plot_sub_iterval(q_s, lw=4, rotated=rotated, ax=ax)
+    if q_s_size > 0:
+        x, y = q_s[0], 0
+        if rotated:
+            x, y = y, x
+        ax.plot(x, y, "wo", mec="k")
 
-        if q_s_size > 0:
-            ax.plot(q_s[0], 0, "wo", mec="k")
+
+def _plot_sub_iterval(q_s, lw, rotated, ax):
+    lower, upper = q_s.pop(0), q_s.pop(-1)
+    if lower < upper:
+        x, y = (lower, upper), [0, 0]
+        if rotated:
+            x, y = y, x
+        ax.plot(x, y, "k", solid_capstyle="butt", lw=lw)
+    else:
+        x0, y0 = (lower, np.pi), [0, 0]
+        x1, y1 = (-np.pi, upper), [0, 0]
+        if rotated:
+            x0, y0 = y0, x0
+            x1, y1 = y1, x1
+        ax.plot(x0, y0, "k", solid_capstyle="butt", lw=lw)
+        ax.plot(x1, y1, "k", solid_capstyle="butt", lw=lw)
 
 
 def eti(distribution, mass):

@@ -119,6 +119,20 @@ class VonMises(Continuous):
         mu = np.mod(mu + np.pi, 2 * np.pi) - np.pi
         self._update(mu, kappa)
 
+    def eti(self, mass=0.94, fmt=".2f"):
+        mean = self.mu
+        self.mu = 0
+        hdi_min, hdi_max = super().eti(mass=mass, fmt=fmt)
+        self.mu = mean
+        return _warp_interval(hdi_min, hdi_max, self.mu, fmt)
+
+    def hdi(self, mass=0.94, fmt=".2f"):
+        mean = self.mu
+        self.mu = 0
+        hdi_min, hdi_max = super().hdi(mass=mass, fmt=fmt)
+        self.mu = mean
+        return _warp_interval(hdi_min, hdi_max, self.mu, fmt)
+
 
 def nb_cdf(x, pdf):
     if isinstance(x, (int, float)):
@@ -170,3 +184,15 @@ def nb_logpdf(x, mu, kappa):
 
 def nb_neg_logpdf(x, mu, kappa):
     return -(nb_logpdf(x, mu, kappa)).sum()
+
+
+def _warp_interval(hdi_min, hdi_max, mu, fmt):
+    hdi_min = hdi_min + mu
+    hdi_max = hdi_max + mu
+
+    lower_tail = np.arctan2(np.sin(hdi_min), np.cos(hdi_min))
+    upper_tail = np.arctan2(np.sin(hdi_max), np.cos(hdi_max))
+    if fmt != "none":
+        lower_tail = float(f"{lower_tail:{fmt}}")
+        upper_tail = float(f"{upper_tail:{fmt}}")
+    return (lower_tail, upper_tail)
