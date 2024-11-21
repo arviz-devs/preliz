@@ -468,7 +468,7 @@ Discrete Distributions
       Discrete Weibull
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.geometric.Geometric
+      :link: ./examples/gallery/geometric.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
