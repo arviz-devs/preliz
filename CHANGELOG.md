@@ -1,3 +1,38 @@
+<a id="0.12.0"></a>
+# [0.12.0](https://github.com/arviz-devs/preliz/releases/tag/0.12.0) - 2024-11-21
+
+## What's Changed
+
+###  New Features
+* Make `quartile_int` a class by [@rohanbabbar04](https://github.com/rohanbabbar04) in [#570](https://github.com/arviz-devs/preliz/pull/570)
+* Add `Mixture` modifier by [@aloctavodia](https://github.com/aloctavodia) in [#572](https://github.com/arviz-devs/preliz/pull/572)
+* Add `to_bambi` method by [@aloctavodia](https://github.com/aloctavodia) in [#578](https://github.com/arviz-devs/preliz/pull/578)
+
+### Maintenance and bug fixes
+* Refactor `ppe` by [@aloctavodia](https://github.com/aloctavodia) in [#579](https://github.com/arviz-devs/preliz/pull/579)
+* fix corner case `Weibull` pdf by [@aloctavodia](https://github.com/aloctavodia) in [#583](https://github.com/arviz-devs/preliz/pull/583)
+* fix corner case hdi `Censored` by [@aloctavodia](https://github.com/aloctavodia) in [#590](https://github.com/arviz-devs/preliz/pull/590)
+* Circular intervals for `VonMises` by [@aloctavodia](https://github.com/aloctavodia) in [#592](https://github.com/arviz-devs/preliz/pull/592)
+* `Dirichlet`: more robust joint pdf for larger values of alpha by [@aloctavodia](https://github.com/aloctavodia) in [#593](https://github.com/arviz-devs/preliz/pull/593)
+
+### Documentation
+* Distributions Gallery: Add Triangular by [@aleicazatti](https://github.com/aleicazatti) in [#571](https://github.com/arviz-devs/preliz/pull/571)
+* Distributions Gallery: Add TruncatedNormal by [@aleicazatti](https://github.com/aleicazatti) in [#573](https://github.com/arviz-devs/preliz/pull/573)
+* Distributions Gallery: Add VonMises by [@aleicazatti](https://github.com/aleicazatti) in [#574](https://github.com/arviz-devs/preliz/pull/574)
+* Distributions Gallery: Add Wald by [@aleicazatti](https://github.com/aleicazatti) in [#581](https://github.com/arviz-devs/preliz/pull/581)
+* Distributions Gallery: Add Weibull by [@aleicazatti](https://github.com/aleicazatti) in [#582](https://github.com/arviz-devs/preliz/pull/582)
+* Distributions Gallery: Add BetaBinomial by [@aleicazatti](https://github.com/aleicazatti) in [#584](https://github.com/arviz-devs/preliz/pull/584)
+* Distribution Gallery: Add Binomial by [@aleicazatti](https://github.com/aleicazatti) in [#586](https://github.com/arviz-devs/preliz/pull/586)
+* Distribution Gallery: Add DiscreteUniform by [@aleicazatti](https://github.com/aleicazatti) in [#589](https://github.com/arviz-devs/preliz/pull/589)
+* Distribution Gallery: Add Categorical by [@aleicazatti](https://github.com/aleicazatti) in [#588](https://github.com/arviz-devs/preliz/pull/588)
+* Distribution Gallery: Add DiscreteWeibull by [@aleicazatti](https://github.com/aleicazatti) in [#591](https://github.com/arviz-devs/preliz/pull/591)
+* Reorganize and update docs by [@aloctavodia](https://github.com/aloctavodia) in [#594](https://github.com/arviz-devs/preliz/pull/594)
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.11.0...0.12.0
+
+[Changes][0.12.0]
+
+
 <a id="0.11.0"></a>
 # [0.11.0](https://github.com/arviz-devs/preliz/releases/tag/0.11.0) - 2024-10-25
 
@@ -640,6 +675,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.12.0]: https://github.com/arviz-devs/preliz/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/arviz-devs/preliz/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/arviz-devs/preliz/compare/0.9.1...0.10.0
 [0.9.1]: https://github.com/arviz-devs/preliz/compare/0.9.0...0.9.1
