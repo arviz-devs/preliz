@@ -48,15 +48,21 @@ It is a community-driven project that aims to provide a comprehensive collection
 * Being agnostic of the underlying probabilistic programming language.
 * Being modular.
 
-Examples and references
-=======================
+Examples
+========
+
+.. toctree::
+   :maxdepth: 2
+
+   examples
+   gallery_content
+
+References
+==========
 
 .. toctree::
    :maxdepth: 1
 
-   examples/param_space_1d_examples
-   examples/observed_space_examples
-   gallery_content
    api_reference
    changelog
 
