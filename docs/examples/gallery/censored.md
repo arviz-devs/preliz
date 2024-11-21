@@ -8,6 +8,7 @@ kernelspec:
   language: python
   name: python3
 ---
+(Censored_gallery)=
 # Censored Distribution
 
 <audio controls> <source src="../../_static/censored.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
