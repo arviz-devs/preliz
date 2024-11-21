@@ -15,7 +15,7 @@ from .unidimensional import *
 from .multidimensional import *
 
 
-__version__ = "0.11.0"
+__version__ = "0.12.0"
 
 
 # Allow legend outside plot in maxent to be included when saving a figure
