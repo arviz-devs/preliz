@@ -468,7 +468,7 @@ Discrete Distributions
       Discrete Weibull
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.geometric.Geometric
+      :link: ./distributions.html#preliz.distributions.geometric.Geometric
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -480,7 +480,7 @@ Discrete Distributions
       Geometric
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.hypergeometric.HyperGeometric
+      :link: ./distributions.html#preliz.distributions.hypergeometric.HyperGeometric
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -516,7 +516,7 @@ Discrete Distributions
       Poisson
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.zi_binomial.ZeroInflatedBinomial
+      :link: ./distributions.html#preliz.distributions.zi_binomial.ZeroInflatedBinomial
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -528,7 +528,7 @@ Discrete Distributions
       Zero-Inflated Binomial
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.zi_negativebinomial.ZeroInflatedNegativeBinomial
+      :link: ./distributions.html#preliz.distributions.zi_negativebinomial.ZeroInflatedNegativeBinomial
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -540,7 +540,7 @@ Discrete Distributions
       Zero-Inflated Negative Binomial
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.zi_poisson.ZeroInflatedPoisson
+      :link: ./distributions.html#preliz.distributions.zi_poisson.ZeroInflatedPoisson
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -557,7 +557,7 @@ Continuous Multivariate Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.continuous_multivariate.Dirichlet
+      :link: ./distributions.html#preliz.distributions.continuous_multivariate.Dirichlet
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -569,7 +569,7 @@ Continuous Multivariate Distributions
       Dirichlet
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.continuous_multivariate.MvNormal
+      :link: ./distributions.html#preliz.distributions.continuous_multivariate.MvNormal
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -598,7 +598,7 @@ Distribution Modifiers
       Censored
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.hurdle.Hurdle
+      :link: ./distributions.html#preliz.distributions.hurdle.Hurdle
       :text-align: center
       :shadow: none
       :class-card: example-gallery
@@ -610,7 +610,7 @@ Distribution Modifiers
       Hurdle
 
    .. grid-item-card::
-      :link: ./api_reference.html#preliz.distributions.mixture.Mixture
+      :link: ./distributions.html#preliz.distributions.mixture.Mixture
       :text-align: center
       :shadow: none
       :class-card: example-gallery
