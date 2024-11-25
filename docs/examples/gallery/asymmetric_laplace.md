@@ -16,9 +16,26 @@ The Asymmetric Laplace distribution (ALD) is a continuous probability distributi
 
 The difference of two variates exponentially distributed with different means and rate parameters will be distributed according to the ALD. When the two rate parameters are equal, the difference will be distributed according to the Laplace distribution.
 
-The ALD, with parameters  $\mu$, $b$ and $q$, is commonly used for performing quantile regression in a Bayesian inference context, with $q$ indicating the desired quantile. 
+The ALD, with parameters  $\mu$, $b$ and $q$, is commonly used for performing quantile regression in a Bayesian inference context, with $q$ indicating the desired quantile.
 
-## Parametrization
+## Key properties and parameters:
+
+```{eval-rst}
+========  =========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      :math:`\mu-\frac{\\\kappa-1/\kappa}b`
+Variance  :math:`\frac{1+\kappa^{4}}{b^2\kappa^2 }`
+========  =========================================
+```
+
+**Parameters:**
+
+- $\kappa$ : (float) Symmetry parameter, $\kappa > 0$.
+- $\mu$ : (float) Location parameter.
+- $b$ : (float) Scale parameter.
+- $q$ : (float) Symmetry parameter, $0 < q < 1$.
+
+**Alternative parametrization**
 
 The ALD has 2 alternative parametrizations. In terms of $\kappa$, $\mu$ and $b$, or $q$, $\mu$ and $b$.
 
@@ -33,6 +50,13 @@ $$
 where $\kappa$ and $q$ are symmetry parameters, $\mu$ is the location parameter and $b$ is the scale parameter.
 
 ## Probability Density Function (PDF):
+
+$$
+{f(x \mid b,\kappa,\mu) =
+    \left({\frac{b}{\kappa + 1/\kappa}}\right)\, e^{-(x-\mu) b \,s\kappa ^{s}}}
+$$
+
+where s=sgn(x-m), and [sgn](https://en.wikipedia.org/wiki/Sign_function) is the sign function.
 
 ::::::{tab-set}
 :class: full-width
@@ -68,6 +92,14 @@ for q, mu, b in zip(qs, mus, bs):
 
 ## Cumulative Distribution Function (CDF):
 
+$$
+F(x \mid b,\kappa,\mu)  = 
+    \begin{cases}
+      \frac{\kappa^2}{1+\kappa^2}\exp(b \kappa(x-\mu)) & \text{if } x \leq \mu \\
+     1-\frac{1}{1+\kappa^2} \exp(-b \kappa(x-\mu))  & \text{if } x > \mu
+    \end{cases}
+$$
+
 ::::::{tab-set}
 :class: full-width
 
@@ -91,37 +123,6 @@ for q, mu, b in zip(qs, mus, bs):
 ```
 :::::
 ::::::
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  =========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      :math:`\mu-\frac{\\\kappa-1/\kappa}b`
-Variance  :math:`\frac{1+\kappa^{4}}{b^2\kappa^2 }`
-========  =========================================
-```
-
-**Probability Density Function (PDF):**
-
-
-$$
-{f(x \mid b,\kappa,\mu) =
-    \left({\frac{b}{\kappa + 1/\kappa}}\right)\, e^{-(x-\mu) b \,s\kappa ^{s}}}
-$$
-
-where s=sgn(x-m), and [sgn](https://en.wikipedia.org/wiki/Sign_function) is the sign function.
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid b,\kappa,\mu)  = 
-    \begin{cases}
-      \frac{\kappa^2}{1+\kappa^2}\exp(b \kappa(x-\mu)) & \text{if } x \leq \mu \\
-     1-\frac{1}{1+\kappa^2} \exp(-b \kappa(x-\mu))  & \text{if } x > \mu
-    \end{cases}
-$$
-
 
 ```{seealso}
 :class: seealso
