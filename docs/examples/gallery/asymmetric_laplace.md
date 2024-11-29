@@ -43,7 +43,7 @@ The link between the 2 alternatives is given by
 
 $$
 \begin{align*}
-\kappa = \sqrt{\frac{1-q}{q}}
+\kappa = \sqrt{\frac{q}{1-q}}
 \end{align*}
 $$
 
