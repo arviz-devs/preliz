@@ -18,7 +18,7 @@ The difference of two variates exponentially distributed with different means an
 
 The ALD, with parameters  $\mu$, $b$ and $q$, is commonly used for performing quantile regression in a Bayesian inference context, with $q$ indicating the desired quantile.
 
-## Key properties and parameters:
+## Key properties and parameters
 
 ```{eval-rst}
 ========  =========================================
@@ -43,13 +43,13 @@ The link between the 2 alternatives is given by
 
 $$
 \begin{align*}
-\kappa = \sqrt(\frac{q}{1-q})
+\kappa = \sqrt{\frac{1-q}{q}}
 \end{align*}
 $$
 
 where $\kappa$ and $q$ are symmetry parameters, $\mu$ is the location parameter and $b$ is the scale parameter.
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
 
 $$
 {f(x \mid b,\kappa,\mu) =
@@ -90,7 +90,7 @@ for q, mu, b in zip(qs, mus, bs):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
 
 $$
 F(x \mid b,\kappa,\mu)  = 
