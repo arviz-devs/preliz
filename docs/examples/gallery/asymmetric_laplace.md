@@ -42,9 +42,7 @@ The ALD has 2 alternative parametrizations. In terms of $\kappa$, $\mu$ and $b$,
 The link between the 2 alternatives is given by
 
 $$
-\begin{align*}
 \kappa = \sqrt{\frac{q}{1-q}}
-\end{align*}
 $$
 
 where $\kappa$ and $q$ are symmetry parameters, $\mu$ is the location parameter and $b$ is the scale parameter.
