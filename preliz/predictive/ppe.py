@@ -7,9 +7,11 @@ from preliz.internal.optimization import optimize_pymc_model
 from preliz.ppls.bambi_io import get_pymc_model, write_bambi_string
 from preliz.ppls.agnostic import back_fitting_idata, get_engine
 from preliz.ppls.pymc_io import (
-    get_model_information,
+    extract_preliz_distributions,
+    retrieve_variable_info,
+    unravel_projection,
     get_initial_guess,
-    compile_logp,
+    compile_mllk,
     back_fitting_pymc,
     write_pymc_string,
 )
@@ -58,6 +60,7 @@ def ppe(model, target, method="projective", engine="auto", random_state=0):
         """This method is experimental and under development with no guarantees of correctness.
                   Use with caution and triple-check the results."""
     )
+    opt_iterations = 400
 
     rng = np.random.default_rng(random_state)
     engine = get_engine(model) if engine == "auto" else engine
@@ -65,53 +68,48 @@ def ppe(model, target, method="projective", engine="auto", random_state=0):
     # Get models information
     if engine == "bambi":
         model = get_pymc_model(model)
-    (
-        bounds,
-        prior,
-        preliz_model,
-        transformed_var_info,
-        untransformed_var_info,
-        num_draws,
-        free_rvs,
-    ) = get_model_information(model)
+
+    preliz_model = extract_preliz_distributions(model)
+    var_info, num_draws = retrieve_variable_info(model)
 
     # With the projective method we attempt to find a prior that induces
     # a prior predictive distribution as close as possible to the target distribution
     if method == "projective":
         # Initial point for optimization
-        initial_guess = get_initial_guess(model, free_rvs)
+        initial_guess = get_initial_guess(model)
         # compile PyMC model
-        fmodel = compile_logp(model)
-        projection = optimize_pymc_model(
+        fmodel, old_y_value, obs_rvs = compile_mllk(model)
+        projection_raveled = optimize_pymc_model(
             fmodel,
             target,
             num_draws,
-            bounds,
+            opt_iterations,
             initial_guess,
-            prior,
-            preliz_model,
-            transformed_var_info,
             rng,
         )
-        # Backfit `projected_posterior` into the model's prior-families
-        new_priors = back_fitting_pymc(projection, preliz_model, untransformed_var_info)
-        if engine == "bambi":
-            return write_bambi_string(new_priors, untransformed_var_info)
-        if engine == "pymc":
-            return write_pymc_string(new_priors, untransformed_var_info)
+        # restore obs_rvs value in the model
+        model.rvs_to_values[obs_rvs] = old_y_value
 
-    # Fit the samples to the original prior distribution
-    # or to a set of predefined distributions
+        projection_unraveled = unravel_projection(projection_raveled, var_info, opt_iterations)
+
+        # Backfit `projected_posterior` into the model's prior-families
+        projection_backfitted = back_fitting_pymc(projection_unraveled, preliz_model, var_info)
+
+        if engine == "bambi":
+            new_priors = write_bambi_string(projection_backfitted, var_info)
+        elif engine == "pymc":
+            new_priors = write_pymc_string(projection_backfitted, var_info)
+
     elif method == "pathfinder":
         from pymc_experimental import fit  # pylint:disable=import-outside-toplevel
 
         with model:
-            idata = fit(method="pathfinder", num_samples=1000)
+            idata = fit(method="pathfinder", num_samples=opt_iterations)
 
-    new_priors = back_fitting_idata(idata, preliz_model, new_families=False)
-    if engine == "bambi":
-        new_model = write_bambi_string(new_priors, untransformed_var_info)
-    elif engine == "pymc":
-        new_model = write_pymc_string(new_priors, untransformed_var_info)
+        projection_backfitted = back_fitting_idata(idata, preliz_model, new_families=False)
+        if engine == "bambi":
+            new_priors = write_bambi_string(projection_backfitted, var_info)
+        elif engine == "pymc":
+            new_priors = write_pymc_string(projection_backfitted, var_info)
 
-    return new_model
+    return new_priors

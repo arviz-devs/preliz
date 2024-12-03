@@ -259,44 +259,35 @@ def optimize_pymc_model(
     fmodel,
     target,
     num_draws,
-    bounds,
+    opt_iterations,
     initial_guess,
-    prior,
-    preliz_model,
-    transformed_var_info,
     rng,
 ):
-    for idx in range(401):
+    prior_array = np.zeros((opt_iterations, len(initial_guess)))
+
+    for idx in range(opt_iterations + 1):
         # can we sample systematically from these and less random?
         # This should be more flexible and allow other targets than just
         # a PreliZ distribution
         if isinstance(target, list):
             obs = get_weighted_rvs(target, num_draws, rng)
         else:
-            obs = target.rvs(num_draws, random_state=rng)
+            obs = target.rvs(num_draws, idx)
         result = minimize(
             fmodel,
             initial_guess,
             tol=0.001,
-            method="SLSQP",
-            args=(obs, transformed_var_info, preliz_model),
-            bounds=bounds,
+            method="powell",
+            args=(obs),
         )
-        optimal_params = result.x
-        # To help minimize the effect of priors
-        # We don't save the first result and insteas we use it as the initial guess
-        # for the next optimization
-        # Updating the initial guess also helps to provides more spread samples
-        initial_guess = optimal_params
+        # To help minimize the effect of priors we don't save the first result
+        # and instead we use it as the initial guess for the next optimization
+        # Updating the initial guess also helps reduce computational times
         if idx:
-            for key, param in zip(prior.keys(), optimal_params):
-                prior[key].append(param)
+            prior_array[idx - 1] = result.x
+        initial_guess = result.x
 
-    # convert to numpy arrays
-    for key, value in prior.items():
-        prior[key] = np.array(value)
-
-    return prior
+    return prior_array
 
 
 def relative_error(dist, lower, upper, required_mass):
