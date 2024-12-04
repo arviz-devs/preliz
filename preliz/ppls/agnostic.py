@@ -17,7 +17,11 @@ from preliz.internal.distribution_helper import init_vals
 from preliz.internal.plot_helper import plot_repr
 from preliz.distributions import Gamma, Normal, HalfNormal
 from preliz.unidimensional.mle import mle
-from preliz.ppls.pymc_io import get_model_information, write_pymc_string
+from preliz.ppls.pymc_io import (
+    extract_preliz_distributions,
+    retrieve_variable_info,
+    write_pymc_string,
+)
 from preliz.ppls.bambi_io import (
     get_pymc_model,
     write_bambi_string,
@@ -65,14 +69,15 @@ def posterior_to_prior(model, idata, new_families=None, engine="auto"):
     if engine == "bambi":
         model = get_pymc_model(model)
 
-    _, _, preliz_model, _, untransformed_var_info, *_ = get_model_information(model)
+    preliz_model = extract_preliz_distributions(model)
+    var_info, _ = retrieve_variable_info(model)
 
     new_priors = back_fitting_idata(idata, preliz_model, new_families)
 
     if engine == "bambi":
-        new_model = write_bambi_string(new_priors, untransformed_var_info)
+        new_model = write_bambi_string(new_priors, var_info)
     elif engine == "pymc":
-        new_model = write_pymc_string(new_priors, untransformed_var_info)
+        new_model = write_pymc_string(new_priors, var_info)
 
     return new_model
 

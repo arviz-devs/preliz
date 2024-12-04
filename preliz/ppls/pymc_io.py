@@ -7,9 +7,10 @@ from sys import modules
 import numpy as np
 
 try:
-    from pytensor.tensor import vector, TensorConstant
+    from pytensor.tensor import matrix, TensorConstant
+    from pytensor import function
     from pytensor.graph.basic import ancestors
-    from pymc import logp, compile_pymc
+    from pymc.pytensorf import compile_pymc, join_nonshared_inputs
     from pymc.util import is_transformed_name, get_untransformed_name
 except ModuleNotFoundError:
     pass
@@ -17,7 +18,7 @@ except ModuleNotFoundError:
 from preliz.internal.distribution_helper import get_distributions
 
 
-def back_fitting_pymc(prior, preliz_model, untransformed_var_info):
+def back_fitting_pymc(prior, preliz_model, var_info):
     """
     Fit the samples from prior into user provided model's prior.
     from the perspective of ppe "prior" is actually an approximated posterior
@@ -26,85 +27,61 @@ def back_fitting_pymc(prior, preliz_model, untransformed_var_info):
     We need probability distributions.
     """
     new_priors = {}
-    for key, size_inf in untransformed_var_info.items():
-        if not size_inf[2]:
-            size = size_inf[1]
-            if size > 1:
-                params = []
-                for i in range(size):
-                    value = prior[f"{key}__{i}"]
-                    dist = preliz_model[key]
-                    dist._fit_mle(value)
-                    params.append(dist.params)
-                dist._parametrization(*[np.array(x) for x in zip(*params)])
-            else:
-                value = prior[key]
-                dist = preliz_model[key]
-                dist._fit_mle(value)
+    for rv_name, (_, size, *_) in var_info.items():
+        if size > 1:
+            params = []
+            for i in range(size):
+                opt_values = prior[rv_name][:, i]
+                dist = preliz_model[rv_name]
+                dist._fit_mle(opt_values)
+                params.append(dist.params)
+            dist._parametrization(*[np.array(x) for x in zip(*params)])
+        else:
+            opt_values = prior[rv_name]
+            dist = preliz_model[rv_name]
+            dist._fit_mle(opt_values)
 
-            new_priors[key] = dist
+        new_priors[rv_name] = dist
 
     return new_priors
 
 
-def compile_logp(model):
+def compile_mllk(model):
     """
-    Compile the log-likelihood function for the model.
-    We need to be able to condition it on parameters or data.
-    Because during the optimization routine we need to change both.
-    Currently this will fail for a prior that depends on other prior.
+    Compile the log-likelihood function for the model to be able to condition on both
+    data and parameters.
     """
-    value = vector("value")
-    rv_logp = logp(*model.observed_RVs, value)
-    rv_logp_fn = compile_pymc([*model.free_RVs, value], rv_logp, on_unused_input="ignore")
+    obs_rvs = model.observed_RVs[0]
+    old_y_value = model.rvs_to_values[obs_rvs]
+    new_y_value = obs_rvs.type()
+    model.rvs_to_values[obs_rvs] = new_y_value
+
+    vars_ = model.value_vars
+    initial_point = model.initial_point()
+
+    [logp], raveled_inp = join_nonshared_inputs(
+        point=initial_point, outputs=[model.datalogp], inputs=vars_
+    )
+
+    rv_logp_fn = compile_pymc([raveled_inp, new_y_value], logp)
     rv_logp_fn.trust_input = True
 
-    def fmodel(params, obs, var_info, p_model):
-        params = reshape_params(model, var_info, p_model, params)
-        return -rv_logp_fn(*params, obs).sum()
+    def fmodel(params, obs):
+        return -rv_logp_fn(params, obs).sum()
 
-    return fmodel
-
-
-def get_pymc_to_preliz():
-    """
-    Generate dictionary mapping pymc to preliz distributions
-    """
-    all_distributions = [
-        dist
-        for dist in modules["preliz.distributions"].__all__
-        if dist not in ["Truncated", "Censored", "Hurdle", "Mixture"]
-    ]
-    pymc_to_preliz = dict(
-        zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions))
-    )
-    return pymc_to_preliz
+    return fmodel, old_y_value, obs_rvs
 
 
-def get_initial_guess(model, free_rvs):
+def get_initial_guess(model):
     """
     Get initial guess for optimization routine.
     """
-    init = []
-
-    free_rvs_names = [rv.name for rv in free_rvs]
-    for key, value in model.initial_point().items():
-
-        if is_transformed_name(key):
-            name = get_untransformed_name(key)
-            value = model.rvs_to_transforms[model.named_vars[name]].backward(value).eval()
-        else:
-            name = key
-
-        if name in free_rvs_names:
-            init.append(value)
-
-    return np.concatenate([np.atleast_1d(arr) for arr in init]).flatten()
+    return np.concatenate([np.ravel(value) for value in model.initial_point().values()])
 
 
-def get_model_information(model):  # pylint: disable=too-many-locals
+def extract_preliz_distributions(model):
     """
-    Get information from a PyMC model.
+    Extract the corresponding PreliZ distributions from a PyMC model
 
     Parameters
     ----------
@@ -112,71 +89,76 @@ def get_model_information(model):  # pylint: disable=too-many-locals
 
     Returns
     -------
-    bounds : a list of tuples with the support of each marginal distribution in the model
-    prior : a dictionary with a key for each marginal distribution in the model and an empty
-        list as value. This will be filled with the samples from a backfitting procedure.
-    preliz_model : a dictionary with a key for each marginal distribution in the model and the
-        corresponding PreliZ distribution as value
-    transformed_var_info : a dictionary with a key for each transformed variable in the model
-        and a tuple with the shape, size and the indexes of the non-constant parents as value
-    untransformed_var_info : same as `transformed_var_info` but the keys are untransformed
-        variable names
-    num_draws : the number of observed samples
-    free_rvs : a list with the free random variables in the model
+    preliz_model : a dictionary of RVs names as keys and PreliZ distributions as values
+    num_draws : the sample size of the observed
     """
+    all_distributions = [
+        dist
+        for dist in modules["preliz.distributions"].__all__
+        if dist not in ["Truncated", "Censored", "Hurdle", "Mixture"]
+    ]
+    pymc_to_preliz = dict(
+        zip([dist.lower() for dist in all_distributions], get_distributions(all_distributions)),
+    )
 
-    bounds = []
-    prior = {}
     preliz_model = {}
-    transformed_var_info = {}
-    untransformed_var_info = {}
-    free_rvs = []
-    pymc_to_preliz = get_pymc_to_preliz()
-    rvs_to_values = model.rvs_to_values
-
     for r_v in model.free_RVs:
-        r_v_eval = r_v.eval()
-        size = r_v_eval.size
-        shape = r_v_eval.shape
-        nc_parents = non_constant_parents(r_v, model.free_RVs)
-        name = (
+        dist_name = (
             r_v.owner.op.name if r_v.owner.op.name else str(r_v.owner.op).split("RV", 1)[0].lower()
         )
-        dist = copy(pymc_to_preliz[name])
+        dist = copy(pymc_to_preliz[dist_name])
         preliz_model[r_v.name] = dist
+
+    return preliz_model
+
+
+def retrieve_variable_info(model):
+    """
+    Get the shape, size, transformation and parents of each free random variable in a PyMC model.
+    """
+
+    var_info = {}
+    initial_point = model.initial_point()
+    for v_var in model.value_vars:
+        name = v_var.name
+        rvs = model.values_to_rvs[v_var]
+        nc_parents = non_constant_parents(rvs, model)
+        idx_parents = []
         if nc_parents:
-            idxs = [free_rvs.index(var_) for var_ in nc_parents]
-            # the keys are the name of the (transformed) variable
-            transformed_var_info[rvs_to_values[r_v].name] = (shape, size, idxs)
-            # the keys are the name of the (untransformed) variable
-            untransformed_var_info[r_v.name] = (shape, size, idxs)
+            idx_parents = [model.free_RVs.index(var_) for var_ in nc_parents]
+
+        if is_transformed_name(name):
+            name = get_untransformed_name(name)
+            x_var = matrix(f"{name}_transformed")
+            z_var = model.rvs_to_transforms[rvs].backward(x_var)
+            transformation = function(inputs=[x_var], outputs=z_var)
         else:
-            free_rvs.append(r_v)
+            transformation = None
 
-            if size > 1:
-                for i in range(size):
-                    bounds.append(dist.support)
-                    prior[f"{r_v.name}__{i}"] = []
-            else:
-                bounds.append(dist.support)
-                prior[r_v.name] = []
-
-            # the keys are the name of the (transformed) variable
-            transformed_var_info[rvs_to_values[r_v].name] = (shape, size, nc_parents)
-            # the keys are the name of the (untransformed) variable
-            untransformed_var_info[r_v.name] = (shape, size, nc_parents)
+        var_info[name] = (
+            initial_point[v_var.name].shape,
+            initial_point[v_var.name].size,
+            transformation,
+            idx_parents,
+        )
 
     num_draws = model.observed_RVs[0].eval().size
 
-    return (
-        bounds,
-        prior,
-        preliz_model,
-        transformed_var_info,
-        untransformed_var_info,
-        num_draws,
-        free_rvs,
-    )
+    return var_info, num_draws
+
+
+def unravel_projection(prior_array, var_info, iterations):
+    size = 0
+    prior_dict = {}
+    for key, values in var_info.items():
+        shape, new_size, transformation, _ = values
+        vector = prior_array[:, size : size + new_size]
+        if transformation is not None:
+            vector = transformation(vector)
+        prior_dict[key] = vector.reshape(iterations, *shape).squeeze()
+        size += new_size
+
+    return prior_dict
 
 
 def write_pymc_string(new_priors, var_info):
@@ -186,49 +168,46 @@ def write_pymc_string(new_priors, var_info):
     """
 
     header = "with pm.Model() as model:\n"
-
+    variables = []
+    names = list(new_priors.keys())
     for key, value in new_priors.items():
-        dist_name, dist_params = repr(value).split("(")
-        size = var_info[key][1]
-        if size > 1:
-            dist_params = dist_params.split(")")[0]
-            header += f'{key:>4} = pm.{dist_name}("{key}", {dist_params}, shape={size})\n'
-        else:
-            header += f'{key:>4} = pm.{dist_name}("{key}", {dist_params}\n'
-
-    return header
-
-
-def reshape_params(model, var_info, p_model, params):
-    """
-    We flatten the parameters to be able to use them in the optimization routine.
-    """
-    size = 0
-    value = []
-    for var in model.value_vars:
-        shape, new_size, idxs = var_info[var.name]
+        idxs = var_info[key][-1]
         if idxs:
-            dist = p_model[var.name]
-            dist._parametrization(*params[idxs])
-            if new_size > 1:
-                value.append(np.repeat(dist.mean(), new_size))
-            else:
-                value.append(dist.mean())
-            size += new_size
+            for i in idxs:
+                nkey = names[i]
+                cp_dist = copy(new_priors[nkey])
+                cp_dist._fit_moments(np.mean(value.mean()), np.mean(value.std()))
+
+                dist_name, dist_params = repr(cp_dist).split("(")
+                size = var_info[nkey][1]
+                if size > 1:
+                    dist_params = dist_params.split(")")[0]
+                    variables[
+                        i
+                    ] = f'    {nkey:} = pm.{dist_name}("{nkey}", {dist_params}, shape={size})\n'
+                else:
+                    variables[i] = f'    {nkey:} = pm.{dist_name}("{nkey}", {dist_params}\n'
+
         else:
-            var_samples = params[size : size + new_size]
-            value.append(var_samples.reshape(shape))
-            size += new_size
+            dist_name, dist_params = repr(value).split("(")
+            size = var_info[key][1]
+            if size > 1:
+                dist_params = dist_params.split(")")[0]
+                variables.append(
+                    f'    {key:} = pm.{dist_name}("{key}", {dist_params}, shape={size})\n'
+                )
+            else:
+                variables.append(f'    {key:} = pm.{dist_name}("{key}", {dist_params}\n')
 
-    return value
+    return "".join([header] + variables)
 
 
-def non_constant_parents(var_, free_rvs):
+def non_constant_parents(rvs, model):
     """Find the parents of a variable that are not constant."""
     parents = []
-    for variable in var_.get_parents()[0].inputs[2:]:
+    for variable in rvs.get_parents()[0].inputs[2:]:
         if not isinstance(variable, TensorConstant):
-            for free_rv in free_rvs:
+            for free_rv in model.free_RVs:
                 if free_rv in list(ancestors([variable])) and free_rv not in parents:
                     parents.append(free_rv)
     return parents

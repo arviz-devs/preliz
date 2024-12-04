@@ -2,8 +2,11 @@
 
 import importlib
 import inspect
+from copy import copy
 import re
 from sys import modules
+
+import numpy as np
 
 
 def get_pymc_model(model):
@@ -19,17 +22,36 @@ def write_bambi_string(new_priors, var_info):
     So the user can copy and paste, ideally with none to minimal changes.
     """
     header = "{\n"
+    variables = []
+    names = list(new_priors.keys())
     for key, value in new_priors.items():
-        dist_name, dist_params = repr(value).split("(")
-        dist_params = dist_params.rstrip(")")
-        size = var_info[key][1]
-        if size > 1:
-            header += f'"{key}" : bmb.Prior("{dist_name}", {dist_params}, shape={size}),\n'
-        else:
-            header += f'"{key}" : bmb.Prior("{dist_name}", {dist_params}),\n'
+        idxs = var_info[key][-1]
+        if idxs:
+            for i in idxs:
+                nkey = names[i]
+                cp_dist = copy(new_priors[nkey])
+                cp_dist._fit_moments(np.mean(value.mean()), np.mean(value.std()))
 
-    header = header.rstrip(", ") + "}"
-    return header
+                dist_name, dist_params = repr(cp_dist).split("(")
+                size = var_info[nkey][1]
+                if size > 1:
+                    variables[
+                        i
+                    ] = f'"{nkey}" : bmb.Prior("{dist_name}", {dist_params}, shape={size}),\n'
+                else:
+                    variables[i] = f'"{nkey}" : bmb.Prior("{dist_name}", {dist_params}),\n'
+        else:
+            dist_name, dist_params = repr(value).split("(")
+            dist_params = dist_params.rstrip(")")
+            size = var_info[key][1]
+            if size > 1:
+                variables.append(
+                    f'"{key}" : bmb.Prior("{dist_name}", {dist_params}, shape={size}),\n'
+                )
+            else:
+                variables.append(f'"{key}" : bmb.Prior("{dist_name}", {dist_params}),\n')
+
+    return "".join([header] + variables)
 
 
 def from_bambi(fmodel, draws):
