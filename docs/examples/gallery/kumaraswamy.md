@@ -16,7 +16,26 @@ The Kumaraswamy distribution is a continuous probability distribution bounded be
 
 The Kumaraswamy distribution is a flexible distribution that can adopt a wide range of shapes, including uniform, U-shape, exponential-like, and many others, always restricted to the unit interval [0, 1].
 
-## Probability Density Function (PDF):
+## Key properties and parameters:
+
+```{eval-rst}
+========  ==============================================================
+Support   :math:`x \in (0, 1)`
+Mean      :math:`b B(1 + \tfrac{1}{a}, b)`
+Variance  :math:`b B(1 + \tfrac{2}{a}, b) - (b B(1 + \tfrac{1}{a}, b))^2`
+========  ==============================================================
+```
+
+**Parameters:**
+
+- $a$ : (float) First shape parameter, $a > 0$.
+- $b$ : (float) Second shape parameter, $b > 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x|a, b) = a b x^{a-1} (1 - x^{a})^{b-1}
+$$
 
 ```{code-cell}
 ---
@@ -36,7 +55,11 @@ for a, b in zip(a_s, b_s):
     ax.set_ylim(0, 3.)
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|a, b) = 1 - (1 - x^{a})^{b}
+$$
 
 ```{code-cell}
 ---
@@ -46,30 +69,6 @@ mystnb: image
 for a, b in zip(a_s, b_s):
     ax = Kumaraswamy(a, b).plot_cdf()
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==============================================================
-Support   :math:`x \in (0, 1)`
-Mean      :math:`b B(1 + \tfrac{1}{a}, b)`
-Variance  :math:`b B(1 + \tfrac{2}{a}, b) - (b B(1 + \tfrac{1}{a}, b))^2`
-========  ==============================================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|a, b) = a b x^{a-1} (1 - x^{a})^{b-1}
-$$
-
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|a, b) = 1 - (1 - x^{a})^{b}
-$$
-
 
 ```{seealso}
 :class: seealso
@@ -86,6 +85,3 @@ $$
 ## References
 
 - [Wikipedia - Kumaraswamy distribution](https://en.wikipedia.org/wiki/Kumaraswamy_distribution)
-
-
-

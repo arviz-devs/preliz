@@ -18,7 +18,27 @@ Its cumulative distribution function is the [logistic function](https://en.wikip
 
 A logistic regression model is typically characterized by a Bernoulli distribution for the likelihood and the logistic function as the inverse link function. However, logistic regression can also be [described](https://en.wikipedia.org/wiki/Logistic_distribution#Logistic_regression) as a latent variable model where the error term follows a logistic distribution.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      :math:`\mu`
+Variance  :math:`\frac{\pi^2}{3}s^2`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) Mean of the distribution.
+- $s$ : (float) Scale parameter, $s > 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu, s) = 
+\frac{e^{-(x-\mu)/s}}{s(1+e^{-(x-\mu)/s})^2}
+$$
 
 ```{code-cell}
 ---
@@ -38,7 +58,11 @@ for mu, s in zip(mus, ss):
     Logistic(mu, s).plot_pdf(support=(-5,5))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, s) = \frac{1}{1 + e^{-(x - \mu) / s}}
+$$
 
 ```{code-cell}
 ---
@@ -51,31 +75,6 @@ mystnb:
 for mu, s in zip(mus, ss):
     Logistic(mu, s).plot_cdf(support=(-5,5))
 ```
-
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      :math:`\mu`
-Variance  :math:`\frac{\pi^2}{3}s^2`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-
-$$
-f(x \mid \mu, s) = 
-\frac{e^{-(x-\mu)/s}}{s(1+e^{-(x-\mu)/s})^2}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, s) = \frac{1}{1 + e^{-(x - \mu) / s}}
-$$
 
 ```{seealso}
 :class: seealso

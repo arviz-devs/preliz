@@ -14,7 +14,23 @@ kernelspec:
 
 The Categorical distribution is the most general discrete distribution and is parameterized by a vector $p$ where each element $p_i$ specifies the probabilities of each possible outcome.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ===================================
+Support   :math:`x \in \{0, 1, \ldots, |p|-1\}`
+========  ===================================
+```
+
+**Parameters:**
+
+- $p$ : (array) Probabilities of each category, $p_i \geq 0$ and $\sum_i p_i = 1$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x) = p_x
+$$
 
 ```{code-cell}
 ---
@@ -31,7 +47,17 @@ for p in ps:
     Categorical(p).plot_pdf()
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid p) = \begin{cases}
+0 & \text{if } x < 0 \\
+\sum_{i=0}^{x} p_i & \text{if } 0 \leq x < |p| \\
+1 & \text{if } x \geq |p|
+\end{cases}
+$$
+
+where $p$ is the array of probabilities for each category.
 
 ```{code-cell}
 ---
@@ -45,32 +71,6 @@ for p in ps:
     Categorical(p).plot_cdf()
 ```
 
-## Key properties and parameters:
-
-```{eval-rst}
-========  ===================================
-Support   :math:`x \in \{0, 1, \ldots, |p|-1\}`
-========  ===================================
-```
-
-**Probability Mass Function (PMF):**
-
-$$
-f(x) = p_x
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid p) = \begin{cases}
-0 & \text{if } x < 0 \\
-\sum_{i=0}^{x} p_i & \text{if } 0 \leq x < |p| \\
-1 & \text{if } x \geq |p|
-\end{cases}
-$$
-
-where $p$ is the array of probabilities for each category.
-
 ```{seealso}
 :class: seealso
 
@@ -83,8 +83,3 @@ where $p$ is the array of probabilities for each category.
 ## References
 
 - [Wikipedia - Categorical Distribution](https://en.wikipedia.org/wiki/Categorical_distribution)
-
-
-
-
-

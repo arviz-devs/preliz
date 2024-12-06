@@ -16,7 +16,43 @@ The truncated normal distribution is a continuous probability distribution that 
 
 Truncated normal distributions are commonly used in cases where the observed data is known to fall within a certain range due to physical constraints or measurement limitations.
 
-## Probability Density Function (PDF):
+## Key properties and parameters:
+
+```{eval-rst}
+
+========  ==========================================
+Support   :math:`x \in [lower, upper]`
+Mean      :math:`\mu +{\frac {\phi (\alpha )-\phi (\beta )}{Z}}\sigma`
+Variance  :math:`\sigma^2 \left[1+\frac{\alpha \phi(\alpha)-\beta \phi(\beta)}{Z}-\left(\frac{\phi(\alpha)-\phi(\beta)}{Z}\right)^2\right]`
+========  ==========================================
+```
+where:
+
+- $\phi$ is the standard normal PDF
+- $\alpha = \frac{lower-\mu}{\sigma}$
+- $\beta = \frac{upper-\mu}{\sigma}$
+- $Z = \Phi(\beta) - \Phi(\alpha)$
+- $\Phi$ is the standard normal CDF
+
+**Parameters:**
+
+- $\mu$ (float): Mean of the distribution.
+- $\sigma$ (float): Standard deviation of the distribution.
+- `lower` (float): Lower bound of the range.
+- `upper` (float): Upper bound of the range.
+
+
+### Probability Density Function (PDF)
+
+$$
+\begin{cases}
+    0 & \text{for } x < \text{lower}, \\
+    \frac{\phi\left(\frac{x-\mu}{\sigma}\right)}{\sigma(Z)} & \text{for } \text{lower} <= x <= \text{upper}, \\
+    0 & \text{for } x > \text{upper},
+\end{cases}
+$$
+
+where $\phi$ is the standard normal PDF, and $Z = \Phi(\beta) - \Phi(\alpha)$.
 
 ```{code-cell}
 ---
@@ -36,7 +72,17 @@ for mu, sigma, lower, upper in zip(mus, sigmas,lowers,uppers):
     TruncatedNormal(mu, sigma, lower, upper).plot_pdf(support=(-10,10))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+\begin{cases}
+    0 & \text{for } x < \text{lower}, \\
+    \frac{\Phi\left(\frac{x-\mu}{\sigma}\right) - \Phi(\alpha)}{Z} & \text{for } \text{lower} <= x <= \text{upper}, \\
+    1 & \text{for } x > \text{upper},
+\end{cases}
+$$
+
+where $\Phi$ is the standard normal CDF, and $Z = \Phi(\beta) - \Phi(\alpha)$.
 
 ```{code-cell}
 ---
@@ -49,48 +95,6 @@ mystnb:
 for mu, sigma, lower, upper in zip(mus, sigmas,lowers,uppers):
     TruncatedNormal(mu, sigma, lower, upper).plot_cdf(support=(-10,10))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-
-========  ==========================================
-Support   :math:`x \in [lower, upper]`
-Mean      :math:`\mu +{\frac {\phi (\alpha )-\phi (\beta )}{Z}}\sigma`
-Variance  :math:`\sigma^2 \left[1+\frac{\alpha \phi(\alpha)-\beta \phi(\beta)}{Z}-\left(\frac{\phi(\alpha)-\phi(\beta)}{Z}\right)^2\right]`
-========  ==========================================
-```
-where:
-
-- $\phi$ is the standard normal PDF
-- $\alpha = \frac{lower-\mu}{\sigma}$
-- $\beta = \frac{upper-\mu}{\sigma}$
-- $Z = \Phi(\beta) - \Phi(\alpha)$
-- $\Phi$ is the standard normal CDF
-
-**Probability Density Function (PDF):**
-
-$$
-\begin{cases}
-    0 & \text{for } x < \text{lower}, \\
-    \frac{\phi\left(\frac{x-\mu}{\sigma}\right)}{\sigma(Z)} & \text{for } \text{lower} <= x <= \text{upper}, \\
-    0 & \text{for } x > \text{upper},
-\end{cases}
-$$
-
-where $\phi$ is the standard normal PDF, and $Z = \Phi(\beta) - \Phi(\alpha)$.
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-\begin{cases}
-    0 & \text{for } x < \text{lower}, \\
-    \frac{\Phi\left(\frac{x-\mu}{\sigma}\right) - \Phi(\alpha)}{Z} & \text{for } \text{lower} <= x <= \text{upper}, \\
-    1 & \text{for } x > \text{upper},
-\end{cases}
-$$
-
-where $\Phi$ is the standard normal CDF, and $Z = \Phi(\beta) - \Phi(\alpha)$.
 
 ```{seealso}
 :class: seealso

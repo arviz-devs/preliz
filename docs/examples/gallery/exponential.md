@@ -17,7 +17,23 @@ The exponential distribution is a continuous probability distribution that descr
 Many real-world phenomena can be modeled using the exponential distribution across various fields. For example, it is used in physics to model the time between decays of a radioactive atom, in medicine to model the time between seizures in patients with epilepsy, in engineering to model the time between failures of a machine, and in finance to model the time between changes in the price of a stock.
 
 In Bayesian modeling, the exponential distribution is often used as a prior distribution for scale parameters, which must always be positive.
-## Parametrization
+
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in [0, \infty)`
+Mean      :math:`\frac{1}{\lambda}`
+Variance  :math:`\frac{1}{\lambda^2}`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\lambda$ : (float) Rate parameter, $\lambda > 0$.
+- $\beta$ : (float) Scale parameter, $\beta > 0$.
+
+**Alternative parametrization**
 
 The exponential distribution can be parametrized in terms of the rate parameter $\lambda$ or the scale parameter $\beta$.
 
@@ -29,7 +45,11 @@ $$
 \end{align*}
 $$
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x|\lambda) = \lambda e^{-\lambda x}
+$$
 
 ::::::{tab-set} 
 :class: full-width
@@ -60,8 +80,11 @@ for beta in betas:
 :::::
 ::::::
 
+### Cumulative Distribution Function (CDF)
 
-## Cumulative Distribution Function (CDF):
+$$
+F(x|\lambda) = 1 - e^{-\lambda x}
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -86,28 +109,6 @@ for beta in betas:
 ```
 :::::
 ::::::
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in [0, \infty)`
-Mean      :math:`\frac{1}{\lambda}`
-Variance  :math:`\frac{1}{\lambda^2}`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\lambda) = \lambda e^{-\lambda x}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\lambda) = 1 - e^{-\lambda x}
-$$
 
 ```{seealso}
 :class: seealso

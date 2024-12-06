@@ -16,7 +16,25 @@ The Beta distribution is a continuous probability distribution bounded between 0
 
 The Beta distribution can adopt a wide range of "shapes" including uniform, U-shape, normal-like, exponential-like, and many others, always restricted to the unit interval. This flexibility makes it a versatile choice for modeling random variables that represent proportions, probabilities, or rates. For example, the Beta distribution is commonly used to model the uncertainty of the true proportion of successes in a series of Bernoulli trials, where $\alpha$ and $\beta$ represent the number of successes and failures, respectively.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==============================================================
+Support   :math:`x \in (0, 1)`
+Mean      :math:`\dfrac{\alpha}{\alpha + \beta}`
+Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)}`
+========  ==============================================================
+```
+
+**Parameters:**
+
+- $\alpha$ : (float) Shape parameter, $\alpha > 0$.
+- $\beta$ : (float) Shape parameter, $\beta > 0$.
+- $\mu$ : (float) Mean of the distribution, $0 < \mu < 1$.
+- $\sigma$ : (float) Standard deviation of the distribution, $\sigma < sqrt(\mu(1-\mu))$.
+- $\nu$ : (float) Concentration parameter, $\nu > 0$.
+
+**Alternative parameterization**
 
 The Beta distribution has 3 alternative parameterizations. In terms of $\alpha$ and $\beta$, $\mu$ and $\sigma$, and $\mu$ and $\nu$. 
 
@@ -29,9 +47,14 @@ $$
 \end{align*}
 $$
 
-where $\mu$ is the mean of the distribution and $\nu$ is the concentration parameter.
+### Probability Density Function (PDF)
 
-## Probability Density Function (PDF):
+$$
+f(x \mid \alpha, \beta) =
+    \frac{x^{\alpha - 1} (1 - x)^{\beta - 1}}{B(\alpha, \beta)}
+$$
+
+where $B(\alpha,\beta)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) 
 
 ::::::{tab-set}
 :class: full-width
@@ -79,7 +102,13 @@ ax.set_ylim(0, 5);
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \alpha,\beta) = \frac{B(x;\alpha,\beta)}{B(\alpha,\beta)} = I_x(\alpha,\beta)
+$$
+
+where $B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) and $I_x(\alpha,\beta)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -114,38 +143,6 @@ for mu, nu in zip(mus, nus):
 ```
 :::::
 ::::::
-
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==============================================================
-Support   :math:`x \in (0, 1)`
-Mean      :math:`\dfrac{\alpha}{\alpha + \beta}`
-Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)}`
-========  ==============================================================
-```
-
-**Probability Density Function (PDF):**
-
-
-$$
-f(x \mid \alpha, \beta) =
-    \frac{x^{\alpha - 1} (1 - x)^{\beta - 1}}{B(\alpha, \beta)}
-$$
-
-where $B(\alpha,\beta)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) 
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \alpha,\beta) = \frac{B(x;\alpha,\beta)}{B(\alpha,\beta)} = I_x(\alpha,\beta)
-$$
-
-
-where $B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) and $I_x(\alpha,\beta)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
-
-
 
 ```{seealso}
 :class: seealso

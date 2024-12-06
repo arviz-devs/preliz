@@ -16,7 +16,29 @@ The Moyal distribution is a continuous probability distribution that was propose
 
 The Moyal distribution is used in high-energy physics to model the energy loss, and the number of ion pairs produced, by ionization for fast charged particles.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==============================================================
+Support   :math:`x \in (-\infty, \infty)`
+Mean      :math:`\mu + \sigma\left(\gamma + \log 2\right)`, where
+          :math:`\gamma` is the `Euler-Mascheroni constant <https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant>`_
+Variance  :math:`\frac{\pi^{2}}{2}\sigma^{2}`
+========  ==============================================================
+```
+
+**Parameters:**
+
+- $\mu$ (loc): The location parameter.
+- $\sigma$ (scale): The scale parameter.
+
+### Probability Density Function (PDF)
+
+$$
+f(x|\mu, \sigma) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{1}{2}\left(z + e^{-z}\right)}
+$$
+
+where $z = \frac{x - \mu}{\sigma}$.
 
 ```{code-cell}
 ---
@@ -33,7 +55,13 @@ for mu, sigma in zip(mus, sigmas):
     Moyal(mu, sigma).plot_pdf(support=(-10,20))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x; \mu, \sigma) = 1 - \text{erf}\left( \frac{e^{-z}}{\sqrt{2}} \right)
+$$
+
+where [erf](https://en.wikipedia.org/wiki/Error_function) is the error function and $z = \frac{x - \mu}{\sigma}$.
 
 ```{code-cell}
 ---
@@ -43,33 +71,6 @@ mystnb: image
 for mu, sigma in zip(mus, sigmas):
     Moyal(mu, sigma).plot_cdf(support=(-10,20))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==============================================================
-Support   :math:`x \in (-\infty, \infty)`
-Mean      :math:`\mu + \sigma\left(\gamma + \log 2\right)`, where
-          :math:`\gamma` is the `Euler-Mascheroni constant <https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant>`_
-Variance  :math:`\frac{\pi^{2}}{2}\sigma^{2}`
-========  ==============================================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\mu, \sigma) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{1}{2}\left(z + e^{-z}\right)}
-$$
-
-where $z = \frac{x - \mu}{\sigma}$.
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x; \mu, \sigma) = 1 - \text{erf}\left( \frac{e^{-z}}{\sqrt{2}} \right)
-$$
-
-where [erf](https://en.wikipedia.org/wiki/Error_function) is the error function and $z = \frac{x - \mu}{\sigma}$.
 
 ```{seealso}
 :class: seealso

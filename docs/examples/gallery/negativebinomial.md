@@ -14,8 +14,24 @@ kernelspec:
 
 The NegativeBinomial distribution describes a Poisson random variable whose rate parameter is Gamma distributed. It is commonly used as an alternative to the Poisson distribution when the variance is greater than the mean (overdispersed data).
 
+## Key properties and parameters
 
-## Parametrization
+```{eval-rst}
+========  ==========================
+Support   :math:`x \in \mathbb{N}_0`
+Mean      :math:`\mu`
+Variance  :math:`\frac{\mu (\alpha + \mu)}{\alpha}`
+========  ==========================
+```
+
+**Parameters:**
+
+- $\mu$ (mean) : $\mu > 0$
+- $\alpha$ (shape) : $\alpha > 0$
+- $n$ (number of failures) : $n > 0$
+- $p$ (probability of success) : $0 < p < 1$
+
+**Alternative Parametrization:**
 
 The NegativeBinomial distribution is parametrized with $\mu$ (mean) and $\alpha$ a shape parameter. The variance is $\mu + \alpha \mu^2$. This parametrization is common for linear regression. Alternatively, if parametrized in terms of $n$ and $p$, the negative binomial describes the probability to have $x$ failures before the n-th success, given the probability $p$ of success in each trial.
 
@@ -28,9 +44,13 @@ n &= \alpha
 \end{align*}
 $$
 
+### Probability Density Function (PDF)
 
-
-## Probability Density Function (PDF):
+$$
+f(x \mid \mu, \alpha) =
+    \binom{x + \alpha - 1}{x}
+    (\alpha/(\mu+\alpha))^\alpha (\mu/(\mu+\alpha))^x
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -63,7 +83,13 @@ for n, p in zip(ns, ps):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, \alpha) = I_{\frac{\alpha}{\mu+\alpha}}(\mu, x)
+$$
+
+where $I$ is the [regularized incomplete beta](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) function.
 
 ::::::{tab-set}
 :class: full-width
@@ -89,33 +115,6 @@ for n, p in zip(ns, ps):
 :::::
 ::::::
 
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================
-Support   :math:`x \in \mathbb{N}_0`
-Mean      :math:`\mu`
-Variance  :math:`\frac{\mu (\alpha + \mu)}{\alpha}`
-========  ==========================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \mu, \alpha) =
-    \binom{x + \alpha - 1}{x}
-    (\alpha/(\mu+\alpha))^\alpha (\mu/(\mu+\alpha))^x
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, \alpha) = I_{\frac{\alpha}{\mu+\alpha}}(\mu, x)
-$$
-
-where $I$ is the [regularized incomplete beta](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) function.
-
 ```{seealso}
 :class: seealso
 
@@ -133,8 +132,3 @@ where $I$ is the [regularized incomplete beta](https://en.wikipedia.org/wiki/Bet
 ## References
 
 - [Wikipedia - NegativeBinomial](https://en.wikipedia.org/wiki/Negative_binomial_distribution)
-
-
-
-
-

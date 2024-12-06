@@ -16,7 +16,26 @@ The Discrete Uniform distribution is a probability distribution where each integ
 
 A simple example of the Discrete Uniform distribution is rolling a fair six-sided die, where each face has an equal probability of 1/6.
 
-## Probability Mass Function (PMF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ============================================================
+Support   :math:`x \in \{ \text{lower}, \text{lower} + 1, \ldots, \text{upper} \}`
+Mean      :math:`\dfrac{\text{lower} + \text{upper}}{2}`
+Variance  :math:`\dfrac{(\text{upper} - \text{lower} + 1)^2 - 1}{12}`
+========  ============================================================
+```
+
+**Parameters:**
+
+- `lower` : (int) Lower bound of the distribution.
+- `upper` : (int) Upper bound of the distribution, $\text{upper} \geq \text{lower}$.
+
+### Probability Mass Function (PMF)
+
+$$
+f(x \mid lower, upper) = \frac{1}{upper-lower+1}
+$$
 
 ```{code-cell}
 ---
@@ -34,7 +53,11 @@ for l, u in zip(ls, us):
     DiscreteUniform(l, u).plot_pdf()
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid lower, upper) = = \frac{x - lower + 1}{upper - lower + 1}
+$$
 
 ```{code-cell}
 ---
@@ -47,27 +70,6 @@ mystnb:
 for l, u in zip(ls, us):
     DiscreteUniform(l, u).plot_cdf()
 ```
-## Key properties and parameters:
-
-```{eval-rst}
-========  ============================================================
-Support   :math:`x \in \{ \text{lower}, \text{lower} + 1, \ldots, \text{upper} \}`
-Mean      :math:`\dfrac{\text{lower} + \text{upper}}{2}`
-Variance  :math:`\dfrac{(\text{upper} - \text{lower} + 1)^2 - 1}{12}`
-========  ============================================================
-```
-
-**Probability Mass Function (PMF):**
-
-$$
-f(x \mid lower, upper) = \frac{1}{upper-lower+1}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid lower, upper) = = \frac{x - lower + 1}{upper - lower + 1}
-$$
 
 ```{seealso}
 :class: seealso
@@ -84,4 +86,3 @@ $$
 ## References
 
 - [Wikipedia - Discrete Uniform Distribution](https://en.wikipedia.org/wiki/Discrete_uniform_distribution)
-

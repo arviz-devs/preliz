@@ -14,9 +14,29 @@ kernelspec:
 
 The Beta-Binomial distribution is a discrete probability distribution derived from the Binomial distribution, with its probability of success in each trial governed by a Beta distribution. This distribution is characterized by three parameters:  $\alpha$, $\beta$, and $n$, where $\alpha$ and $\beta$ are the shape parameters of the Beta distribution and $n$ is the number of trials in the Binomial distribution.
 
+## Key properties and parameters
 
+```{eval-rst}
+========  =================================================================
+Support   :math:`x \in \{0, 1, \ldots, n\}`
+Mean      :math:`n \dfrac{\alpha}{\alpha + \beta}`
+Variance  :math:`\dfrac{n \alpha \beta (\alpha+\beta+n)}{(\alpha+\beta)^2 (\alpha+\beta+1)}`
+========  =================================================================
+```
 
-## Probability Mass Function (PMF):
+**Parameters:**
+
+- $\alpha$ : (float) Shape parameter of the Beta distribution, $\alpha > 0$.
+- $\beta$ : (float) Shape parameter of the Beta distribution, $\beta > 0$.
+- $n$ : (int) Number of trials in the Binomial distribution, $n \geq 0$.
+
+### Probability Mass Function (PMF)
+
+$$
+f(x \mid \alpha, \beta, n) = \binom{n}{x} \frac{B(x + \alpha, n - x + \beta)}{B(\alpha, \beta)}
+$$
+
+where $B$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) and $\binom{n}{x}$ is the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient).
 
 ```{code-cell}
 ---
@@ -35,7 +55,16 @@ for a, b in zip(alphas, betas):
     BetaBinomial(a, b, n).plot_pdf()
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \alpha, \beta, n) = 
+\begin{cases} 
+0, & x < 0 \\ 
+\sum_{k=0}^{x} \binom{n}{k} \frac{B(k + \alpha, n - k + \beta)}{B(\alpha, \beta)}, & 0 \leq x < n \\ 
+1, & x \geq n 
+\end{cases}
+$$
 
 ```{code-cell}
 ---
@@ -49,35 +78,6 @@ for a, b in zip(alphas, betas):
     BetaBinomial(a, b, n).plot_cdf()
 ```
 
-## Key properties and parameters:
-
-```{eval-rst}
-========  =================================================================
-Support   :math:`x \in \{0, 1, \ldots, n\}`
-Mean      :math:`n \dfrac{\alpha}{\alpha + \beta}`
-Variance  :math:`\dfrac{n \alpha \beta (\alpha+\beta+n)}{(\alpha+\beta)^2 (\alpha+\beta+1)}`
-========  =================================================================
-```
-
-**Probability Mass Function (PMF):**
-
-$$
-f(x \mid \alpha, \beta, n) = \binom{n}{x} \frac{B(x + \alpha, n - x + \beta)}{B(\alpha, \beta)}
-$$
-
-where $B$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) and $\binom{n}{x}$ is the [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \alpha, \beta, n) = 
-\begin{cases} 
-0, & x < 0 \\ 
-\sum_{k=0}^{x} \binom{n}{k} \frac{B(k + \alpha, n - k + \beta)}{B(\alpha, \beta)}, & 0 \leq x < n \\ 
-1, & x \geq n 
-\end{cases}
-$$
-
 ```{seealso}
 :class: seealso
 
@@ -90,7 +90,3 @@ $$
 ## References
 
 - [Wikipedia - Beta-Binomial](https://en.wikipedia.org/wiki/Beta-binomial_distribution)
-
-
-
-

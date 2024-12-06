@@ -16,7 +16,30 @@ The Ex-Gaussian distribution (exponentially modified Gaussian distribution or EM
 
 The Ex-Gaussian distribution is commonly used to model reaction times in psychology. It is also used to model the shape of chromatographic peaks, the intermitotic times of cell division, cluster ion beams, and other phenomena.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      :math:`\mu + \nu`
+Variance  :math:`\sigma^2 + \nu^2`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) Mean of the normal component.
+- $\sigma$ : (float) Standard deviation of the normal component, $\sigma > 0$.
+- $\nu$ : (float) Mean of the exponential component, $\nu > 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu, \sigma, \nu) =
+\frac{1}{\nu}\exp\left(\frac{\mu-x}{\nu}+\frac{\sigma^2}{2\nu^2}\right)\Phi\left(\frac{x-\mu}{\sigma}-\frac{\sigma}{\nu}\right)
+$$
+
+where $\Phi$ is the [standard normal CDF](normal.md).
 
 ```{code-cell}
 ---
@@ -35,7 +58,15 @@ for mu, sigma, nu in zip(mus, sigmas, nus):
     ExGaussian(mu, sigma, nu).plot_pdf(support=(-6,9))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, \sigma, \nu) = 
+ \Phi(x, \mu, \sigma)
+- \frac{1}{2} \exp\left( \frac{1}{2\nu} \left(2\mu + \frac{\sigma^2}{\nu} - 2x\right) \right) \left(1 + \operatorname{erf}\left( \frac{x - \left(\mu + \frac{\sigma^2}{\nu}\right)}{\sigma \sqrt{2}} \right)\right)
+$$
+
+where $\Phi$ is the CDF of a Gaussian distribution, $\text{erf}$ is the error function
 
 ```{code-cell}
 ---
@@ -49,35 +80,6 @@ for mu, sigma, nu in zip(mus, sigmas, nus):
     ExGaussian(mu, sigma, nu).plot_cdf(support=(-6,9))
 ```
 
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      :math:`\mu + \nu`
-Variance  :math:`\sigma^2 + \nu^2`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \mu, \sigma, \nu) =
-\frac{1}{\nu}\exp\left(\frac{\mu-x}{\nu}+\frac{\sigma^2}{2\nu^2}\right)\Phi\left(\frac{x-\mu}{\sigma}-\frac{\sigma}{\nu}\right)
-$$
-
-where $\Phi$ is the [standard normal CDF](normal.md).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, \sigma, \nu) = 
- \Phi(x, \mu, \sigma)
-- \frac{1}{2} \exp\left( \frac{1}{2\nu} \left(2\mu + \frac{\sigma^2}{\nu} - 2x\right) \right) \left(1 + \operatorname{erf}\left( \frac{x - \left(\mu + \frac{\sigma^2}{\nu}\right)}{\sigma \sqrt{2}} \right)\right)
-$$
-
-where $\Phi$ is the CDF of a Gaussian distribution, $\text{erf}$ is the error function
-
 ```{seealso}
 :class: seealso
 
@@ -90,4 +92,3 @@ where $\Phi$ is the CDF of a Gaussian distribution, $\text{erf}$ is the error fu
 ## References
 
 - [Wikipedia - Ex-Gaussian distribution](https://en.wikipedia.org/wiki/Exponentially_modified_Gaussian_distribution)
-

@@ -16,7 +16,33 @@ The Triangular distribution is a continuous probability distribution with a tria
 
 The Triangular distribution is often called a "lack of knowledge" distribution because it can be used when there is no prior knowledge about the distribution of the random variable other than the minimum, maximum, and most likely values. It is often used in business simulations and decision-making, project management, and audio dithering.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in [lower, upper]`
+Mean      :math:`\dfrac{lower + upper + c}{3}`
+Variance  :math:`\dfrac{upper^2 + lower^2 +c^2 - lower*upper - lower*c - upper*c}{18}`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $lower$ : (float) Lower bound of the distribution.
+- $c$ : (float) Mode of the distribution.
+- $upper$ : (float) Upper bound of the distribution.
+
+### Probability Density Function (PDF)
+
+$$
+f(x|lower, c, upper) =
+    \begin{cases}
+        0 & \text{for } x < lower \\
+        \frac{2(x - lower)}{(upper - lower)(c - lower)} & \text{for } lower \leq x < c \\
+        \frac{2}{upper - lower} & \text{for } x = c \\
+        \frac{2(upper - x)}{(upper - lower)(upper - c)} & \text{for } c < x \leq upper \\
+    \end{cases}
+$$
 
 ```{code-cell}
 ---
@@ -37,7 +63,17 @@ for lower, c, upper in zip(lowers, cs, uppers):
     Triangular(lower, c, upper).plot_pdf()
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|lower, c, upper) =
+    \begin{cases}
+        0 & \text{for } x < lower \\
+        \frac{(x - lower)^2}{(upper - lower)(c - lower)} & \text{for } lower \leq x < c \\
+        1 - \frac{(upper - x)^2}{(upper - lower)(upper - c)} & \text{for } c \leq x \leq upper \\
+        1 & \text{for } x \geq upper
+    \end{cases}
+$$
 
 ```{code-cell}
 ---
@@ -52,40 +88,6 @@ for lower, c, upper in zip(lowers, cs, uppers):
     c_ = (c - lower) / scale
     Triangular(lower, c, upper).plot_cdf()
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in [lower, upper]`
-Mean      :math:`\dfrac{lower + upper + c}{3}`
-Variance  :math:`\dfrac{upper^2 + lower^2 +c^2 - lower*upper - lower*c - upper*c}{18}`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|lower, c, upper) =
-    \begin{cases}
-        0 & \text{for } x < lower \\
-        \frac{2(x - lower)}{(upper - lower)(c - lower)} & \text{for } lower \leq x < c \\
-        \frac{2}{upper - lower} & \text{for } x = c \\
-        \frac{2(upper - x)}{(upper - lower)(upper - c)} & \text{for } c < x \leq upper \\
-    \end{cases}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|lower, c, upper) =
-    \begin{cases}
-        0 & \text{for } x < lower \\
-        \frac{(x - lower)^2}{(upper - lower)(c - lower)} & \text{for } lower \leq x < c \\
-        1 - \frac{(upper - x)^2}{(upper - lower)(upper - c)} & \text{for } c \leq x \leq upper \\
-        1 & \text{for } x \geq upper
-    \end{cases}
-$$
 
 ```{seealso}
 :class: seealso

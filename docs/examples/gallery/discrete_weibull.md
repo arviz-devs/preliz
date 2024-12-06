@@ -16,7 +16,26 @@ The Discrete Weibull distribution is a discrete probability distribution used to
 
 The Discrete Weibull distribution is predominantly used in reliability engineering. It is particularly suitable for modeling failure data measured in discrete units, such as cycles or shocks. This distribution is a versatile tool for analyzing scenarios where event timing is counted in distinct intervals, making it especially valuable in fields that handle discrete data patterns and reliability analysis.
 
-## Probability Mass Function (PMF)
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{N}_0`
+Mean      :math:`\mu = \sum_{x = 1}^{\infty} q^{x^{\beta}}`
+Variance  :math:`2 \sum_{x = 1}^{\infty} x q^{x^{\beta}} - \mu - \mu^2`
+========  ===============================================
+```
+
+**Parameters:**
+
+- $q$ : (float) Probability of success in each trial, $0 < q < 1$.
+- $\beta$ : (float) Shape parameter, $\beta > 0$.
+
+### Probability Mass Function (PMF)
+
+$$
+f(x \mid q, \beta) = q^{x^{\beta}} - q^{(x + 1)^{\beta}}
+$$
 
 ```{code-cell}
 ---
@@ -35,7 +54,11 @@ for q, beta in zip(qs, betas):
     DiscreteWeibull(q, beta).plot_pdf(support=(0, 10))
 ```
 
-## Cumulative Distribution Function (CDF)
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid q, \beta) = 1 - q^{(x + 1)^{\beta}}
+$$
 
 ```{code-cell}
 ---
@@ -48,28 +71,6 @@ mystnb:
 for q, beta in zip(qs, betas):
     DiscreteWeibull(q, beta).plot_cdf(support=(0, 10))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{N}_0`
-Mean      :math:`\mu = \sum_{x = 1}^{\infty} q^{x^{\beta}}`
-Variance  :math:`2 \sum_{x = 1}^{\infty} x q^{x^{\beta}} - \mu - \mu^2`
-========  ===============================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid q, \beta) = q^{x^{\beta}} - q^{(x + 1)^{\beta}}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid q, \beta) = 1 - q^{(x + 1)^{\beta}}
-$$
 
 ```{seealso}
 :class: seealso
@@ -86,6 +87,3 @@ $$
 ## References
 
 - [Wikipedia - Discrete Weibull Distribution](https://en.wikipedia.org/wiki/Discrete_Weibull_distribution)
-
-
-

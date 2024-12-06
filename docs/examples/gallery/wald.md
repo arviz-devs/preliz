@@ -16,7 +16,22 @@ The Wald distribution, also known as the Inverse Gaussian distribution, is a con
 
 The "Inverse" in the name can be misleading. The Wald distribution describes the time a particle subject to Brownian motion will drift to a certain point. Meanwhile, the Gaussian distribution gives the position of the motion at a fixed time. Only in that sense, the Wald is the "inverse" of the Gaussian.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in (0, \infty)`
+Mean      :math:`\mu`
+Variance  :math:`\mu^3 / \lambda`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : Mean of the distribution.
+- $\lambda$ : Scale parameter.
+
+**Alternative parametrizations:**
 
 Wald distribution has 3 alternative parametrizations. In terms of $\mu$ and $\lambda$, $\mu$ and $\phi$, and $\lambda$ and $\phi$.
 
@@ -28,7 +43,11 @@ $$
 \end{align*}
 $$
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu, \lambda) = \left(\frac{\lambda}{2\pi}\right)^{1/2} x^{-3/2} \exp\left\{-\frac{\lambda}{2x}\left(\frac{x-\mu}{\mu}\right)^2    \right\}
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -71,7 +90,13 @@ for lam, phi in zip(lams, phis):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, \lambda) = \Phi\left(\sqrt{\frac{\lambda}{x}}\left(\frac{x}{\mu} - 1\right)\right)
+$$
+
+where $\Phi$ is the standard normal cumulative distribution function.
 
 ::::::{tab-set}
 :class: full-width
@@ -109,30 +134,6 @@ for lam, phi in zip(lams, phis):
 :::::
 ::::::
 
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in (0, \infty)`
-Mean      :math:`\mu`
-Variance  :math:`\mu^3 / \lambda`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \mu, \lambda) = \left(\frac{\lambda}{2\pi}\right)^{1/2} x^{-3/2} \exp\left\{-\frac{\lambda}{2x}\left(\frac{x-\mu}{\mu}\right)^2    \right\}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, \lambda) = \Phi\left(\sqrt{\frac{\lambda}{x}}\left(\frac{x}{\mu} - 1\right)\right)
-$$
-
-where $\Phi$ is the standard normal cumulative distribution function.
-
 ```{seealso}
 :class: seealso
 
@@ -144,4 +145,3 @@ where $\Phi$ is the standard normal cumulative distribution function.
 ## References
 
 - Wikipedia - [Wald Distribution](https://en.wikipedia.org/wiki/Inverse_Gaussian_distribution)
-

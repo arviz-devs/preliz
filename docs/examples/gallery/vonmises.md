@@ -16,7 +16,28 @@ The Von Mises distribution is a continuous probability distribution on the unit 
 
 The Von Mises distribution is the circular analogue of the normal distribution, and it is used to model circular data, such as wind directions, compass bearings, or angles. 
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in (-\pi, \pi)`
+Mean      :math:`\mu`
+Variance  :math:`1 - I_1(\kappa) / I_0(\kappa)`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) Mean direction, $-\pi \leq \mu \leq \pi$.
+- $\kappa$ : (float) Concentration parameter, $\kappa \geq 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x|\mu, \kappa) = \frac{e^{\kappa \cos(x - \mu)}}{2\pi I_0(\kappa)}
+$$
+
+where $I_0(\kappa)$ is the [modified Bessel function of the first kind](https://en.wikipedia.org/wiki/Bessel_function#Modified_Bessel_functions:_I%CE%B1,_K%CE%B1).
 
 ```{code-cell}
 ---
@@ -35,7 +56,13 @@ for mu, kappa in zip(mus, kappas):
     VonMises(mu, kappa).plot_pdf(support=(-np.pi,np.pi))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+The Von Mises distribution does not have an analytical expression for the CDF. However, it can be evaluated numerically by integrating the PDF in the interval $(-\pi, x)$:
+
+$$
+F(x|\mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\pi}^{x} e^{\kappa \cos(t - \mu)} dt
+$$
 
 ```{code-cell}
 ---
@@ -48,32 +75,6 @@ mystnb:
 for mu, kappa in zip(mus, kappas):
     VonMises(mu, kappa).plot_cdf(support=(-np.pi,np.pi))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in (-\pi, \pi)`
-Mean      :math:`\mu`
-Variance  :math:`1 - I_1(\kappa) / I_0(\kappa)`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\mu, \kappa) = \frac{e^{\kappa \cos(x - \mu)}}{2\pi I_0(\kappa)}
-$$
-
-where $I_0(\kappa)$ is the [modified Bessel function of the first kind](https://en.wikipedia.org/wiki/Bessel_function#Modified_Bessel_functions:_I%CE%B1,_K%CE%B1).
-
-**Cumulative Distribution Function (CDF):**
-
-The Von Mises distribution does not have an analytical expression for the CDF. However, it can be evaluated numerically by integrating the PDF in the interval $(-\pi, x)$:
-
-$$
-F(x|\mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \int_{-\pi}^{x} e^{\kappa \cos(t - \mu)} dt
-$$
 
 ```{seealso}
 :class: seealso
