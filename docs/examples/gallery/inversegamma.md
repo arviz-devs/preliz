@@ -40,10 +40,8 @@ The Inverse Gamma distribution has 2 alternative parametrizations: in terms of t
 The link between the parameters is given by:
 
 $$
-\begin{align*}
-\alpha & = \frac{\mu^2}{\sigma^2} + 2 \\
-\beta & = \frac{\mu^3}{\sigma^2} + \mu
-\end{align*}
+\alpha = \frac{\mu^2}{\sigma^2} + 2 \\
+\beta = \frac{\mu^3}{\sigma^2} + \mu
 $$
 
 ### Probability Density Function (PDF)

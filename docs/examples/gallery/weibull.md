@@ -50,7 +50,7 @@ style.use('preliz-doc')
 alphas = [1., 2., 5., 5.]
 betas = [1., 1., 1., 2.]
 for alpha, beta in zip(alphas, betas):
-7    Weibull(alpha, beta).plot_pdf(support=(0, 5))
+    Weibull(alpha, beta).plot_pdf(support=(0, 5))
 ```
 
 ### Cumulative Distribution Function (CDF)

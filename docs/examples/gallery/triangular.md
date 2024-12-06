@@ -29,7 +29,7 @@ Variance  :math:`\dfrac{upper^2 + lower^2 +c^2 - lower*upper - lower*c - upper*c
 **Parameters:**
 
 - $lower$ : (float) Lower bound of the distribution.
-- $c$ : (float) Mode of the distribution.
+- $c$ : (float) Mode of the distribution, $lower \leq c \leq upper$.
 - $upper$ : (float) Upper bound of the distribution.
 
 ### Probability Density Function (PDF)

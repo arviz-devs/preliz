@@ -38,9 +38,7 @@ Wald distribution has 3 alternative parametrizations. In terms of $\mu$ and $\la
 The link between the 3 alternatives is given by:
 
 $$
-\begin{align*}
-\phi & = \frac{\lambda}{\mu} \\
-\end{align*}
+\phi = \frac{\lambda}{\mu} \\
 $$
 
 ### Probability Density Function (PDF)

@@ -41,9 +41,7 @@ Where $\mu$ is the location parameter, $\sigma$ is the scale parameter, $\tau$ i
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\tau & = \frac{1}{\sigma^2}
-\end{align*}
+\tau = \frac{1}{\sigma^2}
 $$
 
 ### Probability Density Function (PDF)

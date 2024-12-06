@@ -41,9 +41,7 @@ The Student's t distribution has two alternative parameterizations. In terms of 
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\lambda & = \frac{1}{\sigma^2}
-\end{align*}
+\lambda = \frac{1}{\sigma^2}
 $$
 
 where $\sigma$ is the standard deviation as $\nu$ increases, and $\lambda$ is the precision as $\nu$ increases.

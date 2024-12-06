@@ -39,9 +39,7 @@ The logit-normal distribution can be parametrized in terms of $\mu$ and $\sigma$
 The link between the two parametrizations is given by:
 
 $$
-\begin{align*}
-\tau & = \frac{1}{\sigma^2}
-\end{align*}
+\tau = \frac{1}{\sigma^2}
 $$
 
 ### Probability Density Function (PDF)

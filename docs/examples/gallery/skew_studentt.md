@@ -41,9 +41,7 @@ The Skew-Student's t distribution has two alternative parameterizations. In term
 The link between the two parameterizations is given by:
 
 $$
-\begin{align*}
-\lambda & = \frac{1}{\sigma^2}
-\end{align*}
+\lambda = \frac{1}{\sigma^2}
 $$
 
 If $a > b$, the skew-Student's t distribution is positively skewed (skewed to the right). If $a < b$, the skew-Student's t distribution is negatively skewed (skewed to the left). If $a = b$, the skew-Student's t distribution reduces to the Student's t distribution with $\nu = 2a$.

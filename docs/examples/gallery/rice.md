@@ -37,9 +37,7 @@ Variance  :math:`2\sigma^2 + \nu^2 - \frac{\pi \sigma^2}{2}`
 The Rice distribution has two alternative parameterizations: in terms of $v$ and $\sigma$, or in terms of $b$ and $\sigma$. The relationship between the two is given by:
 
 $$
-\begin{align*}
-b & = \frac{v}{\sigma}
-\end{align*}
+b = \frac{v}{\sigma}
 $$
 
 ### Probability Density Function (PDF)

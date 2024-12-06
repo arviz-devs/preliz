@@ -42,10 +42,8 @@ The gamma distribution has two alternative parameterizations. In terms of $\alph
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\alpha & = \frac{\mu^2}{\sigma^2} \\
-\beta & = \frac{\mu}{\sigma^2}
-\end{align*}
+\alpha = \frac{\mu^2}{\sigma^2} \\
+\beta = \frac{\mu}{\sigma^2}
 $$
 
 where $\mu$ is the mean of the distribution and $\sigma$ is the standard deviation.

@@ -38,10 +38,8 @@ The NegativeBinomial distribution is parametrized with $\mu$ (mean) and $\alpha$
 The link between the parameters is given by:
 
 $$
-\begin{align*}
 p &= \frac{\alpha}{\mu + \alpha} \\
 n &= \alpha
-\end{align*}
 $$
 
 ### Probability Density Function (PDF)

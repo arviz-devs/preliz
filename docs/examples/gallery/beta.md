@@ -41,10 +41,8 @@ The Beta distribution has 3 alternative parameterizations. In terms of $\alpha$ 
 The link between the parameters is given by:
 
 $$
-\begin{align*}
-\alpha & = \mu \nu \\
-\beta & = (1 - \mu) \nu
-\end{align*}
+\alpha = \mu \nu \\
+\beta = (1 - \mu) \nu
 $$
 
 ### Probability Density Function (PDF)

@@ -41,9 +41,7 @@ The normal distribution can be parametrized in terms of the mean ($\mu$) and the
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\tau & = \frac{1}{\sigma^2}
-\end{align*}
+\tau = \frac{1}{\sigma^2}
 $$
 
 ### Probability Density Function (PDF)

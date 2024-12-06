@@ -41,7 +41,6 @@ where:
 - `lower` (float): Lower bound of the range.
 - `upper` (float): Upper bound of the range.
 
-
 ### Probability Density Function (PDF)
 
 $$

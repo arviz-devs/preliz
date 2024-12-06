@@ -40,9 +40,7 @@ The exponential distribution can be parametrized in terms of the rate parameter 
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\beta & = \frac{1}{\lambda}
-\end{align*}
+\beta = \frac{1}{\lambda}
 $$
 
 ### Probability Density Function (PDF)
