@@ -16,7 +16,32 @@ The Beta scaled distribution is a continuous probability distribution similar to
 
 The Beta scaled distribution can adopt a wide range of "shapes" including uniform, U-shape, normal-like, exponential-like, and many others, always restricted to a given interval. This flexibility makes it a versatile choice for modeling random variables that are known to be bounded like percentages, grades, some physical quantities like temperature of liquid water at a given pressure. 
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ============================================================================
+Support   :math:`x \in (lower, upper)`
+Mean      :math:`\dfrac{\alpha}{\alpha + \beta} (upper-lower) + lower`
+Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)} (upper-lower)`
+========  ============================================================================
+```
+
+**Parameters:**
+
+- $\alpha$ : (float) Shape parameter, $\alpha > 0$.
+- $\beta$ : (float) Shape parameter, $\beta > 0$.
+- $lower$ : (float) Lower bound of the distribution, $lower < upper$.
+- $upper$ : (float) Upper bound of the distribution, $upper > lower$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \alpha, \beta, lower, upper) =
+    \frac{(x-\text{lower})^{\alpha - 1} (\text{upper} - x)^{\beta - 1}}
+    {(\text{upper}-\text{lower})^{\alpha+\beta-1} B(\alpha, \beta)}
+$$
+
+where $B(\alpha,\beta)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) 
 
 ```{code-cell}
 ---
@@ -37,7 +62,13 @@ for alpha, beta, lower, upper in zip(alphas, betas, lowers, uppers):
     BetaScaled(alpha, beta, lower, upper).plot_pdf()
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \alpha,\beta, lower, upper) = \frac{B(y;\alpha,\beta)}{B(\alpha,\beta)} = I_y(\alpha,\beta)
+$$
+
+where $y$ is the scaled variable $y = \frac{(x - lower)}{(upper - lower)}$. $B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) and $I_x(\alpha,\beta)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
 
 ```{code-cell}
 ---
@@ -50,38 +81,6 @@ mystnb:
 for alpha, beta, lower, upper in zip(alphas, betas, lowers, uppers):
     BetaScaled(alpha, beta, lower, upper).plot_cdf()
 ```
-
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ============================================================================
-Support   :math:`x \in (lower, upper)`
-Mean      :math:`\dfrac{\alpha}{\alpha + \beta} (upper-lower) + lower`
-Variance  :math:`\dfrac{\alpha \beta}{(\alpha+\beta)^2(\alpha+\beta+1)} (upper-lower)`
-========  ============================================================================
-```
-
-**Probability Density Function (PDF):**
-
-
-$$
-f(x \mid \alpha, \beta, lower, upper) =
-    \frac{(x-\text{lower})^{\alpha - 1} (\text{upper} - x)^{\beta - 1}}
-    {(\text{upper}-\text{lower})^{\alpha+\beta-1} B(\alpha, \beta)}
-$$
-
-where $B(\alpha,\beta)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function) 
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \alpha,\beta, lower, upper) = \frac{B(y;\alpha,\beta)}{B(\alpha,\beta)} = I_y(\alpha,\beta)
-$$
-
-where $y$ is the scaled variable $y = \frac{(x - lower)}{(upper - lower)}$. $B(x;\alpha,\beta)$ is the [Incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function) and $I_x(\alpha,\beta)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
-
-
 
 ```{seealso}
 :class: seealso

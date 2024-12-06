@@ -16,19 +16,37 @@ The logit-normal distribution is a continuous probability distribution of a rand
 
 The logit-normal distribution is useful in modeling proportions or ratios. 
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in (0, 1)`
+Mean      no analytical solution
+Variance  no analytical solution
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) The mean of the logit-transformed variable.
+- $\sigma$ : (float) The standard deviation of the logit-transformed variable.
+- $\tau$ : (float) The precision of the logit-transformed variable, $\tau = \frac{1}{\sigma^2}$.
+
+**Alternative parametrization**
 
 The logit-normal distribution can be parametrized in terms of $\mu$ and $\sigma$ or in terms of $\mu$ and $\tau$.
 
 The link between the two parametrizations is given by:
 
 $$
-\begin{align*}
-\tau & = \frac{1}{\sigma^2}
-\end{align*}
+\tau = \frac{1}{\sigma^2}
 $$
 
-## Probability Density Function (PDF)
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu, \sigma) = \frac{1}{x(1-x)\sigma\sqrt{2\pi}}\exp\left(-\frac{1}{2}\left(\frac{\text{logit}(x)-\mu}{\sigma}\right)^2\right)
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -60,7 +78,13 @@ for mu, tau in zip(mus, taus):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF)
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, \sigma) = \frac{1}{2} + \frac{1}{2}\text{erf}\left(\frac{\text{logit}(x)-\mu}{\sigma\sqrt{2}}\right)
+$$
+
+where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -85,31 +109,6 @@ for mu, tau in zip(mus, taus):
 ```
 :::::
 ::::::
-
-## Key properties and parameters
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in (0, 1)`
-Mean      no analytical solution
-Variance  no analytical solution
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \mu, \sigma) = \frac{1}{x(1-x)\sigma\sqrt{2\pi}}\exp\left(-\frac{1}{2}\left(\frac{\text{logit}(x)-\mu}{\sigma}\right)^2\right)
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, \sigma) = \frac{1}{2} + \frac{1}{2}\text{erf}\left(\frac{\text{logit}(x)-\mu}{\sigma\sqrt{2}}\right)
-$$
-
-where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
-
 
 ```{seealso}
 :class: seealso

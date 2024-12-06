@@ -16,7 +16,28 @@ The log-normal distribution is a continuous probability distribution of a random
 
 The log-normal distribution is commonly used to model variables that are positive and result from the product of many small independent factors (instead of the sum of factors, as in the normal distribution). This property makes it a widespread choice for modeling quantities in many fields of knowledge, including biology, engineering, medicine, finance and others. For example, In hydrology, the log-normal distribution is used to model the distribution of annual maximum rainfall, river discharge, and other hydrological variables.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in (0, \infty)`
+Mean      :math:`e^{\mu + \frac{\sigma^2}{2}}`
+Variance  :math:`(e^{\sigma^2} - 1)e^{2\mu + \sigma^2}`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) Location parameter.
+- $\sigma$ : (float) Scale parameter, $\sigma > 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu, \sigma) =
+\frac{1}{x \sigma \sqrt{2\pi}}
+\exp\left( -\frac{1}{2} \left(\frac{\log(x)-\mu}{\sigma}\right)^2 \right)
+$$
 
 ```{code-cell}
 ---
@@ -35,7 +56,11 @@ for mu, sigma in zip(mus, sigmas):
     LogNormal(mu, sigma).plot_pdf(support=(0, 5))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, \sigma) = \frac{1}{2} + \frac{1}{2} \text{erf} \left( \frac{\log(x) - \mu}{\sigma \sqrt{2}} \right)
+$$
 
 ```{code-cell}
 ---
@@ -48,31 +73,6 @@ mystnb:
 for mu, sigma in zip(mus, sigmas):
     LogNormal(mu, sigma).plot_cdf(support=(0, 5))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in (0, \infty)`
-Mean      :math:`e^{\mu + \frac{\sigma^2}{2}}`
-Variance  :math:`(e^{\sigma^2} - 1)e^{2\mu + \sigma^2}`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \mu, \sigma) =
-\frac{1}{x \sigma \sqrt{2\pi}}
-\exp\left( -\frac{1}{2} \left(\frac{\log(x)-\mu}{\sigma}\right)^2 \right)
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, \sigma) = \frac{1}{2} + \frac{1}{2} \text{erf} \left( \frac{\log(x) - \mu}{\sigma \sqrt{2}} \right)
-$$
-
 
 ```{seealso}
 :class: seealso
@@ -91,7 +91,3 @@ $$
 ## References
 
 1. Wikipedia - [Log-normal distribution](https://en.wikipedia.org/wiki/Log-normal_distribution)
-
-
-
-

@@ -14,8 +14,26 @@ kernelspec:
 
 The Binomial distribution is a discrete probability distribution that describes the number of successes in a fixed number $n$ of independent Bernoulli trials (yes/no experiments), each with the same probability of success $p$. 
 
+## Key properties and parameters
 
-## Probability Mass Function (PMF):
+```{eval-rst}
+========  =================================================================
+Support   :math:`x \in \{0, 1, \ldots, n\}`
+Mean      :math:`n p`
+Variance  :math:`n p (1-p)`
+========  =================================================================
+```
+
+**Parameters:**
+
+- $n$ : (int) Number of Bernoulli trials, $n \geq 0$.
+- $p$ : (float) Probability of success in each trial, $0 \leq p \leq 1$.
+
+### Probability Mass Function (PMF)
+
+$$
+f(x \mid n, p) = \binom{n}{x} p^x (1-p)^{n-x}
+$$
 
 ```{code-cell}
 ---
@@ -33,7 +51,11 @@ for n, p in zip(ns, ps):
     Binomial(n, p).plot_pdf()
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(k \mid n, p) = I_{1 - p}(n - \lfloor x \rfloor, \lfloor x \rfloor + 1)
+$$
 
 ```{code-cell}
 ---
@@ -46,29 +68,6 @@ mystnb:
 for n, p in zip(ns, ps):
     Binomial(n, p).plot_cdf()
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  =================================================================
-Support   :math:`x \in \{0, 1, \ldots, n\}`
-Mean      :math:`n p`
-Variance  :math:`n p (1-p)`
-========  =================================================================
-```
-
-**Probability Mass Function (PMF):**
-
-$$
-f(x \mid n, p) = \binom{n}{x} p^x (1-p)^{n-x}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-
-$$
-F(k \mid n, p) = I_{1 - p}(n - \lfloor x \rfloor, \lfloor x \rfloor + 1)
-$$
 
 where $I_{1 - p}(a, b)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
 

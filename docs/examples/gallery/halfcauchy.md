@@ -16,7 +16,25 @@ The Half-Cauchy distribution is a continuous probability distribution that is de
 
 In Bayesian statistics, the Half-Cauchy distribution is often used as a prior for scale parameters.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in [0, \infty)`
+Mean      undefined
+Variance  undefined
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\beta$ : (float) Scale parameter, $\beta > 0$.
+
+### Probability Density Function (PDF)
+
+$$ 
+f(x|\beta) = \frac{2}{\pi \beta \left[1 + \left(\frac{x}{\beta}\right)^2\right]}
+$$
 
 ```{code-cell}
 ---
@@ -32,6 +50,10 @@ for beta in betas:
 
 ## Cumulative Distribution Function (CDF):
 
+$$ 
+F(x|\beta) = \frac{2}{\pi} \arctan\left(\frac{x}{\beta}\right)
+$$
+
 ```{code-cell} 
 ---
 tags: [remove-input]
@@ -40,28 +62,6 @@ mystnb: image
 for beta in betas:
     HalfCauchy(beta).plot_cdf(support=(0, 5))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in [0, \infty)`
-Mean      undefined
-Variance  undefined
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$ 
-f(x|\beta) = \frac{2}{\pi \beta \left[1 + \left(\frac{x}{\beta}\right)^2\right]}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$ 
-F(x|\beta) = \frac{2}{\pi} \arctan\left(\frac{x}{\beta}\right)
-$$
 
 ```{seealso} 
 :class: seealso
@@ -75,7 +75,6 @@ $$
 
 - [Cauchy](cauchy.md) - The Cauchy distribution is the parent distribution from which the Half-Cauchy is derived.
  ```
-
 ## References
 
 - [Wikipedia - Cauchy](https://en.wikipedia.org/wiki/Cauchy_distribution)

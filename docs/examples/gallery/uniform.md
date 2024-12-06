@@ -18,7 +18,30 @@ The probability density of the Uniform distribution is constant between $lower$ 
 
 The Uniform distribution is the maximum entropy probability distribution for a random variable under no constraint other than that it is contained in the interval $[lower,upper]$. It's often employed for generating random numbers from the cumulative distribution function (see [inverse transform sampling](https://en.wikipedia.org/wiki/Inverse_transform_sampling)). It is also used as the basis of some statistical tests (see [probability integral transform](https://en.wikipedia.org/wiki/Probability_integral_transform)). Sometimes, it can be used as a "non-informative" (flat) prior in Bayesian statistics when there is no prior knowledge about the parameter other than its range, but this is discouraged unless the range has a physical meaning and values outside of it are impossible. 
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  =====================================
+Support   :math:`x \in [lower, upper]`
+Mean      :math:`\dfrac{lower + upper}{2}`
+Variance  :math:`\dfrac{(upper - lower)^2}{12}`
+========  =====================================
+```
+
+**Parameters:**
+
+- $lower$ : (float) Lower bound of the distribution.
+- $upper$ : (float) Upper bound of the distribution, $upper > lower$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x \mid lower, upper) =
+    \begin{cases}
+        \dfrac{1}{upper - lower} & \text{for } x \in [lower, upper] \\
+        0 & \text{otherwise}
+    \end{cases}
+$$
 
 ```{code-cell}
 ---
@@ -37,44 +60,9 @@ us = [6, 2]
 for l, u in zip(ls, us):
     ax = Uniform(l, u).plot_pdf()
 ax.set_ylim(0, 0.3);
-
 ```
 
-## Cumulative Distribution Function (CDF):
-
-```{code-cell}
----
-tags: [remove-input]
-mystnb:
-  image:
-    alt: Uniform Distribution CDF
----
-
-for l, u in zip(ls, us):
-    Uniform(l, u).plot_cdf()
-```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  =====================================
-Support   :math:`x \in [lower, upper]`
-Mean      :math:`\dfrac{lower + upper}{2}`
-Variance  :math:`\dfrac{(upper - lower)^2}{12}`
-========  =====================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid lower, upper) =
-    \begin{cases}
-        \dfrac{1}{upper - lower} & \text{for } x \in [lower, upper] \\
-        0 & \text{otherwise}
-    \end{cases}
-$$
-
-**Cumulative Distribution Function (CDF):**
+### Cumulative Distribution Function (CDF)
 
 $$
 F(x \mid lower, upper) =
@@ -88,7 +76,17 @@ $$
 ```{seealso}
 :class: seealso
 
+```{code-cell}
+---
+tags: [remove-input]
+mystnb:
+  image:
+    alt: Uniform Distribution CDF
+---
 
+for l, u in zip(ls, us):
+    Uniform(l, u).plot_cdf()
+```
 
 **Related Distributions:**
 
@@ -99,6 +97,3 @@ $$
 # References
 
 - Wikipedia - [Uniform distribution](https://en.wikipedia.org/wiki/Continuous_uniform_distribution)
-
-
-

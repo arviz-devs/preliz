@@ -18,19 +18,39 @@ The normal distribution is often the result of summing many small, independent e
 
 Normal priors are commonly chosen in Bayesian analysis because they represent a state of limited prior knowledge or weak information. When we assume a parameter has finite variance but lack strong prior knowledge, the normal distribution becomes a suitable choice. This is due to the normal distribution's maximum entropy property among all distributions with a specified mean and variance, ensuring it introduces the least amount of additional assumptions. 
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      :math:`\mu`
+Variance  :math:`\sigma^2`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) Mean of the distribution.
+- $\sigma$ : (float) Standard deviation of the distribution.
+- $\tau$ : (float) Precision of the distribution, $\tau = \frac{1}{\sigma^2}$.
+
+**Alternative parametrization**
 
 The normal distribution can be parametrized in terms of the mean ($\mu$) and the standard deviation ($\sigma$), or in terms of the mean and the precision ($\tau$).
 
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\tau & = \frac{1}{\sigma^2}
-\end{align*}
+\tau = \frac{1}{\sigma^2}
 $$
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu, \sigma) =
+\frac{1}{\sigma \sqrt{2\pi}}
+\exp\left( -\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2 \right)
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -62,7 +82,14 @@ for mu, tau in zip(mus, taus):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, \sigma) =
+\frac{1}{2} \left[ 1 + \text{erf} \left( \frac{x - \mu}{\sigma \sqrt{2}} \right) \right]
+$$
+
+where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -87,35 +114,6 @@ for mu, tau in zip(mus, taus):
 ```
 :::::
 ::::::
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      :math:`\mu`
-Variance  :math:`\sigma^2`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-
-$$
-f(x \mid \mu, \sigma) =
-\frac{1}{\sigma \sqrt{2\pi}}
-\exp\left( -\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2 \right)
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, \sigma) =
-\frac{1}{2} \left[ 1 + \text{erf} \left( \frac{x - \mu}{\sigma \sqrt{2}} \right) \right]
-$$
-
-where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
-
 
 ```{seealso}
 :class: seealso

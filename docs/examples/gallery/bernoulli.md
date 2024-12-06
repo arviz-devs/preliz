@@ -14,7 +14,22 @@ kernelspec:
 
 The Bernoulli distribution is a discrete probability distribution. It can be thought of as a model for the set of possible outcomes of any single experiment that asks a yes–no question. More formally, it is a random variable which takes the value 1 with probability $p$ and the value 0 with probability $q = 1 − p$.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ======================
+Support   :math:`x \in \{0, 1\}`
+Mean      :math:`p`
+Variance  :math:`p (1 - p)`
+========  ======================
+```
+
+**Parameters:**
+
+- $p$ : (float) Probability of success, $0 \leq p \leq 1$.
+- $\text{logit}(p)$ : (float) Alternative log odds for the probability success, $-\infty < \text{logit}(p) < \infty$.
+
+**Alternative parametrization**
 
 The Bernoulli distribution has 2 alternative parametrizations. In terms of $p$ or $\text{logit}(p)$.
 
@@ -25,7 +40,11 @@ $$
 $$
 
 
-## Probability Density Function (PDF):
+### Probability Mass Function (PMF)
+
+$$
+f(x \mid p) = p^{x} (1-p)^{1-x}
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -53,7 +72,15 @@ for logit_p in [-4.6, 0, 1.38]:
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid p) = \begin{cases}
+    0 & \text{if } k < 0 \\
+    1 - p & \text{if } 0 \leq k < 1 \\
+    1 & \text{if } k \geq 1
+    \end{cases}
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -79,37 +106,8 @@ for logit_p in [-4.6, 0, 1.38]:
 :::::
 ::::::
 
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ======================
-Support   :math:`x \in \{0, 1\}`
-Mean      :math:`p`
-Variance  :math:`p (1 - p)`
-========  ======================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid p) = p^{x} (1-p)^{1-x}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid p) = \begin{cases}
-    0 & \text{if } k < 0 \\
-    1 - p & \text{if } 0 \leq k < 1 \\
-    1 & \text{if } k \geq 1
-    \end{cases}
-$$
-
-
 ```{seealso}
 :class: seealso
-
 
 **Related Distributions:**
 
@@ -120,8 +118,3 @@ $$
 ## References
 
 - [Wikipedia - Bernoulli](https://en.wikipedia.org/wiki/Bernoulli_distribution)
-
-
-
-
-

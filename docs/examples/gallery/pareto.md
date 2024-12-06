@@ -16,8 +16,27 @@ The Pareto distribution is a continuous probability distribution, known for foll
 
 It was originally used to describe the distribution of wealth in society where a small proportion of the population holds a large proportion of the wealth (the "80-20 rule"). It has since been used in various fields to describe a wide range of phenomena where events get rarer at greater magnitudes.
 
+## Key properties and parameters
 
-## Probability Density Function (PDF):
+```{eval-rst}
+
+========  ==========================================
+Support   :math:`x \in [m, \infty)`
+Mean      :math:`\frac{\alpha m}{\alpha - 1}` for :math:`\alpha > 1`
+Variance  :math:`\frac{m^2 \alpha}{(\alpha - 1)^2 (\alpha - 2)}` for :math:`\alpha > 2`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $m$ : (float) Scale parameter, $m > 0$.
+- $\alpha$ : (float) Shape parameter, $\alpha > 1$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x|\alpha, m) = \frac{\alpha m^\alpha}{x^{\alpha + 1}}
+$$
 
 ```{code-cell}
 ---
@@ -35,7 +54,11 @@ for alpha, m in zip(alphas, ms):
     Pareto(alpha, m).plot_pdf(support=(0,4))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|\alpha, m) = 1 - \left(\frac{m}{x}\right)^\alpha
+$$
 
 ```{code-cell}
 ---
@@ -49,29 +72,6 @@ for alpha, m in zip(alphas, ms):
     Pareto(alpha, m).plot_cdf(support=(0,4))
 ```
 
-## Key properties and parameters:
-
-```{eval-rst}
-
-========  ==========================================
-Support   :math:`x \in [m, \infty)`
-Mean      :math:`\frac{\alpha m}{\alpha - 1}` for :math:`\alpha > 1`
-Variance  :math:`\frac{m^2 \alpha}{(\alpha - 1)^2 (\alpha - 2)}` for :math:`\alpha > 2`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\alpha, m) = \frac{\alpha m^\alpha}{x^{\alpha + 1}}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\alpha, m) = 1 - \left(\frac{m}{x}\right)^\alpha
-$$
-
 ```{seealso}
 :class: seealso
 
@@ -84,4 +84,3 @@ $$
 ## References
 
 - [Wikipedia - Pareto Distribution](https://en.wikipedia.org/wiki/Pareto_distribution)
-

@@ -17,23 +17,50 @@ The skew-Student's t distribution is a continuous probability distribution that 
 
 There are several definitions of the skew-Student's t distribution. Here, we use the definition proposed by Jones and Faddy (2003) that is defined in terms of four parameters: the location parameter ($\mu$), the scale parameter ($\sigma$), and two shape parameters ($a$ and $b$). 
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      :math:`\mu + \sigma\frac{(a-b) \sqrt{(a+b)}}{2}\frac{\Gamma\left  (a-\frac{1}{2}\right)\Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a) \Gamma(b)}`
+Variance  :math:`\sigma^2\left(1 + \frac{\Gamma\left(a-\frac{1}{2}\right)\Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a)\Gamma(b)} - \left(\frac{\Gamma\left(a-\frac{1}{2}\right)\Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a)\Gamma(b)}\right)^2\right)`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) Location parameter.
+- $\sigma$ : (float) Scale parameter.
+- $a$ : (float) Shape parameter.
+- $b$ : (float) Shape parameter.
+
+**Alternative parametrization**
 
 The Skew-Student's t distribution has two alternative parameterizations. In terms of $\mu$, $\sigma$, $a$ and $b$, or in terms of $\mu$, $\lambda$, $a$ and $b$. 
 
 The link between the two parameterizations is given by:
 
 $$
-\begin{align*}
-\lambda & = \frac{1}{\sigma^2}
-\end{align*}
+\lambda = \frac{1}{\sigma^2}
 $$
 
 If $a > b$, the skew-Student's t distribution is positively skewed (skewed to the right). If $a < b$, the skew-Student's t distribution is negatively skewed (skewed to the left). If $a = b$, the skew-Student's t distribution reduces to the Student's t distribution with $\nu = 2a$.
 
 The parameter $\sigma$ convergences to the standard deviation and $\lambda$ converges to the precision as $a$ and $b$ approach close, and the value of $a$ gets larger.
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(t)=f(t \mid a, b)=C_{a, b}^{-1}\left\{1+\frac{t}{\left(a+b+t^2\right)^{1 / 2}}\right\}^{a+1 / 2}\left\{1-\frac{t}{\left(a+b+t^2\right)^{1 / 2}}\right\}^{b+1 / 2}
+$$
+
+Where $C_{a, b}$ is the normalizing constant given by:
+
+$$
+C_{a, b}=2^{a+b-1} B(a, b)(a+b)^{1 / 2}
+$$
+
+and $B(a, b)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -66,7 +93,13 @@ for mu, lam, a, b in zip(mus, lambdas, a_s, b_s):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(t \mid a, b) = I_{\frac{1+t/\sqrt{a + b + t^2}}{2}}(a, b)
+$$
+
+where $I_x(a, b)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -92,38 +125,6 @@ for mu, lam, a, b in zip(mus, lambdas, a_s, b_s):
 :::::
 ::::::
 
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      :math:`\mu + \sigma\frac{(a-b) \sqrt{(a+b)}}{2}\frac{\Gamma\left  (a-\frac{1}{2}\right)\Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a) \Gamma(b)}`
-Variance  :math:`\sigma^2\left(1 + \frac{\Gamma\left(a-\frac{1}{2}\right)\Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a)\Gamma(b)} - \left(\frac{\Gamma\left(a-\frac{1}{2}\right)\Gamma\left(b-\frac{1}{2}\right)}{\Gamma(a)\Gamma(b)}\right)^2\right)`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(t)=f(t \mid a, b)=C_{a, b}^{-1}\left\{1+\frac{t}{\left(a+b+t^2\right)^{1 / 2}}\right\}^{a+1 / 2}\left\{1-\frac{t}{\left(a+b+t^2\right)^{1 / 2}}\right\}^{b+1 / 2}
-$$
-
-Where $C_{a, b}$ is the normalizing constant given by:
-
-$$
-C_{a, b}=2^{a+b-1} B(a, b)(a+b)^{1 / 2}
-$$
-
-and $B(a, b)$ is the [Beta function](https://en.wikipedia.org/wiki/Beta_function).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(t \mid a, b) = I_{\frac{1+t/\sqrt{a + b + t^2}}{2}}(a, b)
-$$
-
-where $I_x(a, b)$ is the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
-
 ```{seealso}
 :class: seealso
 
@@ -139,5 +140,3 @@ where $I_x(a, b)$ is the [regularized incomplete beta function](https://en.wikip
 ## References:
 
 - M.C. Jones and M.J. Faddy. “A skew extension of the t distribution, with applications” Journal of the Royal Statistical Society, Series B (Statistical Methodology) 65, no. 1 (2003): 159-174. [DOI:10.1111/1467-9868.00378](https://doi.org/10.1111/1467-9868.00378)
-
-

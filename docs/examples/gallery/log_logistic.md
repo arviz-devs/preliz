@@ -16,8 +16,26 @@ The log-logistic distribution, also known as the Fisk distribution, is a continu
 
 The log-logistic distribution is often used in survival analysis as a parametric model for events whose rate increases initially and decreases later, as, for example, mortality rate from cancer following diagnosis or treatment. It has been used in hydrology for modelling stream flow rates and precipitation. It is also used in reliability engineering to model the lifetime of components and systems.
 
+## Key properties and parameters
 
-## Probability Density Function (PDF):
+```{eval-rst}
+========  ==========================================================================
+Support   :math:`x \in [0, \infty)`
+Mean      :math:`{\alpha\,\pi/\beta \over \sin(\pi/\beta)}` if :math:`\beta>1`, else undefined
+Variance  :math:`\alpha^2 \left(2b / \sin 2b -b^2 / \sin^2 b \right), \quad \beta>2`
+========  ==========================================================================
+```
+
+**Parameters:**
+
+- $\alpha$ : (float) Scale parameter, $\alpha > 0$.
+- $\beta$ : (float) Shape parameter, $\beta > 0$.
+
+### Probability Density Function (PDF)  
+
+$$
+f(x|\alpha, \beta) =   \frac{ (\beta/\alpha)(x/\alpha)^{\beta-1}}{\left( 1+(x/\alpha)^{\beta} \right)^2}
+$$
 
 ```{code-cell}
 ---
@@ -37,7 +55,11 @@ for alpha, beta in zip(alphas, betas):
     LogLogistic(alpha, beta).plot_pdf(support=(0, 6))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|\alpha, \beta) = \frac{1}{1 + (x/\alpha)^{-\beta}}
+$$
 
 ```{code-cell}
 ---
@@ -50,28 +72,6 @@ mystnb:
 for alpha, beta in zip(alphas, betas):
     LogLogistic(alpha, beta).plot_cdf(support=(0, 6))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================================================
-Support   :math:`x \in [0, \infty)`
-Mean      :math:`{\alpha\,\pi/\beta \over \sin(\pi/\beta)}` if :math:`\beta>1`, else undefined
-Variance  :math:`\alpha^2 \left(2b / \sin 2b -b^2 / \sin^2 b \right), \quad \beta>2`
-========  ==========================================================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\alpha, \beta) =   \frac{ (\beta/\alpha)(x/\alpha)^{\beta-1}}{\left( 1+(x/\alpha)^{\beta} \right)^2}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\alpha, \beta) = \frac{1}{1 + (x/\alpha)^{-\beta}}
-$$
 
 ```{seealso}
 :class: seealso

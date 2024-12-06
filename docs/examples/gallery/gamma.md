@@ -18,22 +18,43 @@ The gamma distribution is widely used in many settings, including modeling the t
 
 The gamma distribution is used as a conjugate prior for the exponential distribution and for the precision of the normal distribution. It can also used as prior for scale parameters, in particular when there is interest in avoiding values close to zero or one wants to include more information than with other prior commonly used for scale parameter like the halfnormal or the exponential.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in (0, \infty)`
+Mean      :math:`\frac{\alpha}{\beta}`
+Variance  :math:`\frac{\alpha}{\beta^2}`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\alpha$ : (float) Shape parameter, $\alpha > 0$.
+- $\beta$ : (float) Rate parameter, $\beta > 0$.
+- $\mu$ : (float) Mean of the distribution.
+- $\sigma$ : (float) Standard deviation of the distribution.
+
+**Alternative parametrization**
 
 The gamma distribution has two alternative parameterizations. In terms of $\alpha$ and $\beta$, and $\mu$ and $\sigma$.
 
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\alpha & = \frac{\mu^2}{\sigma^2} \\
-\beta & = \frac{\mu}{\sigma^2}
-\end{align*}
+\alpha = \frac{\mu^2}{\sigma^2} \\
+\beta = \frac{\mu}{\sigma^2}
 $$
 
 where $\mu$ is the mean of the distribution and $\sigma$ is the standard deviation.
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x|\alpha, \beta) = \frac{\beta^\alpha x^{\alpha - 1} e^{-\beta x}}{\Gamma(\alpha)}
+$$
+
+where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -69,8 +90,13 @@ for mu, sigma in zip(mus, sigmas):
 :::::
 ::::::
 
+### Cumulative Distribution Function (CDF)
 
-## Cumulative Distribution Function (CDF):
+$$
+F(x|\alpha, \beta) = \frac{1}{\Gamma(\alpha)} \gamma(\alpha, \beta x)
+$$
+
+where $\gamma$ is the [lower incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -97,33 +123,6 @@ for mu, sigma in zip(mus, sigmas):
 :::::
 ::::::
 
-## Key properties and parameters:
-
-```{eval-rst}
-
-========  ==========================================
-Support   :math:`x \in (0, \infty)`
-Mean      :math:`\frac{\alpha}{\beta}`
-Variance  :math:`\frac{\alpha}{\beta^2}`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\alpha, \beta) = \frac{\beta^\alpha x^{\alpha - 1} e^{-\beta x}}{\Gamma(\alpha)}
-$$
-
-where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\alpha, \beta) = \frac{1}{\Gamma(\alpha)} \gamma(\alpha, \beta x)
-$$
-
-where $\gamma$ is the [lower incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
-
 ```{seealso}
 :class: seealso
 
@@ -138,7 +137,6 @@ where $\gamma$ is the [lower incomplete gamma function](https://en.wikipedia.org
 - [Poisson Distribution](poisson.md) - While the Gamma distribution models the time until a specified number of events occur in a Poisson process, the Poisson distribution models the number of events in fixed intervals of time or space.
 - [Negative Binomial Distribution](negative-binomial.md) - The discrete counterpart of the Gamma distribution, modeling the number of trials needed to achieve a specified number of successes in a sequence of Bernoulli trials.
 ```
-
 
 ## References
 

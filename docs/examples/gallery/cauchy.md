@@ -18,7 +18,26 @@ In physics, the Cauchy distribution is also known as the Lorentz distribution, C
 
 In finance, the Cauchy distribution is used to model extreme events, such as stock market crashes, where the tails of the distribution are of particular interest.
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      undefined
+Variance  undefined
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\alpha$ : (float) Location parameter, $\alpha \in \mathbb{R}$.
+- $\beta$ : (float) Scale parameter, $\beta > 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x|\alpha, \beta) = \frac{1}{\pi \beta \left[1 + \left(\frac{x - \alpha}{\beta}\right)^2\right]}
+$$
 
 ```{code-cell}
 ---
@@ -35,7 +54,11 @@ for alpha, beta in zip(alphas, betas):
     Cauchy(alpha, beta).plot_pdf(support=(-5, 5))
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|\alpha, \beta) = \frac{1}{2} + \frac{1}{\pi} \arctan\left(\frac{x - \alpha}{\beta}\right)
+$$
 
 ```{code-cell}
 ---
@@ -45,28 +68,6 @@ mystnb: image
 for alpha, beta in zip(alphas, betas):
     Cauchy(alpha, beta).plot_cdf(support=(-5, 5))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      undefined
-Variance  undefined
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\alpha, \beta) = \frac{1}{\pi \beta \left[1 + \left(\frac{x - \alpha}{\beta}\right)^2\right]}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\alpha, \beta) = \frac{1}{2} + \frac{1}{\pi} \arctan\left(\frac{x - \alpha}{\beta}\right)
-$$
 
 ```{seealso}
 :class: seealso
@@ -85,7 +86,3 @@ $$
 ## References
 
 - [Wikipedia - Cauchy](https://en.wikipedia.org/wiki/Cauchy_distribution)
-
-
-
-

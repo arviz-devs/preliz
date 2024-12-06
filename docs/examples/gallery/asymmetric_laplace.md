@@ -45,8 +45,6 @@ $$
 \kappa = \sqrt{\frac{q}{1-q}}
 $$
 
-where $\kappa$ and $q$ are symmetry parameters, $\mu$ is the location parameter and $b$ is the scale parameter.
-
 ### Probability Density Function (PDF)
 
 $$

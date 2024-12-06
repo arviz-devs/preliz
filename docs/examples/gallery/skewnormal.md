@@ -16,7 +16,24 @@ The skew-normal distribution is a continuous probability distribution that gener
 
 The skew-normal distribution is often used to model data that exhibit skewness, such as financial returns, income distributions, and reaction times. In these cases, the skew-normal distribution provides a flexible framework to capture the asymmetry in the data, which is not possible with the normal distribution.
 
-## Parametrization
+## Key Properties and Parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      :math:`\mu + \sigma \sqrt{\frac{2}{\pi}} \frac{\alpha }{{\sqrt {1+\alpha ^{2}}}}`
+Variance  :math:`\sigma^2 \left(  1-\frac{2\alpha^2}{(\alpha^2+1) \pi} \right)`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) Location parameter.
+- $\sigma$ : (float) Scale parameter.
+- $\tau$ : (float) Precision parameter.
+- $\alpha$ : (float) Skewness parameter.
+
+**Alternative parametrization**
 
 The skew-normal distribution has 2 alternative parameterizations. In terms of $\mu$, $\sigma$ and $\alpha$, or in terms of $\mu$, $\tau$ and $\alpha$. 
 Where $\mu$ is the location parameter, $\sigma$ is the scale parameter, $\tau$ is the precision parameter, and $\alpha$ is the skewness parameter.
@@ -24,12 +41,16 @@ Where $\mu$ is the location parameter, $\sigma$ is the scale parameter, $\tau$ i
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\tau & = \frac{1}{\sigma^2}
-\end{align*}
+\tau = \frac{1}{\sigma^2}
 $$
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu, \tau, \alpha) = 2 \Phi((x-\mu)\sqrt{\tau}\alpha) \phi(x,\mu,\tau)
+$$
+
+where $\Phi$ is the standard normal CDF and $\phi$ is the normal PDF.
 
 ::::::{tab-set}
 :class: full-width
@@ -60,7 +81,13 @@ for alpha in alphas:
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu, \sigma, \alpha) = \frac{1}{2} \left( 1 + \text{erf} \left( \frac{x - \mu}{\sigma \sqrt{2}} \right) \right) - 2 T \left( \frac{x - \mu}{\sigma}, \alpha \right)
+$$
+
+where $\text{erf}$ is the [error function](https://en.wikipedia.org/wiki/Error_function) and $T$ is the [Owen's T function](https://en.wikipedia.org/wiki/Owen%27s_T_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -86,32 +113,6 @@ for alpha in alphas:
 ```
 :::::
 ::::::
-
-## Key Properties and Parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      :math:`\mu + \sigma \sqrt{\frac{2}{\pi}} \frac{\alpha }{{\sqrt {1+\alpha ^{2}}}}`
-Variance  :math:`\sigma^2 \left(  1-\frac{2\alpha^2}{(\alpha^2+1) \pi} \right)`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \mu, \tau, \alpha) = 2 \Phi((x-\mu)\sqrt{\tau}\alpha) \phi(x,\mu,\tau)
-$$
-
-where $\Phi$ is the standard normal CDF and $\phi$ is the normal PDF.
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu, \sigma, \alpha) = \frac{1}{2} \left( 1 + \text{erf} \left( \frac{x - \mu}{\sigma \sqrt{2}} \right) \right) - 2 T \left( \frac{x - \mu}{\sigma}, \alpha \right)
-$$
-
-where $\text{erf}$ is the [error function](https://en.wikipedia.org/wiki/Error_function) and $T$ is the [Owen's T function](https://en.wikipedia.org/wiki/Owen%27s_T_function).
 
 ```{seealso}
 :class: seealso

@@ -16,7 +16,27 @@ The chi-squared (also chi-square or $\chi^2$) is a continuous probability distri
 
 The chi-squared distribution is widely used in many statistical tests, for hypothesis testing and constructing confidence intervals. 
 
-## Probability Density Function (PDF):
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in [0, \infty)`
+Mean      :math:`\nu`
+Variance  :math:`2\nu`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\nu$ : (float) Degrees of freedom, $\nu > 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x|\nu) = \frac{1}{2^{\nu/2}\Gamma(\nu/2)} x^{\nu/2 - 1} e^{-x/2}
+$$
+
+where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
 
 ```{code-cell}
 ---
@@ -37,7 +57,13 @@ for nu in nus:
     ax.set_ylim(0, 0.6)
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|\nu) = \frac{1}{\Gamma(\nu/2)} \gamma(\nu/2, x/2)
+$$
+
+where $\gamma$ is the [lower incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
 
 ```{code-cell}
 ---
@@ -50,32 +76,6 @@ mystnb:
 for nu in nus:
     ChiSquared(nu).plot_cdf(support=(0, 20))
 ```
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in [0, \infty)`
-Mean      :math:`\nu`
-Variance  :math:`2\nu`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\nu) = \frac{1}{2^{\nu/2}\Gamma(\nu/2)} x^{\nu/2 - 1} e^{-x/2}
-$$
-
-where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\nu) = \frac{1}{\Gamma(\nu/2)} \gamma(\nu/2, x/2)
-$$
-
-where $\gamma$ is the [lower incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
-
 
 ```{seealso}
 :class: seealso

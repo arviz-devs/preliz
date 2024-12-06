@@ -17,22 +17,42 @@ The Student's t distribution, also known as the t-distribution, is a continuous 
 
 It is often used in Bayesian analysis particulary as a robust alternative to the Normal due to the possibility of having heavier tails.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in \mathbb{R}`
+Mean      :math:`\mu` for :math:`\nu > 1`, otherwise undefined
+Variance  :math:`\frac{\nu}{\nu-2}` for :math:`\nu > 2`,
+          :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\nu$ : (float) Degrees of freedom, $\nu > 0$.
+- $\mu$ : (float) Location parameter.
+- $\sigma$ : (float) Scale parameter, $\sigma > 0$.
+
+**Alternative parametrization**
 
 The Student's t distribution has two alternative parameterizations. In terms of $\nu$, $\mu$, and $\sigma$, or in terms of $\nu$, $\mu$ and $\lambda$.
 
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\lambda & = \frac{1}{\sigma^2}
-\end{align*}
+\lambda = \frac{1}{\sigma^2}
 $$
 
 where $\sigma$ is the standard deviation as $\nu$ increases, and $\lambda$ is the precision as $\nu$ increases.
 
+### Probability Density Function (PDF)
 
-## Probability Density Function (PDF):
+$$
+f(x \mid \nu, \mu, \sigma) =  \frac{\Gamma \left(\frac{\nu+1}{2} \right)} {\sqrt{\nu\pi}\Gamma \left(\frac{\nu}{2} \right)} \left(1+\frac{x^2}{\nu} \right)^{-\frac{\nu+1}{2}}
+$$
+
+where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -64,7 +84,17 @@ for nu, mu, lam in zip(nus, mus, lambdas):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(y \mid \nu, \mu, \sigma) = 
+\begin{cases} 
+1 - \frac{1}{2} I_{\frac{\nu}{x^2 + \nu}} \left( \frac{\nu}{2}, \frac{1}{2} \right) & \text{for } x = \frac{y - \mu}{\sigma} \leq 0, \\[0.5em]
+\frac{1}{2} I_{\frac{\nu}{x^2 + \nu}} \left( \frac{\nu}{2}, \frac{1}{2} \right) & \text{for } x = \frac{y - \mu}{\sigma} > 0,
+\end{cases}
+$$
+
+where $I_x(a, b)$ denotes the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Regularized_incomplete_beta_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -90,39 +120,6 @@ for nu in nus:
 :::::
 ::::::
 
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in \mathbb{R}`
-Mean      :math:`\mu` for :math:`\nu > 1`, otherwise undefined
-Variance  :math:`\frac{\nu}{\nu-2}` for :math:`\nu > 2`,
-          :math:`\infty` for :math:`1 < \nu \le 2`, otherwise undefined
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \nu, \mu, \sigma) =  \frac{\Gamma \left(\frac{\nu+1}{2} \right)} {\sqrt{\nu\pi}\Gamma \left(\frac{\nu}{2} \right)} \left(1+\frac{x^2}{\nu} \right)^{-\frac{\nu+1}{2}}
-$$
-
-where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(y \mid \nu, \mu, \sigma) = 
-\begin{cases} 
-1 - \frac{1}{2} I_{\frac{\nu}{x^2 + \nu}} \left( \frac{\nu}{2}, \frac{1}{2} \right) & \text{for } x = \frac{y - \mu}{\sigma} \leq 0, \\[0.5em]
-\frac{1}{2} I_{\frac{\nu}{x^2 + \nu}} \left( \frac{\nu}{2}, \frac{1}{2} \right) & \text{for } x = \frac{y - \mu}{\sigma} > 0,
-\end{cases}
-$$
-
-where $I_x(a, b)$ denotes the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Regularized_incomplete_beta_function).
-
-
-
 ```{seealso}
 :class: seealso
 
@@ -136,5 +133,3 @@ where $I_x(a, b)$ denotes the [regularized incomplete beta function](https://en.
 ## References
 
 - Wikipedia. [Student's t-distribution](https://en.wikipedia.org/wiki/Student%27s_t-distribution)
-
-

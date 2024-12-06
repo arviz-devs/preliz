@@ -14,8 +14,25 @@ kernelspec:
 
 The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time (or space) if these events occur with a known constant mean rate and independently of the time since the last event.
 
+## Key properties and parameters
 
-## Probability Density Function (PDF):
+```{eval-rst}
+========  ==========================
+Support   :math:`x \in \mathbb{N}_0`
+Mean      :math:`\mu`
+Variance  :math:`\mu`
+========  ==========================
+```
+
+**Parameters:**
+
+- $\mu$ : (float) The mean rate of events, $\mu > 0$.
+
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \mu) = \frac{e^{-\mu}\mu^x}{x!}
+$$
 
 ```{code-cell}
 ---
@@ -32,7 +49,13 @@ for mu in [0.5, 3, 8]:
     Poisson(mu).plot_pdf();
 ```
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \mu) = \frac{\Gamma(x + 1, \mu)}{x!}
+$$
+
+where $\Gamma(x + 1, \mu)$ is the [upper incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
 
 ```{code-cell}
 ---
@@ -45,30 +68,6 @@ mystnb:
 for mu in [0.5, 3, 8]:
     Poisson(mu).plot_cdf();
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================
-Support   :math:`x \in \mathbb{N}_0`
-Mean      :math:`\mu`
-Variance  :math:`\mu`
-========  ==========================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \mu) = \frac{e^{-\mu}\mu^x}{x!}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \mu) = \frac{\Gamma(x + 1, \mu)}{x!}
-$$
-
-where $\Gamma(x + 1, \mu)$ is the [upper incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
 
 ```{seealso}
 :class: seealso
@@ -88,8 +87,3 @@ where $\Gamma(x + 1, \mu)$ is the [upper incomplete gamma function](https://en.w
 ## References
 
 - [Wikipedia - Poisson](https://en.wikipedia.org/wiki/Poisson_distribution)
-
-
-
-
-

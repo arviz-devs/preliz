@@ -18,20 +18,39 @@ In mathematics, the Lévy distribution (a special case of the inverse gamma dist
 
 In Bayesian statistics, the Inverse Gamma distribution often appears as the marginal posterior distribution for an unknown variance in a normal distribution when using an uninformative prior. It also serves as an analytically tractable conjugate prior when an informative prior is required.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ===============================
+Support   :math:`x \in (0, \infty)`
+Mean      :math:`\dfrac{\beta}{\alpha-1}` for :math:`\alpha > 1`
+Variance  :math:`\dfrac{\beta^2}{(\alpha-1)^2(\alpha - 2)}` for :math:`\alpha > 2`
+========  ===============================
+```
+
+**Parameters:**
+
+- $\alpha$ : (float) Shape parameter, $\alpha > 0$.
+- $\beta$ : (float) Scale parameter, $\beta > 0$.
+
+**Alternative parametrization**
 
 The Inverse Gamma distribution has 2 alternative parametrizations: in terms of the shape parameter $\alpha$ and the scale parameter $\beta$, or in terms of $\mu$ (mean) and $\sigma$ (standard deviation). 
 
 The link between the parameters is given by:
 
 $$
-\begin{align*}
-\alpha & = \frac{\mu^2}{\sigma^2} + 2 \\
-\beta & = \frac{\mu^3}{\sigma^2} + \mu
-\end{align*}
+\alpha = \frac{\mu^2}{\sigma^2} + 2 \\
+\beta = \frac{\mu^3}{\sigma^2} + \mu
 $$
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x; \alpha, \beta) = \dfrac{\beta^\alpha}{\Gamma(\alpha)} x^{-\alpha-1}\exp(-\dfrac{\beta}{x})
+$$
+
+where $\Gamma(\alpha)$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -66,7 +85,13 @@ for mu, sigma in zip(mus, sigmas):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x; \alpha, \beta) = \dfrac{\Gamma(\alpha, \dfrac{\beta}{x})}{\Gamma(\alpha)}
+$$
+
+where $\Gamma(\alpha, x)$ is the [upper incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -93,40 +118,12 @@ for mu, sigma in zip(mus, sigmas):
 :::::
 ::::::
 
-## Key properties and parameters:
-
-```{eval-rst}
-========  ===============================
-Support   :math:`x \in (0, \infty)`
-Mean      :math:`\dfrac{\beta}{\alpha-1}` for :math:`\alpha > 1`
-Variance  :math:`\dfrac{\beta^2}{(\alpha-1)^2(\alpha - 2)}` for :math:`\alpha > 2`
-========  ===============================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x; \alpha, \beta) = \dfrac{\beta^\alpha}{\Gamma(\alpha)} x^{-\alpha-1}\exp(-\dfrac{\beta}{x})
-
-$$
-
-where $\Gamma(\alpha)$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x; \alpha, \beta) = \dfrac{\Gamma(\alpha, \dfrac{\beta}{x})}{\Gamma(\alpha)}
-$$
-
-where $\Gamma(\alpha, x)$ is the [upper incomplete gamma function](https://en.wikipedia.org/wiki/Incomplete_gamma_function).
-
 ```{seealso}
 :class: seealso
 
 **Related Distributions:**
 - [Gamma Distribution](gamma.md) - The Gamma distribution is the reciprocal of the Inverse Gamma distribution.
 ```
-
 
 ## References
 

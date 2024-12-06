@@ -16,17 +16,37 @@ The Rice distribution is the probability distribution of the magnitude of a circ
 
 The Rice distribution is often used in signal processing, particularly in the analysis of noisy signals, such as radar and communication systems.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==============================================================
+Support   :math:`x \in (0, \infty)`
+Mean      :math:`\sigma \sqrt{\pi /2} L_{1/2}(-\nu^2 / 2\sigma^2)`
+Variance  :math:`2\sigma^2 + \nu^2 - \frac{\pi \sigma^2}{2}`
+          :math:`L_{1/2}^2\left(\frac{-\nu^2}{2\sigma^2}\right)`
+========  ==============================================================
+```
+
+**Parameters:**
+
+- $v$ : (float) Non-centrality parameter, $v \geq 0$.
+- $\sigma$ : (float) Scale parameter, $\sigma > 0$.
+
+**Alternative parametrization**
 
 The Rice distribution has two alternative parameterizations: in terms of $v$ and $\sigma$, or in terms of $b$ and $\sigma$. The relationship between the two is given by:
 
 $$
-\begin{align*}
-b & = \frac{v}{\sigma}
-\end{align*}
+b = \frac{v}{\sigma}
 $$
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x|\nu, \sigma) = \frac{x}{\sigma^2} \exp\left(-\frac{x^2 + \nu^2}{2\sigma^2}\right) I_0\left(\frac{x\nu}{\sigma^2}\right)
+$$
+
+where $I_0$ is the modified [Bessel function](https://en.wikipedia.org/wiki/Bessel_function) of the first kind.
 
 ::::::{tab-set}
 :class: full-width
@@ -58,7 +78,13 @@ for b, sigma in zip(bs, sigmas):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|\nu, \sigma) = 1 - Q_1\left(\frac{x}{\sigma}, \frac{\nu}{\sigma}\right)
+$$
+
+where $Q_1$ is the [Marcum Q-function](https://en.wikipedia.org/wiki/Marcum_Q-function).
 
 ::::::{tab-set}
 :class: full-width
@@ -84,33 +110,6 @@ for b, sigma in zip(bs, sigmas):
 ```
 :::::
 ::::::
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==============================================================
-Support   :math:`x \in (0, \infty)`
-Mean      :math:`\sigma \sqrt{\pi /2} L_{1/2}(-\nu^2 / 2\sigma^2)`
-Variance  :math:`2\sigma^2 + \nu^2 - \frac{\pi \sigma^2}{2}`
-          :math:`L_{1/2}^2\left(\frac{-\nu^2}{2\sigma^2}\right)`
-========  ==============================================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\nu, \sigma) = \frac{x}{\sigma^2} \exp\left(-\frac{x^2 + \nu^2}{2\sigma^2}\right) I_0\left(\frac{x\nu}{\sigma^2}\right)
-$$
-
-where $I_0$ is the modified [Bessel function](https://en.wikipedia.org/wiki/Bessel_function) of the first kind.
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\nu, \sigma) = 1 - Q_1\left(\frac{x}{\sigma}, \frac{\nu}{\sigma}\right)
-$$
-
-where $Q_1$ is the [Marcum Q-function](https://en.wikipedia.org/wiki/Marcum_Q-function).
 
 ```{seealso}
 :class: seealso

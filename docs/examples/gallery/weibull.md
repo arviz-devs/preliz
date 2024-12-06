@@ -16,8 +16,26 @@ The Weibull distribution is a continuous probability distribution that models th
 
 This distribution is widely used in fields like engineering, survival analysis, and material science. If $\alpha > 1$, the event becomes more likely as time passes, making it useful for modeling aging or wear-out processes. If $\alpha < 1$, the event is more likely at the beginning and decreases over time.
 
+## Key properties and parameters
 
-## Probability Density Function (PDF)
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in [0, \infty)`
+Mean      :math:`\beta \Gamma(1 + \frac{1}{\alpha})`
+Variance  :math:`\beta^2 \Gamma(1 + \frac{2}{\alpha} - \mu^2/\beta^2)`
+========  ====================================================
+```
+
+**Parameters:**
+
+- $\alpha > 0$: Shape parameter
+- $\beta > 0$: Scale parameter
+
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \alpha, \beta) = \frac{\alpha x^{\alpha - 1} \exp(-(\frac{x}{\beta})^{\alpha})}{\beta^\alpha}
+$$
 
 ```{code-cell}
 ---
@@ -35,7 +53,11 @@ for alpha, beta in zip(alphas, betas):
     Weibull(alpha, beta).plot_pdf(support=(0, 5))
 ```
 
-## Cumulative Distribution Function (CDF)
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \alpha, \beta) = 1 - \exp(-(\frac{x}{\beta})^{\alpha})
+$$
 
 ```{code-cell}
 ---
@@ -48,28 +70,6 @@ mystnb:
 for alpha, beta in zip(alphas, betas):
     Weibull(alpha, beta).plot_cdf(support=(0, 5))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in [0, \infty)`
-Mean      :math:`\beta \Gamma(1 + \frac{1}{\alpha})`
-Variance  :math:`\beta^2 \Gamma(1 + \frac{2}{\alpha} - \mu^2/\beta^2)`
-========  ====================================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \alpha, \beta) = \frac{\alpha x^{\alpha - 1} \exp(-(\frac{x}{\beta})^{\alpha})}{\beta^\alpha}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \alpha, \beta) = 1 - \exp(-(\frac{x}{\beta})^{\alpha})
-$$
 
 ```{seealso}
 :class: seealso
@@ -86,4 +86,3 @@ $$
 ## References
 
 - [Wikipedia - Weibull Distribution](https://en.wikipedia.org/wiki/Weibull_distribution)
-

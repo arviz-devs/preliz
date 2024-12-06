@@ -16,19 +16,36 @@ The Half-Normal distribution is a continuous probability distribution that is de
 
 In Bayesian statistics, the Half-Normal distribution is commonly used as a prior for scale parameters.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in [0, \infty)`
+Mean      :math:`\dfrac{\sigma \sqrt{2}}{\sqrt{\pi}}`
+Variance  :math:`\sigma^2 \left(1 - \dfrac{2}{\pi}\right)`
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\sigma$ : (float) Standard deviation of the distribution, $\sigma > 0$.
+- $\tau$ : (float) Precision of the distribution, $\tau > 0$.
+
+**Alternative parametrization**
 
 The Half-Normal distribution has 2 alternative parameterizations. It can be defined in terms of the standard deviation ($\sigma$) or in terms of the precision ($\tau$).
 
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\tau & = \frac{1}{\sigma^2}
-\end{align*}
+\tau = \frac{1}{\sigma^2}
 $$
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x|\sigma) = \sqrt{\dfrac{2}{\pi\sigma^2}} \exp\left(-\dfrac{x^2}{2\sigma^2}\right)
+$$
 
 ::::::{tab-set}
 :class: full-width
@@ -60,7 +77,13 @@ for tau in taus:
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x|\sigma) = \text{erf}\left(\dfrac{x}{\sigma\sqrt{2}}\right)
+$$
+
+where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -86,30 +109,6 @@ for tau in taus:
 ```
 :::::
 ::::::
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in [0, \infty)`
-Mean      :math:`\dfrac{\sigma \sqrt{2}}{\sqrt{\pi}}`
-Variance  :math:`\sigma^2 \left(1 - \dfrac{2}{\pi}\right)`
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x|\sigma) = \sqrt{\dfrac{2}{\pi\sigma^2}} \exp\left(-\dfrac{x^2}{2\sigma^2}\right)
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x|\sigma) = \text{erf}\left(\dfrac{x}{\sigma\sqrt{2}}\right)
-$$
-
-where erf is the [error function](https://en.wikipedia.org/wiki/Error_function).
 
 ```{seealso}
 :class: seealso

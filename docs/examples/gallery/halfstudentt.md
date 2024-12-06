@@ -16,21 +16,51 @@ The Half-Student's t distribution, also known as the half-t distribution, is a c
 
 In Bayesian statistics, the Half-Student's t distribution is often used as a prior for scale parameters.
 
-## Parametrization
+## Key properties and parameters
+
+```{eval-rst}
+========  ==========================================
+Support   :math:`x \in [0, \infty)`
+Mean      .. math::
+                2\sigma\sqrt{\frac{\nu}{\pi}}\
+                \frac{\Gamma\left(\frac{\nu+1}{2}\right)}
+                {\Gamma\left(\frac{\nu}{2}\right)(\nu-1)}\, \text{for } \nu > 2
+Variance  .. math::
+                \sigma^2\left(\frac{\nu}{\nu - 2}-\
+                \frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}
+                {\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right) \text{for } \nu > 2\, \infty\
+                \text{for } 1 < \nu \le 2\, \text{otherwise undefined}
+========  ==========================================
+```
+
+**Parameters:**
+
+- $\nu$ : (float) Degrees of freedom.
+- $\sigma$ : (float) Scale parameter.
+- $\lambda$ : (float) Precision parameter.
+
+**Alternative parametrization**
 
 The Half-Student's t distribution has 2 alternative parameterizations. In terms of $\nu$ and $\sigma$, or in terms of $\nu$ and $\lambda$.
 
 The link between the 2 alternatives is given by:
 
 $$
-\begin{align*}
-\lambda & = \frac{1}{\sigma^2}
-\end{align*}
+\lambda = \frac{1}{\sigma^2}
 $$
 
 where $\sigma$ is the standard deviation as $\nu$ increases, and $\lambda$ is the precision as $\nu$ increases.
 
-## Probability Density Function (PDF):
+### Probability Density Function (PDF)
+
+$$
+f(x \mid \sigma,\nu) =
+    \frac{2\;\Gamma\left(\frac{\nu+1}{2}\right)}
+    {\Gamma\left(\frac{\nu}{2}\right)\sqrt{\nu\pi\sigma^2}}
+    \left(1+\frac{1}{\nu}\frac{x^2}{\sigma^2}\right)^{-\frac{\nu+1}{2}}
+$$
+
+where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -63,7 +93,17 @@ for nu, lam in zip(nus, lambdas):
 :::::
 ::::::
 
-## Cumulative Distribution Function (CDF):
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid \sigma,\nu) = 
+\begin{cases} 
+\frac{1}{2} \cdot I_{\frac{\nu}{x^2 + \nu}}\left(\frac{\nu}{2}, \frac{1}{2}\right) & \text{if } x \geq 0 \\
+0 & \text{if } x < 0
+\end{cases}
+$$
+
+where $I_x(a, b)$ denotes the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
 
 ::::::{tab-set}
 :class: full-width
@@ -89,46 +129,6 @@ for nu, lam in zip(nus, lambdas):
 ```
 :::::
 ::::::
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  ==========================================
-Support   :math:`x \in [0, \infty)`
-Mean      .. math::
-                2\sigma\sqrt{\frac{\nu}{\pi}}\
-                \frac{\Gamma\left(\frac{\nu+1}{2}\right)}
-                {\Gamma\left(\frac{\nu}{2}\right)(\nu-1)}\, \text{for } \nu > 2
-Variance  .. math::
-                \sigma^2\left(\frac{\nu}{\nu - 2}-\
-                \frac{4\nu}{\pi(\nu-1)^2}\left(\frac{\Gamma\left(\frac{\nu+1}{2}\right)}
-                {\Gamma\left(\frac{\nu}{2}\right)}\right)^2\right) \text{for } \nu > 2\, \infty\
-                \text{for } 1 < \nu \le 2\, \text{otherwise undefined}
-========  ==========================================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid \sigma,\nu) =
-    \frac{2\;\Gamma\left(\frac{\nu+1}{2}\right)}
-    {\Gamma\left(\frac{\nu}{2}\right)\sqrt{\nu\pi\sigma^2}}
-    \left(1+\frac{1}{\nu}\frac{x^2}{\sigma^2}\right)^{-\frac{\nu+1}{2}}
-$$
-
-where $\Gamma$ is the [gamma function](https://en.wikipedia.org/wiki/Gamma_function).
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid \sigma,\nu) = 
-\begin{cases} 
-\frac{1}{2} \cdot I_{\frac{\nu}{x^2 + \nu}}\left(\frac{\nu}{2}, \frac{1}{2}\right) & \text{if } x \geq 0 \\
-0 & \text{if } x < 0
-\end{cases}
-$$
-
-where $I_x(a, b)$ denotes the [regularized incomplete beta function](https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function).
 
 ```{seealso}
 :class: seealso

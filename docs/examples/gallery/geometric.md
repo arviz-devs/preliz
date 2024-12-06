@@ -16,7 +16,25 @@ The Geometric distribution is a discrete probability distribution used to model 
 
 The geometric distribution is memoryless, meaning that the probability of success on the next trial is independent of past outcomes. This property makes it useful in scenarios such as modeling the time until the first occurrence of an event in reliability engineering, quality control, and queuing theory. It is particularly effective for analyzing discrete data patterns where each trial is independent and identically distributed.
 
-## Probability Mass Function (PMF)
+## Key properties and parameters
+
+```{eval-rst}
+========  =============================
+Support   :math:`x \in \mathbb{N}_{>0}`
+Mean      :math:`\dfrac{1}{p}`
+Variance  :math:`\dfrac{1 - p}{p^2}`
+========  =============================
+```
+
+**Parameters:**
+
+- $p$ : (float) Probability of success in each Bernoulli trial, $0 < p \leq 1$.
+
+### Probability Mass Function (PMF)
+
+$$
+f(x \mid p) = p(1-p)^{x-1}
+$$
 
 ```{code-cell}
 ---
@@ -32,7 +50,11 @@ for p in [0.1, 0.25, 0.75]:
     Geometric(p).plot_pdf(support=(1,10))
 ```
 
-## Cumulative Distribution Function (CDF)
+### Cumulative Distribution Function (CDF)
+
+$$
+F(x \mid p) = 1 - (1-p)^x
+$$
 
 ```{code-cell}
 ---
@@ -45,28 +67,6 @@ mystnb:
 for p in [0.1, 0.25, 0.75]:
     Geometric(p).plot_cdf(support=(1,10))
 ```
-
-## Key properties and parameters:
-
-```{eval-rst}
-========  =============================
-Support   :math:`x \in \mathbb{N}_{>0}`
-Mean      :math:`\dfrac{1}{p}`
-Variance  :math:`\dfrac{1 - p}{p^2}`
-========  =============================
-```
-
-**Probability Density Function (PDF):**
-
-$$
-f(x \mid p) = p(1-p)^{x-1}
-$$
-
-**Cumulative Distribution Function (CDF):**
-
-$$
-F(x \mid p) = 1 - (1-p)^x
-$$
 
 ```{seealso}
 :class: seealso
