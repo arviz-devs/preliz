@@ -516,7 +516,7 @@ Discrete Distributions
       Poisson
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.zi_binomial.ZeroInflatedBinomial
+      :link: ./examples/gallery/zeroinflatedbinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
