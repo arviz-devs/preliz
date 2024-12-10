@@ -480,7 +480,7 @@ Discrete Distributions
       Geometric
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.hypergeometric.HyperGeometric
+      :link: ./examples/gallery/hypergeometric.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
