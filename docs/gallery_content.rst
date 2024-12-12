@@ -540,7 +540,7 @@ Discrete Distributions
       Zero-Inflated Negative Binomial
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.zi_poisson.ZeroInflatedPoisson
+      :link: ./examples/gallery/zeroinflatedpoisson.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
