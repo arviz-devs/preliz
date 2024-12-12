@@ -122,8 +122,10 @@ def maxent(
     if mode is not None:
         try:
             distribution.mode()
-        except NotImplementedError:
-            raise ValueError(f"{distribution.__class__.__name__} does not have a mode method")
+        except NotImplementedError as exc:
+            raise ValueError(
+                f"{distribution.__class__.__name__} does not have a mode method"
+            ) from exc
 
     opt = optimize_max_ent(distribution, lower, upper, mass, none_idx, fixed, mode)
     distribution.opt = opt
