@@ -137,6 +137,9 @@ class Gamma(Continuous):
     def mean(self):
         return self.alpha / self.beta
 
+    def mode(self):
+        return np.where(self.alpha <= 1, 0, (self.alpha - 1) / self.beta)
+
     def median(self):
         return self.ppf(0.5)
 

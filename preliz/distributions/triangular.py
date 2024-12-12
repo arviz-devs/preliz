@@ -101,6 +101,9 @@ class Triangular(Continuous):
     def mean(self):
         return (self.lower + self.c + self.upper) / 3
 
+    def mode(self):
+        return self.c
+
     def median(self):
         return np.where(
             self.c >= (self.lower + self.upper) / 2,

@@ -125,6 +125,9 @@ class InverseGamma(Continuous):
     def mean(self):
         return np.where(self.alpha > 1, self.beta / (self.alpha - 1), np.inf)
 
+    def mode(self):
+        return self.beta / (self.alpha + 1)
+
     def median(self):
         return self.ppf(0.5)
 

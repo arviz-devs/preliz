@@ -110,6 +110,9 @@ class Exponential(Continuous):
     def mean(self):
         return self.beta
 
+    def mode(self):
+        return np.zeros_like(self.beta)
+
     def std(self):
         return self.beta
 

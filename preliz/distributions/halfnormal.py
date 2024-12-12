@@ -108,6 +108,9 @@ class HalfNormal(Continuous):
     def mean(self):
         return self.sigma * 0.7978845608028655
 
+    def mode(self):
+        return np.zeros_like(self.sigma)
+
     def median(self):
         return self.sigma * 0.6744897501960818
 

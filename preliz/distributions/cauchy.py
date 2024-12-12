@@ -89,6 +89,9 @@ class Cauchy(Continuous):
     def mean(self):
         return np.nan
 
+    def mode(self):
+        return self.alpha
+
     def median(self):
         return self.alpha
 

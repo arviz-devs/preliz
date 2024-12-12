@@ -64,7 +64,6 @@ class Distribution:
                 else f"{n}=[" + "".join(f"{vi:.3g}, " for vi in v).strip(", ") + "], "
                 for n, v in zip(self.param_names, self.params)
             ).strip(", ")
-
             return f"{bolded_name}({description})"
         else:
             return name
@@ -141,7 +140,7 @@ class Distribution:
         random_state : {None, int, numpy.random.Generator, numpy.random.RandomState}
             Defaults to None
         """
-        return self.rvs(size, random_state)
+        raise NotImplementedError
 
     def pdf(self, x):
         """Probability density/mass function.
@@ -151,7 +150,7 @@ class Distribution:
         x : array_like
             Values on which to evaluate the pdf
         """
-        return self.pdf(x)
+        raise NotImplementedError
 
     def cdf(self, x):
         """Cumulative distribution function.
@@ -161,7 +160,7 @@ class Distribution:
         x : array_like
             Values on which to evaluate the cdf
         """
-        return self.cdf(x)
+        raise NotImplementedError
 
     def ppf(self, q):
         """Percent point function (inverse of cdf).
@@ -171,7 +170,7 @@ class Distribution:
         x : array_like
             Values on which to evaluate the inverse of the cdf
         """
-        return self.ppf(q)
+        raise NotImplementedError
 
     def logpdf(self, x):
         """Log probability density/mass function.
@@ -181,35 +180,39 @@ class Distribution:
         x : array_like
             Values on which to evaluate the logpdf
         """
-        return self.pdf(x)
+        raise NotImplementedError
 
     def entropy(self):
         """Entropy"""
-        return self.entropy()
+        raise NotImplementedError
 
     def mean(self):
         """Mean."""
-        return self.mean()
+        raise NotImplementedError
 
     def median(self):
         """Median."""
-        return self.median()
+        raise NotImplementedError
+
+    def mode(self):
+        """Mode."""
+        raise NotImplementedError
 
     def std(self):
         """Standard deviation."""
-        return self.std()
+        raise NotImplementedError
 
     def var(self):
         """Variance"""
-        return self.var()
+        raise NotImplementedError
 
     def skewness(self):
         """Skewness."""
-        return self.skewness()
+        raise NotImplementedError
 
     def kurtosis(self):
         """Excess kurtosis."""
-        return self.kurtosis()
+        raise NotImplementedError
 
     def moments(self, types="mvsk"):
         """

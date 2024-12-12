@@ -88,6 +88,9 @@ class Logistic(Continuous):
     def mean(self):
         return self.mu
 
+    def mode(self):
+        return self.mu
+
     def median(self):
         return self.mu
 

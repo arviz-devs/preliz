@@ -83,6 +83,9 @@ class HalfCauchy(Continuous):
     def mean(self):
         return np.inf
 
+    def mode(self):
+        return np.zeros_like(self.beta)
+
     def median(self):
         return self.ppf(0.5)
 

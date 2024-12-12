@@ -88,6 +88,9 @@ class Poisson(Discrete):
     def mean(self):
         return self.mu
 
+    def mode(self):
+        return np.floor(self.mu)
+
     def median(self):
         return np.floor(self.mu + 1 / 3 - 0.02 / self.mu)
 
