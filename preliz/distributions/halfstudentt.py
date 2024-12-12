@@ -144,6 +144,9 @@ class HalfStudentT(Continuous):
                 mean = self.sigma * (2 / np.pi) ** 0.5
         return mean
 
+    def mode(self):
+        return np.zeros_like(self.sigma)
+
     def median(self):
         return self.ppf(0.5)
 

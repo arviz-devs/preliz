@@ -96,6 +96,9 @@ class Gumbel(Continuous):
     def mean(self):
         return self.mu + self.beta * np.euler_gamma
 
+    def mode(self):
+        return self.mu
+
     def median(self):
         return self.mu - self.beta * np.log(np.log(2))
 

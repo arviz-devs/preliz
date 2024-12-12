@@ -141,6 +141,9 @@ class NegativeBinomial(Discrete):
     def mean(self):
         return self.mu
 
+    def mode(self):
+        return np.where(self.n < 1, 0, np.floor((self.n - 1) * (1 - self.p) / self.p))
+
     def median(self):
         return self.ppf(0.5)
 

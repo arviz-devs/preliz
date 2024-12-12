@@ -82,6 +82,9 @@ class Geometric(Discrete):
     def mean(self):
         return 1 / self.p
 
+    def mode(self):
+        return np.ones_like(self.p)
+
     def median(self):
         return np.ceil(-1 / np.log(1 - self.p))
 

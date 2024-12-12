@@ -95,6 +95,9 @@ class LogNormal(Continuous):
     def mean(self):
         return np.exp(self.mu + self.sigma**2 / 2)
 
+    def mode(self):
+        return np.exp(self.mu - self.sigma**2)
+
     def median(self):
         return np.exp(self.mu)
 

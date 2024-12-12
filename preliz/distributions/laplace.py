@@ -91,6 +91,9 @@ class Laplace(Continuous):
     def mean(self):
         return self.mu
 
+    def mode(self):
+        return self.mu
+
     def std(self):
         return self.var() ** 0.5
 

@@ -10,7 +10,7 @@ from scipy.special import i0, i1, i0e, i1e  # pylint: disable=no-name-in-module
 from .distribution_helper import init_vals as default_vals
 
 
-def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
+def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed, mode=None):
     def prob_bound(params, dist, lower, upper, mass):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
@@ -19,6 +19,8 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed):
         cdf0 = dist.cdf(lower)
         cdf1 = dist.cdf(upper)
         loss = (cdf1 - cdf0) - mass
+        if mode is not None:
+            loss = loss - abs(dist.mode() - mode)
         return loss
 
     def entropy_loss(params, dist):

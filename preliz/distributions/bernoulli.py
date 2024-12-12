@@ -119,6 +119,9 @@ class Bernoulli(Discrete):
     def mean(self):
         return self.p
 
+    def mode(self):
+        return self.median()
+
     def median(self):
         return np.where(self.p <= 0.5, 0, 1)
 

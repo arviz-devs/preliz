@@ -10,6 +10,7 @@ def maxent(
     lower=-1,
     upper=1,
     mass=0.94,
+    mode=None,
     plot=True,
     plot_kwargs=None,
     ax=None,
@@ -29,6 +30,8 @@ def maxent(
         Upper end-point
     mass: float
         Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.94
+    mode: float
+        Mode of the distribution. Pass a value to fix the mode of the distribution.
     plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defaults to True.
     plot_kwargs : dict
@@ -116,7 +119,13 @@ def maxent(
             mean=(lower + upper) / 2, sigma=((upper - lower) / 4) / mass
         )
 
-    opt = optimize_max_ent(distribution, lower, upper, mass, none_idx, fixed)
+    if mode is not None:
+        try:
+            distribution.mode()
+        except NotImplementedError:
+            raise ValueError(f"{distribution.__class__.__name__} does not have a mode method")
+
+    opt = optimize_max_ent(distribution, lower, upper, mass, none_idx, fixed, mode)
     distribution.opt = opt
 
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)

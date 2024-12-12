@@ -99,6 +99,9 @@ class Moyal(Continuous):
     def mean(self):
         return self.mu + self.sigma * (np.euler_gamma + np.log(2))
 
+    def mode(self):
+        return self.mu
+
     def median(self):
         return self.ppf(0.5)
 
