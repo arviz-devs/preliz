@@ -64,7 +64,8 @@ disable=missing-docstring,
         too-few-public-methods,
         import-error,
         protected-access,
-        no-self-use
+        no-self-use,
+        abstract-method,
 
 
 # Enable the message, report, category or checker with the given id(s). You can
