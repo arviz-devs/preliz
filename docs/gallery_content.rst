@@ -528,7 +528,7 @@ Discrete Distributions
       Zero-Inflated Binomial
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.zi_negativebinomial.ZeroInflatedNegativeBinomial
+      :link: ./examples/gallery/zeroinflatednegativebinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
