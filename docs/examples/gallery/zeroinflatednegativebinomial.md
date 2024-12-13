@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Zero-Inflated Negative Binomial Distribution
 
+<audio controls> <source src="../../_static/zeroinflatednegativebinomial.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The Zero-Inflated Negative Binomial (ZINB) distribution is a discrete probability distribution used to model count data characterized by an excess of zeros. It combines two components: a NegativeBinomial component, which describe count values and a zero-inflation component, which accounts for the extra zeros.
 
 ## Key properties and parameters

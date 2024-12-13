@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Zero-Inflated Binomial Distribution
 
+<audio controls> <source src="../../_static/zeroinflatedbinomial.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The Zero-Inflated Binomial (ZIB) distribution is a discrete probability distribution used to model count data characterized by an excess of zeros. It combines two components: a standard Binomial distribution and an additional mechanism that increases the probability of observing zero outcomes.
 
 This distribution is particularly useful for scenarios where the data exhibit more zeros than what the Binomial model alone would predict. For example, in a study of the number of doctor visits in a year, many individuals might not visit a doctor at all, resulting in a higher frequency of zero counts than expected under a traditional Binomial model.
