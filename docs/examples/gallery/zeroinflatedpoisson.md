@@ -10,6 +10,8 @@ kernelspec:
 ---
 # Zero-Inflated Poisson Distribution
 
+<audio controls> <source src="../../_static/zeroinflatedpoisson.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
+
 The Zero-Inflated Poisson (ZIP) distribution is a discrete probability distribution used to model count data characterized by an excess of zeros. It combines two components: a standard Poisson distribution and an additional mechanism that increases the probability of observing zero outcomes.
 
 This distribution is particularly useful for scenarios where the data exhibit more zeros than what the Poisson model alone would predict. For example, in ecological studies, when researchers survey multiple habitats for a particular species, they often encounter many sites with zero observations (typically due to unsuitable habitat conditions) alongside a smaller number of sites where the species is observed in varying counts.
