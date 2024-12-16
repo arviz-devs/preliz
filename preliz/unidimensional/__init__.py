@@ -11,7 +11,7 @@ __all__ = [
     "combine_roulette",
     "maxent",
     "mle",
-    "Roulette",
     "quartile",
     "QuartileInt",
+    "Roulette",
 ]
