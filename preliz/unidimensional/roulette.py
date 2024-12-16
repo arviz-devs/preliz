@@ -16,52 +16,52 @@ from preliz.distributions import all_discrete, all_continuous
 
 
 class Roulette:
+    """
+    Prior elicitation for 1D distribution using the roulette method.
+
+    Draw 1D distributions using a grid as input.
+
+    Parameters
+    ----------
+    x_min: Optional[float]
+        Minimum value for the domain of the grid and fitted distribution.
+    x_max: Optional[float]
+        Maximum value for the domain of the grid and fitted distribution.
+    nrows: Optional[int]
+        Number of rows for the grid. Defaults to 10.
+    ncols: Optional[int]
+        Number of columns for the grid. Defaults to 11.
+    dist_names: list
+        List of distribution names to be used in the elicitation.
+        Defaults to None. The pre-selected distributions are ["Normal", "BetaScaled",
+        "Gamma", "LogNormal", "StudentT"], but almost all 1D PreliZ's distributions
+        are available to be selected from the menu with some exceptions like Uniform
+        or Cauchy.
+    params: Optional[str]
+        Extra parameters to be passed to the distributions. The format is a string with the
+        PreliZ's distribution name followed by the argument to fix.
+        For example: "TruncatedNormal(lower=0), StudentT(nu=8)". If you use the ``params``
+        text area, quotation marks are not necessary.
+    figsize: Optional[Tuple[int, int]]
+        Figure size. If None, it will be defined automatically.
+
+    Returns
+    -------
+    Roulette object
+        The object has many attributes, but the most important are:
+        - dist: The fitted distribution.
+        - inputs: A tuple with the x values, the empirical pdf, the total
+            chips, the x_min, the x_max, the number of rows, and the number of columns.
+
+    References
+    ----------
+    * Morris D.E. et al. (2014) see https://doi.org/10.1016/j.envsoft.2013.10.010
+    * See roulette mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
+    """
+
     def __init__(
         self, x_min=0, x_max=10, nrows=10, ncols=11, dist_names=None, params=None, figsize=None
     ):
-        """
-        Prior elicitation for 1D distribution using the roulette method.
-
-        Draw 1D distributions using a grid as input.
-
-        Parameters
-        ----------
-        x_min: Optional[float]
-            Minimum value for the domain of the grid and fitted distribution
-        x_max: Optional[float]
-            Maximum value for the domain of the grid and fitted distribution
-        nrows: Optional[int]
-            Number of rows for the grid. Defaults to 10.
-        ncols: Optional[int]
-            Number of columns for the grid. Defaults to 11.
-        dist_names: list
-            List of distributions names to be used in the elicitation.
-            Defaults to None, the pre-selected distribution are ["Normal", "BetaScaled",
-            "Gamma", "LogNormal", "StudentT"] but almost all 1D PreliZ's distributions
-            are available to be selected from the menu with some exceptions like Uniform
-            or Cauchy.
-        params: Optional[str]:
-            Extra parameters to be passed to the distributions. The format is a string with the
-            PreliZ's distribution name followed by the argument to fix.
-            For example: "TruncatedNormal(lower=0), StudentT(nu=8)". If you use the ``params``
-            text area quotation marks are not necessary.
-        figsize: Optional[Tuple[int, int]]
-            Figure size. If None it will be defined automatically.
-
-        Returns
-        -------
-        Roulette object
-            The object has many attributes, but the most important are:
-            - dist: The fitted distribution
-            - inputs: A tuple with the x values, the empirical pdf, the total
-            chips, the x_min, the x_max, the number of rows and the number of columns.
-
-        References
-        ----------
-        * Morris D.E. et al. (2014) see https://doi.org/10.1016/j.envsoft.2013.10.010
-        * See roulette mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
-        """
-
         self._x_min = x_min
         self._x_max = x_max
         self._nrows = nrows
