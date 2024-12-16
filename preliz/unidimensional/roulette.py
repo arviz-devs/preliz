@@ -27,34 +27,34 @@ class Roulette:
         Parameters
         ----------
         x_min: Optional[float]
-            Minimum value for the domain of the grid and fitted distribution
+            Minimum value for the domain of the grid and fitted distribution.
         x_max: Optional[float]
-            Maximum value for the domain of the grid and fitted distribution
+            Maximum value for the domain of the grid and fitted distribution.
         nrows: Optional[int]
             Number of rows for the grid. Defaults to 10.
         ncols: Optional[int]
             Number of columns for the grid. Defaults to 11.
         dist_names: list
-            List of distributions names to be used in the elicitation.
-            Defaults to None, the pre-selected distribution are ["Normal", "BetaScaled",
-            "Gamma", "LogNormal", "StudentT"] but almost all 1D PreliZ's distributions
+            List of distribution names to be used in the elicitation.
+            Defaults to None. The pre-selected distributions are ["Normal", "BetaScaled",
+            "Gamma", "LogNormal", "StudentT"], but almost all 1D PreliZ's distributions
             are available to be selected from the menu with some exceptions like Uniform
             or Cauchy.
-        params: Optional[str]:
+        params: Optional[str]
             Extra parameters to be passed to the distributions. The format is a string with the
             PreliZ's distribution name followed by the argument to fix.
             For example: "TruncatedNormal(lower=0), StudentT(nu=8)". If you use the ``params``
-            text area quotation marks are not necessary.
+            text area, quotation marks are not necessary.
         figsize: Optional[Tuple[int, int]]
-            Figure size. If None it will be defined automatically.
+            Figure size. If None, it will be defined automatically.
 
         Returns
         -------
         Roulette object
             The object has many attributes, but the most important are:
-            - dist: The fitted distribution
+            - dist: The fitted distribution.
             - inputs: A tuple with the x values, the empirical pdf, the total
-            chips, the x_min, the x_max, the number of rows and the number of columns.
+              chips, the x_min, the x_max, the number of rows, and the number of columns.
 
         References
         ----------
