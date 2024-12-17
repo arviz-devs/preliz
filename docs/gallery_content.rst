@@ -557,7 +557,7 @@ Continuous Multivariate Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.continuous_multivariate.Dirichlet
+      :link: ./examples/gallery/dirichlet.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
