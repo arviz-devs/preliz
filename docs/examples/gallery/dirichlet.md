@@ -45,24 +45,20 @@ mystnb:
   image:
     alt: Dirichlet Distribution PDF
 ---
-import contextlib
 import logging
 import matplotlib.pyplot as plt
 from preliz import Dirichlet
 
-@contextlib.contextmanager
-def suppress_logs(logger: logging.Logger = logging.getLogger()):
-    """Context manager to temporarily disable logs."""
-    logger.disabled = True
-    yield
-    logger.disabled = False
 
+logger = logging.getLogger()
+logger.disabled = True
 
-with suppress_logs():
-  _, axes = plt.subplots(2, 2)
-  alphas = [[0.5, 0.5, 0.5], [1, 1, 1], [5, 5, 5], [5, 2, 1]]
-  for alpha, ax in zip(alphas, axes.ravel()):
-      Dirichlet(alpha).plot_pdf(marginals=False, ax=ax)
+_, axes = plt.subplots(2, 2)
+alphas = [[0.5, 0.5, 0.5], [1, 1, 1], [5, 5, 5], [5, 2, 1]]
+for alpha, ax in zip(alphas, axes.ravel()):
+    Dirichlet(alpha).plot_pdf(marginals=False, ax=ax)
+
+logger.disabled = False
 ```
 
 ### Cumulative Distribution Function (CDF)
