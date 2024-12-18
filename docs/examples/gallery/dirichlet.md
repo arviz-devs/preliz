@@ -48,9 +48,12 @@ mystnb:
 
 import matplotlib.pyplot as plt
 from preliz import Dirichlet
+import warnings
 _, axes = plt.subplots(2, 2)
 alphas = [[0.5, 0.5, 0.5], [1, 1, 1], [5, 5, 5], [5, 2, 1]]
 for alpha, ax in zip(alphas, axes.ravel()):
+  with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", message=".*fixed x limits.*")
     Dirichlet(alpha).plot_pdf(marginals=False, ax=ax)
 ```
 
