@@ -51,17 +51,19 @@ import matplotlib.pyplot as plt
 from preliz import Dirichlet
 
 @contextmanager
-def catch_matplotlib_logs(level=logging.WARNING):
-    matplotlib_logger = logging.getLogger('matplotlib')
-    previous_level = matplotlib_logger.level
-    matplotlib_logger.setLevel(level + 1)
-    try:
-        yield
-    finally:
-        matplotlib_logger.setLevel(previous_level)
+
+import contextlib
+import logging
+
+@contextlib.contextmanager
+def suppress_logs(logger: logging.Logger = logging.getLogger()):
+    """Context manager to temporarily disable logs."""
+    logger.disabled = True
+    yield
+    logger.disabled = False
 
 
-with catch_matplotlib_logs(logging.WARNING):
+with suppress_logs():
   _, axes = plt.subplots(2, 2)
   alphas = [[0.5, 0.5, 0.5], [1, 1, 1], [5, 5, 5], [5, 2, 1]]
   for alpha, ax in zip(alphas, axes.ravel()):
