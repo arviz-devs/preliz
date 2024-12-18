@@ -46,9 +46,11 @@ mystnb:
     alt: Dirichlet Distribution PDF
 ---
 
-import logging
-import sys
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+import logging.config
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': True,
+})
 
 import matplotlib.pyplot as plt
 from preliz import Dirichlet
