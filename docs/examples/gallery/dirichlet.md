@@ -45,15 +45,10 @@ mystnb:
   image:
     alt: Dirichlet Distribution PDF
 ---
-import logging
-from contextlib import contextmanager
-import matplotlib.pyplot as plt
-from preliz import Dirichlet
-
-@contextmanager
-
 import contextlib
 import logging
+import matplotlib.pyplot as plt
+from preliz import Dirichlet
 
 @contextlib.contextmanager
 def suppress_logs(logger: logging.Logger = logging.getLogger()):
