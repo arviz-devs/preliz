@@ -46,16 +46,17 @@ mystnb:
     alt: Dirichlet Distribution PDF
 ---
 
-import warnings
+import logging
+import sys
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
 import matplotlib.pyplot as plt
 from preliz import Dirichlet
 
-with warnings.catch_warnings():
-  warnings.filterwarnings("ignore", message="Ignoring fixed x limits")
-  _, axes = plt.subplots(2, 2)
-  alphas = [[0.5, 0.5, 0.5], [1, 1, 1], [5, 5, 5], [5, 2, 1]]
-  for alpha, ax in zip(alphas, axes.ravel()):
-      Dirichlet(alpha).plot_pdf(marginals=False, ax=ax)
+_, axes = plt.subplots(2, 2)
+alphas = [[0.5, 0.5, 0.5], [1, 1, 1], [5, 5, 5], [5, 2, 1]]
+for alpha, ax in zip(alphas, axes.ravel()):
+    Dirichlet(alpha).plot_pdf(marginals=False, ax=ax)
 ```
 
 ### Cumulative Distribution Function (CDF)
