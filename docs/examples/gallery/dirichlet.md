@@ -49,7 +49,6 @@ import logging
 import matplotlib.pyplot as plt
 from preliz import Dirichlet
 
-
 logger = logging.getLogger()
 logger.disabled = True
 
