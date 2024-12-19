@@ -332,7 +332,7 @@ class MvNormal(Continuous):
 
     .. math::
 
-       f(x \mid \pi, T) =
+       f(x \mid \mu, T) =
            \frac{|T|^{1/2}}{(2\pi)^{k/2}}
            \exp\left\{ -\frac{1}{2} (x-\mu)^{\prime} T (x-\mu) \right\}
 
@@ -361,7 +361,7 @@ class MvNormal(Continuous):
 
     .. math::
 
-        \Tau = \Sigma^{-1}
+        T = \Sigma^{-1}
 
     Parameters
     ----------

@@ -569,7 +569,7 @@ Continuous Multivariate Distributions
       Dirichlet
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.continuous_multivariate.MvNormal
+      :link: ./examples/gallery/mvnormal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
