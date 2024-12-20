@@ -20,7 +20,7 @@ Truncated distributions arise in cases where the ability to record, or even to k
 
 **Parameters:**
 
-- `dist` : (PreLiz distribution) Univariate distribution to be truncated.
+- `dist` : (PreliZ distribution) Univariate distribution to be truncated.
 - `lower` : (float, int, or `np.inf`) Lower (left) truncation point, `np.inf` indicates no lower truncation.
 - `upper` : (float, int, or `np.inf`) Upper (right) truncation point, `np.inf` indicates no upper truncation.
 

@@ -21,7 +21,7 @@ A censored distribution arises when the observed data is limited to a certain ra
 
 **Parameters:**
 
-- `dist` : (PreLiz distribution) Univariate distribution to be censored.
+- `dist` : (PreliZ distribution) Univariate distribution to be censored.
 - `lower` : (float, int, or `np.inf`) Lower (left) censoring point, `np.inf` indicates no lower censoring.
 - `upper` : (float, int, or `np.inf`) Upper (right) censoring point, `np.inf` indicates no upper censoring.
 
