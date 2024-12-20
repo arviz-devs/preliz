@@ -23,7 +23,7 @@ Mixture distributions are widely used whenever a single, simple distribution can
 
 **Parameters:**
 
-- `dists` : (list of Univariate PreLiz distributions) Components of the mixture. They should be all discrete or all continuous.
+- `dists` : (list of Univariate PreliZ distributions) Components of the mixture. They should be all discrete or all continuous.
 - `weights` : (list of floats) List of weights for each distribution. Weights must be larger or equal to 0 and their sum must be positive. If the weights do not sum up to 1, they will be normalized.
 
 ### Probability Density Function (PDF)
