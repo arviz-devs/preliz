@@ -598,7 +598,7 @@ Distribution Modifiers
       Censored
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.hurdle.Hurdle
+      :link: ./examples/gallery/hurdle.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
