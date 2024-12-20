@@ -610,7 +610,7 @@ Distribution Modifiers
       Hurdle
 
    .. grid-item-card::
-      :link: ./distributions.html#preliz.distributions.mixture.Mixture
+      :link: ./examples/gallery/mixture.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
