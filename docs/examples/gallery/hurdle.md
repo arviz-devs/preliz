@@ -16,7 +16,7 @@ kernelspec:
 This is not a distribution per se, but a modifier of univariate distributions.
 
 
-The hurdle distribution is a mixture distribution that combines a point mass at zero with a continuous distribution. It is used to model data that is a mixture of two processes: one that generates zeros and another that generates positive values. The hurdle distribution is commonly used in econometrics to model data with excess zeros, such as healthcare costs, insurance claims, and counts of events.
+The hurdle distribution is a mixture distribution that combines a point mass at zero with a continuous distribution. It is used to model data that is a mixture of two processes: one that generates zeros and another that generates non-zero values. The hurdle distribution is commonly used in econometrics to model data with excess zeros, such as healthcare costs, insurance claims, and counts of events.
 
 ## Key properties and parameters
 
