@@ -27,7 +27,7 @@ The hurdle distribution is a mixture distribution that combines a point mass at 
 
 ### Probability Density Function (PDF)
 
-Given a base distribution with cumulative distribution function (CDF) and probability density/mass function (PDF/PMF). The PDF/PMF of a Hurdle distribution is:
+Given a base distribution with parameters $\theta$, cumulative distribution function (CDF) and probability density/mass function (PDF). The density of a Hurdle distribution is:
 
 $$
 f(x \mid \psi, \mu) =
@@ -35,13 +35,13 @@ f(x \mid \psi, \mu) =
         \begin{array}{l}
             (1 - \psi), \text{if } x = 0 \\
             \psi
-            \frac{\text{PoissonPDF}(x \mid \mu)}
-            {1 - \text{PoissonCDF}(0 \mid \mu)}, \text{if } x=1,2,3,\ldots
+            \frac{\text{PDF}(x \mid \theta)}
+            {1 - \text{CDF}(0 \mid \theta)}, \text{if } x=1,2,3,\ldots
         \end{array}
     \right.
 $$
 
-where $\psi$ is the expected proportion of the base distribution and $\mu$ is the mean of the Poisson distribution.
+where $\psi$ is the expected proportion of the base distribution.
 
 The following figure shows the difference between a Gamma distribution and a HurdleGamma, with the same parameters for the base distribution (Gamma).
 
