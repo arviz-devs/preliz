@@ -68,7 +68,7 @@ F(x \mid \psi, \mu) =
     \begin{array}{ll}
         0, \text{if } x < 0 \\
         1 - \psi, \text{if } x = 0 \\
-        1 - \psi + \psi \cdot \frac{\text{CDF}(x \mid \theta) - \text{CDF}(\epsilon \mid \theta)}{1 - \text{CDF}(\epsilon \mid \mu)}, \text{if } x \neq 0
+        1 - \psi + \psi \cdot \frac{\text{CDF}(x \mid \theta) - \text{CDF}(\epsilon \mid \theta)}{1 - \text{CDF}(\epsilon \mid \theta)}, \text{if } x \neq 0
     \end{array}
 \right.
 $$
