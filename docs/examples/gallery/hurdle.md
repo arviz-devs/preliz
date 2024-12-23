@@ -36,7 +36,7 @@ f(x \mid \psi, \mu) =
             (1 - \psi), \text{if } x = 0 \\
             \psi
             \frac{\text{PDF}(x \mid \theta)}
-            {1 - \text{CDF}(\epsilon \mid \theta)}, \text{if } x \neq= 0,\ldots
+            {1 - \text{CDF}(\epsilon \mid \theta)}, \text{if } x \neq 0
         \end{array}
     \right.
 $$
@@ -68,7 +68,7 @@ F(x \mid \psi, \mu) =
     \begin{array}{ll}
         0, \text{if } x < 0 \\
         1 - \psi, \text{if } x = 0 \\
-        1 - \psi + \psi \cdot \frac{\text{PoissonCDF}(x \mid \mu) - \text{PoissonCDF}(0 \mid \mu)}{1 - \text{PoissonCDF}(0 \mid \mu)}, \text{if } x = 1, 2, 3, \ldots
+        1 - \psi + \psi \cdot \frac{\text{CDF}(x \mid \theta) - \text{CDF}(\epsilon \mid \theta)}{1 - \text{CDF}(\epsilon \mid \mu)}, \text{if } x \neq 0
     \end{array}
 \right.
 $$
