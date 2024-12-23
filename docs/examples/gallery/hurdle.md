@@ -36,12 +36,12 @@ f(x \mid \psi, \mu) =
             (1 - \psi), \text{if } x = 0 \\
             \psi
             \frac{\text{PDF}(x \mid \theta)}
-            {1 - \text{CDF}(0 \mid \theta)}, \text{if } x=1,2,3,\ldots
+            {1 - \text{CDF}(\epsilon \mid \theta)}, \text{if } x \neq= 0,\ldots
         \end{array}
     \right.
 $$
 
-where $\psi$ is the expected proportion of the base distribution.
+where $\psi$ is the expected proportion of the base distribution and $\epsilon$ is the machine precision for continuous distribution or 0 for discrete ones.
 
 The following figure shows the difference between a Gamma distribution and a HurdleGamma, with the same parameters for the base distribution (Gamma).
 
