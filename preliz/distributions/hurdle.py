@@ -11,8 +11,8 @@ class Hurdle(DistributionTransformer):
 
     This is not a distribution per se, but a modifier of univariate distributions.
 
-    Given a base distribution with cumulative distribution function (CDF) and
-    probability density mass/function (PDF). The pdf/pmf of a Hurdle distribution is:
+    Given a base distribution with parameters $\theta$, cumulative distribution function (CDF), 
+    and probability density mass/function (PDF). The density of a Hurdle distribution is:
 
     .. math::
 
@@ -21,10 +21,13 @@ class Hurdle(DistributionTransformer):
                 \begin{array}{l}
                 (1 - \psi)  \ \text{if } x = 0 \\
                 \psi
-                \frac{\text{PoissonPDF}(x \mid \mu))}
-                {1 - \text{PoissonCDF}(0 \mid \mu)} \ \text{if } x=1,2,3,\ldots
+                \frac{\text{PDF}(x \mid \theta))}
+                {1 - \text{CDF}(\epsilon \mid \theta)} \ \text{if } x \neq 0
                 \end{array}
             \right.
+
+    where $\psi$ is the expected proportion of the base distribution (0 < $\psi$ < 1), and
+    $\epsilon$ is the machine precision for continuous distributions and 0 for discrete ones.
 
     The following figure shows the difference between a Gamma distribution and a HurdleGamma, with
     the same parameters for the base distribution (Gamma).
