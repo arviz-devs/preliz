@@ -109,6 +109,9 @@ class Categorical(Discrete):
     def mean(self):
         return NotImplemented
 
+    def mode(self):
+        return self.p.argmax()
+
     def median(self):
         return NotImplemented
 

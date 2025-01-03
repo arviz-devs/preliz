@@ -139,6 +139,9 @@ class AsymmetricLaplace(Continuous):
     def mean(self):
         return (1 / self.kappa - self.kappa) * self.b + self.mu
 
+    def mode(self):
+        return self.mu
+
     def var(self):
         return ((1 / self.kappa) ** 2 + self.kappa**2) * self.b**2
 
