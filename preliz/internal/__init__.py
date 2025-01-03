@@ -1,3 +1,3 @@
 """
-utility functions, still not clear how to organize them
+utility functions for internal use
 """
