@@ -2,9 +2,10 @@ import warnings
 import numpy as np
 from preliz.distributions import Dirichlet, Beta
 from preliz.internal.optimization import optimize_dirichlet_mode
+from preliz.internal.rcparams import rcParams
 
 
-def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=None):
+def dirichlet_mode(mode, mass=None, bound=0.01, plot=None, plot_kwargs=None, ax=None):
     """
     Returns a Dirichlet distribution where the marginals have the specified mode
     and mass and their masses lie within the range mode ± bound.
@@ -14,7 +15,8 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
     mode : list
         Mode of the Dirichlet distribution.
     mass : float
-        Probability mass between within mode +- bounds. Defaults to 0.90.
+        Probability mass between within mode +- bounds. Defaults to None,
+        which results in the value of rcParams["stats.ci_prob"] being used.
     bound : float
         Defines upper and lower bounds for the mass as mode +- bound. Defaults to 0.01.
     plot : bool
@@ -33,6 +35,11 @@ def dirichlet_mode(mode, mass=0.90, bound=0.01, plot=True, plot_kwargs=None, ax=
     ----------
     Adapted from  Evans et al. (2017) see https://doi.org/10.3390/e19100564
     """
+    if mass is None:
+        mass = rcParams["stats.ci_prob"]
+
+    if plot is None:
+        plot = rcParams["plots.show_plot"]
 
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")

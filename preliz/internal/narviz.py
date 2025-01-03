@@ -9,9 +9,10 @@ from scipy.signal import convolve
 from scipy.signal.windows import gaussian
 
 from .optimization import _root
+from .rcparams import rcParams
 
 
-def hdi(ary, hdi_prob=0.94, skipna=True):
+def hdi(ary, hdi_prob=None, skipna=True):
     """
     Calculate highest density interval (HDI) of array for given probability.
 
@@ -22,12 +23,16 @@ def hdi(ary, hdi_prob=0.94, skipna=True):
     ary: array_like
         An array containing the values for which the HDI is to be computed.
     hdi_prob: float, optional
-        Prob for which the highest density interval will be computed. Defaults to 0.94
+        Prob for which the highest density interval will be computed. Defaults to None,
+        which results in the value of rcParams["stats.ci_prob"] being used.
 
     Returns
     -------
     np.ndarray with lower and upper values of the interval.
     """
+    if hdi_prob is None:
+        hdi_prob = rcParams["stats.ci_prob"]
+
     if not 1 >= hdi_prob > 0:
         raise ValueError("The value of hdi_prob should be in the interval (0, 1]")
 
