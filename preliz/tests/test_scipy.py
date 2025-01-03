@@ -325,3 +325,11 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_median, expected_median, decimal=6)
     else:
         assert_almost_equal(actual_median, expected_median)
+
+    finite_expected_pdf = np.where(np.isfinite(expected_pdf), expected_pdf, -np.inf)
+    expected_mode = extended_vals[np.argmax(finite_expected_pdf)]
+    try:
+        actual_mode = preliz_dist.mode()
+        assert_almost_equal(actual_mode, expected_mode, decimal=0)
+    except NotImplementedError:
+        pass

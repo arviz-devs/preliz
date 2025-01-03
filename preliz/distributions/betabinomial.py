@@ -111,6 +111,13 @@ class BetaBinomial(Discrete):
     def mean(self):
         return self.n * self.alpha / (self.alpha + self.beta)
 
+    def mode(self):
+        return np.clip(
+            np.floor((self.n + 1) * ((self.alpha - 1) / (self.alpha + self.beta - 2))).astype(int),
+            0,
+            self.n,
+        )
+
     def median(self):
         return self.ppf(0.5)
 
