@@ -349,8 +349,9 @@ class rc_context:  # pylint: disable=invalid-name
             pz.maxent(pz.Normal())
 
     The 'rc' dictionary takes precedence over the settings loaded from
-    'fname'. 
+    'fname'.
     """
+
     def __init__(self, rc=None, fname=None):
         self._orig = rcParams.copy()
         if fname:
