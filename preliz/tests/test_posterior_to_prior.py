@@ -1,12 +1,13 @@
 import pandas as pd
 import pymc as pm
 import bambi as bmb
-import preliz as pz
+from preliz.distributions import Normal, LogNormal, Gamma
+from preliz.ppls.agnostic import posterior_to_prior
 
 
 SEED = 2945
 
-data = pz.Normal(0, 1).rvs(200, random_state=SEED)
+data = Normal(0, 1).rvs(200, random_state=SEED)
 
 with pm.Model() as model:
     a = pm.Normal("a", mu=0, sigma=1)
@@ -16,19 +17,19 @@ with pm.Model() as model:
 
 
 def test_p2p_pymc():
-    pz.posterior_to_prior(model, idata)
-    assert 'Gamma\x1b[0m("b", alpha=' in pz.posterior_to_prior(model, idata, new_families="auto")
-    pz.posterior_to_prior(model, idata, new_families=[pz.LogNormal()])
-    assert 'Gamma\x1b[0m("b", mu=' in pz.posterior_to_prior(
-        model, idata, new_families={"b": [pz.Gamma(mu=0)]}
+    posterior_to_prior(model, idata)
+    assert 'Gamma\x1b[0m("b", alpha=' in posterior_to_prior(model, idata, new_families="auto")
+    posterior_to_prior(model, idata, new_families=[LogNormal()])
+    assert 'Gamma\x1b[0m("b", mu=' in posterior_to_prior(
+        model, idata, new_families={"b": [Gamma(mu=0)]}
     )
 
 
 bmb_data = pd.DataFrame(
     {
-        "y": pz.Normal(0, 1).rvs(117, random_state=SEED + 1),
-        "x": pz.Normal(0, 1).rvs(117, random_state=SEED + 2),
-        "x1": pz.Normal(0, 1).rvs(117, random_state=SEED + 3),
+        "y": Normal(0, 1).rvs(117, random_state=SEED + 1),
+        "x": Normal(0, 1).rvs(117, random_state=SEED + 2),
+        "x1": Normal(0, 1).rvs(117, random_state=SEED + 3),
     }
 )
 bmb_prior = {"Intercept": bmb.Prior("Normal", mu=0, sigma=1)}
@@ -37,11 +38,9 @@ bmb_idata = bmb_model.fit(tune=200, draws=200, random_seed=SEED)
 
 
 def test_p2p_bambi():
-    pz.posterior_to_prior(bmb_model, bmb_idata)
-    assert 'Gamma\x1b[0m", alpha=' in pz.posterior_to_prior(
-        bmb_model, bmb_idata, new_families="auto"
-    )
-    pz.posterior_to_prior(bmb_model, bmb_idata, new_families=[pz.LogNormal()])
-    assert 'Normal\x1b[0m", mu=' in pz.posterior_to_prior(
-        bmb_model, bmb_idata, new_families={"Intercept": [pz.Normal(mu=1, sigma=1)]}
+    posterior_to_prior(bmb_model, bmb_idata)
+    assert 'Gamma\x1b[0m", alpha=' in posterior_to_prior(bmb_model, bmb_idata, new_families="auto")
+    posterior_to_prior(bmb_model, bmb_idata, new_families=[LogNormal()])
+    assert 'Normal\x1b[0m", mu=' in posterior_to_prior(
+        bmb_model, bmb_idata, new_families={"Intercept": [Normal(mu=1, sigma=1)]}
     )

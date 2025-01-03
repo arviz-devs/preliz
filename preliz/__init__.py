@@ -1,7 +1,7 @@
 """
 PreliZ.
 
-Tools to help you pick a prior
+Exploring and eliciting probability distributions
 """
 from os import path as os_path
 
@@ -10,7 +10,6 @@ from matplotlib import style
 
 from .distributions import *
 from .predictive import *
-from .ppls import *
 from .unidimensional import *
 from .multidimensional import *
 
