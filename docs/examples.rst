@@ -18,3 +18,4 @@ space like in the previous examples. In all these example the prior predictive d
    examples/Direct_elicitation_in_1D
    examples/Direct_elicitation_in_ND
    examples/predictive_elicitation
+   examples/Global_settings

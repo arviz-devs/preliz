@@ -119,14 +119,14 @@ class VonMises(Continuous):
         mu = np.mod(mu + np.pi, 2 * np.pi) - np.pi
         self._update(mu, kappa)
 
-    def eti(self, mass=0.94, fmt=".2f"):
+    def eti(self, mass=None, fmt=".2f"):
         mean = self.mu
         self.mu = 0
         hdi_min, hdi_max = super().eti(mass=mass, fmt=fmt)
         self.mu = mean
         return _warp_interval(hdi_min, hdi_max, self.mu, fmt)
 
-    def hdi(self, mass=0.94, fmt=".2f"):
+    def hdi(self, mass=None, fmt=".2f"):
         mean = self.mu
         self.mu = 0
         hdi_min, hdi_max = super().hdi(mass=mass, fmt=fmt)

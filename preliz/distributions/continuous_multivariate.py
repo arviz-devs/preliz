@@ -94,7 +94,7 @@ class Dirichlet(Continuous):
         self,
         marginals=True,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         support="full",
         legend="title",
@@ -114,8 +114,9 @@ class Dirichlet(Continuous):
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantile ranges.
         interval : str
-            Type of interval. Available options are highest density interval `"hdi"` (default),
+            Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -142,7 +143,7 @@ class Dirichlet(Continuous):
     def plot_cdf(
         self,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         support="full",
         legend="title",
@@ -158,8 +159,9 @@ class Dirichlet(Continuous):
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantile ranges.
         interval : str
-            Type of interval. Available options are highest density interval `"hdi"` (default),
+            Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -186,7 +188,7 @@ class Dirichlet(Continuous):
     def plot_ppf(
         self,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         legend="title",
         figsize=None,
@@ -201,8 +203,9 @@ class Dirichlet(Continuous):
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantile ranges.
         interval : str
-            Type of interval. Available options are highest density interval `"hdi"` (default),
+            Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -228,7 +231,7 @@ class Dirichlet(Continuous):
         kind="pdf",
         xy_lim="both",
         pointinterval=True,
-        interval="hdi",
+        interval=None,
         levels=None,
         figsize=None,
     ):
@@ -249,7 +252,7 @@ class Dirichlet(Continuous):
             Whether to include a plot of the quantiles. Defaults to False.
             If `True` the default is to plot the median and two inter-quantiles ranges.
         interval : str
-            Type of interval. Available options are the highest density interval `"hdi"` (default),
+            Type of interval. Available options are the highest density interval `"hdi"`,
             equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
@@ -424,7 +427,7 @@ class MvNormal(Continuous):
         self,
         marginals=True,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         support="full",
         legend="title",
@@ -444,8 +447,9 @@ class MvNormal(Continuous):
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
         interval : str
-            Type of interval. Available options are highest density interval `"hdi"` (default),
+            Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -472,7 +476,7 @@ class MvNormal(Continuous):
     def plot_cdf(
         self,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         support="full",
         legend="title",
@@ -488,8 +492,9 @@ class MvNormal(Continuous):
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
         interval : str
-            Type of interval. Available options are highest density interval `"hdi"` (default),
+            Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -516,7 +521,7 @@ class MvNormal(Continuous):
     def plot_ppf(
         self,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         legend="title",
         figsize=None,
@@ -531,8 +536,9 @@ class MvNormal(Continuous):
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
             plot the median and two interquantiles ranges.
         interval : str
-            Type of interval. Available options are highest density interval `"hdi"` (default),
+            Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -558,7 +564,7 @@ class MvNormal(Continuous):
         kind="pdf",
         xy_lim="both",
         pointinterval=True,
-        interval="hdi",
+        interval=None,
         levels=None,
         figsize=None,
     ):
@@ -579,8 +585,9 @@ class MvNormal(Continuous):
             Whether to include a plot of the quantiles. Defaults to False.
             If `True` the default is to plot the median and two inter-quantiles ranges.
         interval : str
-            Type of interval. Available options are the highest density interval `"hdi"` (default),
+            Type of interval. Available options are the highest density interval `"hdi"`,
             equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0

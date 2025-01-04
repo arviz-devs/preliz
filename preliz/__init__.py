@@ -5,21 +5,21 @@ Exploring and eliciting probability distributions
 """
 from os import path as os_path
 
-from matplotlib import rcParams
+from matplotlib import rcParams as mpl_rcParams
 from matplotlib import style
 
 from .distributions import *
 from .predictive import *
 from .unidimensional import *
 from .multidimensional import *
+from .internal.rcparams import rc_context, rcParams
 
 
 __version__ = "0.13.0"
 
 
-# Allow legend outside plot in maxent to be included when saving a figure
-# We may want to make this more explicit by having preliz.rcParams
-rcParams["savefig.bbox"] = "tight"
+# Allow legend outside plot in maxent to be included in the saved figure
+mpl_rcParams["savefig.bbox"] = "tight"
 
 
 # add PreliZ's styles to matplotlib's styles
@@ -28,4 +28,4 @@ style.core.USER_LIBRARY_PATHS.append(_preliz_style_path)
 style.core.reload_library()
 
 # clean namespace
-del os_path, rcParams, _preliz_style_path
+del os_path, mpl_rcParams, _preliz_style_path

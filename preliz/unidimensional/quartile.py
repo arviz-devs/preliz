@@ -4,6 +4,7 @@ import numpy as np
 from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import valid_distribution
 from preliz.internal.optimization import relative_error, optimize_quartile, get_fixed_params
+from preliz.internal.rcparams import rcParams
 
 
 def quartile(
@@ -11,7 +12,7 @@ def quartile(
     q1=-1,
     q2=0,
     q3=1,
-    plot=True,
+    plot=None,
     plot_kwargs=None,
     ax=None,
 ):
@@ -30,7 +31,8 @@ def quartile(
     q3 : float
         Third quartile, i.e 0.75 of the mass is below this point.
     plot : bool
-        Whether to plot the distribution, and lower and upper bounds. Defaults to True.
+        Whether to plot the distribution, and lower and upper bounds. Defaults to None,
+        which results in the value of rcParams["plots.show_plot"] being used.
     plot_kwargs : dict
         Dictionary passed to the method ``plot_pdf()`` of ``distribution``.
     ax : matplotlib axes
@@ -77,6 +79,9 @@ def quartile(
 
     """
     valid_distribution(distribution)
+
+    if plot is None:
+        plot = rcParams["plots.show_plot"]
 
     if plot_kwargs is None:
         plot_kwargs = {}

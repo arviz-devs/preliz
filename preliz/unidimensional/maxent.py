@@ -3,15 +3,16 @@ import warnings
 from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import valid_distribution
 from preliz.internal.optimization import relative_error, optimize_max_ent, get_fixed_params
+from preliz.internal.rcparams import rcParams
 
 
 def maxent(
     distribution=None,
     lower=-1,
     upper=1,
-    mass=0.94,
+    mass=None,
     mode=None,
-    plot=True,
+    plot=None,
     plot_kwargs=None,
     ax=None,
 ):
@@ -29,11 +30,13 @@ def maxent(
     upper: float
         Upper end-point
     mass: float
-        Probability mass between ``lower`` and ``upper`` bounds. Defaults to 0.94
+        Probability mass between ``lower`` and ``upper`` bounds. Defaults to None,
+        which results in the value of rcParams["stats.ci_prob"] being used.
     mode: float
         Mode of the distribution. Pass a value to fix the mode of the distribution.
     plot : bool
-        Whether to plot the distribution, and lower and upper bounds. Defaults to True.
+        Whether to plot the distribution, and lower and upper bounds. Defaults to None,
+        which results in the value of rcParams["plots.show_plot"] being used.
     plot_kwargs : dict
         Dictionary passed to the method ``plot_pdf()`` of ``distribution``.
     ax : matplotlib axes
@@ -80,6 +83,13 @@ def maxent(
 
     """
     valid_distribution(distribution)
+
+    if mass is None:
+        mass = rcParams["stats.ci_prob"]
+
+    if plot is None:
+        plot = rcParams["plots.show_plot"]
+
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")
 
