@@ -13,19 +13,21 @@ import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers, get_backend
 from matplotlib.ticker import MaxNLocator
 from preliz.internal.narviz import hdi, kde
+from preliz.internal.rcparams import rcParams
 
 
-def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False, ax=None):
+def plot_pointinterval(distribution, interval=None, levels=None, rotated=False, ax=None):
     """
     Plot median as a dot and intervals as lines.
-    By defaults the intervals are HDI with 0.5 and 0.94 mass.
+    By defaults the intervals are HDI with 0.5 and the value in rcParams["stats.ci_prob"].
 
     Parameters
     ----------
     distribution : preliz distribution or array
     interval : str
-        Type of interval. Available options are highest density interval `"hdi"` (default),
+        Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
     levels : list
         Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
         For quantiles the number of elements should be 5, 3, 1 or 0
@@ -40,6 +42,9 @@ def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False,
     else:
         dist_type = "preliz"
 
+    if interval is None:
+        interval = rcParams["stats.ci_kind"]
+
     if interval == "quantiles":
         if levels is None:
             levels = [0.05, 0.25, 0.5, 0.75, 0.95]
@@ -53,7 +58,7 @@ def plot_pointinterval(distribution, interval="hdi", levels=None, rotated=False,
 
     else:
         if levels is None:
-            levels = [0.5, 0.94]
+            levels = [0.5, rcParams["stats.ci_prob"]]
 
         elif len(levels) not in (2, 1):
             raise ValueError("levels should have 2 or 1 elements")

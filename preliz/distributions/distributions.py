@@ -28,6 +28,7 @@ from ..internal.distribution_helper import (
 )
 
 from ..internal.optimization import optimize_hdi
+from ..internal.rcparams import rcParams
 
 
 class Distribution:
@@ -75,7 +76,7 @@ class Distribution:
         else:
             return None
 
-    def summary(self, mass=0.94, interval="hdi", fmt=".2f"):
+    def summary(self, mass=None, interval=None, fmt=".2f"):
         """
         Namedtuple with the mean, median, standard deviation, and lower and upper bounds
         of the equal-tailed interval.
@@ -83,16 +84,20 @@ class Distribution:
         Parameters
         ----------
         mass: float
-            Probability mass for the equal-tailed interval. Defaults to 0.94
+            Probability mass for the equal-tailed interval. Defaults to None,
+        which results in the value of rcParams["stats.ci_prob"] being used.
         interval : str or list-like
-            Type of interval. Available options are highest density interval `"hdi"` (default),
+            Type of interval. Available options are highest density interval `"hdi"`,
             equal tailed interval `"eti"` or arbitrary interval defined by a list-like object
-            with a pair of values.
+            with a pair of values. Defaults to the value in rcParams["stats.ci_kind"].
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point.
         """
         valid_distribution(self)
+
+        if interval is None:
+            interval = rcParams["stats.ci_kind"]
 
         if not isinstance(fmt, str):
             raise ValueError("Invalid format string.")
@@ -248,18 +253,22 @@ class Distribution:
 
         return moments
 
-    def eti(self, mass=0.94, fmt=".2f"):
+    def eti(self, mass=None, fmt=".2f"):
         """Equal-tailed interval containing `mass`.
 
         Parameters
         ----------
         mass: float
-            Probability mass in the interval. Defaults to 0.94
+            Probability mass in the interval. Defaults to None,
+        which results in the value of rcParams["stats.ci_prob"] being used.
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point. Use `"none"` for no format.
         """
         valid_distribution(self)
+
+        if mass is None:
+            mass = rcParams["stats.ci_prob"]
 
         if not isinstance(fmt, str):
             raise ValueError("Invalid format string.")
@@ -277,18 +286,22 @@ class Distribution:
         else:
             return None
 
-    def hdi(self, mass=0.94, fmt=".2f"):
+    def hdi(self, mass=None, fmt=".2f"):
         """Highest density interval containing `mass`.
 
         Parameters
         ----------
         mass: float
-            Probability mass in the interval. Defaults to 0.94
+            Probability mass in the interval. Defaults to None,
+        which results in the value of rcParams["stats.ci_prob"] being used.
         fmt : str
             fmt used to represent results using f-string fmt for floats. Default to ".2f"
             i.e. 2 digits after the decimal point. Use `"none"` for no format.
         """
         valid_distribution(self)
+
+        if mass is None:
+            mass = rcParams["stats.ci_prob"]
 
         if not isinstance(fmt, str):
             raise ValueError("Invalid format string.")
@@ -491,7 +504,7 @@ class Distribution:
         self,
         moments=None,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         support="restricted",
         legend="legend",
@@ -515,6 +528,7 @@ class Distribution:
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
             equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -556,7 +570,7 @@ class Distribution:
         self,
         moments=None,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         support="restricted",
         legend="legend",
@@ -580,6 +594,7 @@ class Distribution:
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
             equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -620,7 +635,7 @@ class Distribution:
         self,
         moments=None,
         pointinterval=False,
-        interval="hdi",
+        interval=None,
         levels=None,
         legend="legend",
         color=None,
@@ -643,6 +658,7 @@ class Distribution:
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
             equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
@@ -671,7 +687,7 @@ class Distribution:
         kind="pdf",
         xy_lim="both",
         pointinterval=True,
-        interval="hdi",
+        interval=None,
         levels=None,
         figsize=None,
     ):
@@ -694,6 +710,7 @@ class Distribution:
         interval : str
             Type of interval. Available options are highest density interval `"hdi"` (default),
             equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            Defaults to the value in rcParams["stats.ci_kind"].
         levels : list
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
