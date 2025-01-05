@@ -15,7 +15,7 @@ from .multidimensional import *
 from .internal.rcparams import rc_context, rcParams
 
 
-__version__ = "0.13.0"
+__version__ = "0.14.0"
 
 
 # Allow legend outside plot in maxent to be included in the saved figure
