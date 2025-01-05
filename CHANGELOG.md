@@ -1,3 +1,31 @@
+<a id="0.14.0"></a>
+# [0.14.0](https://github.com/arviz-devs/preliz/releases/tag/0.14.0) - 2025-01-05
+
+## What's Changed
+
+###  New Features
+* Add rcParams by [@aloctavodia](https://github.com/aloctavodia) in [#615](https://github.com/arviz-devs/preliz/pull/615)
+
+### Maintenance and bug fixes
+* Add test for modes by [@aloctavodia](https://github.com/aloctavodia) in [#613](https://github.com/arviz-devs/preliz/pull/613)
+* Do not expose posterior_to_prior by [@aloctavodia](https://github.com/aloctavodia) in [#614](https://github.com/arviz-devs/preliz/pull/614)
+
+
+### Documentation
+* Distributions Gallery: Add pronunciation to ZIB, ZINB and ZIP by [@aleicazatti](https://github.com/aleicazatti) in [#606](https://github.com/arviz-devs/preliz/pull/606)
+* Distributions Gallery: Add Dirichlet by [@aleicazatti](https://github.com/aleicazatti) in [#608](https://github.com/arviz-devs/preliz/pull/608)
+* Distributions Gallery: Add MvNormal by [@aleicazatti](https://github.com/aleicazatti) in [#609](https://github.com/arviz-devs/preliz/pull/609)
+* Distributions Gallery: Add Mixture by [@aleicazatti](https://github.com/aleicazatti) in [#610](https://github.com/arviz-devs/preliz/pull/610)
+* Distributions Gallery: Add Hurdle by [@aleicazatti](https://github.com/aleicazatti) in [#611](https://github.com/arviz-devs/preliz/pull/611)
+* Fix Roulette docstring by [@aloctavodia](https://github.com/aloctavodia) in [#607](https://github.com/arviz-devs/preliz/pull/607)
+* Fix hurdle docstring by [@aloctavodia](https://github.com/aloctavodia) in [#612](https://github.com/arviz-devs/preliz/pull/612)
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.13.0...0.14.0
+
+[Changes][0.14.0]
+
+
 <a id="0.13.0"></a>
 # [0.13.0](https://github.com/arviz-devs/preliz/releases/tag/0.13.0) - 2024-12-13
 
@@ -701,6 +729,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.14.0]: https://github.com/arviz-devs/preliz/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/arviz-devs/preliz/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/arviz-devs/preliz/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/arviz-devs/preliz/compare/0.10.0...0.11.0
