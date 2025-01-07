@@ -255,7 +255,6 @@ def plot_mvnormal(
     xy_lim="auto",
 ):
     """Plot pdf, cdf or ppf of Multivariate Normal distribution."""
-
     mu = dist.mu
     sigma = dist.rv_frozen.var() ** 0.5
     dim = len(mu)

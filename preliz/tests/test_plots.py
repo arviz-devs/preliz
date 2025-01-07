@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import preliz as pz
+from test_helper import run_notebook
 
 
 @pytest.fixture(scope="function")
@@ -37,28 +38,6 @@ def test_continuous_plot_pdf_cdf_ppf(two_dist, kwargs):
         a_dist.plot_ppf(**kwargs)
 
 
-def test_plot_interactive():
-    for idx, distribution in enumerate(pz.distributions.__all__):
-        if distribution not in [
-            "Dirichlet",
-            "MvNormal",
-            "Truncated",
-            "Censored",
-            "Hurdle",
-            "Mixture",
-        ]:
-            dist = getattr(pz.distributions, distribution)
-            kind = ["pdf", "cdf", "ppf"][idx % 3]
-            xy_lim = ["auto", "both"][idx % 2]
-            dist().plot_interactive(kind=kind, xy_lim=xy_lim)
-        if distribution in ["Truncated", "Censored"]:
-            dist = getattr(pz.distributions, distribution)
-            dist(pz.Normal(0, 2), -1, 1).plot_interactive(kind="pdf", xy_lim="both")
-        if distribution == "Hurdle":
-            dist = getattr(pz.distributions, distribution)
-            dist(pz.Normal(0, 2), 0.9).plot_interactive(kind="pdf", xy_lim="both")
-
-
 @pytest.mark.parametrize(
     "kwargs",
     [
@@ -86,26 +65,6 @@ def test_dirichlet_plot(kwargs):
     "kwargs",
     [
         {},
-        {"xy_lim": "auto"},
-        {"pointinterval": True, "xy_lim": "auto"},
-        {"pointinterval": True, "levels": [0.1, 0.9], "xy_lim": "both"},
-        {"pointinterval": True, "interval": "eti", "levels": [0.9], "xy_lim": (0.3, 0.9, 0.6, 1)},
-        {"pointinterval": True, "interval": "quantiles", "xy_lim": "both"},
-        {"pointinterval": True, "interval": "quantiles", "levels": [0.1, 0.5, 0.9]},
-        {"pointinterval": False, "figsize": (4, 4)},
-    ],
-)
-def test_plot_interactive_dirichlet(kwargs):
-    a_dist = pz.Dirichlet([2, 1, 2])
-    a_dist.plot_interactive(kind="pdf", **kwargs)
-    a_dist.plot_interactive(kind="cdf", **kwargs)
-    a_dist.plot_interactive(kind="ppf", **kwargs)
-
-
-@pytest.mark.parametrize(
-    "kwargs",
-    [
-        {},
         {"marginals": True},
         {"pointinterval": True},
         {"pointinterval": True, "levels": [0.1, 0.9]},
@@ -125,28 +84,11 @@ def test_mvnormal_plot(kwargs):
     a_dist.plot_ppf(**kwargs)
 
 
-@pytest.mark.parametrize(
-    "kwargs",
-    [
-        {},
-        {"xy_lim": "auto"},
-        {"pointinterval": True, "xy_lim": "auto"},
-        {"pointinterval": True, "levels": [0.1, 0.9], "xy_lim": "both"},
-        {"pointinterval": True, "interval": "eti", "levels": [0.9], "xy_lim": (0.3, 0.9, None, 1)},
-        {"pointinterval": True, "interval": "quantiles", "xy_lim": "both"},
-        {"pointinterval": True, "interval": "quantiles", "levels": [0.1, 0.5, 0.9]},
-        {"pointinterval": False, "figsize": (4, 4)},
-    ],
-)
-def test_plot_interactive_mvnormal(kwargs):
-    mvnormal_tau = pz.MvNormal(mu=[-1, 2.4], tau=[[1, 0], [1, 1]])
-    mvnormal_cov = pz.MvNormal(mu=[3, -2], cov=[[1, 0], [0, 1]])
-    mvnormal_tau.plot_interactive(kind="pdf", **kwargs)
-    mvnormal_cov.plot_interactive(kind="pdf", **kwargs)
-    mvnormal_tau.plot_interactive(kind="cdf", **kwargs)
-    mvnormal_cov.plot_interactive(kind="cdf", **kwargs)
-    mvnormal_tau.plot_interactive(kind="ppf", **kwargs)
-    mvnormal_cov.plot_interactive(kind="ppf", **kwargs)
+def test_plot_interactive(capsys):
+    pz.Poisson(4.5).plot_interactive()
+    captured = capsys.readouterr()
+    assert "RuntimeError" in captured.out
+    run_notebook("plot_interactive.ipynb")
 
 
 @pytest.fixture
