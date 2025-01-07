@@ -233,6 +233,7 @@ class Dirichlet(Continuous):
         pointinterval=True,
         interval=None,
         levels=None,
+        legend="title",
         figsize=None,
     ):
         """
@@ -258,6 +259,9 @@ class Dirichlet(Continuous):
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
             (in this last case nothing will be plotted).
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         """
@@ -295,6 +299,7 @@ class Dirichlet(Continuous):
                     interval,
                     levels,
                     "full",
+                    legend,
                     figsize,
                     None,
                     xy_lim,
@@ -566,6 +571,7 @@ class MvNormal(Continuous):
         pointinterval=True,
         interval=None,
         levels=None,
+        legend="title",
         figsize=None,
     ):
         """
@@ -592,6 +598,9 @@ class MvNormal(Continuous):
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
             (in this last case nothing will be plotted).
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
         figsize : tuple
             Size of the figure
         """
@@ -630,10 +639,12 @@ class MvNormal(Continuous):
                     interval,
                     levels,
                     "full",
+                    legend,
                     figsize,
                     None,
                     xy_lim,
                 )
+
             elif kind == "cdf":
                 plot_mvnormal(
                     self,

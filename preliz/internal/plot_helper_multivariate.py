@@ -255,7 +255,7 @@ def plot_mvnormal(
     xy_lim="auto",
 ):
     """Plot pdf, cdf or ppf of Multivariate Normal distribution."""
-
+    print(axes)
     mu = dist.mu
     sigma = dist.rv_frozen.var() ** 0.5
     dim = len(mu)
@@ -274,6 +274,7 @@ def plot_mvnormal(
             fig, axes = plt.subplots(cols, rows, figsize=figsize, sharex=True, sharey=True)
             axes = axes.flatten()
         if len(axes) > dim:
+            print(axes)
             for ax in axes[dim:]:
                 ax.remove()
 
