@@ -12,6 +12,7 @@ def maxent(
     upper=1,
     mass=None,
     mode=None,
+    fixed_stat=None,
     plot=None,
     plot_kwargs=None,
     ax=None,
@@ -34,6 +35,10 @@ def maxent(
         which results in the value of rcParams["stats.ci_prob"] being used.
     mode: float
         Mode of the distribution. Pass a value to fix the mode of the distribution.
+    fixed_stat: tuple
+        Summary statistic to fix. The first element should be a name and the second a
+        numerical value. Valid names are: "mean", "mode", "median", "variance", "std",
+        "skewness", "kurtosis". Defaults to None.
     plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defaults to None,
         which results in the value of rcParams["plots.show_plot"] being used.
@@ -84,11 +89,26 @@ def maxent(
     """
     valid_distribution(distribution)
 
+    if mode is not None:
+        fixed_stat = ("mode", mode)
+        warnings.warn(
+            "The parameter `mode` is deprecated and will be removed in a future release. "
+            "Use `fixed_stat=('mode', mode)` instead.",
+            FutureWarning,
+        )
+
     if mass is None:
         mass = rcParams["stats.ci_prob"]
 
     if plot is None:
         plot = rcParams["plots.show_plot"]
+
+    if fixed_stat is None:
+        fixed_stat = ()
+    else:
+        valid_stats = ["mean", "mode", "median", "variance", "std", "skewness", "kurtosis"]
+        if fixed_stat[0] not in valid_stats:
+            raise ValueError("fixed_stat should be one of the following: " + ", ".join(valid_stats))
 
     if not 0 < mass <= 1:
         raise ValueError("mass should be larger than 0 and smaller or equal to 1")
@@ -115,7 +135,7 @@ def maxent(
             )
 
     # Find which parameters has been fixed
-    none_idx, fixed = get_fixed_params(distribution)
+    none_idx, fixed_params = get_fixed_params(distribution)
 
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
@@ -129,7 +149,7 @@ def maxent(
             mean=(lower + upper) / 2, sigma=((upper - lower) / 4) / mass
         )
 
-    if mode is not None:
+    if "mode" in fixed_stat:
         try:
             distribution.mode()
         except NotImplementedError as exc:
@@ -137,7 +157,7 @@ def maxent(
                 f"{distribution.__class__.__name__} does not have a mode method"
             ) from exc
 
-    opt = optimize_max_ent(distribution, lower, upper, mass, none_idx, fixed, mode)
+    opt = optimize_max_ent(distribution, lower, upper, mass, none_idx, fixed_params, fixed_stat)
     distribution.opt = opt
 
     r_error, computed_mass = relative_error(distribution, lower, upper, mass)

@@ -10,21 +10,21 @@ from scipy.special import i0, i1, i0e, i1e  # pylint: disable=no-name-in-module
 from .distribution_helper import init_vals as default_vals
 
 
-def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed, mode=None):
+def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_stat):
     def prob_bound(params, dist, lower, upper, mass):
-        params = get_params(dist, params, none_idx, fixed)
+        params = get_params(dist, params, none_idx, fixed_params)
         dist._parametrization(**params)
         if dist.kind == "discrete":
             lower -= 1
         cdf0 = dist.cdf(lower)
         cdf1 = dist.cdf(upper)
         loss = (cdf1 - cdf0) - mass
-        if mode is not None:
-            loss = loss - abs(dist.mode() - mode)
+        if fixed_stat:
+            loss = loss - abs(getattr(dist, fixed_stat[0])() - fixed_stat[1])
         return loss
 
     def entropy_loss(params, dist):
-        params = get_params(dist, params, none_idx, fixed)
+        params = get_params(dist, params, none_idx, fixed_params)
         dist._parametrization(**params)
         return -dist.entropy()
 
@@ -39,7 +39,7 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed, mode=None):
         warnings.filterwarnings("ignore", message="Values in x were outside bounds")
         opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
 
-    params = get_params(dist, opt["x"], none_idx, fixed)
+    params = get_params(dist, opt["x"], none_idx, fixed_params)
     dist._parametrization(**params)
 
     return opt
