@@ -654,6 +654,7 @@ class MvNormal(Continuous):
                     interval,
                     levels,
                     "full",
+                    legend,
                     figsize,
                     None,
                     xy_lim,
@@ -661,12 +662,13 @@ class MvNormal(Continuous):
             elif kind == "ppf":
                 plot_mvnormal(
                     self,
-                    "cdf",
+                    "ppf",
                     "marginals",
                     pointinterval,
                     interval,
                     levels,
                     None,
+                    legend,
                     figsize,
                     None,
                     xy_lim,
