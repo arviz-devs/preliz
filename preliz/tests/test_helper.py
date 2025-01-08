@@ -20,8 +20,6 @@ def run_notebook(notebook):
     for cell in inb.cells:
         if cell.cell_type == "code" and "outputs" in cell:
             for output in cell.outputs:
-                print("HOLAAAAAAAAAAAA")
-                print(output)
                 try:
                     if "FAILED" in output.text:
                         raise RuntimeError(f"Error in notebook cell:\n{output.text}")
