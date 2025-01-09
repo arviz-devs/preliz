@@ -1,3 +1,24 @@
+<a id="0.15.0"></a>
+# [0.15.0](https://github.com/arviz-devs/preliz/releases/tag/0.15.0) - 2025-01-09
+
+## What's Changed
+
+### New Features
+* maxent: fix any  of the properties of the distribution (summary statistics) by [@aloctavodia](https://github.com/aloctavodia) in [#616](https://github.com/arviz-devs/preliz/pull/616)
+
+### Maintenance and bug fixes
+* Fix plot_interactive bug for multivariate distributions by [@aloctavodia](https://github.com/aloctavodia) in [#619](https://github.com/arviz-devs/preliz/pull/619)
+* Improve interactive tests by [@aloctavodia](https://github.com/aloctavodia) in [#623](https://github.com/arviz-devs/preliz/pull/623)
+
+### Documentation
+* Add note about restraints by [@aloctavodia](https://github.com/aloctavodia) in [#624](https://github.com/arviz-devs/preliz/pull/624)
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.14.0...0.15.0
+
+[Changes][0.15.0]
+
+
 <a id="0.14.0"></a>
 # [0.14.0](https://github.com/arviz-devs/preliz/releases/tag/0.14.0) - 2025-01-05
 
@@ -729,6 +750,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.15.0]: https://github.com/arviz-devs/preliz/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/arviz-devs/preliz/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/arviz-devs/preliz/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/arviz-devs/preliz/compare/0.11.0...0.12.0
