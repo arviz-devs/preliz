@@ -45,7 +45,7 @@ jobs:
         run: |
           python -m black preliz --check
           echo "Success!"
-          echo "Checking code style with pylint..."
+          echo "Checking code style with ruff..."
           ruff check preliz/
       - name: Run tests
         shell: bash -l {0}
