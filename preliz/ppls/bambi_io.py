@@ -2,8 +2,8 @@
 
 import importlib
 import inspect
-from copy import copy
 import re
+from copy import copy
 from sys import modules
 
 import numpy as np
@@ -19,6 +19,7 @@ def get_pymc_model(model):
 def write_bambi_string(new_priors, var_info):
     """
     Return a string with the new priors for the Bambi model.
+
     So the user can copy and paste, ideally with none to minimal changes.
     """
     header = "{\n"

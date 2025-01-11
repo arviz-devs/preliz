@@ -4,15 +4,15 @@ import numba as nb
 import numpy as np
 from scipy.stats import skew
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import erf, mean_and_std, norm_logcdf
+from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import find_ppf
+from ..internal.special import erf, mean_and_std, norm_logcdf
+from .distributions import Continuous
 
 
 class ExGaussian(Continuous):
     r"""
-    Exponentially modified Gaussian (EMG) Distribution
+    Exponentially modified Gaussian (EMG) Distribution.
 
     Results from the convolution of a normal distribution with an exponential
     distribution.

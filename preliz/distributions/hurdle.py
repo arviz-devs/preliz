@@ -1,17 +1,18 @@
 # pylint: disable=arguments-differ
 import numpy as np
-from preliz.internal.distribution_helper import eps, all_not_none
+
+from preliz.internal.distribution_helper import all_not_none, eps
 
 from ..distributions.distributions import DistributionTransformer
 
 
 class Hurdle(DistributionTransformer):
     r"""
-    Hurdle distribution
+    Hurdle distribution.
 
     This is not a distribution per se, but a modifier of univariate distributions.
 
-    Given a base distribution with parameters $\theta$, cumulative distribution function (CDF), 
+    Given a base distribution with parameters $\theta$, cumulative distribution function (CDF),
     and probability density mass/function (PDF). The density of a Hurdle distribution is:
 
     .. math::
@@ -35,12 +36,10 @@ class Hurdle(DistributionTransformer):
     .. plot::
         :context: close-figs
 
-        
         from preliz import Gamma, Hurdle, style
         style.use('preliz-doc')
         Hurdle(Gamma(mu=2, sigma=1), 0.8).plot_pdf()
         Gamma(mu=2, sigma=1).plot_pdf()
-        
 
     Parameters
     ----------

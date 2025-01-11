@@ -1,16 +1,16 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 
+from ..internal.distribution_helper import all_not_none, eps
+from ..internal.special import cdf_bounds, mean_sample, ppf_bounds_cont, xlog1py
 from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont, mean_sample, xlog1py
 
 
 class Exponential(Continuous):
     r"""
-    Exponential Distribution
+    Exponential Distribution.
 
     The pdf of this distribution is
 

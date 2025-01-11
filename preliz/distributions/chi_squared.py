@@ -1,14 +1,13 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
-
+import numpy as np
 from scipy.special import gammainc, gammaincinv  # pylint: disable=no-name-in-module
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont, gammaln, digamma, xlogy
+from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import optimize_ml
+from ..internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
+from .distributions import Continuous
 
 
 class ChiSquared(Continuous):

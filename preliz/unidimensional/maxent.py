@@ -2,7 +2,7 @@ import warnings
 
 from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import valid_distribution
-from preliz.internal.optimization import relative_error, optimize_max_ent, get_fixed_params
+from preliz.internal.optimization import get_fixed_params, optimize_max_ent, relative_error
 from preliz.internal.rcparams import rcParams
 
 
@@ -18,8 +18,7 @@ def maxent(
     ax=None,
 ):
     """
-    Find the maximum entropy distribution with `mass` in the interval defined by the `lower` and
-    `upper` end-points.
+    Find the maximum entropy distribution with `mass` in the interval defined by the `lower` and `upper` end-points.
 
     Parameters
     ----------
@@ -48,7 +47,6 @@ def maxent(
 
     Returns
     -------
-
     dict: dict with the parameters of the distribution
     axes: matplotlib axes (only if `plot=True`)
 

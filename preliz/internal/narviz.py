@@ -1,9 +1,8 @@
-"""Functions originally imported from ArviZ"""
+"""Functions originally imported from ArviZ."""
 import warnings
 
 import numpy as np
 from numba import njit
-
 from scipy.fftpack import fft
 from scipy.signal import convolve
 from scipy.signal.windows import gaussian

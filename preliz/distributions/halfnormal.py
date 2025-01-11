@@ -3,14 +3,14 @@
 import numba as nb
 import numpy as np
 
+from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from ..internal.special import erfinv, half_erf, ppf_bounds_cont
 from .distributions import Continuous
-from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import half_erf, erfinv, ppf_bounds_cont
 
 
 class HalfNormal(Continuous):
     r"""
-    HalfNormal Distribution
+    HalfNormal Distribution.
 
     The pdf of this distribution is
 

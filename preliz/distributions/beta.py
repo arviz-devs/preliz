@@ -3,21 +3,21 @@
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, any_not_none, all_not_none
+from ..internal.distribution_helper import all_not_none, any_not_none, eps
 from ..internal.optimization import optimize_ml
 from ..internal.special import (
-    betaln,
     betainc,
     betaincinv,
+    betaln,
+    cdf_bounds,
     digamma,
     gammaln,
-    cdf_bounds,
-    ppf_bounds_cont,
     mean_and_std,
-    xlogy,
+    ppf_bounds_cont,
     xlog1py,
+    xlogy,
 )
+from .distributions import Continuous
 
 
 class Beta(Continuous):
@@ -34,7 +34,6 @@ class Beta(Continuous):
     .. plot::
         :context: close-figs
 
-        
         from preliz import Beta, style
         style.use('preliz-doc')
         alphas = [.5, 5., 2.]

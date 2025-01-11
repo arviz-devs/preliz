@@ -2,13 +2,13 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.stats import skew  # pylint: disable=no-name-in-module
 from scipy.special import owens_t  # pylint: disable=no-name-in-module
+from scipy.stats import skew  # pylint: disable=no-name-in-module
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import erf, norm_logcdf
+from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
 from ..internal.optimization import find_ppf, optimize_ml, optimize_moments
+from ..internal.special import erf, norm_logcdf
+from .distributions import Continuous
 
 
 class SkewNormal(Continuous):

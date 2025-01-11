@@ -1,10 +1,11 @@
+import warnings
 from functools import reduce
 from operator import mul
-import warnings
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import tri
+
 from preliz.internal.plot_helper import repr_to_matplotlib
 from preliz.internal.special import gammaln
 
@@ -20,12 +21,11 @@ def get_cols_rows(n_plots):
 
 class DirichletOnSimplex:
     def __init__(self, alpha):
-        """Creates Dirichlet distribution with parameter `alpha`.
+        """Create Dirichlet distribution with parameter `alpha`.
 
         Adapted from Thomas Boggs' blogpost
         https://blog.bogatron.net/blog/2014/02/02/visualizing-dirichlet-distributions/
         """
-
         self._alpha = np.array(alpha)
         self._coef = np.exp(
             gammaln(np.sum(self._alpha)) - np.sum([gammaln(a) for a in self._alpha])
@@ -52,7 +52,7 @@ class DirichletOnSimplex:
 
     def xy2bc(self, x_y, tol=1.0e-3):
         """
-        Converts 2D Cartesian coordinates to barycentric coordinates.
+        Convert 2D Cartesian coordinates to barycentric coordinates.
 
         Parameters
         ----------
@@ -65,7 +65,7 @@ class DirichletOnSimplex:
         return np.clip(bsc, tol, 1.0 - tol)
 
     def pdf(self, x):
-        """Returns pdf value for `x`."""
+        """Return pdf value for `x`."""
         return self._coef * reduce(mul, [xx ** (aa - 1) for (xx, aa) in zip(x, self._alpha)])
 
     def plot(self, ax=None):
@@ -111,7 +111,6 @@ def plot_dirichlet(
     xy_lim="auto",
 ):
     """Plot pdf, cdf or ppf of Dirichlet distribution."""
-
     alpha = dist.alpha
     dim = len(alpha)
 
@@ -178,17 +177,16 @@ def plot_dirichlet(
         if legend == "title":
             fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
 
+    elif dim == 3:
+        dirichlet_ = DirichletOnSimplex(alpha)
+        if dirichlet_.ok:
+            if axes is None:
+                _, axes = plt.subplots(1, 1)
+            dirichlet_.plot(ax=axes)
+            if legend == "title":
+                axes.set_title(repr_to_matplotlib(dist))
     else:
-        if dim == 3:
-            dirichlet_ = DirichletOnSimplex(alpha)
-            if dirichlet_.ok:
-                if axes is None:
-                    _, axes = plt.subplots(1, 1)
-                dirichlet_.plot(ax=axes)
-                if legend == "title":
-                    axes.set_title(repr_to_matplotlib(dist))
-        else:
-            raise ValueError("joint only works for Dirichlet of dim=3")
+        raise ValueError("joint only works for Dirichlet of dim=3")
 
     return axes
 
@@ -320,14 +318,13 @@ def plot_mvnormal(
         if legend == "title":
             fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
 
+    elif dim == 2:
+        if axes is None:
+            _, axes = plt.subplots(1, 1)
+        joint_normal(dist, axes)
+        if legend == "title":
+            axes.set_title(repr_to_matplotlib(dist))
     else:
-        if dim == 2:
-            if axes is None:
-                _, axes = plt.subplots(1, 1)
-            joint_normal(dist, axes)
-            if legend == "title":
-                axes.set_title(repr_to_matplotlib(dist))
-        else:
-            raise ValueError("joint only works for Multivariate Normal of dim=2")
+        raise ValueError("joint only works for Multivariate Normal of dim=2")
 
     return axes

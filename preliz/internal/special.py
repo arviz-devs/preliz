@@ -149,13 +149,12 @@ def betaln(a, b):
 @nb.vectorize(nopython=True, cache=True)
 def betacf(x, a, b):
     """
-    Evaluates the continued fraction for incomplete beta function by modified Lentz's method.
+    Evaluate the continued fraction for incomplete beta function by modified Lentz's method.
 
     Note:
     -----
     Adapted from Andreas Madsen's mathfn library
     """
-
     fpmin = 1e-30
     c = 1
     qab = a + b
@@ -208,7 +207,7 @@ def betacf(x, a, b):
 @nb.vectorize(nopython=True, cache=True)
 def betainc(a, b, x):
     """
-    Returns the regularized incomplete beta function
+    Return the regularized incomplete beta function.
 
     Note:
     -----
@@ -236,7 +235,7 @@ def betainc(a, b, x):
 @nb.vectorize(nopython=True, cache=True)
 def betainc_un(a, b, x):
     """
-    Returns the "unregularized" incomplete beta function
+    Return the "unregularized" incomplete beta function.
 
     Note:
     -----
@@ -248,7 +247,7 @@ def betainc_un(a, b, x):
 @nb.vectorize(nopython=True, cache=True)
 def betaincinv(a, b, p):
     """
-    Returns the inverse of incomplete beta function
+    Return the inverse of incomplete beta function.
 
     Note:
     -----
@@ -323,8 +322,7 @@ def betaincinv(a, b, p):
 @nb.njit(cache=True)
 def garcia_approximation(mean, sigma):
     """
-    Approximate method of moments for Weibull distribution, provides good results for values of
-    alpha larger than 0.83.
+    Approximate method of moments for Weibull distribution, provides good results for values of alpha larger than 0.83.
 
     Oscar Garcia. Simplified method-of-moments estimation for the Weibull distribution. 1981.
     New Zealand Journal of Forestry Science 11:304-306
@@ -345,7 +343,8 @@ def garcia_approximation(mean, sigma):
 @nb.vectorize(nopython=True, cache=True)
 def half_erf(x):
     """
-    Error function for values of x >= 0, return 0 otherwise
+    Error function for values of x >= 0, return 0 otherwise.
+
     Equations 7.1.27 from Abramowitz and Stegun
     Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables
     """
@@ -368,7 +367,7 @@ def half_erf(x):
 
 @nb.vectorize(nopython=True, cache=True)
 def digamma(x):
-    "Faster digamma function assumes x > 0."
+    """Faster digamma function assumes x > 0."""
     r = 0
     while x <= 5:
         r -= 1 / x

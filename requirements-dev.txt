@@ -11,3 +11,4 @@ lxml==5.0.0
 ipykernel
 pymc>=5.16.0
 bambi>=0.13.0
+ruff==0.9.1

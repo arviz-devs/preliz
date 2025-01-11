@@ -3,9 +3,9 @@
 import numba as nb
 import numpy as np
 
+from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from ..internal.special import cdf_bounds, erf, erfinv, expit, logit, mean_and_std, ppf_bounds_cont
 from .distributions import Continuous
-from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import erf, erfinv, logit, expit, mean_and_std, cdf_bounds, ppf_bounds_cont
 
 
 class LogitNormal(Continuous):

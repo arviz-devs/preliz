@@ -3,10 +3,10 @@
 import numba as nb
 import numpy as np
 
-from .distributions import Discrete
 from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import optimize_ml
-from ..internal.special import xlogx, expit, logit
+from ..internal.special import expit, logit, xlogx
+from .distributions import Discrete
 
 
 class Categorical(Discrete):

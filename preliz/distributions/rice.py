@@ -1,12 +1,12 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=arguments-differ
 import numpy as np
+from scipy.special import chndtr, chndtrix, i0, i0e, i1  # pylint: disable=no-name-in-module
 
-from scipy.special import i0, i1, i0e, chndtr, chndtrix  # pylint: disable=no-name-in-module
+from ..internal.distribution_helper import all_not_none, eps
+from ..internal.optimization import optimize_ml, optimize_moments_rice
+from ..internal.special import cdf_bounds, ppf_bounds_cont
 from .distributions import Continuous
-from ..internal.optimization import optimize_moments_rice, optimize_ml
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import ppf_bounds_cont, cdf_bounds
 
 
 class Rice(Continuous):

@@ -1,13 +1,12 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
-
+import numpy as np
 from scipy.special import gammainc, gammaincinv  # pylint: disable=no-name-in-module
-from ..internal.distribution_helper import all_not_none, any_not_none, eps
-from ..internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
-from ..internal.optimization import optimize_ml
 
+from ..internal.distribution_helper import all_not_none, any_not_none, eps
+from ..internal.optimization import optimize_ml
+from ..internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 from .distributions import Continuous
 
 
@@ -28,7 +27,6 @@ class Gamma(Continuous):
     .. plot::
         :context: close-figs
 
-        
         from preliz import Gamma, style
         style.use('preliz-doc')
         alphas = [1., 3., 7.5]

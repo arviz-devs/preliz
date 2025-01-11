@@ -1,7 +1,7 @@
 import re
 from sys import modules
-import numpy as np
 
+import numpy as np
 
 eps = np.finfo(float).eps
 
@@ -43,7 +43,7 @@ def valid_scalar_params(self, check_frozen=True):
         return True
 
     if all(
-        isinstance(param, (int, float, np.int64)) for param in self.params
+        isinstance(param, int | float | np.int64) for param in self.params
     ) or self.__class__.__name__ in ["Categorical", "Mixture"]:
         return True
 

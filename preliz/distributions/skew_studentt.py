@@ -1,13 +1,13 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 from scipy.special import comb
 
-from .distributions import Continuous
 from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
 from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.special import beta, betainc, betaincinv, cdf_bounds, ppf_bounds_cont, gamma
+from ..internal.special import beta, betainc, betaincinv, cdf_bounds, gamma, ppf_bounds_cont
+from .distributions import Continuous
 
 
 class SkewStudentT(Continuous):

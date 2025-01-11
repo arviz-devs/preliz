@@ -4,10 +4,10 @@ import numba as nb
 import numpy as np
 from scipy.special import bdtr, bdtrik  # pylint: disable=no-name-in-module
 
+from ..internal.distribution_helper import all_not_none, eps
+from ..internal.optimization import optimize_ml, optimize_moments
+from ..internal.special import cdf_bounds, gammaln, ppf_bounds_disc
 from .distributions import Discrete
-from ..internal.optimization import optimize_moments, optimize_ml
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln
 
 
 class ZeroInflatedBinomial(Discrete):
@@ -26,7 +26,6 @@ class ZeroInflatedBinomial(Discrete):
     .. plot::
         :context: close-figs
 
-        
         from preliz import ZeroInflatedBinomial, style
         style.use('preliz-doc')
         ns = [10, 20]

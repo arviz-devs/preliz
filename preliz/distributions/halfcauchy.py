@@ -1,17 +1,17 @@
 # pylint: disable=attribute-defined-outside-init
 # pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 
-from ..internal.special import cdf_bounds, ppf_bounds_cont
-from ..internal.optimization import optimize_ml
 from ..internal.distribution_helper import eps
+from ..internal.optimization import optimize_ml
+from ..internal.special import cdf_bounds, ppf_bounds_cont
 from .distributions import Continuous
 
 
 class HalfCauchy(Continuous):
     r"""
-    HalfCauchy Distribution
+    HalfCauchy Distribution.
 
     The pdf of this distribution is
 

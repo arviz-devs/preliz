@@ -3,24 +3,24 @@
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
+from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from ..internal.optimization import optimize_ml
 from ..internal.special import (
-    digamma,
-    gamma,
-    gammaln,
     beta,
     betainc,
     betaincinv,
     cdf_bounds,
+    digamma,
+    gamma,
+    gammaln,
     ppf_bounds_cont,
 )
-from ..internal.optimization import optimize_ml
+from .distributions import Continuous
 
 
 class HalfStudentT(Continuous):
     r"""
-    HalfStudentT Distribution
+    HalfStudentT Distribution.
 
     The pdf of this distribution is
 
@@ -34,7 +34,6 @@ class HalfStudentT(Continuous):
     .. plot::
         :context: close-figs
 
-        
         from preliz import HalfStudentT, style
         style.use('preliz-doc')
         sigmas = [1., 2., 2.]

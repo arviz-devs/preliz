@@ -3,14 +3,14 @@
 import numba as nb
 import numpy as np
 
-from .distributions import Discrete
+from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import optimize_ml
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import xlogx, logit, expit
+from ..internal.special import expit, logit, xlogx
+from .distributions import Discrete
 
 
 class Bernoulli(Discrete):
-    R"""Bernoulli distribution
+    R"""Bernoulli distribution.
 
     The Bernoulli distribution describes the probability of successes (x=1) and failures (x=0).
     The pmf of this distribution is

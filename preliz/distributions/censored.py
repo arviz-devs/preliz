@@ -2,14 +2,14 @@
 import numpy as np
 
 from preliz.distributions.distributions import DistributionTransformer
+from preliz.distributions.truncated import Truncated
 from preliz.internal.distribution_helper import all_not_none
 from preliz.internal.special import xlogx, xprody
-from preliz.distributions.truncated import Truncated
 
 
 class Censored(DistributionTransformer):
     r"""
-    Censored distribution
+    Censored distribution.
 
     This is not a distribution per se, but a modifier of univariate distributions.
 
@@ -29,12 +29,10 @@ class Censored(DistributionTransformer):
     .. plot::
         :context: close-figs
 
-        
         from preliz import Normal, Censored, style
         style.use('preliz-doc')
         Censored(Normal(0, 1), -1, 1).plot_pdf(support=(-4, 4))
         Normal(0, 1).plot_pdf(alpha=0.5)
-        
 
     Parameters
     ----------
