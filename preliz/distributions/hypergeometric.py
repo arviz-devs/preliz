@@ -1,13 +1,10 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-# pylint: disable=invalid-name
 import numba as nb
 import numpy as np
-from .distributions import Discrete
 
-from ..internal.special import betaln, cdf_bounds
-from ..internal.optimization import optimize_ml, optimize_moments, find_ppf
-from ..internal.distribution_helper import all_not_none
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.optimization import find_ppf, optimize_ml, optimize_moments
+from preliz.internal.special import betaln, cdf_bounds
 
 eps = np.finfo(float).eps
 
@@ -77,7 +74,7 @@ class HyperGeometric(Discrete):
         return np.exp(self.logpdf(x))
 
     def cdf(self, x):
-        if isinstance(x, (np.ndarray, list, tuple)):
+        if isinstance(x, np.ndarray | list | tuple):
             cdf_values = np.zeros_like(x, dtype=float)
             for i, val in enumerate(x):
                 x_vals = np.arange(self.support[0], val + 1)

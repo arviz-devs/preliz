@@ -1,13 +1,18 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import bdtr, bdtrik  # pylint: disable=no-name-in-module
+from scipy.special import bdtr, bdtrik
 
-from .distributions import Discrete
-from ..internal.optimization import optimize_moments
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln, mean_and_std, xlogy, xlog1py
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_moments
+from preliz.internal.special import (
+    cdf_bounds,
+    gammaln,
+    mean_and_std,
+    ppf_bounds_disc,
+    xlog1py,
+    xlogy,
+)
 
 
 class Binomial(Discrete):

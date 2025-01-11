@@ -1,11 +1,9 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import optimize_ml
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
 
 
 class AsymmetricLaplace(Continuous):
@@ -156,9 +154,7 @@ class AsymmetricLaplace(Continuous):
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        random_samples = random_state.uniform(
-            -self.kappa, 1 / self.kappa, size  # pylint: disable=invalid-unary-operand-type
-        )
+        random_samples = random_state.uniform(-self.kappa, 1 / self.kappa, size)
         return nb_rvs(random_samples, self.mu, self.b, self.kappa)
 
     def _fit_moments(self, mean, sigma):

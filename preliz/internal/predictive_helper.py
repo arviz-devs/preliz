@@ -1,15 +1,12 @@
 import numpy as np
 
-
-from preliz.internal.plot_helper import repr_to_matplotlib
 from preliz.internal.distribution_helper import get_distributions
+from preliz.internal.plot_helper import repr_to_matplotlib
 from preliz.unidimensional import mle
 
 
 def back_fitting_ppa(model, subset, new_families=True):
-    """
-    Use MLE to fit a subset of the prior samples to the marginal prior distributions
-    """
+    """Use MLE to fit a subset of the prior samples to the marginal prior distributions."""
     string = "Your selection is consistent with the priors (original families):\n"
 
     for name, dist in model.items():
@@ -35,10 +32,7 @@ def back_fitting_ppa(model, subset, new_families=True):
 
 
 def select_prior_samples(selected, prior_samples, model):
-    """
-    Given a selected set of prior predictive samples pick the corresponding
-    prior samples.
-    """
+    """Given a selected set of prior predictive samples pick the corresponding prior samples."""
     subsample = {rv: prior_samples[rv][selected] for rv in model.keys()}
 
     return subsample

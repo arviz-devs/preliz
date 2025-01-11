@@ -1,12 +1,10 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numpy as np
+from scipy.special import chndtr, chndtrix, i0, i0e, i1
 
-from scipy.special import i0, i1, i0e, chndtr, chndtrix  # pylint: disable=no-name-in-module
-from .distributions import Continuous
-from ..internal.optimization import optimize_moments_rice, optimize_ml
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import ppf_bounds_cont, cdf_bounds
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml, optimize_moments_rice
+from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class Rice(Continuous):

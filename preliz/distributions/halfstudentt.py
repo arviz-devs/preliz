@@ -1,26 +1,24 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import (
-    digamma,
-    gamma,
-    gammaln,
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import (
     beta,
     betainc,
     betaincinv,
     cdf_bounds,
+    digamma,
+    gamma,
+    gammaln,
     ppf_bounds_cont,
 )
-from ..internal.optimization import optimize_ml
 
 
 class HalfStudentT(Continuous):
     r"""
-    HalfStudentT Distribution
+    HalfStudentT Distribution.
 
     The pdf of this distribution is
 
@@ -34,7 +32,6 @@ class HalfStudentT(Continuous):
     .. plot::
         :context: close-figs
 
-        
         from preliz import HalfStudentT, style
         style.use('preliz-doc')
         sigmas = [1., 2., 2.]
@@ -177,7 +174,7 @@ class HalfStudentT(Continuous):
         random_state = np.random.default_rng(random_state)
         return np.abs(random_state.standard_t(self.nu, size) * self.sigma)
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         # if nu is smaller than 2 the variance is not defined,
         # so if that happens we use 2.1 as an approximation
         nu = self.nu

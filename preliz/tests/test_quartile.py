@@ -1,31 +1,39 @@
 import sys
-import pytest
 
+import pytest
 from numpy.testing import assert_allclose
 
 from preliz import quartile
 from preliz.distributions import (
     AsymmetricLaplace,
     Beta,
+    # Bernoulli, quartile is not useful for Bernoulli distribution as we only have two states
+    BetaBinomial,
     Cauchy,
     ChiSquared,
+    DiscreteUniform,
+    DiscreteWeibull,
     ExGaussian,
     Exponential,
     Gamma,
+    Geometric,
     Gumbel,
     HalfCauchy,
     HalfNormal,
     HalfStudentT,
+    HyperGeometric,
     InverseGamma,
     Kumaraswamy,
     Laplace,
     Logistic,
+    LogitNormal,
     LogLogistic,
     LogNormal,
-    LogitNormal,
     Moyal,
+    NegativeBinomial,
     Normal,
     Pareto,
+    Poisson,
     Rice,
     SkewStudentT,
     StudentT,
@@ -35,14 +43,6 @@ from preliz.distributions import (
     VonMises,
     Wald,
     Weibull,
-    # Bernoulli, quartile is not useful for Bernoulli distribution as we only have two states
-    BetaBinomial,
-    DiscreteUniform,
-    DiscreteWeibull,
-    Geometric,
-    HyperGeometric,
-    NegativeBinomial,
-    Poisson,
     ZeroInflatedBinomial,
     ZeroInflatedNegativeBinomial,
     ZeroInflatedPoisson,

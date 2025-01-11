@@ -1,7 +1,7 @@
 import numpy as np
 
-from preliz.unidimensional.mle import mle
 from preliz.internal.distribution_helper import get_distributions
+from preliz.unidimensional.mle import mle
 
 
 def combine(
@@ -51,7 +51,6 @@ def combine(
         The distributions that best fit the weighted sample. Sorted from best to worst match.
     axes : matplotlib axes
     """
-
     if rng is None:
         rng = np.random.default_rng()
     else:

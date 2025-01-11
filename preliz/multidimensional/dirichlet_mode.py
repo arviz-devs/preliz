@@ -1,14 +1,15 @@
 import warnings
+
 import numpy as np
-from preliz.distributions import Dirichlet, Beta
+
+from preliz.distributions import Beta, Dirichlet
 from preliz.internal.optimization import optimize_dirichlet_mode
 from preliz.internal.rcparams import rcParams
 
 
 def dirichlet_mode(mode, mass=None, bound=0.01, plot=None, plot_kwargs=None, ax=None):
     """
-    Returns a Dirichlet distribution where the marginals have the specified mode
-    and mass and their masses lie within the range mode ± bound.
+    Return a Dirichlet distribution where the marginals have the specified mode and mass and their masses lie within the range mode ± bound.
 
     Parameters
     ----------

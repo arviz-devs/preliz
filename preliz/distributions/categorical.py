@@ -1,12 +1,10 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Discrete
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import optimize_ml
-from ..internal.special import xlogx, expit, logit
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import expit, logit, xlogx
 
 
 class Categorical(Discrete):

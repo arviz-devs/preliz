@@ -1,57 +1,55 @@
-# pylint: disable=redefined-outer-name
-
-import pytest
-from pymc import Model
-from numpy.testing import assert_almost_equal
 import numpy as np
+import pytest
+from numpy.testing import assert_almost_equal
+from pymc import Model
 
 from preliz.distributions import (
     AsymmetricLaplace,
+    Bernoulli,
     Beta,
+    BetaBinomial,
     BetaScaled,
+    Binomial,
     Cauchy,
+    Censored,
     ChiSquared,
-    Gamma,
-    Gumbel,
+    Dirichlet,
+    DiscreteUniform,
+    DiscreteWeibull,
     ExGaussian,
     Exponential,
+    Gamma,
+    Geometric,
+    Gumbel,
     HalfCauchy,
     HalfNormal,
     HalfStudentT,
+    Hurdle,
     InverseGamma,
     Kumaraswamy,
     Laplace,
     Logistic,
+    LogitNormal,
     LogLogistic,
     LogNormal,
-    LogitNormal,
     Moyal,
+    MvNormal,
+    NegativeBinomial,
     Normal,
     Pareto,
+    Poisson,
     Rice,
     SkewNormal,
     StudentT,
     Triangular,
+    Truncated,
     TruncatedNormal,
     Uniform,
     VonMises,
     Wald,
     Weibull,
-    Bernoulli,
-    BetaBinomial,
-    Binomial,
-    DiscreteUniform,
-    DiscreteWeibull,
-    Geometric,
-    NegativeBinomial,
-    Poisson,
     ZeroInflatedNegativeBinomial,
     ZeroInflatedPoisson,
-    Dirichlet,
-    MvNormal,
-    Truncated,
-    Censored,
-    Hurdle,
 )
 
 

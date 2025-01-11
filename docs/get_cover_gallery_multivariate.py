@@ -1,8 +1,7 @@
-# pylint: disable=invalid-name
 import matplotlib.pyplot as plt
-
 import numpy as np
-from preliz import style, Dirichlet, MvNormal
+
+from preliz import Dirichlet, MvNormal, style
 
 style.use("preliz-doc")
 
@@ -16,7 +15,7 @@ ax = MvNormal(mu, sigma).plot_pdf(marginals=False, legend=False, ax=ax)
 ax.set_xticks([])
 ax.set_yticks([])
 ax.spines[["left", "bottom"]].set_visible(False)
-plt.savefig(f"examples/img/MvNormal.png")
+plt.savefig("examples/img/MvNormal.png")
 
 _, ax = plt.subplots(figsize=(w, h))
 ax = Dirichlet([5, 5, 5]).plot_pdf(marginals=False, legend=None, ax=ax)
@@ -24,4 +23,4 @@ ax.get_lines()[0].set_alpha(0)
 ax.set_xticks([])
 ax.set_yticks([])
 ax.spines[["left", "bottom"]].set_visible(False)
-plt.savefig(f"examples/img/Dirichlet.png")
+plt.savefig("examples/img/Dirichlet.png")

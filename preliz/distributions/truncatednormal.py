@@ -1,12 +1,10 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 
-from ..internal.special import cdf_bounds, erf, erfinv, ppf_bounds_cont
-from ..internal.optimization import optimize_ml
-from ..internal.distribution_helper import eps, all_not_none
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import cdf_bounds, erf, erfinv, ppf_bounds_cont
 
 
 class TruncatedNormal(Continuous):

@@ -1,5 +1,6 @@
 import pytest
 from numpy.testing import assert_almost_equal
+
 from preliz import combine_roulette
 from preliz.distributions import BetaScaled, LogNormal, StudentT
 

@@ -1,12 +1,7 @@
-"""
-Parent classes for all families.
-"""
-# pylint: disable=no-member
-# pylint: disable=import-outside-toplevel
-# pylint: disable=too-many-public-methods
+"""Parent classes for all families."""
+import warnings
 from collections import namedtuple
 from copy import copy
-import warnings
 
 try:
     from ipywidgets import interactive
@@ -14,21 +9,16 @@ except ImportError:
     pass
 import numpy as np
 
-from ..internal.plot_helper import (
-    plot_pdfpmf,
-    plot_cdf,
-    plot_ppf,
-    get_slider,
+from preliz.internal.distribution_helper import init_vals, valid_distribution, valid_scalar_params
+from preliz.internal.optimization import optimize_hdi
+from preliz.internal.plot_helper import (
     check_inside_notebook,
+    get_slider,
+    plot_cdf,
+    plot_pdfpmf,
+    plot_ppf,
 )
-from ..internal.distribution_helper import (
-    init_vals,
-    valid_scalar_params,
-    valid_distribution,
-)
-
-from ..internal.optimization import optimize_hdi
-from ..internal.rcparams import rcParams
+from preliz.internal.rcparams import rcParams
 
 
 class Distribution:
@@ -78,8 +68,7 @@ class Distribution:
 
     def summary(self, mass=None, interval=None, fmt=".2f"):
         """
-        Namedtuple with the mean, median, standard deviation, and lower and upper bounds
-        of the equal-tailed interval.
+        Namedtuple with the mean, median, standard deviation, and lower and upper bounds of the equal-tailed interval.
 
         Parameters
         ----------
@@ -118,7 +107,7 @@ class Distribution:
             median = float(f"{self.median():{fmt}}")
             std = float(f"{self.std():{fmt}}")
 
-            if isinstance(interval, (tuple, list, np.ndarray)):
+            if isinstance(interval, tuple | list | np.ndarray):
                 c_int = self.ppf(interval)
             elif interval == "hdi":
                 c_int = self.hdi(mass, fmt=fmt)
@@ -136,7 +125,7 @@ class Distribution:
             return None
 
     def rvs(self, size=None, random_state=None):
-        """Random sample
+        """Random sample.
 
         Parameters
         ----------
@@ -188,7 +177,7 @@ class Distribution:
         raise NotImplementedError
 
     def entropy(self):
-        """Entropy"""
+        """Entropy."""
         raise NotImplementedError
 
     def mean(self):
@@ -204,11 +193,11 @@ class Distribution:
         raise NotImplementedError
 
     def std(self):
-        """Standard deviation."""
+        """Standard deviation."""  # noqa: D401
         raise NotImplementedError
 
     def var(self):
-        """Variance"""
+        """Variance."""
         raise NotImplementedError
 
     def skewness(self):
@@ -359,29 +348,26 @@ class Distribution:
                     )
                 else:
                     pymc_dist = pymc_class.dist(**self.params_dict, **kwargs)
+            elif self.__class__.__name__ in ["Truncated", "Censored"]:
+                pymc_dist = pymc_class(
+                    name,
+                    getattr(pm_dists, self.dist.__class__.__name__).dist(**self.dist.params_dict),
+                    lower=self.params_dict["lower"],
+                    upper=self.params_dict["upper"],
+                    **kwargs,
+                )
+            elif self.__class__.__name__ == "Mixture":
+                pymc_dist = pymc_class(
+                    name,
+                    self.weights,
+                    [
+                        getattr(pm_dists, dist.__class__.__name__).dist(**dist.params_dict)
+                        for dist in self.dist
+                    ],
+                    **kwargs,
+                )
             else:
-                if self.__class__.__name__ in ["Truncated", "Censored"]:
-                    pymc_dist = pymc_class(
-                        name,
-                        getattr(pm_dists, self.dist.__class__.__name__).dist(
-                            **self.dist.params_dict
-                        ),
-                        lower=self.params_dict["lower"],
-                        upper=self.params_dict["upper"],
-                        **kwargs,
-                    )
-                elif self.__class__.__name__ == "Mixture":
-                    pymc_dist = pymc_class(
-                        name,
-                        self.weights,
-                        [
-                            getattr(pm_dists, dist.__class__.__name__).dist(**dist.params_dict)
-                            for dist in self.dist
-                        ],
-                        **kwargs,
-                    )
-                else:
-                    pymc_dist = pymc_class(name, **self.params_dict, **kwargs)
+                pymc_dist = pymc_class(name, **self.params_dict, **kwargs)
 
             return pymc_dist
 
@@ -409,7 +395,7 @@ class Distribution:
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """
-        Evaluate if the lower and upper values are in the support of the distribution
+        Evaluate if the lower and upper values are in the support of the distribution.
 
         Parameters
         ----------
@@ -449,7 +435,7 @@ class Distribution:
 
     def _finite_endpoints(self, support):
         """
-        Return finite endpoints even for unbounded distributions
+        Return finite endpoints even for unbounded distributions.
 
         Parameters
         ----------
@@ -472,8 +458,8 @@ class Distribution:
         return lower_ep, upper_ep
 
     def xvals(self, support, n_points=None):
-        """Provide x values in the support of the distribution. This is useful for example when
-        plotting.
+        """
+        Provide x values in the support of the distribution. This is useful for example when plotting.
 
         Parameters
         ----------
@@ -548,7 +534,6 @@ class Distribution:
             Size of the figure
         ax : matplotlib axes
         """
-
         if valid_scalar_params(self):
             return plot_pdfpmf(
                 self,
@@ -692,7 +677,7 @@ class Distribution:
         figsize=None,
     ):
         """
-        Interactive exploration of distributions parameters
+        Interactive exploration of distributions parameters.
 
         Parameters
         ----------
@@ -759,7 +744,7 @@ class Distribution:
             for name, value, support in zip(self.param_names, self.params, self.params_support):
                 sliders[name] = get_slider(name, value, *support)
 
-        def plot(**args):  # pylint: disable=inconsistent-return-statements
+        def plot(**args):
             if self.__class__.__name__ == "Categorical":
                 values = list(args.values())
                 args = {list(args.keys())[0].split("_")[0]: values}
@@ -817,7 +802,7 @@ class Discrete(Distribution):
 
 
 class DistributionTransformer(Distribution):
-    """Base class for distributions that transform other distributions"""
+    """Base class for distributions that transform other distributions."""
 
     def __init__(self):
         super().__init__()

@@ -1,6 +1,6 @@
-from numpy.testing import assert_almost_equal
 import numpy as np
-from scipy.stats import skew, kurtosis
+from numpy.testing import assert_almost_equal
+from scipy.stats import kurtosis, skew
 
 from preliz.distributions import DiscreteWeibull
 

@@ -1,16 +1,14 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Discrete
-from ..internal.optimization import optimize_ml
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import xlogx, logit, expit
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import expit, logit, xlogx
 
 
 class Bernoulli(Discrete):
-    R"""Bernoulli distribution
+    R"""Bernoulli distribution.
 
     The Bernoulli distribution describes the probability of successes (x=1) and failures (x=0).
     The pmf of this distribution is
@@ -88,7 +86,7 @@ class Bernoulli(Discrete):
 
         self.is_frozen = True
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         self._update(mean)
 
     def _fit_mle(self, sample):

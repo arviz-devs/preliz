@@ -1,12 +1,16 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import erf, erfinv  # pylint: disable=no-name-in-module
+from scipy.special import erf, erfinv
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import erf, erfinv, mean_and_std, ppf_bounds_cont, cdf_bounds
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.special import (
+    cdf_bounds,
+    erf,  # noqa: F811
+    erfinv,  # noqa: F811
+    mean_and_std,
+    ppf_bounds_cont,
+)
 
 
 class LogNormal(Continuous):

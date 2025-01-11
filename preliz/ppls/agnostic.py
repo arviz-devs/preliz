@@ -1,34 +1,32 @@
 """Functions to communicate with PPLs."""
 
 
-from contextlib import contextmanager
 import inspect
 import logging
 import re
 import warnings
-
+from contextlib import contextmanager
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 from preliz import distributions
+from preliz.distributions import Gamma, HalfNormal, Normal
 from preliz.internal.distribution_helper import init_vals
 from preliz.internal.plot_helper import plot_repr
-from preliz.distributions import Gamma, Normal, HalfNormal
-from preliz.unidimensional.mle import mle
+from preliz.ppls.bambi_io import (
+    dict_model,
+    dist_as_str,
+    get_pymc_model,
+    match_return_variables,
+    write_bambi_string,
+)
 from preliz.ppls.pymc_io import (
     extract_preliz_distributions,
     retrieve_variable_info,
     write_pymc_string,
 )
-from preliz.ppls.bambi_io import (
-    get_pymc_model,
-    write_bambi_string,
-    dist_as_str,
-    match_return_variables,
-    dict_model,
-)
+from preliz.unidimensional.mle import mle
 
 try:
     from pymc import sample_prior_predictive
@@ -38,7 +36,7 @@ except ImportError:
 
 def posterior_to_prior(model, idata, new_families=None, engine="auto"):
     """
-    Fit a posterior from a model to its prior
+    Fit a posterior from a model to its prior.
 
     The fit is based on maximum likelihood of each posterior marginal to the prior
     in the model. Thus possible correlations between parameters in the posteriors
@@ -168,13 +166,12 @@ def parse_arguments(lst, regex, engine):
         if match:
             if item.isidentifier():
                 result.append((None, match.group(0), idx - offset))
+            elif "**" in item:
+                power = item.split("**")[1].strip()
+                result.append((power, match.group(0), idx - offset))
             else:
-                if "**" in item:
-                    power = item.split("**")[1].strip()
-                    result.append((power, match.group(0), idx - offset))
-                else:
-                    func = item.split("(")[0].split(".")[-1]
-                    result.append((func, match.group(0), idx - offset))
+                func = item.split("(")[0].split(".")[-1]
+                result.append((func, match.group(0), idx - offset))
     return result
 
 

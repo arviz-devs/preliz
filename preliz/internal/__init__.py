@@ -1,3 +1,1 @@
-"""
-utility functions for internal use
-"""
+"""utility functions for internal use."""

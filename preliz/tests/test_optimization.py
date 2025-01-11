@@ -1,20 +1,19 @@
+import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
-import numpy as np
-
-from preliz.internal.optimization import find_ppf
 
 from preliz.distributions import (
     Beta,
     Exponential,
+    Geometric,
     HalfNormal,
     Laplace,
     Normal,
+    Poisson,
     StudentT,
     Weibull,
-    Geometric,
-    Poisson,
 )
+from preliz.internal.optimization import find_ppf
 
 
 @pytest.mark.parametrize(

@@ -1,11 +1,10 @@
 """Tests plot_utils functions."""
-# pylint: disable=redefined-outer-name
-import pytest
 import matplotlib.pyplot as plt
 import numpy as np
+import pytest
+from test_helper import run_notebook
 
 import preliz as pz
-from test_helper import run_notebook
 
 
 @pytest.fixture(scope="function")

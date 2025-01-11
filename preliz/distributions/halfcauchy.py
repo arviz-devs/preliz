@@ -1,17 +1,15 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 
-from ..internal.special import cdf_bounds, ppf_bounds_cont
-from ..internal.optimization import optimize_ml
-from ..internal.distribution_helper import eps
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class HalfCauchy(Continuous):
     r"""
-    HalfCauchy Distribution
+    HalfCauchy Distribution.
 
     The pdf of this distribution is
 
@@ -106,7 +104,7 @@ class HalfCauchy(Continuous):
         random_samples = random_state.uniform(0, 1, size)
         return nb_rvs(random_samples, self.beta)
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         self._update(sigma)
 
     def _fit_mle(self, sample):

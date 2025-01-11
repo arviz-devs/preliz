@@ -1,16 +1,14 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont, mean_sample, xlog1py
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.special import cdf_bounds, mean_sample, ppf_bounds_cont, xlog1py
 
 
 class Exponential(Continuous):
     r"""
-    Exponential Distribution
+    Exponential Distribution.
 
     The pdf of this distribution is
 
@@ -129,7 +127,7 @@ class Exponential(Continuous):
         random_state = np.random.default_rng(random_state)
         return random_state.exponential(self.beta, size)
 
-    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma=None):
         lam = 1 / mean
         self._update(lam)
 

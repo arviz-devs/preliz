@@ -1,4 +1,5 @@
 from test_helper import run_notebook
+
 from preliz.internal.plot_helper import check_inside_notebook
 
 

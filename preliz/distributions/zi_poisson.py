@@ -1,13 +1,11 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import pdtr, pdtrik  # pylint: disable=no-name-in-module
+from scipy.special import pdtr, pdtrik
 
-from .distributions import Discrete
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.special import gammaln, xlogy, cdf_bounds, ppf_bounds_disc
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.special import cdf_bounds, gammaln, ppf_bounds_disc, xlogy
 
 
 class ZeroInflatedPoisson(Discrete):
@@ -28,7 +26,6 @@ class ZeroInflatedPoisson(Discrete):
     .. plot::
         :context: close-figs
 
-        
         from preliz import ZeroInflatedPoisson, style
         style.use('preliz-doc')
         psis = [0.7, 0.4]

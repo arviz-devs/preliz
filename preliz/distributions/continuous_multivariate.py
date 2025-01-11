@@ -1,10 +1,4 @@
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-instance-attributes
-# pylint: disable=invalid-name
-# pylint: disable=attribute-defined-outside-init
-"""
-Continuous multivariate probability distributions.
-"""
+"""Continuous multivariate probability distributions."""
 from copy import copy
 
 import numpy as np
@@ -15,12 +9,12 @@ except ImportError:
     pass
 from scipy import stats
 
-from .beta import Beta  # pylint: disable=no-name-in-module
-from .normal import Normal  # pylint: disable=no-name-in-module
-from .distributions_multivariate import Continuous
-from ..internal.distribution_helper import all_not_none
-from ..internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
-from ..internal.plot_helper import check_inside_notebook, get_slider
+from preliz.distributions.beta import Beta
+from preliz.distributions.distributions_multivariate import Continuous
+from preliz.distributions.normal import Normal
+from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.plot_helper import check_inside_notebook, get_slider
+from preliz.internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
 
 eps = np.finfo(float).eps
 
@@ -103,6 +97,7 @@ class Dirichlet(Continuous):
     ):
         """
         Plot the pdf of the marginals or the joint pdf of the simplex.
+
         The joint representation is only available for a dirichlet with an alpha of length 3.
 
         Parameters
@@ -237,7 +232,7 @@ class Dirichlet(Continuous):
         figsize=None,
     ):
         """
-        Interactive exploration of parameters
+        Interactive exploration of parameters.
 
         Parameters
         ----------
@@ -265,11 +260,10 @@ class Dirichlet(Continuous):
         figsize : tuple
             Size of the figure
         """
-
         check_inside_notebook()
 
         args = dict(zip(self.param_names, self.params))
-        self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
+        self.__init__(**args)
         if kind == "pdf":
             w_checkbox_marginals = widgets.Checkbox(
                 value=True,
@@ -289,7 +283,7 @@ class Dirichlet(Continuous):
             if kind == "pdf":
                 marginals = args.pop("marginals")
             params = {"alpha": np.asarray(list(args.values()), dtype=float)}
-            self.__init__(**params)  # pylint: disable=unnecessary-dunder-call
+            self.__init__(**params)
             if kind == "pdf":
                 plot_dirichlet(
                     self,
@@ -440,7 +434,8 @@ class MvNormal(Continuous):
         ax=None,
     ):
         """
-        Plot the pdf of the marginals or the joint pdf
+        Plot the pdf of the marginals or the joint pdf.
+
         The joint representation is only available for a 2D Multivariate Normal.
 
         Parameters
@@ -575,7 +570,7 @@ class MvNormal(Continuous):
         figsize=None,
     ):
         """
-        Interactive exploration of parameters
+        Interactive exploration of parameters.
 
         Parameters
         ----------
@@ -604,12 +599,11 @@ class MvNormal(Continuous):
         figsize : tuple
             Size of the figure
         """
-
         check_inside_notebook()
 
         args = dict(zip(self.param_names, self.params))
         cov, tau = args.get("cov", None), args.get("tau", None)
-        self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
+        self.__init__(**args)
         if kind == "pdf":
             w_checkbox_marginals = widgets.Checkbox(
                 value=True,
@@ -629,7 +623,7 @@ class MvNormal(Continuous):
             if kind == "pdf":
                 marginals = args.pop("marginals")
             params = {"mu": np.asarray(list(args.values()), dtype=float), "cov": cov, "tau": tau}
-            self.__init__(**params)  # pylint: disable=unnecessary-dunder-call
+            self.__init__(**params)
             if kind == "pdf":
                 plot_mvnormal(
                     self,

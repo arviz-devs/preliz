@@ -1,17 +1,16 @@
 """Methods to communicate with PyMC."""
 
-# pylint: disable=protected-access
 from copy import copy
 from sys import modules
 
 import numpy as np
 
 try:
-    from pytensor.tensor import matrix, TensorConstant
+    from pymc.pytensorf import compile_pymc, join_nonshared_inputs
+    from pymc.util import get_untransformed_name, is_transformed_name
     from pytensor import function
     from pytensor.graph.basic import ancestors
-    from pymc.pytensorf import compile_pymc, join_nonshared_inputs
-    from pymc.util import is_transformed_name, get_untransformed_name
+    from pytensor.tensor import TensorConstant, matrix
 except ModuleNotFoundError:
     pass
 
@@ -21,7 +20,8 @@ from preliz.internal.distribution_helper import get_distributions
 def back_fitting_pymc(prior, preliz_model, var_info):
     """
     Fit the samples from prior into user provided model's prior.
-    from the perspective of ppe "prior" is actually an approximated posterior
+
+    From the perspective of ppe "prior" is actually an approximated posterior
     but from the users perspective is its prior.
     We need to "backfit" because we can not use arbitrary samples as priors.
     We need probability distributions.
@@ -47,10 +47,7 @@ def back_fitting_pymc(prior, preliz_model, var_info):
 
 
 def compile_mllk(model):
-    """
-    Compile the log-likelihood function for the model to be able to condition on both
-    data and parameters.
-    """
+    """Compile the log-likelihood function for the model to be able to condition on both data and parameters."""
     obs_rvs = model.observed_RVs[0]
     old_y_value = model.rvs_to_values[obs_rvs]
     new_y_value = obs_rvs.type()
@@ -73,15 +70,13 @@ def compile_mllk(model):
 
 
 def get_initial_guess(model):
-    """
-    Get initial guess for optimization routine.
-    """
+    """Get initial guess for optimization routine."""
     return np.concatenate([np.ravel(value) for value in model.initial_point().values()])
 
 
 def extract_preliz_distributions(model):
     """
-    Extract the corresponding PreliZ distributions from a PyMC model
+    Extract the corresponding PreliZ distributions from a PyMC model.
 
     Parameters
     ----------
@@ -113,10 +108,7 @@ def extract_preliz_distributions(model):
 
 
 def retrieve_variable_info(model):
-    """
-    Get the shape, size, transformation and parents of each free random variable in a PyMC model.
-    """
-
+    """Get the shape, size, transformation and parents of each free random variable in a PyMC model."""
     var_info = {}
     initial_point = model.initial_point()
     for v_var in model.value_vars:
@@ -164,9 +156,9 @@ def unravel_projection(prior_array, var_info, iterations):
 def write_pymc_string(new_priors, var_info):
     """
     Return a string with the new priors for the PyMC model.
+
     So the user can copy and paste, ideally with none to minimal changes.
     """
-
     header = "with pm.Model() as model:\n"
     variables = []
     names = list(new_priors.keys())

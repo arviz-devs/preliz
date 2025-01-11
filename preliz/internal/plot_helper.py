@@ -1,17 +1,18 @@
 import inspect
-import traceback
 import sys
+import traceback
 
 try:
     from IPython import get_ipython
-    from ipywidgets import FloatSlider, IntSlider, FloatText, IntText, Checkbox, ToggleButton
+    from ipywidgets import Checkbox, FloatSlider, FloatText, IntSlider, IntText, ToggleButton
 except ImportError:
     pass
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import _pylab_helpers, get_backend
 from matplotlib.ticker import MaxNLocator
+
 from preliz.internal.narviz import hdi, kde
 from preliz.internal.rcparams import rcParams
 
@@ -19,6 +20,7 @@ from preliz.internal.rcparams import rcParams
 def plot_pointinterval(distribution, interval=None, levels=None, rotated=False, ax=None):
     """
     Plot median as a dot and intervals as lines.
+
     By defaults the intervals are HDI with 0.5 and the value in rcParams["stats.ci_prob"].
 
     Parameters
@@ -36,8 +38,7 @@ def plot_pointinterval(distribution, interval=None, levels=None, rotated=False, 
         Whether to do the plot along the x-axis (default) or on the y-axis
     ax : matplotlib axis
     """
-
-    if isinstance(distribution, (np.ndarray, list, tuple)):
+    if isinstance(distribution, np.ndarray | list | tuple):
         dist_type = "sample"
     else:
         dist_type = "preliz"
@@ -357,7 +358,7 @@ def get_boxes(name, value, lower, upper):
 def get_textboxes(signature, model):
     textboxes = {}
     for name, param in signature.parameters.items():
-        if isinstance(param.default, (int, float)):
+        if isinstance(param.default, int | float):
             value = float(param.default)
         else:
             value = None
@@ -524,10 +525,8 @@ def plot_pp_samples(pp_samples, pp_samples_idxs, references, kind="pdf", sharex=
 
         if sharex:
             min_, max_ = ax.get_xlim()
-            if min_ < x_lims[0]:
-                x_lims[0] = min_
-            if max_ > x_lims[1]:
-                x_lims[1] = max_
+            x_lims[0] = min(min_, x_lims[0])
+            x_lims[1] = max(max_, x_lims[1])
 
         ax.set_title(idx, alpha=0)
         ax.set_yticks([])
@@ -586,7 +585,7 @@ def plot_references(references, ax):
                 ax.text(ref, max_value * 0.2, label, rotation=90, bbox={"color": "w", "alpha": 0.5})
                 ax.axvline(ref, ls="--", color="0.5")
         else:
-            if isinstance(references, (float, int)):
+            if isinstance(references, float | int):
                 references = [references]
             for ref in references:
                 ax.axvline(ref, ls="--", color="0.5")
@@ -610,7 +609,7 @@ def check_inside_notebook(need_widget=False):
             if shell_name == "ZMQInteractiveShell" and "nbagg" not in get_backend():
                 msg = f"To run {name}, you need use the magic `%matplotlib widget`"
                 raise RuntimeError(msg)
-    except Exception:  # pylint: disable=broad-except
+    except Exception:
         tb_as_str = traceback.format_exc()
         # Print only the last line of the traceback, which contains the error message
         print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=sys.stdout)
@@ -634,9 +633,7 @@ def representations(fitted_dist, kind_plot, ax):
 
 
 def create_figure(figsize):
-    """
-    Initialize a matplotlib figure with one subplot
-    """
+    """Initialize a matplotlib figure with one subplot."""
     fig, axes = plt.subplots(1, 1, figsize=figsize, constrained_layout=True)
     axes.set_yticks([])
     fig.canvas.header_visible = False
@@ -647,9 +644,7 @@ def create_figure(figsize):
 
 
 def reset_dist_panel(ax, yticks):
-    """
-    Clean the distribution subplot
-    """
+    """Clean the distribution subplot."""
     ax.cla()
     if yticks:
         ax.set_yticks([])

@@ -1,16 +1,13 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-# pylint: disable=invalid-name
-import numpy as np
 import numba as nb
+import numpy as np
 
-from ..internal.distribution_helper import all_not_none
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none
 
 
 class Triangular(Continuous):
     r"""
-    Triangular distribution
+    Triangular distribution.
 
     The pdf of this distribution is
 
@@ -27,7 +24,6 @@ class Triangular(Continuous):
     .. plot::
         :context: close-figs
 
-        
         from preliz import Triangular, style
         style.use('preliz-doc')
         lowers = [0., -1, 2]

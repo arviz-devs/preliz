@@ -1,7 +1,7 @@
-from numpy.testing import assert_almost_equal
 import numpy as np
+from numpy.testing import assert_almost_equal
 
-from preliz.distributions import Truncated, TruncatedNormal, Normal
+from preliz.distributions import Normal, Truncated, TruncatedNormal
 
 
 def test_truncated():

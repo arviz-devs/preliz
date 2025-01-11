@@ -1,22 +1,21 @@
 try:
     from IPython.display import display
-    from ipywidgets import VBox, HBox, interactive_output
+    from ipywidgets import HBox, VBox, interactive_output
 except ImportError:
     pass
+from preliz.internal.plot_helper import get_textboxes
 from preliz.ppls.agnostic import (
     inspect_source,
     parse_function_for_pred_textboxes,
     ppl_plot_decorator,
 )
-from preliz.internal.plot_helper import get_textboxes
 
 
 def predictive_explorer(
     fmodel, samples=50, kind_plot="ecdf", references=None, plot_func=None, engine="auto"
 ):
     """
-    Create textboxes and plot a set of samples returned by a function relating one or more
-    PreliZ distributions.
+    Create textboxes and plot a set of samples returned by a function relating one or more PreliZ distributions.
 
     Use this function to interactively explore how a prior predictive distribution changes when the
     priors are changed.

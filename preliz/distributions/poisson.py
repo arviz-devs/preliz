@@ -1,12 +1,10 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import pdtr, pdtrik  # pylint: disable=no-name-in-module
+from scipy.special import pdtr, pdtrik
 
-from .distributions import Discrete
-from ..internal.distribution_helper import eps
-from ..internal.special import gammaln, xlogy, cdf_bounds, ppf_bounds_disc
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import eps
+from preliz.internal.special import cdf_bounds, gammaln, ppf_bounds_disc, xlogy
 
 
 class Poisson(Discrete):
@@ -110,7 +108,7 @@ class Poisson(Discrete):
         random_state = np.random.default_rng(random_state)
         return random_state.poisson(self.mu, size=size)
 
-    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma=None):
         self._update(mean)
 
     def _fit_mle(self, sample):

@@ -1,16 +1,10 @@
-"""
-Parent classes for multivariate families.
-"""
-# pylint: disable=no-member
+"""Parent classes for multivariate families."""
 from collections import namedtuple
 
 import numpy as np
-from scipy.special import betainc  # pylint: disable=no-name-in-module
+from scipy.special import betainc
 
-from ..internal.distribution_helper import (
-    valid_scalar_params,
-    valid_distribution,
-)
+from preliz.internal.distribution_helper import valid_distribution, valid_scalar_params
 
 
 class Multivariate:
@@ -39,17 +33,14 @@ class Multivariate:
             return name
 
     def _update_rv_frozen(self):
-        """Update the rv_frozen object"""
-
+        """Update the rv_frozen object."""
         frozen = self._get_frozen()
         if frozen is not None:
             self.is_frozen = True
             self.rv_frozen = frozen
 
     def summary(self):
-        """
-        Namedtuple with the mean, and standard deviation of the distribution.
-        """
+        """Namedtuple with the mean, and standard deviation of the distribution."""
         valid_distribution(self)
 
         if valid_scalar_params(self):
@@ -66,7 +57,7 @@ class Multivariate:
             return None
 
     def rvs(self, *args, **kwds):
-        """Random sample
+        """Random sample.
 
         Parameters
         ----------
@@ -90,7 +81,7 @@ class Multivariate:
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """
-        Evaluate if the lower and upper values are in the support of the distribution
+        Evaluate if the lower and upper values are in the support of the distribution.
 
         Parameters
         ----------
@@ -130,7 +121,7 @@ class Multivariate:
 
     def _finite_endpoints(self, support):
         """
-        Return finite endpoints even for unbounded distributions
+        Return finite endpoints even for unbounded distributions.
 
         Parameters
         ----------
@@ -158,8 +149,8 @@ class Continuous(Multivariate):
         self.kind = "continuous_multivariate"
 
     def xvals(self, support):
-        """Provide x values in the support of the distribution. This is useful for example when
-        plotting.
+        """
+        Provide x values in the support of the distribution. This is useful for example when plotting.
 
         Parameters
         ----------
@@ -202,9 +193,7 @@ class Discrete(Multivariate):
         self.kind = "discrete"
 
     def xvals(self, support):
-        """Provide x values in the support of the distribution. This is useful for example when
-        plotting.
-        """
+        """Provide x values in the support of the distribution. This is useful for example when plotting."""
         lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals

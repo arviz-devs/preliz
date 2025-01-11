@@ -1,14 +1,13 @@
-# pylint: disable=arguments-differ
 import numpy as np
 
 from preliz.distributions.distributions import DistributionTransformer
-from preliz.internal.distribution_helper import all_not_none, num_skewness, num_kurtosis
+from preliz.internal.distribution_helper import all_not_none, num_kurtosis, num_skewness
 from preliz.internal.optimization import find_ppf
 
 
 class Mixture(DistributionTransformer):
     r"""
-    Mixture distribution
+    Mixture distribution.
 
     This is not a distribution per se, but a modifier of univariate distributions.
 
@@ -100,7 +99,7 @@ class Mixture(DistributionTransformer):
         if self.kind == "discrete":
             return -np.sum(np.exp(logpdf) * logpdf)
         else:
-            return -np.trapz(np.exp(logpdf) * logpdf, x_values)
+            return -np.trapzoid(np.exp(logpdf) * logpdf, x_values)
 
     def mean(self):
         return np.sum(

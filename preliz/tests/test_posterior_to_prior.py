@@ -1,9 +1,9 @@
+import bambi as bmb
 import pandas as pd
 import pymc as pm
-import bambi as bmb
-from preliz.distributions import Normal, LogNormal, Gamma
-from preliz.ppls.agnostic import posterior_to_prior
 
+from preliz.distributions import Gamma, LogNormal, Normal
+from preliz.ppls.agnostic import posterior_to_prior
 
 SEED = 2945
 
@@ -12,7 +12,7 @@ data = Normal(0, 1).rvs(200, random_state=SEED)
 with pm.Model() as model:
     a = pm.Normal("a", mu=0, sigma=1)
     b = pm.HalfNormal("b", sigma=[1, 1], shape=2)
-    y = pm.Normal("y", mu=a, sigma=b[0], observed=data)  # pylint:disable = unsubscriptable-object
+    y = pm.Normal("y", mu=a, sigma=b[0], observed=data)
     idata = pm.sample(tune=200, draws=500, random_seed=SEED)
 
 

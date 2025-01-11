@@ -1,12 +1,10 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Discrete
-from ..internal.distribution_helper import eps, all_not_none, num_skewness, num_kurtosis
-from ..internal.optimization import optimize_moments, optimize_ml
-from ..internal.special import cdf_bounds, ppf_bounds_disc
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, eps, num_kurtosis, num_skewness
+from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.special import cdf_bounds, ppf_bounds_disc
 
 
 class DiscreteWeibull(Discrete):

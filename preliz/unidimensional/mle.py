@@ -2,8 +2,9 @@ import logging
 import warnings
 
 import numpy as np
-from ..internal.optimization import fit_to_sample
-from ..internal.distribution_helper import valid_distribution
+
+from preliz.internal.distribution_helper import valid_distribution
+from preliz.internal.optimization import fit_to_sample
 
 _log = logging.getLogger("preliz")
 
@@ -16,8 +17,7 @@ def mle(
     ax=None,
 ):
     """
-    Find the maximum likelihood distribution given a list of distributions
-    and one sample.
+    Find the maximum likelihood distribution given a list of distributions and one sample.
 
     AIC with a correction for small sample sizes is used to compare the fits.
     See https://doi.org/10.1177/0049124104268

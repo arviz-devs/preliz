@@ -1,11 +1,9 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_cont
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class Uniform(Continuous):

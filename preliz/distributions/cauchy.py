@@ -1,17 +1,15 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
 
-from ..internal.optimization import optimize_ml
-from ..internal.special import ppf_bounds_cont
-from ..internal.distribution_helper import all_not_none, eps
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import ppf_bounds_cont
 
 
 class Cauchy(Continuous):
     r"""
-    Cauchy Distribution
+    Cauchy Distribution.
 
     The pdf of this distribution is
 

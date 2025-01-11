@@ -1,7 +1,7 @@
-# pylint: disable=too-many-instance-attributes
 from math import ceil, floor
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import patches
 
 try:
@@ -9,10 +9,10 @@ try:
 except ImportError:
     pass
 
+from preliz.distributions import all_continuous, all_discrete
+from preliz.internal.distribution_helper import get_distributions, process_extra
 from preliz.internal.optimization import fit_to_epdf
 from preliz.internal.plot_helper import check_inside_notebook, representations
-from preliz.internal.distribution_helper import process_extra, get_distributions
-from preliz.distributions import all_discrete, all_continuous
 
 
 class Roulette:
@@ -106,7 +106,7 @@ class Roulette:
                 self._widgets["w_checkbox_none"],
             ]
         )
-        display(  # pylint:disable=undefined-variable
+        display(  # noqa: F821
             widgets.HBox(
                 [
                     controls,
@@ -234,19 +234,15 @@ class Roulette:
         all_cls = []
         if self._widgets["w_checkbox_cont"].value:
             all_cls += list(
-                (
-                    cls.__name__
-                    for cls in all_continuous
-                    if cls.__name__ in self._widgets["w_distributions"].options
-                )
+                cls.__name__
+                for cls in all_continuous
+                if cls.__name__ in self._widgets["w_distributions"].options
             )
         if self._widgets["w_checkbox_disc"].value:
             all_cls += list(
-                (
-                    cls.__name__
-                    for cls in all_discrete
-                    if cls.__name__ in self._widgets["w_distributions"].options
-                )
+                cls.__name__
+                for cls in all_discrete
+                if cls.__name__ in self._widgets["w_distributions"].options
             )
         return all_cls
 

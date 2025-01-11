@@ -1,18 +1,19 @@
 """Projective predictive elicitation."""
 
 import warnings
+
 import numpy as np
 
 from preliz.internal.optimization import optimize_pymc_model
-from preliz.ppls.bambi_io import get_pymc_model, write_bambi_string
 from preliz.ppls.agnostic import back_fitting_idata, get_engine
+from preliz.ppls.bambi_io import get_pymc_model, write_bambi_string
 from preliz.ppls.pymc_io import (
+    back_fitting_pymc,
+    compile_mllk,
     extract_preliz_distributions,
+    get_initial_guess,
     retrieve_variable_info,
     unravel_projection,
-    get_initial_guess,
-    compile_mllk,
-    back_fitting_pymc,
     write_pymc_string,
 )
 
@@ -101,7 +102,7 @@ def ppe(model, target, method="projective", engine="auto", random_state=0):
             new_priors = write_pymc_string(projection_backfitted, var_info)
 
     elif method == "pathfinder":
-        from pymc_experimental import fit  # pylint:disable=import-outside-toplevel
+        from pymc_experimental import fit
 
         with model:
             idata = fit(method="pathfinder", num_samples=opt_iterations)

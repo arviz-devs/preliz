@@ -1,5 +1,6 @@
-from gtts import gTTS
 import os
+
+from gtts import gTTS
 
 # List of terms to generate audio files for
 names = {

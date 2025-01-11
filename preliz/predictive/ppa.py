@@ -1,8 +1,8 @@
 """Prior predictive check assistant."""
 
 import ast
-from random import shuffle
 import warnings
+from random import shuffle
 
 try:
     import ipywidgets as widgets
@@ -12,17 +12,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import KDTree
 
-
-from preliz.internal.plot_helper import (
-    check_inside_notebook,
-    plot_pp_samples,
-    plot_pp_mean,
-)
-from preliz.ppls.agnostic import get_prior_pp_samples, from_preliz
-from preliz.ppls.bambi_io import from_bambi
-from preliz.internal.predictive_helper import back_fitting_ppa, select_prior_samples
 from preliz.distributions import Normal
 from preliz.distributions.distributions import Distribution
+from preliz.internal.plot_helper import (
+    check_inside_notebook,
+    plot_pp_mean,
+    plot_pp_samples,
+)
+from preliz.internal.predictive_helper import back_fitting_ppa, select_prior_samples
+from preliz.ppls.agnostic import from_preliz, get_prior_pp_samples
+from preliz.ppls.bambi_io import from_bambi
 
 
 def ppa(
@@ -144,12 +143,10 @@ def ppa(
     controls = widgets.VBox([button_carry_on, button_return_prior])
     plot_combine = widgets.VBox([radio_buttons_kind, check_button_sharex])
 
-    display(  # pylint:disable=undefined-variable
-        widgets.HBox([references_widget, plot_combine, controls, output])
-    )
+    display(widgets.HBox([references_widget, plot_combine, controls, output]))  # noqa:F821
 
 
-class FilterDistribution:  # pylint:disable=too-many-instance-attributes
+class FilterDistribution:
     def __init__(self, fmodel, draws, references, boundaries, target, new_families, engine):
         self.fmodel = fmodel
         self.source = ""  # string representation of the model
@@ -211,11 +208,9 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
 
     def compute_octiles(self):
         """
-        Compute the octiles for the prior predictive samples. This is used to find
-        similar distributions using a KDTree.
+        Compute the octiles for the prior predictive samples. This is used to find similar distributions using a KDTree.
 
-        We have empirically found that octiles are a good choice, but this could
-        be the consequence of limited testing.
+        We have empirically found that octiles are a good choice, but this could be the consequence of limited testing.
         """
         pp_octiles = np.quantile(
             self.pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
@@ -287,6 +282,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
     def keep_sampling(self):
         """
         Find distribution similar to the ones in `choices`, but not already shown.
+
         If `choices` is empty return an empty selection.
         """
         if self.choices:
@@ -315,7 +311,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
 
     def collect_more_samples(self):
         """
-        Automatically extend the set of user selected distributions
+        Automatically extend the set of user selected distributions.
 
         If the user has selected at least two distributions we automatically extend the selection
         by adding all the distributions that are close to the selected ones. To do so we use
@@ -355,9 +351,7 @@ class FilterDistribution:  # pylint:disable=too-many-instance-attributes
             self.shown.update(new)
 
     def carry_on(self, kind, sharex):
-        """
-        Collect user input and update the plot.
-        """
+        """Collect user input and update the plot."""
         self.fig.suptitle("")
 
         if self.clicked:

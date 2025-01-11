@@ -1,13 +1,11 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import erf, erfinv, zeta  # pylint: disable=no-name-in-module
+from scipy.special import erf, erfinv, zeta
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import erf, erfinv, ppf_bounds_cont
-from ..internal.optimization import optimize_ml
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import erf, erfinv, ppf_bounds_cont  # noqa: F811
 
 
 class Moyal(Continuous):

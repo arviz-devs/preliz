@@ -1,13 +1,12 @@
-# pylint: disable=arguments-differ
 import numpy as np
 
 from preliz.distributions.distributions import DistributionTransformer
-from preliz.internal.distribution_helper import all_not_none, num_skewness, num_kurtosis
+from preliz.internal.distribution_helper import all_not_none, num_kurtosis, num_skewness
 
 
 class Truncated(DistributionTransformer):
     r"""
-    Truncated distribution
+    Truncated distribution.
 
     This is not a distribution per se, but a modifier of univariate distributions.
 
@@ -26,12 +25,10 @@ class Truncated(DistributionTransformer):
     .. plot::
         :context: close-figs
 
-        
         from preliz import Gamma, Truncated, style
         style.use('preliz-doc')
         Truncated(Gamma(mu=2, sigma=1), 1, 4.5).plot_pdf()
         Gamma(mu=2, sigma=1).plot_pdf()
-        
 
     Parameters
     ----------

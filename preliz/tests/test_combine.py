@@ -1,5 +1,5 @@
+from preliz.distributions import Gamma, Normal
 from preliz.unidimensional.combine import combine
-from preliz.distributions import Normal, Gamma
 
 
 def test_combine():

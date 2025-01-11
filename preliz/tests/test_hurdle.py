@@ -1,15 +1,15 @@
+import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
-import numpy as np
 
 from preliz.distributions import (
-    Hurdle,
-    Truncated,
     Gamma,
-    Normal,
+    Hurdle,
     LogNormal,
-    Poisson,
     NegativeBinomial,
+    Normal,
+    Poisson,
+    Truncated,
 )
 from preliz.internal.distribution_helper import eps
 

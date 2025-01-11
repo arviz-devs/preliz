@@ -1,22 +1,20 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
+from preliz.distributions.distributions import Continuous
 from preliz.distributions.normal import Normal
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import (
+from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import (
     beta,
     betainc,
     betaincinv,
     digamma,
-    gammaln,
     erf,
     erfinv,
+    gammaln,
     ppf_bounds_cont,
 )
-from ..internal.optimization import optimize_ml
 
 
 class StudentT(Continuous):
@@ -36,7 +34,6 @@ class StudentT(Continuous):
     .. plot::
         :context: close-figs
 
-        
         from preliz import StudentT, style
         style.use('preliz-doc')
         nus = [2., 5., 5.]

@@ -1,16 +1,14 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.optimization import optimize_ml
-from ..internal.special import (
-    garcia_approximation,
-    gamma,
-    mean_and_std,
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import (
     cdf_bounds,
+    gamma,
+    garcia_approximation,
+    mean_and_std,
     ppf_bounds_cont,
     xlogy,
 )

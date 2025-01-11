@@ -1,12 +1,9 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Discrete
-from ..internal.distribution_helper import eps
-from ..internal.special import mean_sample, cdf_bounds, ppf_bounds_disc
-from ..internal.special import xlog1py, xlogx
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import eps
+from preliz.internal.special import cdf_bounds, mean_sample, ppf_bounds_disc, xlog1py, xlogx
 
 
 class Geometric(Discrete):
@@ -104,7 +101,7 @@ class Geometric(Discrete):
         random_state = np.random.default_rng(random_state)
         return random_state.geometric(self.p, size=size)
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         p = 1 / mean
         self._update(p)
 

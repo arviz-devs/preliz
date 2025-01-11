@@ -1,9 +1,10 @@
 import warnings
+
 import numpy as np
 
 from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import valid_distribution
-from preliz.internal.optimization import relative_error, optimize_quartile, get_fixed_params
+from preliz.internal.optimization import get_fixed_params, optimize_quartile, relative_error
 from preliz.internal.rcparams import rcParams
 
 
@@ -39,7 +40,6 @@ def quartile(
 
     Returns
     -------
-
     dict: dict with the parameters of the distribution
     axes: matplotlib axes (only if `plot=True`)
 
@@ -105,7 +105,7 @@ def quartile(
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
     # from the quartiles and then use those values for moment matching
-    distribution._fit_moments(mean=q2, sigma=(q3 - q1) / 1.35)  # pylint:disable=protected-access
+    distribution._fit_moments(mean=q2, sigma=(q3 - q1) / 1.35)
 
     opt = optimize_quartile(distribution, quartiles, none_idx, fixed)
 

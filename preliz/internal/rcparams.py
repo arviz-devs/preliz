@@ -5,9 +5,9 @@ import os
 import pprint
 import re
 import sys
+import warnings
 from collections.abc import MutableMapping
 from pathlib import Path
-import warnings
 
 import numpy as np
 
@@ -119,7 +119,7 @@ def make_iterable_validator(scalar_validator, length=None, allow_none=False, all
     return validate_iterable
 
 
-defaultParams = {  # pylint: disable=invalid-name
+defaultParams = {
     "stats.ci_kind": ("hdi", _make_validate_choice({"eti", "hdi"})),
     "stats.ci_prob": (0.94, _validate_probability),
     "plots.show_plot": (True, _validate_boolean),
@@ -202,7 +202,7 @@ class RcParams(MutableMapping):
         """Customize str/print of RcParams objects."""
         return "\n".join(
             map(
-                "{0[0]:<22}: {0[1]}".format,  # pylint: disable=consider-using-f-string
+                "{0[0]:<22}: {0[1]}".format,
                 sorted(self._underlying_storage.items()),
             )
         )
@@ -327,10 +327,10 @@ def rc_params(ignore_files=False):
     return defaults
 
 
-rcParams = rc_params()  # pylint: disable=invalid-name
+rcParams = rc_params()
 
 
-class rc_context:  # pylint: disable=invalid-name
+class rc_context:
     """
     Return a context manager for managing rc settings.
 

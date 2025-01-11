@@ -1,16 +1,14 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, to_precision, from_precision, all_not_none
-from ..internal.special import half_erf, erfinv, ppf_bounds_cont
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from preliz.internal.special import erfinv, half_erf, ppf_bounds_cont
 
 
 class HalfNormal(Continuous):
     r"""
-    HalfNormal Distribution
+    HalfNormal Distribution.
 
     The pdf of this distribution is
 
@@ -130,7 +128,7 @@ class HalfNormal(Continuous):
         random_state = np.random.default_rng(random_state)
         return np.abs(random_state.normal(0, self.sigma, size))
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         self._update(sigma / (1 - 2 / np.pi) ** 0.5)
 
     def _fit_mle(self, sample):

@@ -1,19 +1,10 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.special import (
-    beta,
-    digamma,
-    cdf_bounds,
-    ppf_bounds_cont,
-    xlogy,
-    xlog1py,
-)
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.special import beta, cdf_bounds, digamma, ppf_bounds_cont, xlog1py, xlogy
 
 
 class Kumaraswamy(Continuous):

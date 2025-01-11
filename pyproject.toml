@@ -66,3 +66,43 @@ convention = "numpy"
 testpaths = [
     "tests",
 ]
+
+[tool.ruff]
+line-length = 220
+
+[tool.ruff.lint]
+select = [
+    "F",  # Pyflakes
+    "E",  # Pycodestyle
+    "W",  # Pycodestyle
+    "D",  # pydocstyle
+    "NPY", # numpy specific rules
+    "UP",  # pyupgrade
+    "I",  # isort
+    "PL",  # Pylint
+    "TID",  # Absolute imports
+]
+ignore = [
+    "PLR0912",  # too many branches
+    "PLR0913",  # too many arguments
+    "PLR2004",  # magic value comparison
+    "PLR0915",  # too many statements
+    "NPY002",   # Replace legacy `np.random.randn` call with `np.random.Generator`
+    "NPY201",   # `np.trapz` will be removed in NumPy 2.0. Use `numpy.trapezoid` on NumPy 2.0, or ignore this warning on earlier versions.
+    "D1"    # Missing docstring
+]
+
+[tool.ruff.lint.per-file-ignores]
+"docs/source/**/*.ipynb" = ["D", "E", "F", "I", "NPY", "PL", "TID", "UP", "W"]
+"preliz/__init__.py" = ["I", "F401", "E402", "F403"]
+"preliz/tests/**/*" = ["D", "PLR2004", "TID252"]
+"preliz/tests/**/*.ipynb" = ["E", "F"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"  # Disallow all relative imports.
+
+[tool.ruff.format]
+docstring-code-format = false

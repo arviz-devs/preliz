@@ -1,13 +1,12 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numpy as np
-from scipy.special import i0e, i1e  # pylint: disable=no-name-in-module
 from scipy.integrate import quad
 from scipy.optimize import bisect
+from scipy.special import i0e, i1e
 from scipy.stats import circmean
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.optimization import find_kappa, optimize_moments
+
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import find_kappa, optimize_moments
 
 
 class VonMises(Continuous):
@@ -135,7 +134,7 @@ class VonMises(Continuous):
 
 
 def nb_cdf(x, pdf):
-    if isinstance(x, (int, float)):
+    if isinstance(x, int | float):
         x = [x]
         scalar_input = True
     else:
@@ -150,7 +149,7 @@ def nb_ppf(q, pdf):
     def root_func(x, q):
         return nb_cdf(x, pdf) - q
 
-    if isinstance(q, (int, float)):
+    if isinstance(q, int | float):
         q = [q]
         scalar_input = True
     else:

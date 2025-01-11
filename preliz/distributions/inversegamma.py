@@ -1,14 +1,11 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-import numpy as np
 import numba as nb
+import numpy as np
+from scipy.special import gammaincc, gammainccinv
 
-from scipy.special import gammaincc, gammainccinv  # pylint: disable=no-name-in-module
-
-from ..internal.distribution_helper import all_not_none, any_not_none, eps
-from ..internal.special import gammaln, digamma, cdf_bounds, ppf_bounds_cont, xlogy
-from ..internal.optimization import optimize_ml
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 
 
 class InverseGamma(Continuous):
@@ -26,7 +23,6 @@ class InverseGamma(Continuous):
     .. plot::
         :context: close-figs
 
-        
         from preliz import InverseGamma, style
         style.use('preliz-doc')
         alphas = [1., 2., 3.]

@@ -3,14 +3,14 @@ try:
 except ImportError:
     pass
 
+from preliz.internal.distribution_helper import get_distributions, process_extra
 from preliz.internal.optimization import fit_to_quartile
 from preliz.internal.plot_helper import (
-    create_figure,
     check_inside_notebook,
+    create_figure,
     representations,
     reset_dist_panel,
 )
-from preliz.internal.distribution_helper import process_extra, get_distributions
 
 
 class QuartileInt:
@@ -80,7 +80,7 @@ class QuartileInt:
                 self._widgets["w_extra"],
             ]
         )
-        display(  # pylint:disable=undefined-variable
+        display(  # noqa: F821
             widgets.HBox([controls, self._widgets["w_repr"], self._widgets["w_distributions"]])
         )
 

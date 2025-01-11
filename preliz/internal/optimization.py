@@ -1,13 +1,12 @@
-"""
-Optimization routines and utilities
-"""
+"""Optimization routines and utilities."""
 import warnings
 from copy import copy
 
 import numpy as np
-from scipy.optimize import minimize, least_squares, root_scalar, brentq
-from scipy.special import i0, i1, i0e, i1e  # pylint: disable=no-name-in-module
-from .distribution_helper import init_vals as default_vals
+from scipy.optimize import brentq, least_squares, minimize, root_scalar
+from scipy.special import i0, i0e, i1, i1e
+
+from preliz.internal.distribution_helper import init_vals as default_vals
 
 
 def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_stat):
@@ -137,12 +136,11 @@ def optimize_moments(dist, mean, sigma, params=None):
 
 def optimize_moments_rice(mean, std_dev):
     """
-    Moment matching for the Rice distribution
+    Moment matching for the Rice distribution.
 
     This function uses the Koay inversion technique, see: https://doi.org/10.1016/j.jmr.2006.01.016
     and https://en.wikipedia.org/wiki/Rice_distribution
     """
-
     ratio = mean / std_dev
 
     if ratio < 1.913:  # Rayleigh distribution
@@ -301,8 +299,7 @@ def relative_error(dist, lower, upper, required_mass):
 
 def fit_to_epdf(selected_distributions, x_vals, epdf, mean, std, x_min, x_max, extra_pros):
     """
-    Minimize the difference between the pdf and the epdf over a grid of values
-    defined by x_min and x_max
+    Minimize the difference between the pdf and the epdf over a grid of values defined by x_min and x_max.
 
     Note: This function is intended to be used with pz.roulette
     """
@@ -318,7 +315,7 @@ def fit_to_epdf(selected_distributions, x_vals, epdf, mean, std, x_min, x_max, e
 
         if dist._check_endpoints(x_min, x_max, raise_error=False):
             none_idx, fixed = get_fixed_params(dist)
-            dist._fit_moments(mean, std)  # pylint:disable=protected-access
+            dist._fit_moments(mean, std)
             loss = optimize_pdf(dist, x_vals, epdf, none_idx, fixed)
 
             fitted.update(loss, dist)
@@ -327,11 +324,9 @@ def fit_to_epdf(selected_distributions, x_vals, epdf, mean, std, x_min, x_max, e
 
 
 def fit_to_sample(selected_distributions, sample, x_min, x_max):
-    """
-    Maximize the likelihood given a sample
-    """
+    """Maximize the likelihood given a sample."""
     fitted = Loss(len(selected_distributions))
-    for dist in selected_distributions:  # pylint: disable=too-many-nested-blocks
+    for dist in selected_distributions:
         if dist.__class__.__name__ in ["BetaScaled", "TruncatedNormal"]:
             update_bounds_beta_scaled(dist, x_min, x_max)
 
@@ -356,7 +351,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
 
                 dist._parametrization(**{k: np.asarray(v) for k, v in new_dict.items()})
             else:
-                dist._fit_mle(sample)  # pylint:disable=protected-access
+                dist._fit_mle(sample)
                 neg_logpdf = dist._neg_logpdf(sample)
             corr = get_penalization(sample.size, dist)
             loss = neg_logpdf + corr
@@ -381,9 +376,7 @@ def fit_to_quartile(selected_distributions, q1, q2, q3, extra_pros):
         if distribution._check_endpoints(q1, q3, raise_error=False):
             none_idx, fixed = get_fixed_params(distribution)
 
-            distribution._fit_moments(
-                mean=q2, sigma=(q3 - q1) / 1.35
-            )  # pylint:disable=protected-access
+            distribution._fit_moments(mean=q2, sigma=(q3 - q1) / 1.35)
 
             optimize_quartile(distribution, (q1, q2, q3), none_idx, fixed)
 
@@ -475,11 +468,10 @@ def find_ppf(dist, q):
                 ppf[idx] = lower
         elif q_i == 1:
             ppf[idx] = upper
+        elif dist.__class__.__name__ in ["HyperGeometric", "BetaBinomial"]:
+            ppf[idx] = _ppf_single(dist, q_i) + 1
         else:
-            if dist.__class__.__name__ in ["HyperGeometric", "BetaBinomial"]:
-                ppf[idx] = _ppf_single(dist, q_i) + 1
-            else:
-                ppf[idx] = _ppf_single(dist, q_i)
+            ppf[idx] = _ppf_single(dist, q_i)
     return ppf[0] if len(ppf) == 1 else ppf
 
 
@@ -560,7 +552,7 @@ def _root(n_p, k_sq, a_sq, x):
     return band_w
 
 
-def _bw_silverman(x, x_std=None):  # pylint: disable=unused-argument
+def _bw_silverman(x, x_std=None):
     """Silverman's Rule."""
     x_std = np.std(x)
     q75, q25 = np.percentile(x, [75, 25])
