@@ -235,19 +235,15 @@ class Roulette:
         all_cls = []
         if self._widgets["w_checkbox_cont"].value:
             all_cls += list(
-
-                    cls.__name__
-                    for cls in all_continuous
-                    if cls.__name__ in self._widgets["w_distributions"].options
-
+                cls.__name__
+                for cls in all_continuous
+                if cls.__name__ in self._widgets["w_distributions"].options
             )
         if self._widgets["w_checkbox_disc"].value:
             all_cls += list(
-
-                    cls.__name__
-                    for cls in all_discrete
-                    if cls.__name__ in self._widgets["w_distributions"].options
-
+                cls.__name__
+                for cls in all_discrete
+                if cls.__name__ in self._widgets["w_distributions"].options
             )
         return all_cls
 

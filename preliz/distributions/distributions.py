@@ -358,9 +358,7 @@ class Distribution:
             elif self.__class__.__name__ in ["Truncated", "Censored"]:
                 pymc_dist = pymc_class(
                     name,
-                    getattr(pm_dists, self.dist.__class__.__name__).dist(
-                        **self.dist.params_dict
-                    ),
+                    getattr(pm_dists, self.dist.__class__.__name__).dist(**self.dist.params_dict),
                     lower=self.params_dict["lower"],
                     upper=self.params_dict["upper"],
                     **kwargs,

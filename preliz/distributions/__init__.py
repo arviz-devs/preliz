@@ -109,7 +109,7 @@ all_discrete = [
 all_continuous_multivariate = [Dirichlet, MvNormal]
 
 
-__all__ = (     # noqa: PLE0604
+__all__ = (  # noqa: PLE0604
     [s.__name__ for s in all_continuous]
     + [s.__name__ for s in all_discrete]
     + [s.__name__ for s in all_continuous_multivariate]

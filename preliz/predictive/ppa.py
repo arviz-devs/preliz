@@ -143,9 +143,7 @@ def ppa(
     controls = widgets.VBox([button_carry_on, button_return_prior])
     plot_combine = widgets.VBox([radio_buttons_kind, check_button_sharex])
 
-    display(  # noqa:F821
-        widgets.HBox([references_widget, plot_combine, controls, output])
-    )
+    display(widgets.HBox([references_widget, plot_combine, controls, output]))  # noqa:F821
 
 
 class FilterDistribution:  # pylint:disable=too-many-instance-attributes
