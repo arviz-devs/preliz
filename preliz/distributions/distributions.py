@@ -193,7 +193,7 @@ class Distribution:
         raise NotImplementedError
 
     def std(self):
-        """Calculate Standard Deviation."""
+        """Standard deviation."""   # noqa: D401
         raise NotImplementedError
 
     def var(self):
