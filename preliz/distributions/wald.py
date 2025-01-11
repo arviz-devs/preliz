@@ -3,12 +3,12 @@
 # pylint: disable=invalid-name
 import numba as nb
 import numpy as np
-from scipy.special import ndtr, expi  # pylint: disable=no-name-in-module
+from scipy.special import expi, ndtr  # pylint: disable=no-name-in-module
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
+from ..internal.distribution_helper import all_not_none, eps
+from ..internal.optimization import find_ppf, optimize_ml
 from ..internal.special import cdf_bounds
-from ..internal.optimization import optimize_ml, find_ppf
+from .distributions import Continuous
 
 
 class Wald(Continuous):

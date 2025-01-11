@@ -3,17 +3,17 @@
 import numba as nb
 import numpy as np
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
+from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import optimize_ml
 from ..internal.special import (
-    garcia_approximation,
-    gamma,
-    mean_and_std,
     cdf_bounds,
+    gamma,
+    garcia_approximation,
+    mean_and_std,
     ppf_bounds_cont,
     xlogy,
 )
+from .distributions import Continuous
 
 
 class Weibull(Continuous):

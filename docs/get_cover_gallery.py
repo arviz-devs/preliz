@@ -1,12 +1,9 @@
 # pylint: disable=invalid-name
 import matplotlib.pyplot as plt
-
 import numpy as np
-from preliz import Gamma
-from preliz import distributions
-from preliz import style
-from preliz.internal.distribution_helper import init_vals
 
+from preliz import Gamma, distributions, style
+from preliz.internal.distribution_helper import init_vals
 
 style.use("preliz-doc")
 rng = np.random.default_rng(247)
@@ -114,7 +111,7 @@ for name, params in init_vals.items():
             )
 
         if name == "VonMises":
-            ax.set_xticks([l_b, u_b], labels=["$-\pi$", "$\pi$"])
+            ax.set_xticks([l_b, u_b], labels=[r"$-\pi$", r"$\pi$"])
 
         if l_b is not None and u_b is not None:
             ax.set_xticks([l_b, u_b])

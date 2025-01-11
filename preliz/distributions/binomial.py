@@ -4,10 +4,10 @@ import numba as nb
 import numpy as np
 from scipy.special import bdtr, bdtrik  # pylint: disable=no-name-in-module
 
-from .distributions import Discrete
+from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import optimize_moments
-from ..internal.distribution_helper import eps, all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_disc, gammaln, mean_and_std, xlogy, xlog1py
+from ..internal.special import cdf_bounds, gammaln, mean_and_std, ppf_bounds_disc, xlog1py, xlogy
+from .distributions import Discrete
 
 
 class Binomial(Discrete):

@@ -1,7 +1,6 @@
 import numpy as np
 
-from preliz.internal.distribution_helper import get_distributions
-from preliz.internal.distribution_helper import process_extra
+from preliz.internal.distribution_helper import get_distributions, process_extra
 from preliz.internal.optimization import fit_to_epdf
 
 
@@ -29,7 +28,6 @@ def combine_roulette(responses, weights=None, dist_names=None, params=None):
     -------
     PreliZ distribution
     """
-
     if params is not None:
         extra_pros = process_extra(params)
     else:

@@ -4,9 +4,9 @@ import numba as nb
 import numpy as np
 from scipy.special import pdtr, pdtrik  # pylint: disable=no-name-in-module
 
-from .distributions import Discrete
 from ..internal.distribution_helper import eps
-from ..internal.special import gammaln, xlogy, cdf_bounds, ppf_bounds_disc
+from ..internal.special import cdf_bounds, gammaln, ppf_bounds_disc, xlogy
+from .distributions import Discrete
 
 
 class Poisson(Discrete):

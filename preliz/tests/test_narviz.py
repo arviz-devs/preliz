@@ -2,7 +2,7 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal
 from scipy.stats import gaussian_kde
 
-from preliz.internal.narviz import hdi, kde, histogram, _dct1d, _bw_isj
+from preliz.internal.narviz import _bw_isj, _dct1d, hdi, histogram, kde
 
 
 def test_hdi():

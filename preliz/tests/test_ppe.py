@@ -1,9 +1,9 @@
 import numpy as np
-import pandas as pd
-import preliz as pz
 import pymc as pm
 import pytest
 from numpy.testing import assert_allclose
+
+import preliz as pz
 
 np.random.seed(42)
 

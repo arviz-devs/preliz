@@ -1,9 +1,9 @@
+import bambi as bmb
 import pandas as pd
 import pymc as pm
-import bambi as bmb
-from preliz.distributions import Normal, LogNormal, Gamma
-from preliz.ppls.agnostic import posterior_to_prior
 
+from preliz.distributions import Gamma, LogNormal, Normal
+from preliz.ppls.agnostic import posterior_to_prior
 
 SEED = 2945
 

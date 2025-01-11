@@ -3,10 +3,9 @@
 import numba as nb
 import numpy as np
 
-from .distributions import Discrete
 from ..internal.distribution_helper import eps
-from ..internal.special import mean_sample, cdf_bounds, ppf_bounds_disc
-from ..internal.special import xlog1py, xlogx
+from ..internal.special import cdf_bounds, mean_sample, ppf_bounds_disc, xlog1py, xlogx
+from .distributions import Discrete
 
 
 class Geometric(Discrete):

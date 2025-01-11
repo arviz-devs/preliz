@@ -1,9 +1,10 @@
 import warnings
+
 import numpy as np
 
 from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import valid_distribution
-from preliz.internal.optimization import relative_error, optimize_quartile, get_fixed_params
+from preliz.internal.optimization import get_fixed_params, optimize_quartile, relative_error
 from preliz.internal.rcparams import rcParams
 
 
@@ -39,7 +40,6 @@ def quartile(
 
     Returns
     -------
-
     dict: dict with the parameters of the distribution
     axes: matplotlib axes (only if `plot=True`)
 

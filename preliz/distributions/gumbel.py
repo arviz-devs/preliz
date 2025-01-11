@@ -2,13 +2,12 @@
 # pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-
 from scipy.special import zeta
 
-from .distributions import Continuous
-from ..internal.distribution_helper import eps, all_not_none
+from ..internal.distribution_helper import all_not_none, eps
 from ..internal.optimization import optimize_ml
 from ..internal.special import cdf_bounds, ppf_bounds_cont
+from .distributions import Continuous
 
 
 class Gumbel(Continuous):

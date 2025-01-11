@@ -1,33 +1,40 @@
-import pytest
 import numpy as np
-
+import pytest
 from numpy.testing import assert_allclose, assert_almost_equal
-
 
 from preliz import maxent
 from preliz.distributions import (
     AsymmetricLaplace,
     Beta,
+    # Bernoulli, maxent is not useful for Bernoulli distribution as we only have two states
+    BetaBinomial,
     BetaScaled,
+    Binomial,
     Cauchy,
     ChiSquared,
+    DiscreteUniform,
+    DiscreteWeibull,
     ExGaussian,
     Exponential,
     Gamma,
+    Geometric,
     Gumbel,
     HalfCauchy,
     HalfNormal,
     HalfStudentT,
+    HyperGeometric,
     InverseGamma,
     Kumaraswamy,
     Laplace,
     Logistic,
+    LogitNormal,
     LogLogistic,
     LogNormal,
-    LogitNormal,
     Moyal,
+    NegativeBinomial,
     Normal,
     Pareto,
+    Poisson,
     Rice,
     SkewNormal,
     SkewStudentT,
@@ -38,15 +45,6 @@ from preliz.distributions import (
     VonMises,
     Wald,
     Weibull,
-    # Bernoulli, maxent is not useful for Bernoulli distribution as we only have two states
-    BetaBinomial,
-    Binomial,
-    DiscreteUniform,
-    DiscreteWeibull,
-    Geometric,
-    HyperGeometric,
-    NegativeBinomial,
-    Poisson,
     ZeroInflatedBinomial,
     ZeroInflatedNegativeBinomial,
     ZeroInflatedPoisson,
