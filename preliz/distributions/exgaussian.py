@@ -4,10 +4,10 @@ import numba as nb
 import numpy as np
 from scipy.stats import skew
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import find_ppf
-from ..internal.special import erf, mean_and_std, norm_logcdf
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import find_ppf
+from preliz.internal.special import erf, mean_and_std, norm_logcdf
 
 
 class ExGaussian(Continuous):

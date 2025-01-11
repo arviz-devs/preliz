@@ -4,10 +4,10 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none
-from ..internal.optimization import find_ppf, optimize_ml, optimize_moments
-from ..internal.special import betaln, cdf_bounds
-from .distributions import Discrete
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.optimization import find_ppf, optimize_ml, optimize_moments
+from preliz.internal.special import betaln, cdf_bounds
 
 eps = np.finfo(float).eps
 

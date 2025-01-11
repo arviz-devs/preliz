@@ -3,9 +3,9 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none
-from ..internal.special import cdf_bounds, ppf_bounds_disc
-from .distributions import Discrete
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.special import cdf_bounds, ppf_bounds_disc
 
 
 class DiscreteUniform(Discrete):

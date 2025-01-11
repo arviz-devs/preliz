@@ -3,9 +3,9 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from ..internal.special import erf, erfinv, mean_and_std, ppf_bounds_cont
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from preliz.internal.special import erf, erfinv, mean_and_std, ppf_bounds_cont
 
 
 class Normal(Continuous):

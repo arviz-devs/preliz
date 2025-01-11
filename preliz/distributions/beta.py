@@ -3,21 +3,10 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none, any_not_none, eps
-from ..internal.optimization import optimize_ml
-from ..internal.special import (
-    betainc,
-    betaincinv,
-    betaln,
-    cdf_bounds,
-    digamma,
-    gammaln,
-    mean_and_std,
-    ppf_bounds_cont,
-    xlog1py,
-    xlogy,
-)
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import betainc, betaincinv, betaln, cdf_bounds, digamma, gammaln, mean_and_std, ppf_bounds_cont, xlog1py, xlogy
 
 
 class Beta(Continuous):

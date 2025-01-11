@@ -5,10 +5,7 @@ from collections import namedtuple
 import numpy as np
 from scipy.special import betainc  # pylint: disable=no-name-in-module
 
-from ..internal.distribution_helper import (
-    valid_distribution,
-    valid_scalar_params,
-)
+from preliz.internal.distribution_helper import valid_distribution, valid_scalar_params
 
 
 class Multivariate:

@@ -8,11 +8,11 @@ from os import path as os_path
 from matplotlib import rcParams as mpl_rcParams
 from matplotlib import style
 
-from .distributions import *
-from .predictive import *
-from .unidimensional import *
-from .multidimensional import *
-from .internal.rcparams import rc_context, rcParams
+from preliz.distributions import *
+from preliz.predictive import *
+from preliz.unidimensional import *
+from preliz.multidimensional import *
+from preliz.internal.rcparams import rc_context, rcParams
 
 
 __version__ = "0.15.0"

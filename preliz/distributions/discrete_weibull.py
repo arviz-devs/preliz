@@ -3,10 +3,10 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none, eps, num_kurtosis, num_skewness
-from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.special import cdf_bounds, ppf_bounds_disc
-from .distributions import Discrete
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, eps, num_kurtosis, num_skewness
+from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.special import cdf_bounds, ppf_bounds_disc
 
 
 class DiscreteWeibull(Discrete):

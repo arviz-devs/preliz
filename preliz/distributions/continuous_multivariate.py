@@ -13,12 +13,12 @@ except ImportError:
     pass
 from scipy import stats
 
-from ..internal.distribution_helper import all_not_none
-from ..internal.plot_helper import check_inside_notebook, get_slider
-from ..internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
-from .beta import Beta  # pylint: disable=no-name-in-module
-from .distributions_multivariate import Continuous
-from .normal import Normal  # pylint: disable=no-name-in-module
+from preliz.distributions.beta import Beta  # pylint: disable=no-name-in-module
+from preliz.distributions.distributions_multivariate import Continuous
+from preliz.distributions.normal import Normal  # pylint: disable=no-name-in-module
+from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.plot_helper import check_inside_notebook, get_slider
+from preliz.internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
 
 eps = np.finfo(float).eps
 

@@ -4,10 +4,10 @@ import numba as nb
 import numpy as np
 from scipy.special import gammaincc, gammainccinv  # pylint: disable=no-name-in-module
 
-from ..internal.distribution_helper import all_not_none, any_not_none, eps
-from ..internal.optimization import optimize_ml
-from ..internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 
 
 class InverseGamma(Continuous):

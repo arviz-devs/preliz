@@ -12,20 +12,10 @@ except ImportError:
     pass
 import numpy as np
 
-from ..internal.distribution_helper import (
-    init_vals,
-    valid_distribution,
-    valid_scalar_params,
-)
-from ..internal.optimization import optimize_hdi
-from ..internal.plot_helper import (
-    check_inside_notebook,
-    get_slider,
-    plot_cdf,
-    plot_pdfpmf,
-    plot_ppf,
-)
-from ..internal.rcparams import rcParams
+from preliz.internal.distribution_helper import init_vals, valid_distribution, valid_scalar_params
+from preliz.internal.optimization import optimize_hdi
+from preliz.internal.plot_helper import check_inside_notebook, get_slider, plot_cdf, plot_pdfpmf, plot_ppf
+from preliz.internal.rcparams import rcParams
 
 
 class Distribution:

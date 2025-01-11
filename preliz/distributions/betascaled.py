@@ -3,18 +3,10 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import optimize_ml
-from ..internal.special import (
-    betainc,
-    betaincinv,
-    betaln,
-    cdf_bounds,
-    digamma,
-    ppf_bounds_cont,
-    xlogy,
-)
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import betainc, betaincinv, betaln, cdf_bounds, digamma, ppf_bounds_cont, xlogy
 
 
 class BetaScaled(Continuous):

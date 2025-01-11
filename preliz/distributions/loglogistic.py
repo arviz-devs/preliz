@@ -3,10 +3,10 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.special import cdf_bounds, ppf_bounds_cont
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class LogLogistic(Continuous):

@@ -4,10 +4,10 @@ import numba as nb
 import numpy as np
 from scipy.special import erf, erfinv, zeta  # pylint: disable=no-name-in-module
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import optimize_ml
-from ..internal.special import erf, erfinv, ppf_bounds_cont  # noqa: F811
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import erf, erfinv, ppf_bounds_cont  # noqa: F811
 
 
 class Moyal(Continuous):

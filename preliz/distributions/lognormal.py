@@ -4,9 +4,9 @@ import numba as nb
 import numpy as np
 from scipy.special import erf, erfinv  # pylint: disable=no-name-in-module
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.special import cdf_bounds, erf, erfinv, mean_and_std, ppf_bounds_cont  # noqa: F811
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.special import cdf_bounds, erf, erfinv, mean_and_std, ppf_bounds_cont  # noqa: F811
 
 
 class LogNormal(Continuous):

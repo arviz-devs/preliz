@@ -5,10 +5,10 @@ import numpy as np
 from scipy.special import owens_t  # pylint: disable=no-name-in-module
 from scipy.stats import skew  # pylint: disable=no-name-in-module
 
-from ..internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from ..internal.optimization import find_ppf, optimize_ml, optimize_moments
-from ..internal.special import erf, norm_logcdf
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from preliz.internal.optimization import find_ppf, optimize_ml, optimize_moments
+from preliz.internal.special import erf, norm_logcdf
 
 
 class SkewNormal(Continuous):

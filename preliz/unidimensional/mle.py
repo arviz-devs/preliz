@@ -3,8 +3,8 @@ import warnings
 
 import numpy as np
 
-from ..internal.distribution_helper import valid_distribution
-from ..internal.optimization import fit_to_sample
+from preliz.internal.distribution_helper import valid_distribution
+from preliz.internal.optimization import fit_to_sample
 
 _log = logging.getLogger("preliz")
 

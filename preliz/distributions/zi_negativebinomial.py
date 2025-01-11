@@ -4,10 +4,10 @@ import numba as nb
 import numpy as np
 from scipy.special import nbdtrik  # pylint: disable=no-name-in-module
 
-from ..internal.distribution_helper import all_not_none, any_not_none, eps
-from ..internal.optimization import optimize_ml, optimize_moments
-from ..internal.special import betainc, cdf_bounds, gammaln, ppf_bounds_disc, xlogy
-from .distributions import Discrete
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
+from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.special import betainc, cdf_bounds, gammaln, ppf_bounds_disc, xlogy
 
 
 class ZeroInflatedNegativeBinomial(Discrete):

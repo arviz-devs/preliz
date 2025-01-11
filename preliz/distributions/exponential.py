@@ -3,9 +3,9 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.special import cdf_bounds, mean_sample, ppf_bounds_cont, xlog1py
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.special import cdf_bounds, mean_sample, ppf_bounds_cont, xlog1py
 
 
 class Exponential(Continuous):

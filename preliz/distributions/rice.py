@@ -3,10 +3,10 @@
 import numpy as np
 from scipy.special import chndtr, chndtrix, i0, i0e, i1  # pylint: disable=no-name-in-module
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import optimize_ml, optimize_moments_rice
-from ..internal.special import cdf_bounds, ppf_bounds_cont
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml, optimize_moments_rice
+from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class Rice(Continuous):

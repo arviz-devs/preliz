@@ -4,8 +4,8 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none
 
 
 class Triangular(Continuous):

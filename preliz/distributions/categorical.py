@@ -3,10 +3,10 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import optimize_ml
-from ..internal.special import expit, logit, xlogx
-from .distributions import Discrete
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import expit, logit, xlogx
 
 
 class Categorical(Discrete):

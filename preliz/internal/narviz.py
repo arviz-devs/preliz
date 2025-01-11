@@ -7,8 +7,8 @@ from scipy.fftpack import fft
 from scipy.signal import convolve
 from scipy.signal.windows import gaussian
 
-from .optimization import _root
-from .rcparams import rcParams
+from preliz.internal.optimization import _root
+from preliz.internal.rcparams import rcParams
 
 
 def hdi(ary, hdi_prob=None, skipna=True):

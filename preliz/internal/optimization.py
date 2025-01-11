@@ -6,7 +6,7 @@ import numpy as np
 from scipy.optimize import brentq, least_squares, minimize, root_scalar
 from scipy.special import i0, i0e, i1, i1e  # pylint: disable=no-name-in-module
 
-from .distribution_helper import init_vals as default_vals
+from preliz.internal.distribution_helper import init_vals as default_vals
 
 
 def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_stat):

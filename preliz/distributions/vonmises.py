@@ -6,9 +6,9 @@ from scipy.optimize import bisect
 from scipy.special import i0e, i1e  # pylint: disable=no-name-in-module
 from scipy.stats import circmean
 
-from ..internal.distribution_helper import all_not_none, eps
-from ..internal.optimization import find_kappa, optimize_moments
-from .distributions import Continuous
+from preliz.distributions.distributions import Continuous
+from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.optimization import find_kappa, optimize_moments
 
 
 class VonMises(Continuous):

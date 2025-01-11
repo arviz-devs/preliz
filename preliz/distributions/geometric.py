@@ -3,9 +3,9 @@
 import numba as nb
 import numpy as np
 
-from ..internal.distribution_helper import eps
-from ..internal.special import cdf_bounds, mean_sample, ppf_bounds_disc, xlog1py, xlogx
-from .distributions import Discrete
+from preliz.distributions.distributions import Discrete
+from preliz.internal.distribution_helper import eps
+from preliz.internal.special import cdf_bounds, mean_sample, ppf_bounds_disc, xlog1py, xlogx
 
 
 class Geometric(Discrete):
