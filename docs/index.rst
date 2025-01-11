@@ -56,6 +56,7 @@ Examples
 
    examples
    gallery_content
+   gallery_examples
 
 References
 ==========
