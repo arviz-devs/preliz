@@ -7,7 +7,16 @@ from preliz.distributions.distributions import Continuous
 from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import beta, betainc, betaincinv, digamma, erf, erfinv, gammaln, ppf_bounds_cont
+from preliz.internal.special import (
+    beta,
+    betainc,
+    betaincinv,
+    digamma,
+    erf,
+    erfinv,
+    gammaln,
+    ppf_bounds_cont,
+)
 
 
 class StudentT(Continuous):

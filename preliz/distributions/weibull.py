@@ -6,7 +6,14 @@ import numpy as np
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import cdf_bounds, gamma, garcia_approximation, mean_and_std, ppf_bounds_cont, xlogy
+from preliz.internal.special import (
+    cdf_bounds,
+    gamma,
+    garcia_approximation,
+    mean_and_std,
+    ppf_bounds_cont,
+    xlogy,
+)
 
 
 class Weibull(Continuous):

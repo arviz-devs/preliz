@@ -6,7 +6,13 @@ from scipy.special import erf, erfinv  # pylint: disable=no-name-in-module
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.special import cdf_bounds, erf, erfinv, mean_and_std, ppf_bounds_cont  # noqa: F811
+from preliz.internal.special import (
+    cdf_bounds,
+    erf,
+    erfinv,
+    mean_and_std,
+    ppf_bounds_cont,
+)  # noqa: F811
 
 
 class LogNormal(Continuous):

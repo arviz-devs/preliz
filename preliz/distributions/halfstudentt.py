@@ -6,7 +6,16 @@ import numpy as np
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import beta, betainc, betaincinv, cdf_bounds, digamma, gamma, gammaln, ppf_bounds_cont
+from preliz.internal.special import (
+    beta,
+    betainc,
+    betaincinv,
+    cdf_bounds,
+    digamma,
+    gamma,
+    gammaln,
+    ppf_bounds_cont,
+)
 
 
 class HalfStudentT(Continuous):

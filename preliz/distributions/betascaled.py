@@ -6,7 +6,15 @@ import numpy as np
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import betainc, betaincinv, betaln, cdf_bounds, digamma, ppf_bounds_cont, xlogy
+from preliz.internal.special import (
+    betainc,
+    betaincinv,
+    betaln,
+    cdf_bounds,
+    digamma,
+    ppf_bounds_cont,
+    xlogy,
+)
 
 
 class BetaScaled(Continuous):

@@ -5,7 +5,15 @@ import numpy as np
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from preliz.internal.special import cdf_bounds, erf, erfinv, expit, logit, mean_and_std, ppf_bounds_cont
+from preliz.internal.special import (
+    cdf_bounds,
+    erf,
+    erfinv,
+    expit,
+    logit,
+    mean_and_std,
+    ppf_bounds_cont,
+)
 
 
 class LogitNormal(Continuous):
