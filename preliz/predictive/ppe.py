@@ -102,7 +102,7 @@ def ppe(model, target, method="projective", engine="auto", random_state=0):
             new_priors = write_pymc_string(projection_backfitted, var_info)
 
     elif method == "pathfinder":
-        from pymc_experimental import fit  # pylint:disable=import-outside-toplevel
+        from pymc_experimental import fit
 
         with model:
             idata = fit(method="pathfinder", num_samples=opt_iterations)

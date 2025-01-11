@@ -1,5 +1,4 @@
 """Tests plot_utils functions."""
-# pylint: disable=redefined-outer-name
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest

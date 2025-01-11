@@ -1,6 +1,5 @@
 """Methods to communicate with PyMC."""
 
-# pylint: disable=protected-access
 from copy import copy
 from sys import modules
 

@@ -1,7 +1,4 @@
 """Parent classes for all families."""
-# pylint: disable=no-member
-# pylint: disable=import-outside-toplevel
-# pylint: disable=too-many-public-methods
 import warnings
 from collections import namedtuple
 from copy import copy
@@ -747,7 +744,7 @@ class Distribution:
             for name, value, support in zip(self.param_names, self.params, self.params_support):
                 sliders[name] = get_slider(name, value, *support)
 
-        def plot(**args):  # pylint: disable=inconsistent-return-statements
+        def plot(**args):
             if self.__class__.__name__ == "Categorical":
                 values = list(args.values())
                 args = {list(args.keys())[0].split("_")[0]: values}

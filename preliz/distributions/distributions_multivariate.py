@@ -1,9 +1,8 @@
 """Parent classes for multivariate families."""
-# pylint: disable=no-member
 from collections import namedtuple
 
 import numpy as np
-from scipy.special import betainc  # pylint: disable=no-name-in-module
+from scipy.special import betainc
 
 from preliz.internal.distribution_helper import valid_distribution, valid_scalar_params
 

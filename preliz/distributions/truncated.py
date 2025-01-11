@@ -1,4 +1,3 @@
-# pylint: disable=arguments-differ
 import numpy as np
 
 from preliz.distributions.distributions import DistributionTransformer

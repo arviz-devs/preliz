@@ -609,7 +609,7 @@ def check_inside_notebook(need_widget=False):
             if shell_name == "ZMQInteractiveShell" and "nbagg" not in get_backend():
                 msg = f"To run {name}, you need use the magic `%matplotlib widget`"
                 raise RuntimeError(msg)
-    except Exception:  # pylint: disable=broad-except
+    except Exception:
         tb_as_str = traceback.format_exc()
         # Print only the last line of the traceback, which contains the error message
         print(tb_as_str.strip().rsplit("\n", maxsplit=1)[-1], file=sys.stdout)

@@ -1,5 +1,3 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
@@ -103,7 +101,7 @@ class Geometric(Discrete):
         random_state = np.random.default_rng(random_state)
         return random_state.geometric(self.p, size=size)
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         p = 1 / mean
         self._update(p)
 

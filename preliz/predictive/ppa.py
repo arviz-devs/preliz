@@ -146,7 +146,7 @@ def ppa(
     display(widgets.HBox([references_widget, plot_combine, controls, output]))  # noqa:F821
 
 
-class FilterDistribution:  # pylint:disable=too-many-instance-attributes
+class FilterDistribution:
     def __init__(self, fmodel, draws, references, boundaries, target, new_families, engine):
         self.fmodel = fmodel
         self.source = ""  # string representation of the model

@@ -1,7 +1,3 @@
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-instance-attributes
-# pylint: disable=invalid-name
-# pylint: disable=attribute-defined-outside-init
 """Continuous multivariate probability distributions."""
 from copy import copy
 
@@ -13,9 +9,9 @@ except ImportError:
     pass
 from scipy import stats
 
-from preliz.distributions.beta import Beta  # pylint: disable=no-name-in-module
+from preliz.distributions.beta import Beta
 from preliz.distributions.distributions_multivariate import Continuous
-from preliz.distributions.normal import Normal  # pylint: disable=no-name-in-module
+from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import all_not_none
 from preliz.internal.plot_helper import check_inside_notebook, get_slider
 from preliz.internal.plot_helper_multivariate import plot_dirichlet, plot_mvnormal
@@ -267,7 +263,7 @@ class Dirichlet(Continuous):
         check_inside_notebook()
 
         args = dict(zip(self.param_names, self.params))
-        self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
+        self.__init__(**args)
         if kind == "pdf":
             w_checkbox_marginals = widgets.Checkbox(
                 value=True,
@@ -287,7 +283,7 @@ class Dirichlet(Continuous):
             if kind == "pdf":
                 marginals = args.pop("marginals")
             params = {"alpha": np.asarray(list(args.values()), dtype=float)}
-            self.__init__(**params)  # pylint: disable=unnecessary-dunder-call
+            self.__init__(**params)
             if kind == "pdf":
                 plot_dirichlet(
                     self,
@@ -607,7 +603,7 @@ class MvNormal(Continuous):
 
         args = dict(zip(self.param_names, self.params))
         cov, tau = args.get("cov", None), args.get("tau", None)
-        self.__init__(**args)  # pylint: disable=unnecessary-dunder-call
+        self.__init__(**args)
         if kind == "pdf":
             w_checkbox_marginals = widgets.Checkbox(
                 value=True,
@@ -627,7 +623,7 @@ class MvNormal(Continuous):
             if kind == "pdf":
                 marginals = args.pop("marginals")
             params = {"mu": np.asarray(list(args.values()), dtype=float), "cov": cov, "tau": tau}
-            self.__init__(**params)  # pylint: disable=unnecessary-dunder-call
+            self.__init__(**params)
             if kind == "pdf":
                 plot_mvnormal(
                     self,

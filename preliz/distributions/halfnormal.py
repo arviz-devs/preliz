@@ -1,5 +1,3 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
@@ -130,7 +128,7 @@ class HalfNormal(Continuous):
         random_state = np.random.default_rng(random_state)
         return np.abs(random_state.normal(0, self.sigma, size))
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         self._update(sigma / (1 - 2 / np.pi) ** 0.5)
 
     def _fit_mle(self, sample):

@@ -1,4 +1,3 @@
-# pylint: disable=no-member
 import numpy as np
 from numpy.testing import assert_almost_equal
 from scipy import special as sc_special

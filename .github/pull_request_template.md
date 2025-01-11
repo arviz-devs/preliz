@@ -15,7 +15,7 @@ Thank you so much for your PR! To help us review your contribution, please consi
 ## Checklist
 <!-- Feel free to remove check-list items that aren't relevant to your change -->
 
-- [ ] Code style is correct (follows pylint and black guidelines)
+- [ ] Code style is correct (follows ruff and black guidelines)
 - [ ] Includes new or updated tests to cover the new feature
 - [ ] New features are properly documented (with an example if appropriate)
 - [ ] Includes a sample plot to visually illustrate the changes (only for plot-related functions)

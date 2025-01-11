@@ -1,6 +1,3 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
-# pylint: disable=invalid-name
 import numba as nb
 import numpy as np
 

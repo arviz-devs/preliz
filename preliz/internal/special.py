@@ -1,5 +1,3 @@
-# pylint: disable=invalid-name
-# pylint: disable=no-else-raise
 import numba as nb
 import numpy as np
 
@@ -328,8 +326,8 @@ def garcia_approximation(mean, sigma):
     New Zealand Journal of Forestry Science 11:304-306
     https://www.scionresearch.com/__data/assets/pdf_file/0010/36874/NZJFS1131981GARCIA304-306.pdf
     """
-    ks = [-0.221016417, 0.010060668, 0.117358987, -0.050999126]  # pylint: disable=invalid-name
-    z = sigma / mean  # pylint: disable=invalid-name
+    ks = [-0.221016417, 0.010060668, 0.117358987, -0.050999126]
+    z = sigma / mean
 
     poly = 0
     for idx, k in enumerate(ks):

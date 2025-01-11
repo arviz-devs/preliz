@@ -1,7 +1,5 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numpy as np
-from scipy.special import chndtr, chndtrix, i0, i0e, i1  # pylint: disable=no-name-in-module
+from scipy.special import chndtr, chndtrix, i0, i0e, i1
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps

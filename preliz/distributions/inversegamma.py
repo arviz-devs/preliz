@@ -1,8 +1,6 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import gammaincc, gammainccinv  # pylint: disable=no-name-in-module
+from scipy.special import gammaincc, gammainccinv
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, any_not_none, eps

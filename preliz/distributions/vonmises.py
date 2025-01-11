@@ -1,9 +1,7 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numpy as np
 from scipy.integrate import quad
 from scipy.optimize import bisect
-from scipy.special import i0e, i1e  # pylint: disable=no-name-in-module
+from scipy.special import i0e, i1e
 from scipy.stats import circmean
 
 from preliz.distributions.distributions import Continuous

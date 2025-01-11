@@ -1,4 +1,3 @@
-# pylint: disable=too-many-instance-attributes
 from math import ceil, floor
 
 import matplotlib.pyplot as plt

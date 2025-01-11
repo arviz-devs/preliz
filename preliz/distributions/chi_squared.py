@@ -1,8 +1,6 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
-from scipy.special import gammainc, gammaincinv  # pylint: disable=no-name-in-module
+from scipy.special import gammainc, gammaincinv
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
@@ -112,7 +110,7 @@ class ChiSquared(Continuous):
         random_state = np.random.default_rng(random_state)
         return random_state.chisquare(self.nu, size)
 
-    def _fit_moments(self, mean, sigma=None):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma=None):
         self._update(mean)
 
     def _fit_mle(self, sample):

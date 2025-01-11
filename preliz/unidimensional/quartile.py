@@ -105,7 +105,7 @@ def quartile(
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
     # from the quartiles and then use those values for moment matching
-    distribution._fit_moments(mean=q2, sigma=(q3 - q1) / 1.35)  # pylint:disable=protected-access
+    distribution._fit_moments(mean=q2, sigma=(q3 - q1) / 1.35)
 
     opt = optimize_quartile(distribution, quartiles, none_idx, fixed)
 

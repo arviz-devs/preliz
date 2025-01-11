@@ -1,5 +1,3 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 """BetaBinomial probability distribution."""
 import numba as nb
 import numpy as np

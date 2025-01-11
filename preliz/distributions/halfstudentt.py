@@ -1,5 +1,3 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
@@ -176,7 +174,7 @@ class HalfStudentT(Continuous):
         random_state = np.random.default_rng(random_state)
         return np.abs(random_state.standard_t(self.nu, size) * self.sigma)
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         # if nu is smaller than 2 the variance is not defined,
         # so if that happens we use 2.1 as an approximation
         nu = self.nu

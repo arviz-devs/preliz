@@ -1,5 +1,3 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
@@ -106,7 +104,7 @@ class HalfCauchy(Continuous):
         random_samples = random_state.uniform(0, 1, size)
         return nb_rvs(random_samples, self.beta)
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         self._update(sigma)
 
     def _fit_mle(self, sample):

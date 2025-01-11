@@ -1,5 +1,3 @@
-# pylint: disable=attribute-defined-outside-init
-# pylint: disable=arguments-differ
 import numba as nb
 import numpy as np
 
@@ -88,7 +86,7 @@ class Bernoulli(Discrete):
 
         self.is_frozen = True
 
-    def _fit_moments(self, mean, sigma):  # pylint: disable=unused-argument
+    def _fit_moments(self, mean, sigma):
         self._update(mean)
 
     def _fit_mle(self, sample):

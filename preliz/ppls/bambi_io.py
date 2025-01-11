@@ -93,7 +93,7 @@ def from_bambi(fmodel, draws):
         model = dict_model(matches, return_variables)
 
         # Execute the new source code to redefine the function
-        exec(new_source, module.__dict__)  # pylint: disable=exec-used
+        exec(new_source, module.__dict__)
         modified_fmodel = getattr(module, fmodel.__name__)
 
     return modified_fmodel, return_variables, model
