@@ -92,7 +92,7 @@ class ChiSquared(Continuous):
         return self.nu
 
     def mode(self):
-        return max(self.nu - 2, 0)
+        return np.maximum(self.nu - 2, 0)
 
     def median(self):
         return self.ppf(0.5)

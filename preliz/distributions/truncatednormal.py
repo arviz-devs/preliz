@@ -124,7 +124,7 @@ class TruncatedNormal(Continuous):
         )
 
     def mode(self):
-        return max(self.lower, min(self.upper, self.mu))
+        return np.maximum(self.lower, np.minimum(self.upper, self.mu))
 
     def median(self):
         alpha = (self.lower - self.mu) / self.sigma

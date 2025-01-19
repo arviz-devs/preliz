@@ -139,7 +139,7 @@ class Wald(Continuous):
 
     def mode(self):
         return self.mu * (
-            (1 + (9 * self.mu**2) / (4 * self.lam**2)) ** 0.5 - 3 * self.mu / 2 * self.lam
+            (1 + (9 * self.mu**2) / (4 * self.lam**2)) ** 0.5 - (3 * self.mu) / (2 * self.lam)
         )
 
     def median(self):

@@ -95,7 +95,7 @@ class Kumaraswamy(Continuous):
 
     def mode(self):
         return np.where(
-            (self.a > 1) & (self.b > 1), ((self.a - 1) / (self.a * self.b - 1)) ** (1 / self.a), 1
+            (self.a > 1) | (self.b > 1), ((self.a - 1) / (self.a * self.b - 1)) ** (1 / self.a), 0.5
         )
 
     def median(self):

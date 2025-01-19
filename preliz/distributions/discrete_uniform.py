@@ -101,7 +101,7 @@ class DiscreteUniform(Discrete):
         return (self.upper + self.lower) / 2
 
     def mode(self):
-        return np.nan
+        return (self.upper + self.lower) / 2
 
     def median(self):
         return np.floor((self.upper + self.lower) / 2)
