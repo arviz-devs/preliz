@@ -126,6 +126,14 @@ class BetaScaled(Continuous):
     def mean(self):
         return (self.alpha * self.upper + self.beta * self.lower) / (self.alpha + self.beta)
 
+    def mode(self):
+        return np.where(
+            (self.alpha > 1) & (self.beta > 1),
+            self.lower
+            + (self.alpha - 1) / (self.alpha + self.beta - 2) * (self.upper - self.lower),
+            (self.lower + self.upper) / 2,
+        )
+
     def median(self):
         return self.ppf(0.5)
 

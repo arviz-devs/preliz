@@ -93,6 +93,11 @@ class LogLogistic(Continuous):
             self.beta > 1, self.alpha * np.pi / self.beta / np.sin(np.pi / self.beta), np.nan
         )
 
+    def mode(self):
+        return np.where(
+            self.beta > 1, self.alpha * ((self.beta - 1) / (self.beta + 1)) ** (1 / self.beta), 0
+        )
+
     def median(self):
         return self.alpha
 

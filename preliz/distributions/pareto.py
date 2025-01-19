@@ -87,6 +87,9 @@ class Pareto(Continuous):
     def mean(self):
         return np.where(self.alpha > 1, self.alpha * self.m / (self.alpha - 1), np.inf)
 
+    def mode(self):
+        return self.m
+
     def median(self):
         return self.m * 2 ** (1 / self.alpha)
 
