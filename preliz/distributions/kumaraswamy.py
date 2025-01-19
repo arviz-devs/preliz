@@ -93,6 +93,11 @@ class Kumaraswamy(Continuous):
     def mean(self):
         return _mom(self.a, self.b, 1)
 
+    def mode(self):
+        return np.where(
+            (self.a > 1) & (self.b > 1), ((self.a - 1) / (self.a * self.b - 1)) ** (1 / self.a), 1
+        )
+
     def median(self):
         return (1 - 2 ** -(1 / self.b)) ** (1 / self.a)
 
