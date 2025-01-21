@@ -127,17 +127,7 @@ class BetaScaled(Continuous):
         return (self.alpha * self.upper + self.beta * self.lower) / (self.alpha + self.beta)
 
     def mode(self):
-        if self.alpha == 1 and self.beta == 1:
-            return (self.lower + self.upper) / 2
-        elif self.alpha < 1 and self.beta < 1:
-            return np.nan
-        elif self.alpha <= 1 < self.beta:
-            return self.lower
-        elif self.beta <= 1 < self.alpha:
-            return self.upper
-        return self.lower + (self.alpha - 1) / (self.alpha + self.beta - 2) * (
-            self.upper - self.lower
-        )
+        return nb_mode(self.alpha, self.beta, self.lower, self.upper)
 
     def median(self):
         return self.ppf(0.5)
@@ -226,3 +216,16 @@ def nb_logpdf(x, alpha, beta, lower, upper):
 @nb.njit(cache=True)
 def nb_neg_logpdf(x, alpha, beta, lower, upper):
     return -(nb_logpdf(x, alpha, beta, lower, upper)).sum()
+
+
+@nb.njit(cache=True)
+def nb_mode(alpha, beta, lower, upper):
+    if alpha == 1 and beta == 1:
+        return (lower + upper) / 2
+    elif alpha < 1 and beta < 1:
+        return np.nan
+    elif alpha <= 1 < beta:
+        return lower
+    elif beta <= 1 < alpha:
+        return upper
+    return lower + (alpha - 1) / (alpha + beta - 2) * (upper - lower)
