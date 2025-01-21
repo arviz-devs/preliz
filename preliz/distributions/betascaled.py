@@ -127,11 +127,16 @@ class BetaScaled(Continuous):
         return (self.alpha * self.upper + self.beta * self.lower) / (self.alpha + self.beta)
 
     def mode(self):
-        return np.where(
-            (self.alpha > 1) & (self.beta > 1),
-            self.lower
-            + (self.alpha - 1) / (self.alpha + self.beta - 2) * (self.upper - self.lower),
-            (self.lower + self.upper) / 2,
+        if self.alpha == 1 and self.beta == 1:
+            return (self.lower + self.upper) / 2
+        elif self.alpha < 1 and self.beta < 1:
+            return np.nan
+        elif self.alpha <= 1 < self.beta:
+            return self.lower
+        elif self.beta <= 1 < self.alpha:
+            return self.upper
+        return self.lower + (self.alpha - 1) / (self.alpha + self.beta - 2) * (
+            self.upper - self.lower
         )
 
     def median(self):

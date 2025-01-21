@@ -165,9 +165,15 @@ class Beta(Continuous):
         return self.alpha / (self.alpha + self.beta)
 
     def mode(self):
-        return np.where(
-            (self.alpha > 1) & (self.beta > 1), (self.alpha - 1) / (self.alpha + self.beta - 2), 0.5
-        )
+        if self.alpha == 1 and self.beta == 1:
+            return 0.5
+        elif self.alpha < 1 and self.beta < 1:
+            return np.nan
+        elif self.alpha <= 1 < self.beta:
+            return 0
+        elif self.beta <= 1 < self.alpha:
+            return 1
+        return (self.alpha - 1) / (self.alpha + self.beta - 2)
 
     def median(self):
         return self.ppf(0.5)
