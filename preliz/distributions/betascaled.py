@@ -218,7 +218,7 @@ def nb_neg_logpdf(x, alpha, beta, lower, upper):
     return -(nb_logpdf(x, alpha, beta, lower, upper)).sum()
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_mode(alpha, beta, lower, upper):
     if alpha == 1 and beta == 1:
         return (lower + upper) / 2

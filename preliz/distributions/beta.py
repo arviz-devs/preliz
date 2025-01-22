@@ -249,7 +249,7 @@ def nb_neg_logpdf(x, alpha, beta):
     return -(nb_logpdf(x, alpha, beta)).sum()
 
 
-@nb.njit(cache=True)
+@nb.vectorize(nopython=True, cache=True)
 def nb_mode(alpha, beta):
     if alpha == 1 and beta == 1:
         return 0.5
