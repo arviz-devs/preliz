@@ -95,6 +95,11 @@ class Weibull(Continuous):
     def mean(self):
         return self.beta * gamma(1 + 1 / self.alpha)
 
+    def mode(self):
+        return np.where(
+            self.alpha > 1, self.beta * ((self.alpha - 1) / self.alpha) ** (1 / self.alpha), 0
+        )
+
     def median(self):
         return self.beta * np.log(2) ** (1 / self.alpha)
 
