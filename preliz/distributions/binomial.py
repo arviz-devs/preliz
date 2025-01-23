@@ -106,6 +106,9 @@ class Binomial(Discrete):
     def mean(self):
         return self.n * self.p
 
+    def mode(self):
+        return np.where(self.p == 1, self.n, np.floor((self.n + 1) * self.p))
+
     def median(self):
         return np.ceil(self.n * self.p)
 
