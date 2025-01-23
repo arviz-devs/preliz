@@ -8,69 +8,20 @@ style.use("preliz-doc")
 rng = np.random.default_rng(247)
 
 category_colors = {
-    'continuous': 'C3',
-    'discrete': 'C1',
-    'modifier': 'C2'
-}
-
-distribution_categories = {
-    'AsymmetricLaplace': 'continuous',
-    'Beta': 'continuous',
-    'BetaScaled': 'continuous',
-    'Cauchy': 'continuous',
-    'Censored': 'modifier',
-    'ChiSquared': 'continuous',
-    'ExGaussian': 'continuous',
-    'Exponential': 'continuous',
-    'Gamma': 'continuous',
-    'Gumbel': 'continuous',
-    'HalfCauchy': 'continuous',
-    'HalfNormal': 'continuous',
-    'HalfStudentT': 'continuous',
-    'InverseGamma': 'continuous',
-    'Kumaraswamy': 'continuous',
-    'Laplace': 'continuous',
-    'LogNormal': 'continuous',
-    'Logistic': 'continuous',
-    'LogLogistic': 'continuous',
-    'LogitNormal': 'continuous',
-    'Moyal': 'continuous',
-    'Normal': 'continuous',
-    'Pareto': 'continuous',
-    'Rice': 'continuous',
-    'SkewNormal': 'continuous',
-    'StudentT': 'continuous',
-    'SkewStudentT': 'continuous',
-    'Triangular': 'continuous',
-    'Truncated': 'modifier',
-    'TruncatedNormal': 'continuous',
-    'Uniform': 'continuous',
-    'VonMises': 'continuous',
-    'Wald': 'continuous',
-    'Weibull': 'continuous',
-    'Bernoulli': 'discrete',
-    'BetaBinomial': 'discrete',
-    'Binomial': 'discrete',
-    'Categorical': 'discrete',
-    'DiscreteUniform': 'discrete',
-    'DiscreteWeibull': 'discrete',
-    'Geometric': 'discrete',
-    'HyperGeometric': 'discrete',
-    'NegativeBinomial': 'discrete',
-    'Poisson': 'discrete',
-    'ZeroInflatedBinomial': 'discrete',
-    'ZeroInflatedNegativeBinomial': 'discrete',
-    'ZeroInflatedPoisson': 'discrete',
-    'Mixture': 'modifier',
-    'Hurdle': 'modifier',
+    "continuous": "C0",
+    "discrete": "C1",
+    "modifier": "C2",
 }
 
 init_vals["Hurdle"] = None
 init_vals["Mixture"] = None
 init_vals["SkewStudentT"] = {"mu": 0.0, "sigma": 1, "a": 2.5, "b": 1.5}
 for name, params in init_vals.items():
-    category = distribution_categories.get(name, 'continuous')
-    color = category_colors.get(category, 'black')
+    try:
+        dist_kind = getattr(distributions, name)().kind
+    except:
+        dist_kind = "modifier"
+    color = category_colors.get(dist_kind, "C3")
     _, ax = plt.subplots(figsize=(3.5, 2.3))
     dist = getattr(distributions, name)
     if name in ["Truncated", "Censored"]:
