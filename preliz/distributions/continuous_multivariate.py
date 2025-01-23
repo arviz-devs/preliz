@@ -307,6 +307,7 @@ class Dirichlet(Continuous):
                     interval,
                     levels,
                     "full",
+                    legend,
                     figsize,
                     None,
                     xy_lim,
@@ -320,12 +321,22 @@ class Dirichlet(Continuous):
                     interval,
                     levels,
                     None,
+                    legend,
                     figsize,
                     None,
                     xy_lim,
                 )
 
         return interactive(plot, **plot_widgets)
+
+    def mode(self):
+        alpha_sum = np.sum(self.alpha)
+        K = len(self.alpha)
+        return np.where(
+            np.all(self.alpha > 1),
+            (self.alpha - 1) / (alpha_sum - K),
+            np.nan
+        )
 
 
 class MvNormal(Continuous):
@@ -490,7 +501,7 @@ class MvNormal(Continuous):
         ----------
         pointinterval : bool
             Whether to include a plot of the quantiles. Defaults to False. If True the default is to
-            plot the median and two interquantiles ranges.
+            plot the median and two interquantile ranges.
         interval : str
             Type of interval. Available options are highest density interval `"hdi"`,
         equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
@@ -669,3 +680,10 @@ class MvNormal(Continuous):
                 )
 
         return interactive(plot, **plot_widgets)
+
+    def mode(self):
+        """
+        Calculate the mode of the Multivariate Normal distribution.
+        For Multivariate Normal, the mode equals the mean.
+        """
+        return self.mu

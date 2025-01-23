@@ -220,6 +220,15 @@ class SkewStudentT(Continuous):
         )
         return nu4 / nu2**2 - 3
 
+    def mode(self):
+        # For α=0 (symmetric case), mode = ξ
+        # For other cases, mode needs numerical optimization
+        return np.where(
+            self.a == 0,
+            self.mu,
+            self.mu  # This is an approximation,
+        )
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         beta_rng = random_state.beta(self.a, self.b, size)

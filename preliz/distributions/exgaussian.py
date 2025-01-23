@@ -123,6 +123,9 @@ class ExGaussian(Continuous):
         opnus2 = 1.0 + nus2
         return 6.0 * nus2 * nus2 * opnus2 ** (-2)
 
+    def mode(self):
+        return self.mu
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return random_state.normal(self.mu, self.sigma, size) + random_state.exponential(

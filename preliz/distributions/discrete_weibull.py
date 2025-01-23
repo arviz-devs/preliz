@@ -107,6 +107,9 @@ class DiscreteWeibull(Discrete):
     def kurtosis(self):
         return num_kurtosis(self)
 
+    def mode(self):
+        return np.floor(self.q * np.power((self.beta - 1) / self.beta, 1 / self.beta))
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return self.ppf(random_state.uniform(size=size))

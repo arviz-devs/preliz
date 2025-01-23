@@ -150,6 +150,10 @@ class SkewNormal(Continuous):
             * ((delta * np.sqrt(2 / np.pi)) ** 4 / (1 - 2 * (delta**2) / np.pi) ** 2)
         )
 
+    def mode(self):
+        delta = self.alpha / np.sqrt(1 + self.alpha * self.alpha)
+        return self.mu + self.sigma * delta * np.sqrt(2 / np.pi)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         u_0 = random_state.normal(size=size)

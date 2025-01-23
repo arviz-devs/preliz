@@ -149,6 +149,9 @@ class LogitNormal(Continuous):
         pdf = self.pdf(x_values)
         return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
 
+    def mode(self):
+        return 1 / (1 + np.exp(-self.mu))
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return expit(random_state.normal(self.mu, self.sigma, size))
