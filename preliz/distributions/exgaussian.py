@@ -1,6 +1,7 @@
 import numba as nb
 import numpy as np
 from scipy.stats import skew
+from scipy.special import erfcinv
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
@@ -101,6 +102,14 @@ class ExGaussian(Continuous):
         logpdf = self.logpdf(x_values)
         return -np.trapz(np.exp(logpdf) * logpdf, x_values)
 
+    def mode(self):
+        tau = self.nu
+        mu = self.mu
+        sigma = self.sigma
+        
+        t = np.abs(tau) * np.sqrt(2/np.pi)
+        return mu - np.sign(tau) * np.sqrt(2*sigma) * erfcinv(t) + sigma**2/tau
+
     def mean(self):
         return self.mu + self.nu
 
@@ -122,9 +131,6 @@ class ExGaussian(Continuous):
         nus2 = (self.nu / self.sigma) ** 2
         opnus2 = 1.0 + nus2
         return 6.0 * nus2 * nus2 * opnus2 ** (-2)
-
-    def mode(self):
-        return self.mu
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)

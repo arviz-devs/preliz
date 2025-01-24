@@ -221,13 +221,8 @@ class SkewStudentT(Continuous):
         return nu4 / nu2**2 - 3
 
     def mode(self):
-        # For α=0 (symmetric case), mode = ξ
-        # For other cases, mode needs numerical optimization
-        return np.where(
-            self.a == 0,
-            self.mu,
-            self.mu  # This is an approximation,
-        )
+        #Not implement yet
+        pass
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
@@ -244,7 +239,7 @@ class SkewStudentT(Continuous):
 
 
 @nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, mu, sigma, a, b, lower, upper):
+def nb_cdf(x, mu, sigmea, a, b, lower, upper):
     x = (x - mu) / sigma
     if x == -np.inf:
         return 0

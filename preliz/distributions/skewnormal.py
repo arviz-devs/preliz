@@ -151,8 +151,19 @@ class SkewNormal(Continuous):
         )
 
     def mode(self):
-        delta = self.alpha / np.sqrt(1 + self.alpha * self.alpha)
-        return self.mu + self.sigma * delta * np.sqrt(2 / np.pi)
+        alpha = self.alpha
+        delta = alpha / np.sqrt(1 + alpha**2)
+        
+        # Calculate mo(alpha)
+        sqrt_2_pi = np.sqrt(2/np.pi)
+        term1 = sqrt_2_pi * delta
+        term2 = (1 - np.pi/4) * (sqrt_2_pi * delta)**3 / (1 - 2/np.pi * delta**2)
+        term3 = np.sign(alpha)/2 * np.exp(-2*np.pi/abs(alpha)) if alpha != 0 else 0
+        
+        mo_alpha = term1 - term2 - term3
+        
+        # Final mode calculation
+        return self.mu + self.sigma * mo_alpha
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
