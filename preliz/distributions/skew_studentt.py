@@ -239,7 +239,7 @@ class SkewStudentT(Continuous):
 
 
 @nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, mu, sigmea, a, b, lower, upper):
+def nb_cdf(x, mu, sigma, a, b, lower, upper):
     x = (x - mu) / sigma
     if x == -np.inf:
         return 0
