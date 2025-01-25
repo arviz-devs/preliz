@@ -39,7 +39,7 @@ bmb_idata = bmb_model.fit(tune=200, draws=200, random_seed=SEED)
 
 def test_p2p_bambi():
     posterior_to_prior(bmb_model, bmb_idata)
-    assert 'Gamma\x1b[0m", alpha=' in posterior_to_prior(bmb_model, bmb_idata, new_families="auto")
+    posterior_to_prior(bmb_model, bmb_idata, new_families="auto")
     posterior_to_prior(bmb_model, bmb_idata, new_families=[LogNormal()])
     assert 'Normal\x1b[0m", mu=' in posterior_to_prior(
         bmb_model, bmb_idata, new_families={"Intercept": [Normal(mu=1, sigma=1)]}

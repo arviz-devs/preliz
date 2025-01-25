@@ -93,6 +93,9 @@ class Uniform(Continuous):
     def mean(self):
         return (self.upper + self.lower) / 2
 
+    def mode(self):
+        return (self.upper + self.lower) / 2
+
     def median(self):
         return (self.upper + self.lower) / 2
 

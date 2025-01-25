@@ -165,9 +165,7 @@ class Beta(Continuous):
         return self.alpha / (self.alpha + self.beta)
 
     def mode(self):
-        return np.where(
-            (self.alpha > 1) & (self.beta > 1), (self.alpha - 1) / (self.alpha + self.beta - 2), 0.5
-        )
+        return nb_mode(self.alpha, self.beta)
 
     def median(self):
         return self.ppf(0.5)
@@ -249,3 +247,16 @@ def nb_logpdf(x, alpha, beta):
 @nb.njit(cache=True)
 def nb_neg_logpdf(x, alpha, beta):
     return -(nb_logpdf(x, alpha, beta)).sum()
+
+
+@nb.vectorize(nopython=True, cache=True)
+def nb_mode(alpha, beta):
+    if alpha == 1 and beta == 1:
+        return 0.5
+    elif alpha < 1 and beta < 1:
+        return np.nan
+    elif alpha <= 1 < beta:
+        return 0
+    elif beta <= 1 < alpha:
+        return 1
+    return (alpha - 1) / (alpha + beta - 2)
