@@ -5,3 +5,6 @@ sphinx-copybutton
 sphinx_tabs
 sphinx-design
 jupyter-sphinx
+ipympl
+pymc
+bambi

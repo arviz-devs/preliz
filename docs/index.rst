@@ -54,7 +54,6 @@ Examples
 .. toctree::
    :maxdepth: 2
 
-   examples
    gallery_content
    gallery_examples
 
