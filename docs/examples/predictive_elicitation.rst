@@ -43,7 +43,7 @@ This function will automatically generate textboxes for a function, which makes 
 
             pz.predictive_explorer(a_preliz_model)
 
-        .. image:: img/predictive_elicitation/predictive_explorer_preliz_ecdf.png
+        .. image:: img/predictive_explorer_preliz_ecdf.png
             :alt: Predictive Explorer ecdf
             :align: center
 
@@ -63,7 +63,7 @@ This function will automatically generate textboxes for a function, which makes 
             # plot_func set to custom_hist for preliz model
             pz.predictive_explorer(a_preliz_model, samples=10, plot_func=custom_hist)
 
-        .. image:: img/predictive_elicitation/predictive_explorer_preliz_custplot.png
+        .. image:: img/predictive_explorer_preliz_custplot.png
             :alt: Predictive Explorer Custom Plot
             :align: center
 
@@ -100,7 +100,7 @@ This function will automatically generate textboxes for a function, which makes 
 
             pz.predictive_explorer(a_pymc_model)
 
-        .. image:: img/predictive_elicitation/predictive_explorer_pymc_ecdf.png
+        .. image:: img/predictive_explorer_pymc_ecdf.png
             :alt: Predictive Explorer ecdf
             :align: center
 
@@ -120,7 +120,7 @@ This function will automatically generate textboxes for a function, which makes 
             # plot_func set to custom_hist for pymc model
             pz.predictive_explorer(a_pymc_model, samples=10, plot_func=custom_hist)
 
-        .. image:: img/predictive_elicitation/predictive_explorer_pymc_custplot.png
+        .. image:: img/predictive_explorer_pymc_custplot.png
             :alt: Predictive Explorer Custom Plot
             :align: center
 
@@ -160,7 +160,7 @@ This function will automatically generate textboxes for a function, which makes 
 
             pz.predictive_explorer(a_bambi_model)
 
-        .. image:: img/predictive_elicitation/predictive_explorer_bambi_ecdf.png
+        .. image:: img/predictive_explorer_bambi_ecdf.png
             :alt: Predictive Explorer ecdf
             :align: center
 
@@ -180,7 +180,7 @@ This function will automatically generate textboxes for a function, which makes 
             # plot_func set to custom_hist for bambi model
             pz.predictive_explorer(a_bambi_model, samples=10, plot_func=custom_hist)
 
-        .. image:: img/predictive_elicitation/predictive_explorer_bambi_custplot.png
+        .. image:: img/predictive_explorer_bambi_custplot.png
             :alt: Predictive Explorer histogram
             :align: center
 
@@ -204,7 +204,7 @@ Let assume a Normal model with an unknown mean and standard deviation, here ``a`
     %matplotlib widget
     pz.ppa(a_preliz_model)
 
-.. image:: img/predictive_elicitation/ppa_preliz.png
+.. image:: img/ppa_preliz.png
     :alt: Prior predictive assistant
     :align: center
 
@@ -239,6 +239,6 @@ Alternatively to the random initialization, we can provide information to ``ppa`
 If you are unable to run this notebook, you can get a glimpse of ``ppa`` from this gif:
 
 
-.. image:: ppa.gif
+.. image:: img/ppa.gif
     :alt: Prior predictive assistant
     :align: center
