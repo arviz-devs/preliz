@@ -606,7 +606,7 @@ def check_inside_notebook(need_widget=False):
             )
         if need_widget:
             shell_name = shell.__class__.__name__
-            if shell_name == "ZMQInteractiveShell" and get_backend() in [
+            if shell_name == "ZMQInteractiveShell" and get_backend() not in [
                 "ipympl",
                 "widget",
                 "nbagg",
