@@ -606,7 +606,11 @@ def check_inside_notebook(need_widget=False):
             )
         if need_widget:
             shell_name = shell.__class__.__name__
-            if shell_name == "ZMQInteractiveShell" and get_backend() in ["ipympl", "widget", "nbagg"]:
+            if shell_name == "ZMQInteractiveShell" and get_backend() in [
+                "ipympl",
+                "widget",
+                "nbagg",
+            ]:
                 msg = f"To run {name}, you need use the magic `%matplotlib widget`"
                 raise RuntimeError(msg)
     except Exception:
