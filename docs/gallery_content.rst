@@ -7,384 +7,384 @@ Continuous Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./examples/gallery/asymmetric_laplace.html
+      :link: ./distributions/gallery/asymmetric_laplace.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/AsymmetricLaplace.png
+      .. image:: distributions/img/AsymmetricLaplace.png
          :alt: AsymmetricLaplace
 
       +++
       Asymmetric Laplace
 
    .. grid-item-card::
-      :link: ./examples/gallery/beta.html
+      :link: ./distributions/gallery/beta.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Beta.png
+      .. image:: distributions/img/Beta.png
          :alt: Beta
 
       +++
       Beta
 
    .. grid-item-card::
-      :link: ./examples/gallery/beta_scaled.html
+      :link: ./distributions/gallery/beta_scaled.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/BetaScaled.png
+      .. image:: distributions/img/BetaScaled.png
          :alt: BetaScaled
 
       +++
       Beta Scaled
 
    .. grid-item-card::
-      :link: ./examples/gallery/cauchy.html
+      :link: ./distributions/gallery/cauchy.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Cauchy.png
+      .. image:: distributions/img/Cauchy.png
          :alt: Cauchy
 
       +++
       Cauchy
 
    .. grid-item-card::
-      :link: ./examples/gallery/chisquared.html
+      :link: ./distributions/gallery/chisquared.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/ChiSquared.png
+      .. image:: distributions/img/ChiSquared.png
          :alt: ChiSquared
 
       +++
       Chi-Squared
 
    .. grid-item-card::
-      :link: ./examples/gallery/exgaussian.html
+      :link: ./distributions/gallery/exgaussian.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/ExGaussian.png
+      .. image:: distributions/img/ExGaussian.png
          :alt: ExGaussian
 
       +++
       Ex-Gaussian
 
    .. grid-item-card::
-      :link: ./examples/gallery/exponential.html
+      :link: ./distributions/gallery/exponential.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Exponential.png
+      .. image:: distributions/img/Exponential.png
          :alt: Exponential
 
       +++
       Exponential
 
    .. grid-item-card::
-      :link: ./examples/gallery/gamma.html
+      :link: ./distributions/gallery/gamma.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Gamma.png
+      .. image:: distributions/img/Gamma.png
          :alt: Gamma
 
       +++
       Gamma
 
    .. grid-item-card::
-      :link: ./examples/gallery/gumbel.html
+      :link: ./distributions/gallery/gumbel.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Gumbel.png
+      .. image:: distributions/img/Gumbel.png
          :alt: Gumbel
 
       +++
       Gumbel
 
    .. grid-item-card::
-      :link: ./examples/gallery/halfcauchy.html
+      :link: ./distributions/gallery/halfcauchy.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/HalfCauchy.png
+      .. image:: distributions/img/HalfCauchy.png
          :alt: HalfCauchy
 
       +++
       Half-Cauchy
 
    .. grid-item-card::
-      :link: ./examples/gallery/halfnormal.html
+      :link: ./distributions/gallery/halfnormal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/HalfNormal.png
+      .. image:: distributions/img/HalfNormal.png
          :alt: HalfNormal
 
       +++
       Half-Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/halfstudentt.html
+      :link: ./distributions/gallery/halfstudentt.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/HalfStudentT.png
+      .. image:: distributions/img/HalfStudentT.png
          :alt: HalfStudentT
 
       +++
       Half-Student's t
 
    .. grid-item-card::
-      :link: ./examples/gallery/inversegamma.html
+      :link: ./distributions/gallery/inversegamma.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/InverseGamma.png
+      .. image:: distributions/img/InverseGamma.png
          :alt: InverseGamma
 
       +++
       Inverse Gamma
 
    .. grid-item-card::
-      :link: ./examples/gallery/kumaraswamy.html
+      :link: ./distributions/gallery/kumaraswamy.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Kumaraswamy.png
+      .. image:: distributions/img/Kumaraswamy.png
          :alt: Kumaraswamy
 
       +++
       Kumaraswamy
 
    .. grid-item-card::
-      :link: ./examples/gallery/laplace.html
+      :link: ./distributions/gallery/laplace.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Laplace.png
+      .. image:: distributions/img/Laplace.png
          :alt: Laplace
 
       +++
       Laplace
 
    .. grid-item-card::
-      :link: ./examples/gallery/log_normal.html
+      :link: ./distributions/gallery/log_normal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/LogNormal.png
+      .. image:: distributions/img/LogNormal.png
          :alt: LogNormal
 
       +++
       Log-Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/logistic.html
+      :link: ./distributions/gallery/logistic.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Logistic.png
+      .. image:: distributions/img/Logistic.png
          :alt: Logistic
 
       +++
       Logistic
 
    .. grid-item-card::
-      :link: ./examples/gallery/log_logistic.html
+      :link: ./distributions/gallery/log_logistic.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/LogLogistic.png
+      .. image:: distributions/img/LogLogistic.png
          :alt: LogLogistic
 
       +++
       Log-Logistic
 
    .. grid-item-card::
-      :link: ./examples/gallery/logit_normal.html
+      :link: ./distributions/gallery/logit_normal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/LogitNormal.png
+      .. image:: distributions/img/LogitNormal.png
          :alt: LogitNormal
 
       +++
       Logit-Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/moyal.html
+      :link: ./distributions/gallery/moyal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Moyal.png
+      .. image:: distributions/img/Moyal.png
          :alt: Moyal
 
       +++
       Moyal
 
    .. grid-item-card::
-      :link: ./examples/gallery/normal.html
+      :link: ./distributions/gallery/normal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Normal.png
+      .. image:: distributions/img/Normal.png
          :alt: Normal
 
       +++
       Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/pareto.html
+      :link: ./distributions/gallery/pareto.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Pareto.png
+      .. image:: distributions/img/Pareto.png
          :alt: Pareto
 
       +++
       Pareto
 
    .. grid-item-card::
-      :link: ./examples/gallery/rice.html
+      :link: ./distributions/gallery/rice.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Rice.png
+      .. image:: distributions/img/Rice.png
          :alt: Rice
 
       +++
       Rice
 
    .. grid-item-card::
-      :link: ./examples/gallery/skewnormal.html
+      :link: ./distributions/gallery/skewnormal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/SkewNormal.png
+      .. image:: distributions/img/SkewNormal.png
          :alt: SkewNormal
 
       +++
       Skew-Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/students_t.html
+      :link: ./distributions/gallery/students_t.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/StudentT.png
+      .. image:: distributions/img/StudentT.png
          :alt: StudentT
 
       +++
       Student's t
 
    .. grid-item-card::
-      :link: ./examples/gallery/skew_studentt.html
+      :link: ./distributions/gallery/skew_studentt.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/SkewStudentT.png
+      .. image:: distributions/img/SkewStudentT.png
          :alt: SkewStudentT
 
       +++
       Skew-Student's t
 
    .. grid-item-card::
-      :link: ./examples/gallery/triangular.html
+      :link: ./distributions/gallery/triangular.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Triangular.png
+      .. image:: distributions/img/Triangular.png
          :alt: Triangular
 
       +++
       Triangular
 
    .. grid-item-card::
-      :link: ./examples/gallery/truncated_normal.html
+      :link: ./distributions/gallery/truncated_normal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/TruncatedNormal.png
+      .. image:: distributions/img/TruncatedNormal.png
          :alt: TruncatedNormal
 
       +++
       Truncated Normal
 
    .. grid-item-card::
-      :link: ./examples/gallery/uniform.html
+      :link: ./distributions/gallery/uniform.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Uniform.png
+      .. image:: distributions/img/Uniform.png
          :alt: Uniform
 
       +++
       Uniform
 
    .. grid-item-card::
-      :link: ./examples/gallery/vonmises.html
+      :link: ./distributions/gallery/vonmises.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/VonMises.png
+      .. image:: distributions/img/VonMises.png
          :alt: VonMises
 
       +++
       Von Mises
 
    .. grid-item-card::
-      :link: ./examples/gallery/wald.html
+      :link: ./distributions/gallery/wald.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Wald.png
+      .. image:: distributions/img/Wald.png
          :alt: Wald
 
       +++
       Wald
 
    .. grid-item-card::
-      :link: ./examples/gallery/weibull.html
+      :link: ./distributions/gallery/weibull.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Weibull.png
+      .. image:: distributions/img/Weibull.png
          :alt: Weibull
 
       +++
@@ -396,156 +396,156 @@ Discrete Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./examples/gallery/bernoulli.html
+      :link: ./distributions/gallery/bernoulli.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Bernoulli.png
+      .. image:: distributions/img/Bernoulli.png
          :alt: Bernoulli
 
       +++
       Bernoulli
 
    .. grid-item-card::
-      :link: ./examples/gallery/betabinomial.html
+      :link: ./distributions/gallery/betabinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/BetaBinomial.png
+      .. image:: distributions/img/BetaBinomial.png
          :alt: BetaBinomial
 
       +++
       Beta Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/binomial.html
+      :link: ./distributions/gallery/binomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Binomial.png
+      .. image:: distributions/img/Binomial.png
          :alt: Binomial
 
       +++
       Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/categorical.html
+      :link: ./distributions/gallery/categorical.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Categorical.png
+      .. image:: distributions/img/Categorical.png
          :alt: Categorical
 
       +++
       Categorical
 
    .. grid-item-card::
-      :link: ./examples/gallery/discrete_uniform.html
+      :link: ./distributions/gallery/discrete_uniform.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/DiscreteUniform.png
+      .. image:: distributions/img/DiscreteUniform.png
          :alt: DiscreteUniform
 
       +++
       Discrete Uniform
 
    .. grid-item-card::
-      :link: ./examples/gallery/discrete_weibull.html
+      :link: ./distributions/gallery/discrete_weibull.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/DiscreteWeibull.png
+      .. image:: distributions/img/DiscreteWeibull.png
          :alt: DiscreteWeibull
 
       +++
       Discrete Weibull
 
    .. grid-item-card::
-      :link: ./examples/gallery/geometric.html
+      :link: ./distributions/gallery/geometric.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Geometric.png
+      .. image:: distributions/img/Geometric.png
          :alt: Geometric
 
       +++
       Geometric
 
    .. grid-item-card::
-      :link: ./examples/gallery/hypergeometric.html
+      :link: ./distributions/gallery/hypergeometric.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/HyperGeometric.png
+      .. image:: distributions/img/HyperGeometric.png
          :alt: HyperGeometric
 
       +++
       Hypergeometric
 
    .. grid-item-card::
-      :link: ./examples/gallery/negativebinomial.html
+      :link: ./distributions/gallery/negativebinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/NegativeBinomial.png
+      .. image:: distributions/img/NegativeBinomial.png
          :alt: NegativeBinomial
 
       +++
       Negative Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/poisson.html
+      :link: ./distributions/gallery/poisson.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Poisson.png
+      .. image:: distributions/img/Poisson.png
          :alt: Poisson
 
       +++
       Poisson
 
    .. grid-item-card::
-      :link: ./examples/gallery/zeroinflatedbinomial.html
+      :link: ./distributions/gallery/zeroinflatedbinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/ZeroInflatedBinomial.png
+      .. image:: distributions/img/ZeroInflatedBinomial.png
          :alt: ZeroInflatedBinomial
 
       +++
       Zero-Inflated Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/zeroinflatednegativebinomial.html
+      :link: ./distributions/gallery/zeroinflatednegativebinomial.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/ZeroInflatedNegativeBinomial.png
+      .. image:: distributions/img/ZeroInflatedNegativeBinomial.png
          :alt: ZeroInflatedNegativeBinomial
 
       +++
       Zero-Inflated Negative Binomial
 
    .. grid-item-card::
-      :link: ./examples/gallery/zeroinflatedpoisson.html
+      :link: ./distributions/gallery/zeroinflatedpoisson.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/ZeroInflatedPoisson.png
+      .. image:: distributions/img/ZeroInflatedPoisson.png
          :alt: ZeroInflatedPoisson
 
       +++
@@ -557,24 +557,24 @@ Continuous Multivariate Distributions
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./examples/gallery/dirichlet.html
+      :link: ./distributions/gallery/dirichlet.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Dirichlet.png
+      .. image:: distributions/img/Dirichlet.png
          :alt: Dirichlet
 
       +++
       Dirichlet
 
    .. grid-item-card::
-      :link: ./examples/gallery/mvnormal.html
+      :link: ./distributions/gallery/mvnormal.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/MvNormal.png
+      .. image:: distributions/img/MvNormal.png
          :alt: Multivariate Normal
 
       +++
@@ -586,48 +586,48 @@ Distribution Modifiers
    :gutter: 2 2 3 3
 
    .. grid-item-card::
-      :link: ./examples/gallery/censored.html
+      :link: ./distributions/gallery/censored.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Censored.png
+      .. image:: distributions/img/Censored.png
          :alt: Censored
 
       +++
       Censored
 
    .. grid-item-card::
-      :link: ./examples/gallery/hurdle.html
+      :link: ./distributions/gallery/hurdle.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Hurdle.png
+      .. image:: distributions/img/Hurdle.png
          :alt: Hurdle
 
       +++
       Hurdle
 
    .. grid-item-card::
-      :link: ./examples/gallery/mixture.html
+      :link: ./distributions/gallery/mixture.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Mixture.png
+      .. image:: distributions/img/Mixture.png
          :alt: Mixture
 
       +++
       Mixture
 
    .. grid-item-card::
-      :link: ./examples/gallery/truncated.html
+      :link: ./distributions/gallery/truncated.html
       :text-align: center
       :shadow: none
       :class-card: example-gallery
 
-      .. image:: examples/img/Truncated.png
+      .. image:: distributions/img/Truncated.png
          :alt: Truncated
 
       +++
