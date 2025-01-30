@@ -1,5 +1,11 @@
+import sys
+
 import numpy as np
-import pymc as pm
+
+try:
+    import pymc as pm
+except ImportError:
+    pass
 import pytest
 from numpy.testing import assert_allclose
 
@@ -8,6 +14,7 @@ import preliz as pz
 np.random.seed(42)
 
 
+@pytest.mark.skipif(sys.version_info[:2] >= (3, 13), reason="Skipping for Python 3.13 and above")
 @pytest.mark.parametrize(
     "params",
     [
