@@ -73,9 +73,6 @@ F(x \mid lower, upper) =
     \end{cases}
 $$
 
-```{seealso}
-:class: seealso
-
 ```{code-cell}
 ---
 tags: [remove-input]
@@ -88,12 +85,15 @@ for l, u in zip(ls, us):
     Uniform(l, u).plot_cdf()
 ```
 
+```{seealso}
+:class: seealso
+
 **Related Distributions:**
 
 - [Beta](beta.md) - The Uniform distribution with $lower=0$, $upper=1$ is a special case of the Beta distribution with $\alpha = \beta = 1$.
 - [Beta Scaled](beta_scaled.md) - The Uniform distribution is a special case of the Beta Scaled distribution with $\alpha = \beta = 1$ and $lower$, $upper$ parameters.
 - [Discrete Uniform](discrete_uniform.md) - The discrete version of the Uniform distribution.
 ```
-# References
+## References
 
 - Wikipedia - [Uniform distribution](https://en.wikipedia.org/wiki/Continuous_uniform_distribution)
