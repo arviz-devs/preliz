@@ -108,8 +108,8 @@ class Binomial(Discrete):
 
     def mode(self):
         y = (self.n + 1) * self.p
-        if np.issubdtype(type(y), np.integer):
-            return (self.n + 1) * self.p, (self.n + 1) * self.p - 1
+        if not np.mod(y, 1):
+            return y, y - 1
         return np.where(self.p == 1, self.n, np.floor(y))
 
     def median(self):
