@@ -107,7 +107,10 @@ class Binomial(Discrete):
         return self.n * self.p
 
     def mode(self):
-        return np.where(self.p == 1, self.n, np.floor((self.n + 1) * self.p))
+        y = (self.n + 1) * self.p
+        if np.issubdtype(type(y), np.integer):
+            return (self.n + 1) * self.p, (self.n + 1) * self.p - 1
+        return np.where(self.p == 1, self.n, np.floor(y))
 
     def median(self):
         return np.ceil(self.n * self.p)
