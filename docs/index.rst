@@ -48,100 +48,33 @@ It is a community-driven project that aims to provide a comprehensive collection
 * Being agnostic of the underlying probabilistic programming language.
 * Being modular.
 
-Examples
-========
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Getting Started
+
+   Overview <self>
+   installation
+   api_reference
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
+   :caption: Examples
 
    gallery_content
    gallery_examples
 
-References
-==========
-
 .. toctree::
    :maxdepth: 1
+   :hidden:
+   :caption: References
 
-   api_reference
+   citing
+   contributing
    changelog
 
-Installation
-============
-
-PreliZ is tested on Python 3.11+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
-
-
-For the latest release, you can install PreliZ either using pip or conda-forge:
-
-Using pip
----------
-
-.. code-block:: bash
-
-  pip install preliz
-
-To make use of the interactive features, you can install the optional dependencies:
-
-.. tabs::
-
-  .. tab:: JupyterLab
-    .. code-block:: bash
-
-      pip install "preliz[full,lab]"
-
-  .. tab:: Jupyter Notebook
-    .. code-block:: bash
-
-      pip install "preliz[full,notebook]"
-
-Using conda-forge
------------------
-
-.. code-block:: bash
-
-    conda install -c conda-forge preliz
-
-
-Development version
--------------------
-
-The latest development version can be installed from the main branch using pip:
-
-.. code-block:: bash
-
-  pip install git+https://github.com/arviz-devs/preliz.git
-
-
-Contributing
-============
-We welcome contributions from interested individuals or groups! For information about contributing to PreliZ check out our instructions, policies, and guidelines `here <https://github.com/arviz-devs/preliz/blob/main/CONTRIBUTING.md>`_.
-
-See the `GitHub contributor page <https://github.com/arviz-devs/preliz/graphs/contributors>`_.
-
-
-Citation
-========
-
-If you find PreliZ useful in your work we kindly request that you cite the following paper:
-
-::
-
-  @article{Icazatti_2023,
-  author = {Icazatti, Alejandro and Abril-Pla, Oriol and Klami, Arto and Martin, Osvaldo A},
-  doi = {10.21105/joss.05499},
-  journal = {Journal of Open Source Software},
-  month = sep,
-  number = {89},
-  pages = {5499},
-  title = {{PreliZ: A tool-box for prior elicitation}},
-  url = {https://joss.theoj.org/papers/10.21105/joss.05499},
-  volume = {8},
-  year = {2023}
-  }
-
-
 Donations
-=========
+---------
 
 PreliZ, as other ArviZ-devs projects, is a non-profit project under the NumFOCUS umbrella. If you want to support PreliZ financially, you can donate `here <https://numfocus.org/donate-to-arviz>`_.
