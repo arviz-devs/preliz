@@ -1,7 +1,7 @@
 Installation
 ============
 
-PreliZ is tested on Python 3.11+. And depends on ArviZ, matplotlib, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
+PreliZ is tested on Python 3.11+. And depends on matplotlib, numba, NumPy, and SciPy. See `pyproject.toml <https://github.com/arviz-devs/preliz/blob/main/pyproject.toml>`_ for version information.
 
 
 For the latest release, you can install PreliZ either using pip or conda-forge:
