@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/halfstudentt.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Non-Negative](../../gallery_tags.rst#non-negative), [Asymmetric](../../gallery_tags.rst#asymmetric), [Heavy-tailed](../../gallery_tags.rst#heavy-tailed)
+
 The Half-Student's t distribution, also known as the half-t distribution, is a continuous probability distribution that is derived from the Student's t distribution but is restricted to only positive values. It is characterized by two parameters: the degrees of freedom ($\nu$) and the scale parameter ($\sigma$), which determines the width of the distribution. The smaller the value of $\nu$, the heavier the tails of the distribution.
 
 In Bayesian statistics, the Half-Student's t distribution is often used as a prior for scale parameters.

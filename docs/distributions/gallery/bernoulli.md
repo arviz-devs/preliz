@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/bernoulli.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Bounded](../../gallery_tags.rst#bounded), [Non-Negative](../../gallery_tags.rst#non-negative)
+
 The Bernoulli distribution is a discrete probability distribution. It can be thought of as a model for the set of possible outcomes of any single experiment that asks a yes–no question. More formally, it is a random variable which takes the value 1 with probability $p$ and the value 0 with probability $q = 1 − p$.
 
 ## Key properties and parameters

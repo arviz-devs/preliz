@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/kumaraswamy.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Bounded](../../gallery_tags.rst#bounded)
+
 The Kumaraswamy distribution is a continuous probability distribution bounded between 0 and 1. It is characterized by two positive shape parameters: $a$ and $b$. 
 
 The Kumaraswamy distribution is a flexible distribution that can adopt a wide range of shapes, including uniform, U-shape, exponential-like, and many others, always restricted to the unit interval [0, 1].

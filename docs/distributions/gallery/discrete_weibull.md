@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/discreteweibull.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Bounded](../../gallery_tags.rst#bounded)
+
 The Discrete Weibull distribution is a discrete probability distribution used to model the number of trials until an event occurs. It is an analog of the continuous Weibull distribution, adapted for discrete settings. The distribution has two shape parameters: $q$ and $\beta$. The parameter $q$ ($0 < q < 1$) controls the overall probability decay across trials, with smaller values leading to faster decay. The parameter $\beta$ ($\beta > 0$) determines the specific shape of the distribution, influencing how probabilities change as the number of trials increases.
 
 The Discrete Weibull distribution is predominantly used in reliability engineering. It is particularly suitable for modeling failure data measured in discrete units, such as cycles or shocks. This distribution is a versatile tool for analyzing scenarios where event timing is counted in distinct intervals, making it especially valuable in fields that handle discrete data patterns and reliability analysis.

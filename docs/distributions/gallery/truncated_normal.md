@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/truncatednormal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Modifier](../../gallery_tags.rst#modifier), [Bounded](../../gallery_tags.rst#bounded), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The truncated normal distribution is a continuous probability distribution that is a normal distribution restricted to a specific range. It is defined by four parameters: the mean ($\mu$), the standard deviation ($\sigma$), and the lower and upper bounds of the range. 
 
 Truncated normal distributions are commonly used in cases where the observed data is known to fall within a certain range due to physical constraints or measurement limitations.

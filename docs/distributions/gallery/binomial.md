@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/binomial.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Bounded](../../gallery_tags.rst#bounded)
+
 The Binomial distribution is a discrete probability distribution that describes the number of successes in a fixed number $n$ of independent Bernoulli trials (yes/no experiments), each with the same probability of success $p$. 
 
 ## Key properties and parameters

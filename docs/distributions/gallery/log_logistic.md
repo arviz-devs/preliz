@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/loglogistic.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Non-Negative](../../gallery_tags.rst#non-negative), [Extreme values](../../gallery_tags.rst#extreme-values), [Heavy-tailed](../../gallery_tags.rst#heavy-tailed)
+
 The log-logistic distribution, also known as the Fisk distribution, is a continuous probability distribution that is used to model non-negative random variables. It is characterized by two parameters: a scale parameter ($\alpha$), which is also the median of the distribution, and a shape parameter ($\beta$). The dispersion of the distribution decreases as $\beta$ increases.
 
 The log-logistic distribution is often used in survival analysis as a parametric model for events whose rate increases initially and decreases later, as, for example, mortality rate from cancer following diagnosis or treatment. It has been used in hydrology for modelling stream flow rates and precipitation. It is also used in reliability engineering to model the lifetime of components and systems.

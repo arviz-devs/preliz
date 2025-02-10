@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/discreteuniform.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Bounded](../../gallery_tags.rst#bounded)
+
 The Discrete Uniform distribution is a probability distribution where each integer value between `lower` and `upper` (inclusive) has the same probability. This distribution is characterized by two parameters: `lower` and `upper`, defining the range of integers.
 
 A simple example of the Discrete Uniform distribution is rolling a fair six-sided die, where each face has an equal probability of 1/6.

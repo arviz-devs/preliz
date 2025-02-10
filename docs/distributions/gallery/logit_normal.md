@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/logitnormal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Non-Negative](../../gallery_tags.rst#non-negative), [Heavy-tailed](../../gallery_tags.rst#heavy-tailed)
+
 The logit-normal distribution is a continuous probability distribution of a random variable whose [logit](https://en.wikipedia.org/wiki/Logit) (or log-odds) is normally distributed. Thus, if a random variable $X$ follows a logit-normal distribution, then $ Y = \text{logit}(X) = \log\left(\frac{X}{1-X}\right)$ is normally distributed. It is defined for values of $x$ between 0 and 1. It is characterized by two parameters: $\mu$ and $\sigma$, which are the mean and standard deviation of the logit-transformed variable, respectively, not the original variable.
 
 The logit-normal distribution is useful in modeling proportions or ratios. 

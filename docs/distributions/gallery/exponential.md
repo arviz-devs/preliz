@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/exponential.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Non-Negative](../../gallery_tags.rst#non-negative), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The exponential distribution is a continuous probability distribution that describes the time between events in a Poisson process, in which events occur continuously and independently at a constant average rate. It has a memorylessness property, which means that the probability of the event occurring in the next instant of time does not depend on how much time has already elapsed. It is characterized by the rate parameter $\lambda$ which is the reciprocal of the mean of the distribution.
 
 Many real-world phenomena can be modeled using the exponential distribution across various fields. For example, it is used in physics to model the time between decays of a radioactive atom, in medicine to model the time between seizures in patients with epilepsy, in engineering to model the time between failures of a machine, and in finance to model the time between changes in the price of a stock.

@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/weibull.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Non-Negative](../../gallery_tags.rst#non-negative), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The Weibull distribution is a continuous probability distribution that models the "waiting time" until an event occurs. It has two parameters: the shape parameter $\alpha$ and the scale parameter $\beta$.
 
 This distribution is widely used in fields like engineering, survival analysis, and material science. If $\alpha > 1$, the event becomes more likely as time passes, making it useful for modeling aging or wear-out processes. If $\alpha < 1$, the event is more likely at the beginning and decreases over time.

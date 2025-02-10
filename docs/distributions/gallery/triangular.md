@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/triangular.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Bounded](../../gallery_tags.rst#bounded), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The Triangular distribution is a continuous probability distribution with a triangular shape. It is defined by three parameters: the lower bound $lower$, the mode $c$, and the upper bound $upper$. Where $lower \leq c \leq upper$. 
 
 The Triangular distribution is often called a "lack of knowledge" distribution because it can be used when there is no prior knowledge about the distribution of the random variable other than the minimum, maximum, and most likely values. It is often used in business simulations and decision-making, project management, and audio dithering.

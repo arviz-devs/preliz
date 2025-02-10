@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/logistic.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Symmetric](../../gallery_tags.rst#symmetric), [Unbounded](../../gallery_tags.rst#unbounded), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The logistic distribution is a continuous probability distribution with a shape that resembles the normal distribution but with heavier tails. Thus, it is sometimes used as a replacement for the normal when heavier tails are needed. It is defined by two parameters: the mean ($\mu$) and the scale parameter ($s$). The mean determines the center of the distribution, while the scale parameter controls the width.
 
 Its cumulative distribution function is the [logistic function](https://en.wikipedia.org/wiki/Logistic_function), which is characterized by an S-shaped curve (sigmoid curve). It is particularly useful in modeling growth processes, such as population growth, where the rate of growth decreases as the population reaches its carrying capacity. 

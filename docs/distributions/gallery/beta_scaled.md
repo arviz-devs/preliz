@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/betascaled.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Bounded](../../gallery_tags.rst#bounded), [Symmetric](../../gallery_tags.rst#symmetric) (when α = β)
+
 The Beta scaled distribution is a continuous probability distribution similar to the Beta distribution but instead of being bounded between 0 and1 it is bounded between $lower$ and $upper$. It is usually defined by two positive shape parameters: ($\alpha$) and ($\beta$). But other parametrization like mean ($\mu$) and concentration ($\nu$) are also common.
 
 The Beta scaled distribution can adopt a wide range of "shapes" including uniform, U-shape, normal-like, exponential-like, and many others, always restricted to a given interval. This flexibility makes it a versatile choice for modeling random variables that are known to be bounded like percentages, grades, some physical quantities like temperature of liquid water at a given pressure. 

@@ -12,7 +12,7 @@ kernelspec:
 
 <audio controls> <source src="../../_static/asymmetriclaplace.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-[Asymmetric](../../gallery_tags.rst#asymmetric), [Unbounded](../../gallery_tags.rst#unbounded), [Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous)
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Unbounded](../../gallery_tags.rst#unbounded), [Light-tailed](../../gallery_tags.rst#light-tailed)
 
 The Asymmetric Laplace distribution (ALD) is a continuous probability distribution. It is a generalization of the Laplace distribution. The ALD consists of two exponential distributions of unequal scale back to back about $x = \mu$, adjusted to assure continuity and normalization. 
 
