@@ -162,8 +162,14 @@ class SkewNormal(Continuous):
         
         mo_alpha = term1 - term2 - term3
         
-        # Final mode calculation
-        return self.mu + self.sigma * mo_alpha
+        mode_value = self.mu + self.sigma * mo_alpha
+        
+        if alpha > 0:
+            return max(mode_value, self.mu)
+        elif alpha < 0:
+            return min(mode_value, self.mu)
+        else:
+            return self.mu
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)

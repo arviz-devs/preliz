@@ -3,9 +3,8 @@ import numpy as np
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps, num_kurtosis, num_skewness
-from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.optimization import optimize_ml, optimize_moments, find_mode_through_optimization
 from preliz.internal.special import cdf_bounds, ppf_bounds_disc
-from scipy.optimize import minimize_scalar
 
 class DiscreteWeibull(Discrete):
     R"""
@@ -108,12 +107,7 @@ class DiscreteWeibull(Discrete):
         return num_kurtosis(self)
 
     def mode(self):
-        
-        def negative_pdf(x):
-            return -self.pdf(x)
-        
-        result = minimize_scalar(negative_pdf, bounds=(0, 100), method='bounded')
-        return np.floor(result.x)
+        return find_mode_through_optimization(self)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)

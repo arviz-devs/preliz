@@ -3,7 +3,7 @@ import warnings
 from copy import copy
 
 import numpy as np
-from scipy.optimize import brentq, least_squares, minimize, root_scalar
+from scipy.optimize import brentq, least_squares, minimize, minimize_scalar, root_scalar
 from scipy.special import i0, i0e, i1, i1e
 
 from preliz.internal.distribution_helper import init_vals as default_vals
@@ -450,6 +450,32 @@ def find_kappa(data, mu):
         return root_res.root
     else:
         return np.finfo(float).tiny
+
+
+def find_mode_through_optimization(dist, bounds=None):
+    """Find mode of a distribution through numerical optimization.
+    
+    Parameters
+    ----------
+    dist : Distribution
+        Distribution object that has pdf method
+    bounds : tuple, optional
+        (lower, upper) bounds for optimization. If None, uses (0, dist.ppf(0.9999))
+        for positive distributions
+        
+    Returns
+    -------
+    float
+        Mode of the distribution
+    """
+    def negative_pdf(x):
+        return -dist.pdf(x)
+    
+    if bounds is None:
+        bounds = (0, dist.ppf(0.9999))
+        
+    result = minimize_scalar(negative_pdf, bounds=bounds, method='bounded')
+    return result.x
 
 
 def find_ppf(dist, q):

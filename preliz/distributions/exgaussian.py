@@ -1,12 +1,11 @@
 import numba as nb
 import numpy as np
 from scipy.stats import skew
-from scipy.special import erfcinv
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
 from preliz.internal.optimization import find_ppf
-from preliz.internal.special import erf, mean_and_std, norm_logcdf
+from preliz.internal.special import erf, mean_and_std, norm_logcdf, erfcinv
 
 
 class ExGaussian(Continuous):
@@ -102,13 +101,9 @@ class ExGaussian(Continuous):
         logpdf = self.logpdf(x_values)
         return -np.trapz(np.exp(logpdf) * logpdf, x_values)
 
-    def mode(self):
-        tau = self.nu
-        mu = self.mu
-        sigma = self.sigma
-        
-        t = np.abs(tau) * np.sqrt(2/np.pi)
-        return mu - np.sign(tau) * np.sqrt(2*sigma) * erfcinv(t) + sigma**2/tau
+    def mode(self):        
+        t = min((np.abs(self.nu)/self.sigma) * np.sqrt(2/np.pi), 1.99)
+        return self.mu - np.sign(self.nu) * np.sqrt(2*self.sigma) * erfcinv(t) + self.sigma**2/self.nu
 
     def mean(self):
         return self.mu + self.nu

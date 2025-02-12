@@ -220,10 +220,6 @@ class SkewStudentT(Continuous):
         )
         return nu4 / nu2**2 - 3
 
-    def mode(self):
-        #Not implement yet
-        pass
-
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         beta_rng = random_state.beta(self.a, self.b, size)
