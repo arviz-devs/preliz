@@ -82,7 +82,7 @@ for alpha, beta in zip(alphas, betas):
 
 **Related Distributions:**
 
-- [Half-Cauchy](half_cauchy.md) - Considers only the positive half of the Cauchy distribution, often used as a prior for scale parameters.
+- [Half-Cauchy](halfcauchy.md) - Considers only the positive half of the Cauchy distribution, often used as a prior for scale parameters.
 ```
 
 ## References

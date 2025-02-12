@@ -78,7 +78,7 @@ for l, u in zip(ls, us):
 
 **Common Alternatives:**
 
-- [Categorical](categotical.md) - The Discrete Uniform distribution is a special case of the Categorical distribution  where all elements of $p$ are equal.
+- [Categorical](categorical.md) - The Discrete Uniform distribution is a special case of the Categorical distribution  where all elements of $p$ are equal.
 
 **Related Distributions:**
 

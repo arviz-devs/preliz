@@ -89,7 +89,7 @@ for alpha, beta, lower, upper in zip(alphas, betas, lowers, uppers):
 
 **Related Distributions:**
 - [Beta](beta.md) - A Beta scaled distribution with $lower=0$ and $upper=1$.
-- [Kumaraswamy](Kumaraswamy.md) -  It is similar to the Beta scaled distribution, but restricted to the [0, 1] interval and with closed form expression for its probability density function, cumulative distribution function and quantile function.
+- [Kumaraswamy](kumaraswamy.md) -  It is similar to the Beta scaled distribution, but restricted to the [0, 1] interval and with closed form expression for its probability density function, cumulative distribution function and quantile function.
 - [Uniform](uniform.md) - The Uniform distribution on the interval $[lower, upper]$ is a special case of the Beta scaled distribution with $\alpha = \beta = 1$.
 ```
 

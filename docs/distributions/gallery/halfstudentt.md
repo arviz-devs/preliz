@@ -142,7 +142,7 @@ for nu, lam in zip(nus, lambdas):
 
 **Related Distributions:**
 
-- [Student's t](studentt.md) - The Student's t distribution is the parent distribution from which the Half-Student's t distribution is derived.
+- [Student's t](students_t.md) - The Student's t distribution is the parent distribution from which the Half-Student's t distribution is derived.
 ```
 
 ## References

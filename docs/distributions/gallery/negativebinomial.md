@@ -120,13 +120,13 @@ for n, p in zip(ns, ps):
 
 **Common Alternatives:**
 
-- [Poisson](Poisson.md) - The NegativeBinomial distribution arises as a continuous mixture of Poisson distributions where the mixing distribution of the Poisson rate is a gamma distribution.
-- [ZeroInflatedNegativeBinomial](zero_inflated_NegativeBinomial.md) - The Zero-Inflated NegativeBinomial is used when there is an excess of zero counts in the data.
+- [Poisson](poisson.md) - The NegativeBinomial distribution arises as a continuous mixture of Poisson distributions where the mixing distribution of the Poisson rate is a gamma distribution.
+- [ZeroInflatedNegativeBinomial](zeroinflatednegativebinomial.md) - The Zero-Inflated NegativeBinomial is used when there is an excess of zero counts in the data.
 - [HurdleNegativeBinomial](hurdle.md) - The Hurdle NegativeBinomial is used when there is an excess of zero counts in the data.
 
 **Related Distributions:**
 
-- [Geometric](Geometric.md) - The geometric distribution (on $\{ 0, 1, 2, 3, \dots \}$) is a special case of the negative binomial distribution, with $\text{Geom}(p)=\text{NB}(1, p)$.
+- [Geometric](geometric.md) - The geometric distribution (on $\{ 0, 1, 2, 3, \dots \}$) is a special case of the negative binomial distribution, with $\text{Geom}(p)=\text{NB}(1, p)$.
 ```
 
 ## References
