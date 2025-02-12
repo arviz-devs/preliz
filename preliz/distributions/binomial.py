@@ -106,6 +106,12 @@ class Binomial(Discrete):
     def mean(self):
         return self.n * self.p
 
+    def mode(self):
+        y = (self.n + 1) * self.p
+        if np.isscalar(y) and y.is_integer() and 0 < self.p < 1:
+            return y, y - 1
+        return np.where(self.p == 1, self.n, np.floor(y))
+
     def median(self):
         return np.ceil(self.n * self.p)
 
