@@ -108,9 +108,9 @@ class Binomial(Discrete):
 
     def mode(self):
         y = (self.n + 1) * self.p
-        if (np.isin(self.p, [0, 1])) | (np.mod(y, 1) != 0):
-            return np.where(self.p == 1, self.n, np.floor(y))
-        return y, y - 1
+        if np.isscalar(y) and y.is_integer() and 0 < self.p < 1:
+            return y, y - 1
+        return np.where(self.p == 1, self.n, np.floor(y))
 
     def median(self):
         return np.ceil(self.n * self.p)
