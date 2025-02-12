@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/hypergeometric.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Bounded](../../gallery_tags.rst#bounded)
+
 The Hypergeometric distribution is a discrete probability distribution used to model the number of successes in a sequence of $n$ draws, taken whithout replacement, from a finite population of size $N$ containing $K$ successful individuals. The distribution is defined by three parameters: $N$, $K$, and $n$.
 
 This distribution is particularly useful for sampling without replacement, where the probability of success changes with each draw. Common applications include calculating probabilities in games of chance like lottery draws or poker, auditing elections to detect irregularities, and assessing over-representation in statistical tests such as Fisher's exact test.

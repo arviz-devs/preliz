@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/multivariatenormal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Multivariate](../../gallery_tags.rst#multivariate), [Continuous](../../gallery_tags.rst#continuous), [Symmetric](../../gallery_tags.rst#symmetric), [Unbounded](../../gallery_tags.rst#unbounded)
+
 The multivariate normal distribution, also known as the multivariate Gaussian distribution, is a generalization of the univariate normal distribution to multiple dimensions. A random vector is said to follow a $k$-dimensional multivariate normal distribution if every linear combination of its $k$ components follows a univariate normal distribution.
 
 The multivariate normal distribution is often used to describe the joint distribution of a set of correlated random variables. 

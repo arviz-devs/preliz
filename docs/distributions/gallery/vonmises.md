@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/vonmises.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Symmetric](../../gallery_tags.rst#symmetric)
+
 The Von Mises distribution is a continuous probability distribution on the unit circle. It is characterized by two parameters: $\mu$ and $\kappa$, which are the mean direction and concentration parameter, respectively.
 
 The Von Mises distribution is the circular analogue of the normal distribution, and it is used to model circular data, such as wind directions, compass bearings, or angles. 

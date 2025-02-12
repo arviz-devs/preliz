@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/halfcauchy.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Non-Negative](../../gallery_tags.rst#non-negative), [Asymmetric](../../gallery_tags.rst#asymmetric), [Heavy-tailed](../../gallery_tags.rst#heavy-tailed)
+
 The Half-Cauchy distribution is a continuous probability distribution that is derived from the Cauchy distribution but is restricted to only positive values. It is characterized by a single scale parameter ($\beta$), which determines the width of the distribution. Similar to the Cauchy distribution, the Half-Cauchy distribution has undefined mean and variance, making it an example of a "pathological" distribution with heavy tails.
 
 In Bayesian statistics, the Half-Cauchy distribution is often used as a prior for scale parameters.

@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/betabinomial.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Bounded](../../gallery_tags.rst#bounded)
+
 The Beta-Binomial distribution is a discrete probability distribution derived from the Binomial distribution, with its probability of success in each trial governed by a Beta distribution. This distribution is characterized by three parameters:  $\alpha$, $\beta$, and $n$, where $\alpha$ and $\beta$ are the shape parameters of the Beta distribution and $n$ is the number of trials in the Binomial distribution.
 
 ## Key properties and parameters

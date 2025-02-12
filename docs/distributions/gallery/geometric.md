@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/geometric.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Non-Negative](../../gallery_tags.rst#non-negative), [Asymmetric](../../gallery_tags.rst#asymmetric)
+
 The Geometric distribution is a discrete probability distribution used to model the number of Bernoulli trials required to achieve the first success. The distribution has a single parameter, $p$ ($0 < p \leq 1$), representing the probability of success in each Bernoulli trial.
 
 The geometric distribution is memoryless, meaning that the probability of success on the next trial is independent of past outcomes. This property makes it useful in scenarios such as modeling the time until the first occurrence of an event in reliability engineering, quality control, and queuing theory. It is particularly effective for analyzing discrete data patterns where each trial is independent and identically distributed.

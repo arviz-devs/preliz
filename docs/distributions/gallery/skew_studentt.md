@@ -13,6 +13,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/skewstudentt.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Unbounded](../../gallery_tags.rst#unbounded), [Heavy-tailed](../../gallery_tags.rst#heavy-tailed)
+
 The skew-Student's t distribution is a continuous probability distribution that generalizes the Student's t distribution by allowing for non-zero skewness. It is used in various fields when data is skewed and has heavy tails. 
 
 There are several definitions of the skew-Student's t distribution. Here, we use the definition proposed by Jones and Faddy (2003) that is defined in terms of four parameters: the location parameter ($\mu$), the scale parameter ($\sigma$), and two shape parameters ($a$ and $b$). 

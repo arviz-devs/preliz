@@ -13,6 +13,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/mixture.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Modifier](../../gallery_tags.rst#modifier)
+
 This is not a distribution per se, but a modifier of univariate distributions.
 
 A mixture distribution is a probability distribution that results from the combination of two or more univariate distributions. The resulting distribution is a weighted sum of the component distributions. 

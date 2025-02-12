@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/chisquared.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Non-Negative](../../gallery_tags.rst#non-negative), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The chi-squared (also chi-square or $\chi^2$) is a continuous probability distribution characterized by a single parameter, $\nu$, usually called degrees of freedom. This distribution emerges from the sum of the squares of $\nu$ independent standard normal random variables.
 
 The chi-squared distribution is widely used in many statistical tests, for hypothesis testing and constructing confidence intervals. 

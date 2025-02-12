@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/inversegamma.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Non-Negative](../../gallery_tags.rst#non-negative), [Heavy-tailed](../../gallery_tags.rst#heavy-tailed)
+
 The Inverse Gamma distribution is a continuous probability distribution defined as the distribution of the reciprocal of a Gamma-distributed random variable. It is characterized by two parameters: the shape parameter $\alpha$ and the scale parameter $\beta$.
 
 In mathematics, the Lévy distribution (a special case of the inverse gamma distribution with a shape parameter $\alpha=0.5$) describes the hitting time of a Wiener process, which is the probability distribution of the first time this stochastic process reaches a specific level.

@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/laplace.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Symmetric](../../gallery_tags.rst#symmetric), [Unbounded](../../gallery_tags.rst#unbounded), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The Laplace or Laplacian distribution is a continuous probability distribution named after Pierre-Simon Laplace. It is also known as the double exponential distribution due to its shape: it consists of two exponential distributions of the same scale back to back about $x = \mu$. The difference between two independent identically distributed (i.i.d.) exponential random variables follows a Laplace distribution.
 
 The Laplace distribution is characterized by two parameters: the location parameter $\mu$ and the scale parameter $b$.

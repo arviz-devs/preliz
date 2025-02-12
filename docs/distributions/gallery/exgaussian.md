@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/exgaussian.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Unbounded](../../gallery_tags.rst#unbounded), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The Ex-Gaussian distribution (exponentially modified Gaussian distribution or EMG) is a continuous probability distribution that results from the convolution of a normal distribution and an exponential distribution. It is characterized by three parameters: $\mu$, $\sigma$, and $\nu$, which are the mean and standard deviation of the normal component, and the mean of the exponential component, respectively. It has a bell-shaped curve like the normal distribution, but with a positive skew due to the exponential component.
 
 The Ex-Gaussian distribution is commonly used to model reaction times in psychology. It is also used to model the shape of chromatographic peaks, the intermitotic times of cell division, cluster ion beams, and other phenomena.

@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/dirichlet.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Multivariate](../../gallery_tags.rst#multivariate), [Continuous](../../gallery_tags.rst#continuous), [Bounded](../../gallery_tags.rst#bounded)
+
 The Dirichlet distribution is a multivariate continuous probability distribution defined on the standard $K$-simplex, where $K \geq 2$. It is parameterized by a vector of positive concentration parameters $\alpha = (\alpha_1, \alpha_2, \ldots, \alpha_K)$, which control the shape of the distribution. The support of the Dirichlet distribution consists of vectors whose entries sum to one, making it particularly useful for modeling probabilities or proportions.
 
 A key property of the Dirichlet distribution is that it generalizes the Beta distribution to multiple dimensions. When used as a prior distribution in Bayesian statistics, it becomes the conjugate prior of both the categorical and multinomial distributions. This conjugacy simplifies inference, particularly in hierarchical models and Bayesian mixture models. For example, the posterior distribution of a categorical model with a Dirichlet prior remains Dirichlet after observing new data.

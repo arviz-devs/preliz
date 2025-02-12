@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/moyal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Unbounded](../../gallery_tags.rst#unbounded), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The Moyal distribution is a continuous probability distribution that was proposed by the physicist J. E. Moyal in 1955 as an approximation to the [Landau distribution](https://en.wikipedia.org/wiki/Landau_distribution). The Moyal distribution is characterized by two parameters: the location parameter $\mu$ and the scale parameter $\sigma$. 
 
 The Moyal distribution is used in high-energy physics to model the energy loss, and the number of ion pairs produced, by ionization for fast charged particles.

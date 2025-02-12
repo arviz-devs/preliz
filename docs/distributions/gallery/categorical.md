@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/categorical.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Discrete](../../gallery_tags.rst#discrete), [Bounded](../../gallery_tags.rst#bounded)
+
 The Categorical distribution is the most general discrete distribution and is parameterized by a vector $p$ where each element $p_i$ specifies the probabilities of each possible outcome.
 
 ## Key properties and parameters

@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/halfnormal.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Non-Negative](../../gallery_tags.rst#non-negative), [Asymmetric](../../gallery_tags.rst#asymmetric), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The Half-Normal distribution is a continuous probability distribution that is derived from the Normal distribution but is restricted to only positive values. It is characterized by a single scale parameter ($\sigma$), which determines the width of the distribution.
 
 In Bayesian statistics, the Half-Normal distribution is commonly used as a prior for scale parameters.

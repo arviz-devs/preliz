@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/pareto.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Non-Negative](../../gallery_tags.rst#non-negative), [Heavy-tailed](../../gallery_tags.rst#heavy-tailed)
+
 The Pareto distribution is a continuous probability distribution, known for following a power-law and having a heavy right tail. It is defined by two parameters: the scale parameter $m$ and the shape parameter $\alpha$.
 
 It was originally used to describe the distribution of wealth in society where a small proportion of the population holds a large proportion of the wealth (the "80-20 rule"). It has since been used in various fields to describe a wide range of phenomena where events get rarer at greater magnitudes.

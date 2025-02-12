@@ -12,6 +12,8 @@ kernelspec:
 
 <audio controls> <source src="../../_static/rice.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric), [Non-Negative](../../gallery_tags.rst#non-negative), [Light-tailed](../../gallery_tags.rst#light-tailed)
+
 The Rice distribution is the probability distribution of the magnitude of a circularly-symmetric bivariate normal random variable. It's characterized by two parameters: $v$, which represents the non-centrality parameter, and $\sigma$, the scale parameter. 
 
 The Rice distribution is often used in signal processing, particularly in the analysis of noisy signals, such as radar and communication systems.
