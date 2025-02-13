@@ -80,7 +80,7 @@ for p in [0.1, 0.25, 0.75]:
 **Related Distributions:**
 
 - [Exponential Distribution](exponential.md) - Continuous analog of the Geometric distribution, used to model the time between events in a Poisson process.
-- [Negative Binomial Distribution](negative_binomial.md) - The geometric distribution (on $\{ 0, 1, 2, 3, \dots \}$) is a special case of the negative binomial distribution, with $\text{Geom}(p)=\text{NB}(1, p)$.
+- [Negative Binomial Distribution](negativebinomial.md) - The geometric distribution (on $\{ 0, 1, 2, 3, \dots \}$) is a special case of the negative binomial distribution, with $\text{Geom}(p)=\text{NB}(1, p)$.
 ```
 
 ## References

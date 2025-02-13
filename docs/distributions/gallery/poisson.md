@@ -76,8 +76,8 @@ for mu in [0.5, 3, 8]:
 
 **Common Alternatives:**
 
-- [NegativeBinomial](negative_binomial.md) - The Negative Binomial is often used as an alternative the Poisson when the variance is greater than the mean (overdispersed data).
-- [ZeroInflatedPoisson](zero_inflated_poisson.md) - The Zero-Inflated Poisson is used when there is an excess of zero counts in the data.
+- [NegativeBinomial](negativebinomial.md) - The Negative Binomial is often used as an alternative the Poisson when the variance is greater than the mean (overdispersed data).
+- [ZeroInflatedPoisson](zeroinflatedpoisson.md) - The Zero-Inflated Poisson is used when there is an excess of zero counts in the data.
 - [HurdlePoisson](hurdle.md) - The Hurdle Poisson is used when there is an excess of zero counts in the data.
 
 **Related Distributions:**

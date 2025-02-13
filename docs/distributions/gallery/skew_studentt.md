@@ -132,11 +132,11 @@ for mu, lam, a, b in zip(mus, lambdas, a_s, b_s):
 
 **Common Alternatives:**
 
-- [Student's t Distribution](studentst) - The parent distribution of the skew-Student's t distribution. Less flexible than the skew-Student's t distribution.
+- [Student's t Distribution](students_t.md) - The parent distribution of the skew-Student's t distribution. Less flexible than the skew-Student's t distribution.
 
 **Related Distributions:**
 
-- [Skew-Normal Distribution](skewnormal) - A related distribution that generalizes the normal distribution by introducing a skewness parameter, but has lighter tails than the skew-Student's t distribution.
+- [Skew-Normal Distribution](skewnormal.md) - A related distribution that generalizes the normal distribution by introducing a skewness parameter, but has lighter tails than the skew-Student's t distribution.
 ```
 
 ## References:

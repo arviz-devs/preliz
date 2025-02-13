@@ -94,7 +94,7 @@ Gamma(mu=2, sigma=1).plot_cdf();
 **Related Distributions:**
 
 - [Mixture](mixture.md) - A distribution modifier that combines two or more distributions with weights.
-- [ZeroInflatedPoisson](zero_inflated_poisson.md) - A distribution that extends the Poisson distribution by adding a mechanism to account for excess zeros, often observed in count data.
+- [ZeroInflatedPoisson](zeroinflatedpoisson.md) - A distribution that extends the Poisson distribution by adding a mechanism to account for excess zeros, often observed in count data.
 - [Zero-Inflated Binomial Distribution](zeroinflatedbinomial.md) - A distribution that combines the Binomial distribution with a zero-inflation component, useful for modeling count data with an excess of zeros.
 - [Zero-Inflated Negative Binomial Distribution](zeroinflatednegativebinomial.md)- A distribution that combines the Negative Binomial distribution with a zero-inflation component, modeling scenarios with overdispersion and an excess of zeros.
 ```
