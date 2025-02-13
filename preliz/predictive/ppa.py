@@ -175,13 +175,11 @@ class FilterDistribution:
         self.axes = None  # axes used to display the pp_samples
 
     def __call__(self):
-
         if self.engine == "preliz":
             variables, self.model = from_preliz(self.fmodel)
         elif self.engine == "bambi":
             self.fmodel, variables, self.model = from_bambi(self.fmodel, self.draws)
 
-        print(variables, self.model)
         self.pp_samples, self.prior_samples = get_prior_pp_samples(
             self.fmodel, variables, self.draws, self.engine
         )
@@ -208,9 +206,10 @@ class FilterDistribution:
 
     def compute_octiles(self):
         """
-        Compute the octiles for the prior predictive samples. This is used to find similar distributions using a KDTree.
+        Compute the octiles for the prior predictive samples.
 
-        We have empirically found that octiles are a good choice, but this could be the consequence of limited testing.
+        This is used to find similar distributions using a KDTree. We have empirically found that
+        octiles are a good choice, but this could be the consequence of limited testing.
         """
         pp_octiles = np.quantile(
             self.pp_samples, [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875], axis=1
@@ -386,7 +385,6 @@ class FilterDistribution:
             self.fig.canvas.draw()
 
     def on_return_prior(self):
-
         selected = list(self.selected)
 
         if len(selected) > 4:

@@ -1,4 +1,5 @@
 """Functions originally imported from ArviZ."""
+
 import warnings
 
 import numpy as np

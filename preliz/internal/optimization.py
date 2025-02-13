@@ -1,4 +1,5 @@
 """Optimization routines and utilities."""
+
 import warnings
 from copy import copy
 
@@ -299,9 +300,10 @@ def relative_error(dist, lower, upper, required_mass):
 
 def fit_to_epdf(selected_distributions, x_vals, epdf, mean, std, x_min, x_max, extra_pros):
     """
-    Minimize the difference between the pdf and the epdf over a grid of values defined by x_min and x_max.
+    Minimize the difference between the pdf and the epdf.
 
-    Note: This function is intended to be used with pz.roulette
+    Minimization is done over a grid of values defined by x_min and x_max. This function is
+    intended to be used with pz.roulette
     """
     fitted = Loss(len(selected_distributions))
     for dist in selected_distributions:

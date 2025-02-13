@@ -111,7 +111,6 @@ class Hurdle(DistributionTransformer):
             )
 
     def cdf(self, x):
-
         if self.dist == "discrete":
             return np.where(
                 x <= 0, 1 - self.psi, 1 - self.psi * (1 - self.dist.cdf(x)) / (1 - self.dist.cdf(0))

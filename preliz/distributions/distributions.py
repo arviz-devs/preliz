@@ -1,4 +1,5 @@
 """Parent classes for all families."""
+
 import warnings
 from collections import namedtuple
 from copy import copy
@@ -68,7 +69,7 @@ class Distribution:
 
     def summary(self, mass=None, interval=None, fmt=".2f"):
         """
-        Namedtuple with the mean, median, standard deviation, and lower and upper bounds of the equal-tailed interval.
+        Namedtuple with the mean, median, sd, and lower and upper bounds.
 
         Parameters
         ----------
@@ -459,7 +460,9 @@ class Distribution:
 
     def xvals(self, support, n_points=None):
         """
-        Provide x values in the support of the distribution. This is useful for example when plotting.
+        Provide x values in the support of the distribution.
+
+        This is useful for example when plotting.
 
         Parameters
         ----------

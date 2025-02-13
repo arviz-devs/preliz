@@ -129,7 +129,6 @@ def test_auto_recover(distribution, params):
 
 
 def test_recover_right():
-
     dists = [Normal(), Gamma(), Poisson()]
     sample = Normal(0, 1).rvs(10000)
     idx, ax = pz.mle(dists, sample, plot=0)

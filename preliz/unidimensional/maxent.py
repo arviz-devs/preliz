@@ -18,7 +18,10 @@ def maxent(
     ax=None,
 ):
     """
-    Find the maximum entropy distribution with `mass` in the interval defined by the `lower` and `upper` end-points.
+    Find the maximum entropy distribution that satisfies the constraints.
+
+    Find the maximum entropy distribution with `mass` in the interval
+    defined by the `lower` and `upper` end-points.
 
     Parameters
     ----------
@@ -83,7 +86,6 @@ def maxent(
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
         >>> pz.maxent(pz.HalfStudentT(nu=4), 0, 12, 0.9)
-
     """
     valid_distribution(distribution)
 

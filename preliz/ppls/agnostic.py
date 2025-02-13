@@ -1,6 +1,5 @@
 """Functions to communicate with PPLs."""
 
-
 import inspect
 import logging
 import re

@@ -9,7 +9,10 @@ from preliz.internal.rcparams import rcParams
 
 def dirichlet_mode(mode, mass=None, bound=0.01, plot=None, plot_kwargs=None, ax=None):
     """
-    Return a Dirichlet distribution where the marginals have the specified mode and mass and their masses lie within the range mode ± bound.
+    Elicitate a Dirichlet distribution with a given mode and mass.
+
+    Computes a Dirichlet distribution where the marginals have the specified mode
+    and mass and their masses lie within the range mode ± bound.
 
     Parameters
     ----------

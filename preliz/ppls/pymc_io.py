@@ -47,7 +47,11 @@ def back_fitting_pymc(prior, preliz_model, var_info):
 
 
 def compile_mllk(model):
-    """Compile the log-likelihood function for the model to be able to condition on both data and parameters."""
+    """
+    Compile the log-likelihood for a pymc model.
+
+    The compiled function allow us to condition on both data and parameters.
+    """
     obs_rvs = model.observed_RVs[0]
     old_y_value = model.rvs_to_values[obs_rvs]
     new_y_value = obs_rvs.type()
@@ -108,7 +112,7 @@ def extract_preliz_distributions(model):
 
 
 def retrieve_variable_info(model):
-    """Get the shape, size, transformation and parents of each free random variable in a PyMC model."""
+    """Get shape, size, transformation and parents of each free RV in a PyMC model."""
     var_info = {}
     initial_point = model.initial_point()
     for v_var in model.value_vars:
@@ -174,9 +178,9 @@ def write_pymc_string(new_priors, var_info):
                 size = var_info[nkey][1]
                 if size > 1:
                     dist_params = dist_params.split(")")[0]
-                    variables[
-                        i
-                    ] = f'    {nkey:} = pm.{dist_name}("{nkey}", {dist_params}, shape={size})\n'
+                    # fmt: off
+                    variables[i] = f'    {nkey:} = pm.{dist_name}("{nkey}", {dist_params}, shape={size})\n' # noqa: E501
+                    # fmt: on
                 else:
                     variables[i] = f'    {nkey:} = pm.{dist_name}("{nkey}", {dist_params}\n'
 

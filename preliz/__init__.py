@@ -3,6 +3,7 @@ PreliZ.
 
 Exploring and eliciting probability distributions
 """
+
 from os import path as os_path
 
 from matplotlib import rcParams as mpl_rcParams

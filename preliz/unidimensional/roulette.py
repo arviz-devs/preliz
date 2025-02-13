@@ -78,7 +78,6 @@ class Roulette:
         self._output = widgets.Output()
 
         with self._output:
-
             if self._figsize is None:
                 self._figsize = (8, 6)
 

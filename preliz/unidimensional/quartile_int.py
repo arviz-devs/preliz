@@ -130,7 +130,6 @@ class QuartileInt:
         )
 
         if self._dist_names is None:
-
             default_dist = ["Normal", "BetaScaled", "Gamma", "LogNormal", "StudentT"]
 
             self._dist_names = [
