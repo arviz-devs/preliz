@@ -68,7 +68,7 @@ testpaths = [
 ]
 
 [tool.ruff]
-line-length = 220
+line-length = 100
 
 [tool.ruff.lint]
 select = [
