@@ -127,7 +127,7 @@ class Rice(Continuous):
         return -np.trapz(np.exp(logpdf) * logpdf, x_values)
 
     def mean(self):
-        return self.sigma * np.sqrt(np.pi / 2) * _l_half(-self.nu**2 / (2 * self.sigma**2))
+        return self.sigma * np.sqrt(np.pi / 2) * _l_half(-(self.nu**2) / (2 * self.sigma**2))
 
     def median(self):
         return self.ppf(0.5)
@@ -136,7 +136,7 @@ class Rice(Continuous):
         return (
             2 * self.sigma**2
             + self.nu**2
-            - np.pi / 2 * self.sigma**2 * _l_half(-self.nu**2 / (2 * self.sigma**2)) ** 2
+            - np.pi / 2 * self.sigma**2 * _l_half(-(self.nu**2) / (2 * self.sigma**2)) ** 2
         )
 
     def std(self):

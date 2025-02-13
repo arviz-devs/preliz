@@ -1,4 +1,5 @@
 """BetaBinomial probability distribution."""
+
 import numba as nb
 import numpy as np
 

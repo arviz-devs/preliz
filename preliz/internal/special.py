@@ -320,7 +320,9 @@ def betaincinv(a, b, p):
 @nb.njit(cache=True)
 def garcia_approximation(mean, sigma):
     """
-    Approximate method of moments for Weibull distribution, provides good results for values of alpha larger than 0.83.
+    Approximate method of moments for Weibull distribution.
+
+    The approximation is good for values of alpha larger than 0.83.
 
     Oscar Garcia. Simplified method-of-moments estimation for the Weibull distribution. 1981.
     New Zealand Journal of Forestry Science 11:304-306

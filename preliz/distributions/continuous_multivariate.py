@@ -1,4 +1,5 @@
 """Continuous multivariate probability distributions."""
+
 from copy import copy
 
 import numpy as np

@@ -126,17 +126,7 @@ def plot_pdfpmf(
     dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
 ):
     ax = get_ax(ax, figsize)
-    if legend is not None:
-        label = repr_to_matplotlib(dist)
-
-        if moments is not None:
-            label += get_moments(dist, moments)
-
-        if legend == "title":
-            ax.set_title(label)
-            label = None
-    else:
-        label = None
+    label = set_label(dist, legend, moments, ax)
 
     x = dist.xvals(support)
     if dist.kind == "continuous":
@@ -181,8 +171,7 @@ def plot_pdfpmf(
     if pointinterval:
         plot_pointinterval(dist, interval, levels, ax=ax)
 
-    if legend == "legend":
-        side_legend(ax)
+    side_legend(legend, ax)
 
     return ax
 
@@ -191,17 +180,7 @@ def plot_cdf(
     dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
 ):
     ax = get_ax(ax, figsize)
-    if legend is not None:
-        label = repr_to_matplotlib(dist)
-
-        if moments is not None:
-            label += get_moments(dist, moments)
-
-        if legend == "title":
-            ax.set_title(label)
-            label = None
-    else:
-        label = None
+    label = set_label(dist, legend, moments, ax)
 
     ax.set_ylim(-0.05, 1.05)
     x = dist.xvals(support)
@@ -221,24 +200,14 @@ def plot_cdf(
     if pointinterval:
         plot_pointinterval(dist, interval, levels, ax=ax)
 
-    if legend == "legend":
-        side_legend(ax)
+    side_legend(legend, ax)
+
     return ax
 
 
 def plot_ppf(dist, moments, pointinterval, interval, levels, legend, color, alpha, figsize, ax):
     ax = get_ax(ax, figsize)
-    if legend is not None:
-        label = repr_to_matplotlib(dist)
-
-        if moments is not None:
-            label += get_moments(dist, moments)
-
-        if legend == "title":
-            ax.set_title(label)
-            label = None
-    else:
-        label = None
+    label = set_label(dist, legend, moments, ax)
 
     x = np.linspace(0, 1, 1000)
     ax.plot(x, dist.ppf(x), label=label, color=color, alpha=alpha)
@@ -248,8 +217,8 @@ def plot_ppf(dist, moments, pointinterval, interval, levels, legend, color, alph
     if pointinterval:
         plot_pointinterval(dist, interval, levels, rotated=True, ax=ax)
 
-    if legend == "legend":
-        side_legend(ax)
+    side_legend(legend, ax)
+
     return ax
 
 
@@ -263,10 +232,11 @@ def get_ax(ax, figsize):
     return ax
 
 
-def side_legend(ax):
-    bbox = ax.get_position()
-    ax.set_position([bbox.x0, bbox.y0, bbox.width, bbox.height])
-    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+def side_legend(legend, ax):
+    if isinstance(legend, str) and legend != "title":
+        bbox = ax.get_position()
+        ax.set_position([bbox.x0, bbox.y0, bbox.width, bbox.height])
+        ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
 
 def repr_to_matplotlib(distribution):
@@ -297,7 +267,6 @@ def get_moments(dist, moments):
 
 
 def get_slider(name, value, lower, upper):
-
     min_v, max_v, step = generate_range(value, lower, upper)
 
     if isinstance(value, float):
@@ -337,7 +306,6 @@ def generate_range(value, lower, upper):
 
 
 def get_boxes(name, value, lower, upper):
-
     if isinstance(value, float):
         text_type = FloatText
         step = 0.1
@@ -654,3 +622,21 @@ def reset_dist_panel(ax, yticks):
         ax.set_yticks([])
     ax.relim()
     ax.autoscale_view()
+
+
+def set_label(dist, legend, moments, ax):
+    if legend is not None:
+        if isinstance(legend, str) and legend not in ["title", "legend"]:
+            label = legend
+        else:
+            label = repr_to_matplotlib(dist)
+
+            if moments is not None:
+                label += get_moments(dist, moments)
+
+            if legend == "title":
+                ax.set_title(label)
+                label = None
+    else:
+        label = None
+    return label

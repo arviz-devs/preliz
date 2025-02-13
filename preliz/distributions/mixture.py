@@ -63,8 +63,9 @@ class Mixture(DistributionTransformer):
         self.param_names.append("weights")
         self.params_support.append((0, 1))
 
-        self.support = np.min([dist.support[0] for dist in self.dist]), np.max(
-            [dist.support[1] for dist in self.dist]
+        self.support = (
+            np.min([dist.support[0] for dist in self.dist]),
+            np.max([dist.support[1] for dist in self.dist]),
         )
         self.weights = np.asarray(weights)
         self.weights = self.weights / np.sum(self.weights)

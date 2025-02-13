@@ -149,7 +149,6 @@ init_vals = {
 
 
 def get_distributions(dist_names=None):
-
     if dist_names is None:
         all_distributions = modules["preliz.distributions"].__all__
     else:

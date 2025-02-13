@@ -1,4 +1,5 @@
 """Tests plot_utils functions."""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest

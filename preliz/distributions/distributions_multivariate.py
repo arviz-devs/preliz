@@ -1,4 +1,5 @@
 """Parent classes for multivariate families."""
+
 from collections import namedtuple
 
 import numpy as np
@@ -150,7 +151,9 @@ class Continuous(Multivariate):
 
     def xvals(self, support):
         """
-        Provide x values in the support of the distribution. This is useful for example when plotting.
+        Provide x values in the support of the distribution.
+
+        This is useful for example when plotting.
 
         Parameters
         ----------
@@ -193,7 +196,11 @@ class Discrete(Multivariate):
         self.kind = "discrete"
 
     def xvals(self, support):
-        """Provide x values in the support of the distribution. This is useful for example when plotting."""
+        """
+        Provide x values in the support of the distribution.
+
+        This is useful for example when plotting.
+        """
         lower_ep, upper_ep = self._finite_endpoints(support)
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
         return x_vals

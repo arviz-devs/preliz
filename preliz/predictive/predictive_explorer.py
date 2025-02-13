@@ -15,7 +15,7 @@ def predictive_explorer(
     fmodel, samples=50, kind_plot="ecdf", references=None, plot_func=None, engine="auto"
 ):
     """
-    Create textboxes and plot a set of samples returned by a function relating one or more PreliZ distributions.
+    Explore how changing parameters in the prior affects the prior predictive distribution.
 
     Use this function to interactively explore how a prior predictive distribution changes when the
     priors are changed.
