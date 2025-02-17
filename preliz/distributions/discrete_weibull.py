@@ -6,6 +6,7 @@ from preliz.internal.distribution_helper import all_not_none, eps, num_kurtosis,
 from preliz.internal.optimization import optimize_ml, optimize_moments, find_mode
 from preliz.internal.special import cdf_bounds, ppf_bounds_disc
 
+
 class DiscreteWeibull(Discrete):
     R"""
     Discrete Weibull distribution.

@@ -13,6 +13,7 @@ from preliz.internal.special import (
 )
 from preliz.internal.optimization import find_mode_logitnormal
 
+
 class LogitNormal(Continuous):
     r"""
     Logit-Normal distribution.
