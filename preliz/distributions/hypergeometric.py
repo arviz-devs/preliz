@@ -143,6 +143,10 @@ class HyperGeometric(Discrete):
             )
         )
 
+    def mode(self):
+        value = (self.n + 1) * (self.k + 1) / (self.N + 2)
+        return max(np.ceil(value) - 1, np.floor(value))
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return random_state.hypergeometric(self.k, self.N - self.k, self.n, size=size)

@@ -1,6 +1,5 @@
 import numba as nb
 import numpy as np
-
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
 from preliz.internal.special import (
@@ -12,6 +11,7 @@ from preliz.internal.special import (
     mean_and_std,
     ppf_bounds_cont,
 )
+from preliz.internal.optimization import find_mode_logitnormal
 
 
 class LogitNormal(Continuous):
@@ -148,6 +148,9 @@ class LogitNormal(Continuous):
         x_values = self.xvals("full")
         pdf = self.pdf(x_values)
         return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
+
+    def mode(self):
+        return find_mode_logitnormal(self)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
