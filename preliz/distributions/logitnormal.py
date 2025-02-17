@@ -1,6 +1,5 @@
 import numba as nb
 import numpy as np
-from scipy.optimize import root_scalar
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
 from preliz.internal.special import (
