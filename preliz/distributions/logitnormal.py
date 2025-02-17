@@ -12,7 +12,7 @@ from preliz.internal.special import (
     mean_and_std,
     ppf_bounds_cont,
 )
-
+from preliz.internal.optimization import find_mode_logitnormal
 
 class LogitNormal(Continuous):
     r"""
@@ -150,35 +150,7 @@ class LogitNormal(Continuous):
         return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
 
     def mode(self):
-        def mode_equation(x):
-            # The equation is: logit(x) = σ²(2x-1) + μ
-            # We want to find the root of: logit(x) - σ²(2x-1) - μ = 0
-            return logit(x) - (self.sigma**2 * (2*x - 1)) - self.mu     
-        
-        #Left side
-        try:
-            sol1 = root_scalar(mode_equation, bracket=(eps, 0.5-eps)).root
-        except ValueError:
-            sol1 = None
-            
-        #Right side
-        try:
-            sol2 = root_scalar(mode_equation, bracket=(0.5+eps, 1-eps)).root
-        except ValueError:
-            sol2 = None
-            
-        if sol1 is None and sol2 is None:
-            # If no solutions found, return the median as an approximation
-            return self.median()
-        elif sol1 is None:
-            return sol2
-        elif sol2 is None:
-            return sol1
-        else:
-            # Return the solution with higher density
-            if self.pdf(sol1) >= self.pdf(sol2):
-                return sol1
-            return sol2
+        return find_mode_logitnormal(self)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)

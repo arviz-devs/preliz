@@ -5,7 +5,7 @@ from scipy.stats import skew
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
 from preliz.internal.optimization import find_ppf
-from preliz.internal.special import erf, mean_and_std, norm_logcdf, erfcinv
+from preliz.internal.special import erf, mean_and_std, norm_logcdf
 
 
 class ExGaussian(Continuous):
@@ -100,10 +100,6 @@ class ExGaussian(Continuous):
         x_values = self.xvals("restricted")
         logpdf = self.logpdf(x_values)
         return -np.trapz(np.exp(logpdf) * logpdf, x_values)
-
-    def mode(self):        
-        t = min((np.abs(self.nu)/self.sigma) * np.sqrt(2/np.pi), 1.99)
-        return self.mu - np.sign(self.nu) * np.sqrt(2*self.sigma) * erfcinv(t) + self.sigma**2/self.nu
 
     def mean(self):
         return self.mu + self.nu
