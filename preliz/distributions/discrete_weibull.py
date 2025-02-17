@@ -3,7 +3,7 @@ import numpy as np
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps, num_kurtosis, num_skewness
-from preliz.internal.optimization import optimize_ml, optimize_moments, find_mode
+from preliz.internal.optimization import optimize_ml, optimize_moments, find_mode_through_optimization
 from preliz.internal.special import cdf_bounds, ppf_bounds_disc
 
 class DiscreteWeibull(Discrete):
@@ -107,7 +107,7 @@ class DiscreteWeibull(Discrete):
         return num_kurtosis(self)
 
     def mode(self):
-        return find_mode(self)
+        return find_mode_through_optimization(self)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
