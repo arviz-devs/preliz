@@ -129,9 +129,7 @@ class AsymmetricLaplace(Continuous):
 
     def median(self):
         if self.kappa > 1:
-            return self.mu + self.kappa * self.b * np.log(
-                (1 + self.kappa**2) / (2 * self.kappa**2)
-            )
+            return self.mu + self.kappa * self.b * np.log((1 + self.kappa**2) / (2 * self.kappa**2))
         return self.mu - np.log((1 + self.kappa**2) / 2) / (self.kappa / self.b)
 
     def mean(self):
