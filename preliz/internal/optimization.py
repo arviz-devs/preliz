@@ -5,7 +5,7 @@ from copy import copy
 
 import numpy as np
 from scipy.optimize import brentq, least_squares, minimize, minimize_scalar, root_scalar
-from scipy.special import i0, i0e, i1, i1e
+from scipy.special import i0, i0e, i1, i1e, logit
 
 from preliz.internal.distribution_helper import init_vals as default_vals
 
@@ -455,6 +455,8 @@ def find_kappa(data, mu):
 
 
 def find_mode_logitnormal(distribution):
+    eps = np.finfo(float).eps
+
     def mode_equation(x):
         # The equation is: logit(x) = σ²(2x-1) + μ
         # We want to find the root of: logit(x) - σ²(2x-1) - μ = 0
