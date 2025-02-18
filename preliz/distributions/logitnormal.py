@@ -1,7 +1,9 @@
 import numba as nb
 import numpy as np
+
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from preliz.internal.optimization import find_mode_logitnormal
 from preliz.internal.special import (
     cdf_bounds,
     erf,
@@ -11,7 +13,6 @@ from preliz.internal.special import (
     mean_and_std,
     ppf_bounds_cont,
 )
-from preliz.internal.optimization import find_mode_logitnormal
 
 
 class LogitNormal(Continuous):

@@ -3,7 +3,7 @@ import numpy as np
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps, num_kurtosis, num_skewness
-from preliz.internal.optimization import optimize_ml, optimize_moments, find_mode
+from preliz.internal.optimization import find_mode, optimize_ml, optimize_moments
 from preliz.internal.special import cdf_bounds, ppf_bounds_disc
 
 
