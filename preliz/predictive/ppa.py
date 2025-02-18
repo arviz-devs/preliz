@@ -238,10 +238,11 @@ class FilterDistribution:
 
         self.shown.update(shown_list)
 
+        rng = np.random.default_rng(235)
         # If we have not seen all the samples yet, we collect more
         if len(self.shown) != self.draws:
             if target is None:
-                new = np.random.choice(list(set(range(0, len(self.pp_octiles))) - self.shown))
+                new = rng.choice(list(set(range(0, len(self.pp_octiles))) - self.shown))
                 pp_idxs_to_display.append(new)
 
                 for _ in range(8):
