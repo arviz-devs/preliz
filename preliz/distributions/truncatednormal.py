@@ -402,5 +402,7 @@ def nb_rvs(random_samples, mu, sigma, lower, upper):
     alpha = (lower - mu) / sigma
     beta = (upper - mu) / sigma
     z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-    inv_phi = 2**0.5 * erfinv(2 * (0.5 * (1 + erf(alpha / 2**0.5)) + random_samples * z_val) - 1)
+    inv_phi = 2**0.5 * erfinv(
+        2 * (0.5 * (1 + erf(alpha / 2**0.5)) + random_samples * z_val) - 1
+    )
     return inv_phi * sigma + mu
