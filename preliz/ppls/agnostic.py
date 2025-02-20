@@ -233,7 +233,7 @@ def ppl_plot_decorator(func, iterations, kind_plot, references, plot_func, engin
             auto = True
         else:
             auto = False
-        
+
         y_min = kwargs.pop("__y_min__", None)
         y_max = kwargs.pop("__y_max__", None)
         set_ylim = kwargs.pop("__set_ylim__", False)
