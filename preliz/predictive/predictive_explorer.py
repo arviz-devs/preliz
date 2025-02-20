@@ -46,7 +46,11 @@ def predictive_explorer(
     textboxes = get_textboxes(signature, model)
     new_fmodel = ppl_plot_decorator(fmodel, samples, kind_plot, references, plot_func, engine)
     out = interactive_output(new_fmodel, textboxes)
-    default_names = ["__set_xlim__", "__x_min__", "__x_max__", "__resample__"]
+    default_names = [
+        "__set_xlim__", "__x_min__", "__x_max__", 
+        "__set_ylim__", "__y_min__", "__y_max__", 
+        "__resample__"
+    ]    
     default_controls = [textboxes[name] for name in default_names]
     params_controls = [v for k, v in textboxes.items() if k not in default_names]
 

@@ -373,6 +373,24 @@ def get_textboxes(signature, model):
         disabled=False,
     )
 
+    textboxes["__set_ylim__"] = Checkbox(
+        value=False, description="set ylim", disabled=False, indent=False
+    )
+
+    textboxes["__y_min__"] = FloatText(
+        value=-10,
+        step=0.1,
+        description="y_min",
+        disabled=False,
+    )
+
+    textboxes["__y_max__"] = FloatText(
+        value=10,
+        step=0.1,
+        description="y_max",
+        disabled=False,
+    )
+
     textboxes["__resample__"] = ToggleButton(
         value=True,
         description="Resample",
