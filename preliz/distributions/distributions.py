@@ -11,7 +11,7 @@ except ImportError:
 import numpy as np
 
 from preliz.internal.distribution_helper import init_vals, valid_distribution, valid_scalar_params
-from preliz.internal.optimization import optimize_hdi
+from preliz.internal.optimization import find_mode, optimize_hdi
 from preliz.internal.plot_helper import (
     check_inside_notebook,
     get_slider,
@@ -794,6 +794,9 @@ class Continuous(Distribution):
     def __init__(self):
         super().__init__()
         self.kind = "continuous"
+
+    def mode(self):
+        return find_mode(self)
 
 
 class Discrete(Distribution):
