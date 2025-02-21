@@ -234,6 +234,16 @@ def ppl_plot_decorator(func, iterations, kind_plot, references, plot_func, engin
         else:
             auto = False
 
+        y_min = kwargs.pop("__y_min__", None)
+        y_max = kwargs.pop("__y_max__", None)
+        set_ylim = kwargs.pop("__set_ylim__", False)
+        if not set_ylim:
+            y_min = None
+            y_max = None
+            auto_ylim = True
+        else:
+            auto_ylim = False
+
         if engine == "preliz":
             results = []
             for _ in range(iterations):
@@ -264,6 +274,7 @@ def ppl_plot_decorator(func, iterations, kind_plot, references, plot_func, engin
 
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
+        ax.set_ylim(y_min, y_max, auto=auto_ylim)
         if plot_func is None:
             plot_repr(results, kind_plot, references, iterations, ax)
         else:
