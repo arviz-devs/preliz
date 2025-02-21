@@ -3,7 +3,7 @@ from scipy.special import chndtr, chndtrix, i0, i0e, i1
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import optimize_ml, optimize_moments_rice
+from preliz.internal.optimization import find_mode, optimize_ml, optimize_moments_rice
 from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
@@ -128,6 +128,9 @@ class Rice(Continuous):
 
     def mean(self):
         return self.sigma * np.sqrt(np.pi / 2) * _l_half(-(self.nu**2) / (2 * self.sigma**2))
+
+    def mode(self):
+        return find_mode(self)
 
     def median(self):
         return self.ppf(0.5)
