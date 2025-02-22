@@ -8,3 +8,4 @@ jupyter-sphinx
 ipympl
 pymc
 bambi
+sphinxcontrib-bibtex

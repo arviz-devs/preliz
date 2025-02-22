@@ -15,7 +15,7 @@ from preliz.internal.plot_helper import (
 
 class QuartileInt:
     """
-    Prior elicitation for 1D distributions from quartiles.
+    Prior elicitation for 1D distributions from quartiles (See :footcite:p:`Morris2014`).
 
     Parameters
     ----------
@@ -42,8 +42,9 @@ class QuartileInt:
 
     References
     ----------
-    * Morris D.E. et al. (2014) see https://doi.org/10.1016/j.envsoft.2013.10.010
-    * See quartile mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
+
+    .. footbibliography::
+
     """
 
     def __init__(self, q1=1, q2=2, q3=3, dist_names=None, figsize=None):
