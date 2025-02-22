@@ -18,6 +18,7 @@ dependencies:
   - sphinx>=4
   - sphinx-copybutton
   - sphinx-tabs
+  - sphinxcontrib-bibtex
   - jupyter-sphinx
   - pymc>=5.16.0
   - bambi>=0.13.0
