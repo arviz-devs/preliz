@@ -1,10 +1,5 @@
-import pytest
-
-import preliz as pz
+from test_helper import run_notebook
 
 
-@pytest.mark.parametrize(
-    "methods, show_as", [(None, "bibtex"), ([pz.Roulette, pz.dirichlet_mode], "bibtex")]
-)
-def test_citations(methods, show_as):
-    pz.citations(methods, show_as)
+def test_citations():
+    run_notebook("citations.ipynb")
