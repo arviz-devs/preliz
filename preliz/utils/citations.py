@@ -46,6 +46,6 @@ def _citation_bibtex(content, keys):
     for key in keys:
         match = re.search(rf"(@\w+\{{\s*{key}\s*,.*?\n\}})", content, re.DOTALL)
         gen_citations.append(match.group(1))
-    gen_citations = "\n".join(gen_citations)
-    display(Markdown(f"```bibtex\n{gen_citations}\n```"))
-    return gen_citations
+    if gen_citations:
+        gen_citations = "\n".join(gen_citations)
+        display(Markdown(f"```bibtex\n{gen_citations}\n```"))

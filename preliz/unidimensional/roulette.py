@@ -17,7 +17,7 @@ from preliz.internal.plot_helper import check_inside_notebook, representations
 
 class Roulette:
     """
-    Prior elicitation for 1D distribution using the roulette method (See :footcite:p:`Morris2014`).
+    Prior elicitation for 1D distribution using the roulette method (See :footcite:t:`Morris2014`).
 
     Draw 1D distributions using a grid as input.
 

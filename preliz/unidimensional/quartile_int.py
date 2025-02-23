@@ -15,7 +15,7 @@ from preliz.internal.plot_helper import (
 
 class QuartileInt:
     """
-    Prior elicitation for 1D distributions from quartiles (See :footcite:p:`Morris2014`).
+    Prior elicitation for 1D distributions from quartiles (See :footcite:t:`Morris2014`).
 
     Parameters
     ----------

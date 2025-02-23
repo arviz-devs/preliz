@@ -13,7 +13,7 @@ def dirichlet_mode(mode, mass=None, bound=0.01, plot=None, plot_kwargs=None, ax=
 
     Computes a Dirichlet distribution where the marginals have the specified mode
     and mass and their masses lie within the range mode ± bound
-    (Adapted from :footcite:p:`Michael2017`).
+    (Adapted from :footcite:t:`Michael2017`).
 
     Parameters
     ----------
