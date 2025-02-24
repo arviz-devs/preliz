@@ -146,7 +146,7 @@ htmlhelp_basename = "prelizdoc"
 
 # -- For Bibtex files ---------------------------------------------
 
-bibtex_bibfiles = ['../preliz/utils/reference.bib']
+bibtex_bibfiles = ['../preliz/internal/reference.bib']
 
 # -- Options for LaTeX output ------------------------------------------------
 
