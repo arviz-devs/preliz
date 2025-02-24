@@ -12,7 +12,8 @@ def dirichlet_mode(mode, mass=None, bound=0.01, plot=None, plot_kwargs=None, ax=
     Elicitate a Dirichlet distribution with a given mode and mass.
 
     Computes a Dirichlet distribution where the marginals have the specified mode
-    and mass and their masses lie within the range mode ± bound.
+    and mass and their masses lie within the range mode ± bound
+    (Adapted from :footcite:t:`Michael2017`).
 
     Parameters
     ----------
@@ -37,7 +38,9 @@ def dirichlet_mode(mode, mass=None, bound=0.01, plot=None, plot_kwargs=None, ax=
 
     References
     ----------
-    Adapted from  Evans et al. (2017) see https://doi.org/10.3390/e19100564
+
+    .. footbibliography::
+
     """
     if mass is None:
         mass = rcParams["stats.ci_prob"]

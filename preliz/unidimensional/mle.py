@@ -20,7 +20,7 @@ def mle(
     Find the maximum likelihood distribution given a list of distributions and one sample.
 
     AIC with a correction for small sample sizes is used to compare the fits.
-    See https://doi.org/10.1177/0049124104268
+    (See :footcite:t:`Burnham2004`)
 
     Parameters
     ----------
@@ -43,6 +43,12 @@ def mle(
     -------
     idx : array with the indexes to sort ``distributions`` from best to worst match
     axes : matplotlib axes
+
+    References
+    ----------
+
+    .. footbibliography::
+
     """
     for dist in distributions:
         valid_distribution(dist)

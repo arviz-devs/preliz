@@ -17,7 +17,7 @@ from preliz.internal.plot_helper import check_inside_notebook, representations
 
 class Roulette:
     """
-    Prior elicitation for 1D distribution using the roulette method.
+    Prior elicitation for 1D distribution using the roulette method (See :footcite:t:`Morris2014`).
 
     Draw 1D distributions using a grid as input.
 
@@ -53,10 +53,6 @@ class Roulette:
         - inputs: A tuple with the x values, the empirical pdf, the total
             chips, the x_min, the x_max, the number of rows, and the number of columns.
 
-    References
-    ----------
-    * Morris D.E. et al. (2014) see https://doi.org/10.1016/j.envsoft.2013.10.010
-    * See roulette mode http://optics.eee.nottingham.ac.uk/match/uncertainty.php
     """
 
     def __init__(
