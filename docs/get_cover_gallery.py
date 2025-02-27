@@ -7,11 +7,21 @@ from preliz.internal.distribution_helper import init_vals
 style.use("preliz-doc")
 rng = np.random.default_rng(247)
 
+category_colors = {
+    "continuous": "C0",
+    "discrete": "C1",
+    "modifier": "C2",
+}
+
 init_vals["Hurdle"] = None
 init_vals["Mixture"] = None
 init_vals["SkewStudentT"] = {"mu": 0.0, "sigma": 1, "a": 2.5, "b": 1.5}
 for name, params in init_vals.items():
-    color = f"C{rng.integers(0, 4)}"
+    try:
+        dist_kind = getattr(distributions, name)().kind
+    except:
+        dist_kind = "modifier"
+    color = category_colors.get(dist_kind, "C3")
     _, ax = plt.subplots(figsize=(3.5, 2.3))
     dist = getattr(distributions, name)
     if name in ["Truncated", "Censored"]:
@@ -121,4 +131,5 @@ for name, params in init_vals.items():
 
         ax.spines["bottom"].set_position(("data", pos))
 
-    plt.savefig(f"examples/img/{name}.png")
+    plt.savefig(f"distributions/img/{name}.png")
+    plt.close(ax.figure)
