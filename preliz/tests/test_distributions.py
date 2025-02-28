@@ -1,5 +1,3 @@
-import sys
-
 import numpy as np
 import pytest
 from numpy.testing import assert_almost_equal
@@ -293,7 +291,6 @@ def test_ppf(a_few_poissons):
     assert result2 == 4.0
 
 
-@pytest.mark.skipif(sys.version_info[:2] >= (3, 13), reason="Skipping for Python 3.13 and above")
 def test_to_pymc():
     with Model() as model:
         Gamma(1, 1).to_pymc("a", shape=(2, 2))
@@ -310,7 +307,6 @@ def test_to_pymc():
     assert Censored(Normal(0, 1), lower=0).to_pymc().ndim == 0
 
 
-@pytest.mark.skipif(sys.version_info[:2] >= (3, 13), reason="Skipping for Python 3.13 and above")
 def test_to_bambi():
     bambi_prior = Gamma(mu=2, sigma=1).to_bambi()
     assert bambi_prior.name == "Gamma"
