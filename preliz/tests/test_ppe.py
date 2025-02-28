@@ -1,5 +1,3 @@
-import sys
-
 import numpy as np
 
 try:
@@ -14,7 +12,6 @@ import preliz as pz
 np.random.seed(42)
 
 
-@pytest.mark.skipif(sys.version_info[:2] >= (3, 13), reason="Skipping for Python 3.13 and above")
 @pytest.mark.parametrize(
     "params",
     [

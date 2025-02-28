@@ -9,6 +9,6 @@ nbformat
 lxml
 ipykernel
 pandas
-pymc>=5.16.0; python_version<"3.13"
-bambi>=0.13.0; python_version<"3.13"
+pymc>=5.16.0
+bambi>=0.13.0
 ruff

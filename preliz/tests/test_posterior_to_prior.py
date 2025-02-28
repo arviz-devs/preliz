@@ -1,7 +1,4 @@
-import sys
-
 import pandas as pd
-import pytest
 
 from preliz.distributions import Gamma, LogNormal, Normal
 from preliz.ppls.agnostic import posterior_to_prior
@@ -22,7 +19,6 @@ except ImportError:
     pass
 
 
-@pytest.mark.skipif(sys.version_info[:2] >= (3, 13), reason="Skipping for Python 3.13 and above")
 def test_p2p_pymc():
     posterior_to_prior(model, idata)
     assert 'Gamma\x1b[0m("b", alpha=' in posterior_to_prior(model, idata, new_families="auto")
@@ -49,7 +45,6 @@ except ImportError:
     pass
 
 
-@pytest.mark.skipif(sys.version_info[:2] >= (3, 13), reason="Skipping for Python 3.13 and above")
 def test_p2p_bambi():
     posterior_to_prior(bmb_model, bmb_idata)
     posterior_to_prior(bmb_model, bmb_idata, new_families="auto")
