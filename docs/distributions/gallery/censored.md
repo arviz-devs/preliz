@@ -90,7 +90,7 @@ Normal(0, 1).plot_cdf(alpha=0.5);
 
 **Related Distributions:**
 
-- [Truncated](truncated.md) - In a truncated distribution, values outside the range are set to the nearest bound, while in a censored distribution, they are not recorded.
+- [Truncated](truncated.md) - In a truncated distribution, values outside the range are not recorded, while in a censored distribution, they are set to the nearest bound.
 
 ```
 
