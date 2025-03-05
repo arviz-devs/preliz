@@ -89,7 +89,7 @@ Gamma(mu=2, sigma=1).plot_cdf();
 
 **Related Distributions:**
 
-- [Censored](censored.md) - In a censored distribution, values outside the range are not recorded, while in a truncated distribution, they are set to the nearest bound.
+- [Censored](censored.md) - In a censored distribution, values outside the range are set to the nearest bound, while in a truncated distribution, they are not recorded.
 - [TruncatedNormal](truncated_normal.md) - A truncated normal distribution is a normal distribution that has been restricted to a specific range.
 
 ```
