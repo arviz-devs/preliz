@@ -8,9 +8,10 @@ def citations(methods=None, filepath=None, format_type="bibtex"):
 
     Parameters
     ----------
-    methods : A list of preliz methods
-        Displays references for the specified methods or classes.
-        Defaults to ``None``, which shows PreliZ's references.
+    methods : str or list, optional
+        Specifies the PreliZ methods or classes for which to display references.
+        Use `"all"` to show references for all available methods/classes.
+        Defaults to `None`, which displays PreliZ references.
 
     filepath : str or a file-like object
         Specifies the location to save the file.
@@ -22,17 +23,18 @@ def citations(methods=None, filepath=None, format_type="bibtex"):
        Defaults to ``bibtex``.
 
     """
-    if methods is None:
+    ref_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reference.bib")
+    with open(ref_path, encoding="utf-8") as fr:
+        content = fr.read()
+    if methods == "all":
+        keys = set(re.findall(r"@.*?\{(.*?),", content))
+    elif methods is None:
         keys = {"PreliZ", "Icazatti2023"}
     else:
         keys = set()
         for method in methods:
             matches = set(re.findall(r":(?:cite|footcite):[tp]:`(.*?)`", method.__doc__))
             keys.update(matches)
-    ref_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reference.bib")
-    with open(ref_path, encoding="utf-8") as fr:
-        content = fr.read()
-
     if format_type == "bibtex":
         cite_text = _citation_bibtex(content, keys)
         if filepath:
