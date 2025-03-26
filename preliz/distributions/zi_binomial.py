@@ -2,11 +2,11 @@ import numba as nb
 import numpy as np
 from scipy.special import bdtr, bdtrik
 
+from preliz.distributions.binomial import Binomial
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps
 from preliz.internal.optimization import optimize_ml, optimize_moments
 from preliz.internal.special import cdf_bounds, gammaln, ppf_bounds_disc
-from preliz.distributions.binomial import Binomial
 
 
 class ZeroInflatedBinomial(Discrete):
