@@ -6,6 +6,7 @@ from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps
 from preliz.internal.optimization import optimize_ml, optimize_moments
 from preliz.internal.special import cdf_bounds, gammaln, ppf_bounds_disc
+from preliz.distributions.binomial import Binomial
 
 
 class ZeroInflatedBinomial(Discrete):
@@ -100,6 +101,28 @@ class ZeroInflatedBinomial(Discrete):
 
     def mean(self):
         return self.psi * self.n * self.p
+
+    def mode(self):
+        binomial_raw_mode = Binomial(self.n, self.p).mode()
+        binomial_mode = (
+            min(binomial_raw_mode)
+            if isinstance(binomial_raw_mode, tuple)
+            else int(binomial_raw_mode)
+        )
+        if self.psi == 0:
+            return 0
+        elif self.psi == 1:
+            return binomial_mode
+        else:
+            prob_zero = (1 - self.psi) + self.psi * (1 - self.p) ** self.n
+            prob_binomial_mode = self.psi * np.exp(
+                gammaln(self.n + 1)
+                - gammaln(binomial_mode + 1)
+                - gammaln(self.n - binomial_mode + 1)
+                + binomial_mode * np.log(self.p)
+                + (self.n - binomial_mode) * np.log1p(-self.p)
+            )
+            return 0 if prob_zero > prob_binomial_mode else binomial_mode
 
     def median(self):
         return self.ppf(0.5)
