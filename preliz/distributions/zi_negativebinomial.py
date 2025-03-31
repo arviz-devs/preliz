@@ -4,7 +4,7 @@ from scipy.special import nbdtrik
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
-from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.optimization import find_discrete_mode, optimize_ml, optimize_moments
 from preliz.internal.special import betainc, cdf_bounds, gammaln, ppf_bounds_disc, xlogy
 
 
@@ -150,6 +150,9 @@ class ZeroInflatedNegativeBinomial(Discrete):
 
     def mean(self):
         return self.psi * self.mu
+
+    def mode(self):
+        return find_discrete_mode(self)
 
     def median(self):
         # missing explicit expression
