@@ -517,12 +517,12 @@ def find_mode(distribution, bounds=None):
 
 def find_discrete_mode(dist):
     """
-    Find mode for a discrete distribution via brute-force search.
+    Find mode for a discrete distribution from its pmf.
 
     Parameters
     ----------
     dist : Distribution
-        Discrete distribution object with pdf and xvals method.
+        PreliZ distribution object
 
     Returns
     -------
