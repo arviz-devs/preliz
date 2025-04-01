@@ -515,6 +515,25 @@ def find_mode(distribution, bounds=None):
     return result.x
 
 
+def find_discrete_mode(dist):
+    """
+    Find mode for a discrete distribution from its pmf.
+
+    Parameters
+    ----------
+    dist : Distribution
+        PreliZ distribution object
+
+    Returns
+    -------
+    int
+        Mode of the distribution
+    """
+    x_vals = dist.xvals("full")
+    pmf_vals = dist.pdf(x_vals)
+    return int(x_vals[np.argmax(pmf_vals)])
+
+
 def find_ppf(dist, q):
     q = np.atleast_1d(q)
     ppf = np.zeros_like(q)
