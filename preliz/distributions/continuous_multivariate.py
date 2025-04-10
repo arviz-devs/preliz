@@ -423,6 +423,9 @@ class MvNormal(Continuous):
     def _fit_mle(self, sample, **kwargs):
         raise NotImplementedError
 
+    def mode(self):
+        return tuple(self.mu)
+
     def plot_pdf(
         self,
         marginals=True,
