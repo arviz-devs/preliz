@@ -424,7 +424,7 @@ class MvNormal(Continuous):
         raise NotImplementedError
 
     def mode(self):
-        return tuple(self.mu)
+        return self.mu
 
     def plot_pdf(
         self,
