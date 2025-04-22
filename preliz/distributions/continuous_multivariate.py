@@ -85,6 +85,13 @@ class Dirichlet(Continuous):
     def _fit_mle(self, sample, **kwargs):
         raise NotImplementedError
 
+    def mode(self):
+        return (
+            (self.alpha - 1) / (np.sum(self.alpha) - len(self.alpha))
+            if np.all(self.alpha > 1)
+            else None
+        )
+
     def plot_pdf(
         self,
         marginals=True,
