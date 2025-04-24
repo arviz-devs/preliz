@@ -515,7 +515,7 @@ def find_mode(distribution, bounds=None):
     return result.x
 
 
-def find_discrete_mode(dist):
+def find_discrete_mode(dist, bounds=None):
     """
     Find mode for a discrete distribution from its pmf.
 
@@ -523,6 +523,8 @@ def find_discrete_mode(dist):
     ----------
     dist : Distribution
         PreliZ distribution object
+    bounds : tuple, optional
+        (lower, upper) bounds for optimization. If None, uses the full range of x-values.
 
     Returns
     -------
@@ -530,6 +532,8 @@ def find_discrete_mode(dist):
         Mode of the distribution
     """
     x_vals = dist.xvals("full")
+    if bounds is not None:
+        x_vals = x_vals[(x_vals >= bounds[0]) & (x_vals <= bounds[1])]
     pmf_vals = dist.pdf(x_vals)
     return int(x_vals[np.argmax(pmf_vals)])
 
