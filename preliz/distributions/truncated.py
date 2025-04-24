@@ -87,6 +87,16 @@ class Truncated(DistributionTransformer):
         else:
             return np.trapz(x_values * pdf, x_values)
 
+    def mode(self):
+        if self.kind == "discrete":
+            from preliz.internal.optimization import find_discrete_mode
+
+            return find_discrete_mode(self)
+        else:
+            from preliz.internal.optimization import find_mode
+
+            return find_mode(self)
+
     def median(self):
         return self.ppf(0.5)
 
