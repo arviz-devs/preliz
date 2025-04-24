@@ -488,16 +488,14 @@ def find_mode_logitnormal(distribution):
         return sol2
 
 
-def find_mode(distribution, bounds=None):
-    """Find mode of a distribution through numerical optimization.
+def find_mode(distribution):
+    """
+    Find mode of a distribution through numerical optimization.
 
     Parameters
     ----------
-    dist : Distribution
+    distribution : Distribution
         Distribution object that has pdf method
-    bounds : tuple, optional
-        (lower, upper) bounds for optimization. If None, uses (0, dist.ppf(0.9999))
-        for positive distributions
 
     Returns
     -------
@@ -508,14 +506,12 @@ def find_mode(distribution, bounds=None):
     def negative_pdf(x):
         return -distribution.pdf(x)
 
-    if bounds is None:
-        bounds = distribution._finite_endpoints("full")
-
+    bounds = distribution._finite_endpoints("full")
     result = minimize_scalar(negative_pdf, bounds=bounds, method="bounded")
     return result.x
 
 
-def find_discrete_mode(dist, bounds=None):
+def find_discrete_mode(dist):
     """
     Find mode for a discrete distribution from its pmf.
 
@@ -523,8 +519,6 @@ def find_discrete_mode(dist, bounds=None):
     ----------
     dist : Distribution
         PreliZ distribution object
-    bounds : tuple, optional
-        (lower, upper) bounds for optimization. If None, uses the full range of x-values.
 
     Returns
     -------
@@ -532,8 +526,6 @@ def find_discrete_mode(dist, bounds=None):
         Mode of the distribution
     """
     x_vals = dist.xvals("full")
-    if bounds is not None:
-        x_vals = x_vals[(x_vals >= bounds[0]) & (x_vals <= bounds[1])]
     pmf_vals = dist.pdf(x_vals)
     return int(x_vals[np.argmax(pmf_vals)])
 
