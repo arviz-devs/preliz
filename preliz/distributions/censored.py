@@ -93,6 +93,16 @@ class Censored(DistributionTransformer):
         mean_trunc = Truncated(self.dist, self.lower, self.upper).mean()
         return xprody(self.lower, p_low) + mean_trunc * p_int + xprody(self.upper, p_up)
 
+    def mode(self):
+        if self.kind == "discrete":
+            from preliz.internal.optimization import find_discrete_mode
+
+            return find_discrete_mode(self)
+        else:
+            from preliz.internal.optimization import find_mode
+
+            return find_mode(self)
+
     def median(self):
         return np.clip(self.dist.median(), self.lower, self.upper)
 
