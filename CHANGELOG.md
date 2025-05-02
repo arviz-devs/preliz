@@ -1,3 +1,27 @@
+<a id="0.17.0"></a>
+# [0.17.0](https://github.com/arviz-devs/preliz/releases/tag/0.17.0) - 2025-05-02
+
+## What's Changed
+
+### New Features
+* Add mode method for Discrete distributions by [@aleicazatti](https://github.com/aleicazatti) in [#660](https://github.com/arviz-devs/preliz/pull/660)
+* Add mode method to MvNormal by [@aleicazatti](https://github.com/aleicazatti) in [#661](https://github.com/arviz-devs/preliz/pull/661)
+* Add Mode method to Dirichlet by [@aleicazatti](https://github.com/aleicazatti) in [#662](https://github.com/arviz-devs/preliz/pull/662)
+* Add Mode method to Truncated by [@aleicazatti](https://github.com/aleicazatti) in [#663](https://github.com/arviz-devs/preliz/pull/663)
+* Add Mode to Hurdle and Censored by [@aleicazatti](https://github.com/aleicazatti) in [#664](https://github.com/arviz-devs/preliz/pull/664)
+
+### Documentation
+* Add "all" to methods in citations by [@rohanbabbar04](https://github.com/rohanbabbar04) in [#658](https://github.com/arviz-devs/preliz/pull/658)
+ 
+### Maintenance and bug fixes
+* Allow scipy version 1.15 by [@aloctavodia](https://github.com/aloctavodia) in [#666](https://github.com/arviz-devs/preliz/pull/666)
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.16.0...0.17.0
+
+[Changes][0.17.0]
+
+
 <a id="0.16.0"></a>
 # [0.16.0](https://github.com/arviz-devs/preliz/releases/tag/0.16.0) - 2025-03-07
 
@@ -794,6 +818,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.17.0]: https://github.com/arviz-devs/preliz/compare/0.16.0...0.17.0
 [0.16.0]: https://github.com/arviz-devs/preliz/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/arviz-devs/preliz/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/arviz-devs/preliz/compare/0.13.0...0.14.0
