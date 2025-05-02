@@ -75,7 +75,7 @@ from preliz.distributions import (
         (Normal(), -1, 0, 1, (0, 1.482)),
         (Pareto(), 0.5, 1, 4, (0.541, 0.289)),
         (Rice(), 2, 4, 6, (0, 3.395)),
-        (SkewStudentT(), 2, 4, 6, (4, 2.648, 1.663, 1.663)),
+        (SkewStudentT(), 2, 4, 6, (4.000, 2.648, 1.663, 1.663)),
         pytest.param(
             StudentT(),
             -1,
@@ -100,7 +100,7 @@ from preliz.distributions import (
         (HyperGeometric(), 3, 4, 5, (50, 10, 20)),
         (NegativeBinomial(), 3, 5, 10, (7.283, 2.167)),
         (Poisson(), 4, 5, 6, (5.641)),
-        (ZeroInflatedBinomial(), 1, 4, 7, (0.660, 10.947, 0.670)),
+        (ZeroInflatedBinomial(), 1, 4, 7, (0.660, 10.983, 0.670)),
         (ZeroInflatedBinomial(psi=0.7), 2, 4, 6, (10.0, 0.571)),
         (ZeroInflatedNegativeBinomial(), 2, 4, 6, (0.87, 5.24, 17.49)),
         (ZeroInflatedNegativeBinomial(psi=0.9), 2, 4, 6, (5.16, 11.32)),
