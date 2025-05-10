@@ -107,7 +107,7 @@ Actually, `moments` suports a specifying the moment with the “m” (mean), “
 dist.moments(types="md")
 ```
 
-One important note is that PreliZ compues the [excess kurtosis](https://en.wikipedia.org/wiki/Kurtosis#Excess_kurtosis), then for a Normal we get 0.
+One important note is that PreliZ computes the [excess kurtosis](https://en.wikipedia.org/wiki/Kurtosis#Excess_kurtosis), then for a Normal we get 0.
 
 ```{jupyter-execute}
 
