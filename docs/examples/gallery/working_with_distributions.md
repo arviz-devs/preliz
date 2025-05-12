@@ -196,13 +196,13 @@ pz.Gamma(alpha=50, beta=1).plot_interactive()
 
 PreliZ supports some special “distributions” that act as modifiers of other univariate distributions. Currently, we have:
 
-- [Censored](https://preliz.readthedocs.io/en/latest/examples/gallery/censored.html) - A censored distribution arises when data is limited to a certain range, and values outside this range are not recorded.
+- [Censored](https://preliz.readthedocs.io/en/latest/distributions/gallery/censored.html) - A censored distribution arises when data is limited to a certain range, and values outside this range are not recorded.
 
-- [Truncated](https://preliz.readthedocs.io/en/latest/examples/gallery/truncated.html) - Truncated distributions arise in cases where the ability to record, or even to know about, occurrences is limited to values which lie above or below a given threshold or within a specified range.
+- [Truncated](https://preliz.readthedocs.io/en/latest/distributions/gallery/truncated.html) - Truncated distributions arise in cases where the ability to record, or even to know about, occurrences is limited to values which lie above or below a given threshold or within a specified range.
 
-- [Mixture](https://preliz.readthedocs.io/en/latest/examples/gallery/mixture.html) - A mixture distribution is a distribution that is composed of a mixture of two or more distributions. The mixture distribution is the sum of the component distributions, weighted by the probability of each component distribution.
+- [Mixture](https://preliz.readthedocs.io/en/latest/distributions/gallery/mixture.html) - A mixture distribution is a distribution that is composed of a mixture of two or more distributions. The mixture distribution is the sum of the component distributions, weighted by the probability of each component distribution.
 
-- [Hurdle](https://preliz.readthedocs.io/en/latest/examples/gallery/hurdle.html) - A hurdle distribution is a mixture distribution of with one process generating zeros and another non-zeros. This is different from a zero-inflated distribution, where we also have a mixture one generating zeros and another generating both zeros and positive values.
+- [Hurdle](https://preliz.readthedocs.io/en/latest/distributions/gallery/hurdle.html) - A hurdle distribution is a mixture distribution of with one process generating zeros and another non-zeros. This is different from a zero-inflated distribution, where we also have a mixture one generating zeros and another generating both zeros and positive values.
 
 ```{jupyter-execute}
 
