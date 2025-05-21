@@ -197,6 +197,16 @@ class Distribution:
         """
         return 1 - self.cdf(x)
 
+    def logsf(self, x):
+        """Log survival function log(1 - cdf).
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the sf
+        """
+        return np.log(self.sf(x))
+
     def isf(self, x):
         """Inverse survival function (inverse of sf).
 
