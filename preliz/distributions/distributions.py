@@ -177,6 +177,36 @@ class Distribution:
         """
         raise NotImplementedError
 
+    def logcdf(self, x):
+        """Log cumulative distribution function.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the logcdf
+        """
+        return np.log(self.cdf(x))
+
+    def sf(self, x):
+        """Survival function (1 - cdf).
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the sf
+        """
+        return 1 - self.cdf(x)
+
+    def isf(self, x):
+        """Inverse survival function (inverse of sf).
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the inverse of the sf
+        """
+        return self.ppf(1 - np.array(x))
+
     def entropy(self):
         """Entropy."""
         raise NotImplementedError

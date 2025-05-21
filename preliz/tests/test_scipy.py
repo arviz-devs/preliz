@@ -255,13 +255,36 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
     else:
         assert_almost_equal(actual_cdf, expected_cdf, decimal=6)
 
+    actual_logcdf = preliz_dist.logcdf(extended_vals)
+    expected_logcdf = scipy_dist.logcdf(extended_vals)
+
+    if preliz_name in ["HalfStudentT", "LogitNormal"]:
+        assert_almost_equal(actual_logcdf, expected_logcdf, decimal=2)
+    else:
+        assert_almost_equal(actual_logcdf, expected_logcdf, decimal=5)
+
+    actual_sf = preliz_dist.sf(extended_vals)
+    expected_sf = scipy_dist.sf(extended_vals)
+
+    if preliz_name in ["HalfStudentT", "LogitNormal"]:
+        assert_almost_equal(actual_sf, expected_sf, decimal=2)
+    else:
+        assert_almost_equal(actual_sf, expected_sf, decimal=6)
+
     x_vals = [-1, 0, 0.25, 0.5, 0.75, 1, 2]
     actual_ppf = preliz_dist.ppf(x_vals)
     expected_ppf = scipy_dist.ppf(x_vals)
-    if preliz_name in ["HalfStudentT", "Wald", "LogitNormal", "SkewNormal", "ExGaussian"]:
+    if preliz_name in ["HalfStudentT", "LogitNormal", "ExGaussian"]:
         assert_almost_equal(actual_ppf, expected_ppf, decimal=2)
     else:
         assert_almost_equal(actual_ppf, expected_ppf)
+
+    actual_isf = preliz_dist.isf(x_vals)
+    expected_isf = scipy_dist.isf(x_vals)
+    if preliz_name in ["HalfStudentT", "LogitNormal", "ExGaussian"]:
+        assert_almost_equal(actual_isf, expected_isf, decimal=2)
+    else:
+        assert_almost_equal(actual_isf, expected_isf)
 
     actual_logpdf = preliz_dist.logpdf(extended_vals)
     if preliz_dist.kind == "continuous":
