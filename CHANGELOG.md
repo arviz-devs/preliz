@@ -1,3 +1,24 @@
+<a id="0.18.0"></a>
+# [0.18.0](https://github.com/arviz-devs/preliz/releases/tag/0.18.0) - 2025-05-21
+
+## What's Changed
+
+### New Features
+* add logcdf, sf and isf by [@aloctavodia](https://github.com/aloctavodia) in [#670](https://github.com/arviz-devs/preliz/pull/670)
+
+### Documentation
+* Correct a typo: compues -> computes by [@star1327p](https://github.com/star1327p) in [#668](https://github.com/arviz-devs/preliz/pull/668)
+* Update the links in Distributions modifiers by [@star1327p](https://github.com/star1327p) in [#669](https://github.com/arviz-devs/preliz/pull/669)
+
+
+## New Contributors
+* [@star1327p](https://github.com/star1327p) made their first contribution in [#668](https://github.com/arviz-devs/preliz/pull/668)
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.17.0...0.18.0
+
+[Changes][0.18.0]
+
+
 <a id="0.17.0"></a>
 # [0.17.0](https://github.com/arviz-devs/preliz/releases/tag/0.17.0) - 2025-05-02
 
@@ -818,6 +839,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.18.0]: https://github.com/arviz-devs/preliz/compare/0.17.0...0.18.0
 [0.17.0]: https://github.com/arviz-devs/preliz/compare/0.16.0...0.17.0
 [0.16.0]: https://github.com/arviz-devs/preliz/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/arviz-devs/preliz/compare/0.14.0...0.15.0
