@@ -17,7 +17,7 @@ from preliz.internal.rcparams import rc_context, rcParams
 from preliz.internal.citations import citations
 
 
-__version__ = "0.18.0"
+__version__ = "0.19.0"
 
 
 # Allow legend outside plot in maxent to be included in the saved figure
