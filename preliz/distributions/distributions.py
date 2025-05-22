@@ -203,7 +203,7 @@ class Distribution:
         Parameters
         ----------
         x : array_like
-            Values on which to evaluate the sf
+            Values on which to evaluate the logsf
         """
         return np.log(self.sf(x))
 

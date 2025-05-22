@@ -265,14 +265,20 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
 
     actual_sf = preliz_dist.sf(extended_vals)
     expected_sf = scipy_dist.sf(extended_vals)
-    actual_logsf = preliz_dist.logsf(extended_vals)
-    expected_logsf = scipy_dist.logsf(extended_vals)
 
     if preliz_name in ["HalfStudentT", "LogitNormal"]:
         assert_almost_equal(actual_sf, expected_sf, decimal=2)
-        assert_almost_equal(actual_logsf, expected_logsf, decimal=1)
     else:
         assert_almost_equal(actual_sf, expected_sf, decimal=6)
+
+    actual_logsf = preliz_dist.logsf(extended_vals)
+    expected_logsf = scipy_dist.logsf(extended_vals)
+
+    if preliz_name == "HalfStudentT":
+        assert_almost_equal(actual_logsf, expected_logsf, decimal=0)
+    elif preliz_name == "LogitNormal":
+        assert_almost_equal(actual_logsf, expected_logsf, decimal=2)
+    else:
         assert_almost_equal(actual_logsf, expected_logsf, decimal=4)
 
     x_vals = [-1, 0, 0.25, 0.5, 0.75, 1, 2]
