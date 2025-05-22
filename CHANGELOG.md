@@ -1,3 +1,15 @@
+<a id="0.19.0"></a>
+# [0.19.0](https://github.com/arviz-devs/preliz/releases/tag/0.19.0) - 2025-05-22
+
+## What's Changed
+* add logsf method by [@OriolAbril](https://github.com/OriolAbril) in [#671](https://github.com/arviz-devs/preliz/pull/671)
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.18.0...0.19.0
+
+[Changes][0.19.0]
+
+
 <a id="0.18.0"></a>
 # [0.18.0](https://github.com/arviz-devs/preliz/releases/tag/0.18.0) - 2025-05-21
 
@@ -839,6 +851,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.19.0]: https://github.com/arviz-devs/preliz/compare/0.18.0...0.19.0
 [0.18.0]: https://github.com/arviz-devs/preliz/compare/0.17.0...0.18.0
 [0.17.0]: https://github.com/arviz-devs/preliz/compare/0.16.0...0.17.0
 [0.16.0]: https://github.com/arviz-devs/preliz/compare/0.15.0...0.16.0
