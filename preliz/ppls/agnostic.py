@@ -222,7 +222,9 @@ def match_preliz_dist(all_dist_str, source, engine):
     return matches
 
 
-def ppl_plot_decorator(func, iterations, kind_plot, references, plot_func, engine):
+def ppl_plot_decorator(
+    func, iterations, kind_plot, references, plot_func, engine, group, var_name, stats_kwargs
+):
     def looper(*args, **kwargs):
         kwargs.pop("__resample__")
         x_min = kwargs.pop("__x_min__")
@@ -234,6 +236,7 @@ def ppl_plot_decorator(func, iterations, kind_plot, references, plot_func, engin
         else:
             auto = False
 
+        var_to_plot = var_name
         y_min = kwargs.pop("__y_min__", None)
         y_max = kwargs.pop("__y_max__", None)
         set_ylim = kwargs.pop("__set_ylim__", False)
@@ -243,6 +246,8 @@ def ppl_plot_decorator(func, iterations, kind_plot, references, plot_func, engin
             auto_ylim = True
         else:
             auto_ylim = False
+
+        kind = kwargs.pop("__kind__", kind_plot)
 
         if engine == "preliz":
             results = []
@@ -255,28 +260,30 @@ def ppl_plot_decorator(func, iterations, kind_plot, references, plot_func, engin
         elif engine == "bambi":
             model = func(*args, **kwargs)
             model.build()
+            if var_to_plot is None:
+                var_to_plot = model.observed_RVs[0].name
+
             with disable_pymc_sampling_logs():
                 idata = model.prior_predictive(iterations)
-            results = (
-                idata["prior_predictive"]
-                .stack(sample=("chain", "draw"))[model.response_component.response.name]
-                .values.T
-            )
+            results = idata[group].stack(sample=("chain", "draw"))[var_to_plot].values.T
+            if group == "prior":
+                results = np.atleast_2d(results)
 
         elif engine == "pymc":
             with func(*args, **kwargs) as model:
-                obs_name = model.observed_RVs[0].name
+                if var_to_plot is None:
+                    var_to_plot = model.observed_RVs[0].name
                 with disable_pymc_sampling_logs():
                     idata = sample_prior_predictive(samples=iterations)
-                results = (
-                    idata["prior_predictive"].stack(sample=("chain", "draw"))[obs_name].values.T
-                )
+                results = idata[group].stack(sample=("chain", "draw"))[var_to_plot].values.T
+            if group == "prior":
+                results = np.atleast_2d(results)
 
         _, ax = plt.subplots()
         ax.set_xlim(x_min, x_max, auto=auto)
         ax.set_ylim(y_min, y_max, auto=auto_ylim)
         if plot_func is None:
-            plot_repr(results, kind_plot, references, iterations, ax)
+            plot_repr(results, kind, references, iterations, stats_kwargs, ax)
         else:
             plot_func(results, ax)
 
