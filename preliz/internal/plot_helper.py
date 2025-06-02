@@ -4,7 +4,15 @@ import traceback
 
 try:
     from IPython import get_ipython
-    from ipywidgets import Checkbox, FloatSlider, FloatText, IntSlider, IntText, ToggleButton
+    from ipywidgets import (
+        Checkbox,
+        FloatSlider,
+        FloatText,
+        IntSlider,
+        IntText,
+        RadioButtons,
+        ToggleButton,
+    )
 except ImportError:
     pass
 
@@ -323,7 +331,7 @@ def get_boxes(name, value, lower, upper):
     return text
 
 
-def get_textboxes(signature, model):
+def get_textboxes(signature, model, kind_plot):
     textboxes = {}
     for name, param in signature.parameters.items():
         if isinstance(param.default, int | float):
@@ -399,6 +407,13 @@ def get_textboxes(signature, model):
         tooltip="Resample",
     )
 
+    textboxes["__kind__"] = RadioButtons(
+        options=["hist", "kde", "ecdf"],
+        value=kind_plot,
+        description="Kind",
+        disabled=False,
+    )
+
     return textboxes
 
 
@@ -432,8 +447,9 @@ def plot_decorator(func, iterations, kind_plot, references, plot_func):
     return looper
 
 
-def plot_repr(results, kind_plot, references, iterations, ax):
+def plot_repr(results, kind_plot, references, iterations, stats_kwargs, ax):
     alpha = max(0.01, 1 - iterations * 0.009)
+    stats_kwargs.setdefault("alpha", alpha)
 
     if kind_plot == "hist":
         if results[0].dtype.kind == "i":
@@ -442,31 +458,29 @@ def plot_repr(results, kind_plot, references, iterations, ax):
                 ax.set_xticks(bins + 0.5)
         else:
             bins = "auto"
-        ax.hist(
-            results.T,
-            alpha=alpha,
-            density=True,
-            color=["0.5"] * iterations,
-            bins=bins,
-            histtype="step",
-        )
-        ax.hist(
-            np.concatenate(results),
-            density=True,
-            bins=bins,
-            color="k",
-            ls="--",
-            histtype="step",
-        )
+
+        stats_kwargs.setdefault("bins", bins)
+        stats_kwargs.setdefault("density", True)
+        stats_kwargs.setdefault("histtype", "step")
+        stats_kwargs.setdefault("alpha", alpha)
+        stats_kwargs.setdefault("color", ["0.5"] * iterations)
+
+        ax.hist(results.T, **stats_kwargs)
+        stats_kwargs.pop("color")
+        stats_kwargs.pop("ls", None)
+        ax.hist(np.concatenate(results), color="k", ls="--", **stats_kwargs)
     elif kind_plot == "kde":
+        stats_kwargs.setdefault("color", "0.5")
         for result in results:
-            ax.plot(*kde(result), "0.5", alpha=alpha)
+            ax.plot(*kde(result), **stats_kwargs)
         ax.plot(*kde(np.concatenate(results)), "k--")
+
     elif kind_plot == "ecdf":
+        stats_kwargs.setdefault("color", "0.5")
         ax.plot(
             np.sort(results, axis=1).T,
             np.linspace(0, 1, len(results[0]), endpoint=False),
-            color="0.5",
+            **stats_kwargs,
         )
         a = np.concatenate(results)
         ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")

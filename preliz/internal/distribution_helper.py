@@ -145,6 +145,7 @@ init_vals = {
     "ZeroInflatedPoisson": {"psi": 0.8, "mu": 4.5},
     "Truncated": {"lower": -10, "upper": 10},
     "Censored": {"lower": -10, "upper": 10},
+    "Dirichlet": {"alpha": [1.0, 1.0, 1.0]},
 }
 
 
