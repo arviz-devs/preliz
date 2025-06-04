@@ -14,10 +14,12 @@ try:
 except ModuleNotFoundError:
     pass
 
+from preliz.distributions import Gamma, HalfNormal, Normal
 from preliz.internal.distribution_helper import get_distributions
+from preliz.unidimensional import mle
 
 
-def back_fitting_pymc(prior, preliz_model, var_info):
+def back_fitting_pymc(prior, preliz_model, var_info, new_families=None):
     """
     Fit the samples from prior into user provided model's prior.
 
@@ -32,18 +34,34 @@ def back_fitting_pymc(prior, preliz_model, var_info):
             params = []
             for i in range(size):
                 opt_values = prior[rv_name][:, i]
+                # Not sure how to fit alternative families.
                 dist = preliz_model[rv_name]
                 dist._fit_mle(opt_values)
                 params.append(dist.params)
             dist._parametrization(*[np.array(x) for x in zip(*params)])
         else:
             opt_values = prior[rv_name]
-            dist = preliz_model[rv_name]
-            dist._fit_mle(opt_values)
+            dists = set_families(preliz_model[rv_name], rv_name, new_families)
+            idx, _ = mle(dists, opt_values, plot=False)
+            dist = dists[idx[0]]
 
         new_priors[rv_name] = dist
 
     return new_priors
+
+
+def set_families(dist, var, new_families):
+    dists = [dist]
+    if new_families is not None:
+        if new_families == "auto":
+            alt = [Normal(), HalfNormal(), Gamma()]
+            dists += [a for a in alt if dist.__class__.__name__ != a.__class__.__name__]
+        elif isinstance(new_families, list):
+            dists += new_families
+        elif isinstance(new_families, dict):
+            dists += new_families.get(var, [])
+
+    return dists
 
 
 def compile_mllk(model):

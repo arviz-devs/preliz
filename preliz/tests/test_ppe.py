@@ -68,9 +68,7 @@ def test_ppe(params):
         )
         pm.Normal("y", x_idx, z, observed=Y)
 
-    new_prior = (
-        pz.ppe(model, target, method="projective").replace("\x1b[1m", "").replace("\x1b[0m", "")
-    )
+    new_prior = pz.ppe(model, target).replace("\x1b[1m", "").replace("\x1b[0m", "")
     exec_context = {}
     exec(new_prior, globals(), exec_context)
     model = exec_context.get("model")
