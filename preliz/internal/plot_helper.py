@@ -18,10 +18,10 @@ except ImportError:
 
 import matplotlib.pyplot as plt
 import numpy as np
+from arviz_stats.base import array_stats
 from matplotlib import _pylab_helpers, get_backend
 from matplotlib.ticker import MaxNLocator
 
-from preliz.internal.narviz import hdi, kde
 from preliz.internal.rcparams import rcParams
 
 
@@ -74,9 +74,9 @@ def plot_pointinterval(distribution, interval=None, levels=None, rotated=False, 
 
         if dist_type == "sample":
             if interval == "hdi":
-                func = hdi
+                func = array_stats.hdi
             if interval == "eti":
-                func = eti
+                func = array_stats.eti
 
             q_tmp = np.concatenate([func(distribution, m) for m in levels])
             median = np.median(distribution)
@@ -123,11 +123,6 @@ def _plot_sub_iterval(q_s, lw, rotated, ax):
             x1, y1 = y1, x1
         ax.plot(x0, y0, "k", solid_capstyle="butt", lw=lw)
         ax.plot(x1, y1, "k", solid_capstyle="butt", lw=lw)
-
-
-def eti(distribution, mass):
-    lower = (1 - mass) / 2
-    return np.quantile(distribution, (lower, mass + lower))
 
 
 def plot_pdfpmf(
@@ -472,8 +467,10 @@ def plot_repr(results, kind_plot, references, iterations, stats_kwargs, ax):
     elif kind_plot == "kde":
         stats_kwargs.setdefault("color", "0.5")
         for result in results:
-            ax.plot(*kde(result), **stats_kwargs)
-        ax.plot(*kde(np.concatenate(results)), "k--")
+            grid, pdf, _ = array_stats.kde(result)
+            ax.plot(grid, pdf, **stats_kwargs)
+        grid, pdf, _ = array_stats.kde(np.concatenate(results))
+        ax.plot(grid, pdf, "k--")
 
     elif kind_plot == "ecdf":
         stats_kwargs.setdefault("color", "0.5")
@@ -592,7 +589,7 @@ def plot_references(references, ax):
 
 
 def plot_kde(sample, ax, **kwargs):
-    grid, pdf = kde(sample)
+    grid, pdf, _ = array_stats.kde(sample)
     ax.plot(grid, pdf, **kwargs)
 
 
