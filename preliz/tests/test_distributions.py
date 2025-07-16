@@ -218,6 +218,65 @@ def test_mle(distribution, params):
         raise AssertionError("Test failed after 10 attempts")
 
 
+@pytest.mark.parametrize(
+    "distribution, params",
+    [
+        (AsymmetricLaplace, (1, 4, 3)),
+        (Beta, (2, 5)),
+        (BetaScaled, (2, 2, -1, 2)),
+        (Cauchy, (0, 1)),
+        (ChiSquared, (1,)),
+        (ExGaussian, (0, 1, 3)),
+        (Exponential, (0.5,)),
+        (Gamma, (1, 0.5)),
+        (Gumbel, (0, 1)),
+        (HalfCauchy, (1,)),
+        (HalfNormal, (1,)),
+        (HalfStudentT, (100, 1)),
+        (InverseGamma, (3, 0.5)),
+        (Kumaraswamy, (2, 3)),
+        (Laplace, (0, 1)),
+        (Logistic, (0, 1)),
+        (LogNormal, (0, 0.5)),
+        (LogitNormal, (0, 0.5)),
+        (Moyal, (0, 2)),
+        (Normal, (0, 1)),
+        (Pareto, (5, 1)),
+        (Rice, (1, 2)),
+        (SkewNormal, (0, 1, 0)),
+        (SkewNormal, (0, 1, -1)),
+        (StudentT, (4, 0, 1)),
+        (StudentT, (1000, 0, 1)),
+        (Triangular, (-3, 0, 5)),
+        (TruncatedNormal, (0, 1, -1, 1)),
+        (Uniform, (0, 1)),
+        (VonMises, (0, 1)),
+        (Wald, (1, 1)),
+        (Weibull, (2, 1)),
+        (BetaBinomial, (2, 2, 10)),
+        (Binomial, (20, 0.5)),
+        (DiscreteUniform, (-10, 10)),
+        (DiscreteWeibull, (0.5, 1)),
+        (Geometric, (0.5,)),
+        (NegativeBinomial, (8, 4)),
+        (Poisson, (4.5,)),
+        (ZeroInflatedNegativeBinomial, (0.7, 8, 4)),
+        (
+            ZeroInflatedPoisson,
+            (
+                0.8,
+                4.5,
+            ),
+        ),
+    ],
+)
+def test_hdi(distribution, params):
+    dist = distribution(*params)
+    sample = dist.rvs(10_000)
+    interval = dist.hdi(mass=0.8)
+    assert_almost_equal(np.mean((sample >= interval[0]) & (sample < interval[1])), 0.8, decimal=1)
+
+
 @pytest.mark.parametrize("fmt", (".2f", ".1g"))
 @pytest.mark.parametrize("interval", ("hdi", "eti", [0.25, 0.75]))
 @pytest.mark.parametrize("mass", (0.5, 0.95))
@@ -263,16 +322,6 @@ def test_eti(a_few_poissons):
         d_1.eti()
     result = d_2.eti()
     assert result == (1.0, 9.0)
-
-
-def test_hdi(a_few_poissons):
-    d_0, d_1, d_2 = a_few_poissons
-    with pytest.raises(ValueError):
-        d_0.hdi()
-    with pytest.raises(ValueError):
-        d_1.hdi()
-    result = d_2.hdi()
-    assert result == (1.0, 8.0)
 
 
 def test_cdf(a_few_poissons):
