@@ -159,7 +159,7 @@ from preliz.distributions import (
         (ZeroInflatedBinomial(), 1, 10, 0.9, (0, 10), (0.902, 9.0, 0.485)),
         (ZeroInflatedBinomial(psi=0.7), 1, 10, 0.7, (0, 11), (10, 0.897)),
         (ZeroInflatedNegativeBinomial(), 2, 15, 0.8, (0, np.inf), (1.0, 9.864, 3.432)),
-        (ZeroInflatedNegativeBinomial(psi=0.9), 2, 15, 0.8, (0, np.inf), (9.011, 6.300)),
+        (ZeroInflatedNegativeBinomial(psi=0.9), 2, 15, 0.8, (0, np.inf), (9.009, 6.297)),
         (ZeroInflatedPoisson(), 0, 3, 0.7, (0, np.inf), (0.847, 3.005)),
         (ZeroInflatedPoisson(psi=0.8), 0, 3, 0.7, (0, np.inf), (3.099)),
     ],

@@ -83,7 +83,7 @@ def num_skewness(dist):
     if dist.kind == "discrete":
         return np.sum(((x_values - mean) / std) ** 3 * pdf)
     else:
-        return np.trapz(((x_values - mean) / std) ** 3 * pdf, x_values)
+        return np.trapezoid(((x_values - mean) / std) ** 3 * pdf, x_values)
 
 
 def num_kurtosis(dist):
@@ -94,7 +94,7 @@ def num_kurtosis(dist):
     if dist.kind == "discrete":
         return np.sum(((x_values - mean) / std) ** 4 * pdf) - 3
     else:
-        return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
+        return np.trapezoid(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
 
 
 init_vals = {
