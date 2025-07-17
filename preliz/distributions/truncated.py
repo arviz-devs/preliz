@@ -85,7 +85,7 @@ class Truncated(DistributionTransformer):
         if self.kind == "discrete":
             return np.sum(x_values * pdf)
         else:
-            return np.trapz(x_values * pdf, x_values)
+            return np.trapezoid(x_values * pdf, x_values)
 
     def mode(self):
         if self.kind == "discrete":
@@ -106,7 +106,7 @@ class Truncated(DistributionTransformer):
         if self.kind == "discrete":
             return np.sum((x_values - self.mean()) ** 2 * pdf)
         else:
-            return np.trapz((x_values - self.mean()) ** 2 * pdf, x_values)
+            return np.trapezoid((x_values - self.mean()) ** 2 * pdf, x_values)
 
     def std(self):
         return self.var() ** 0.5
@@ -150,7 +150,7 @@ class Truncated(DistributionTransformer):
         if self.kind == "discrete":
             return -np.sum(np.exp(logpdf) * logpdf)
         else:
-            return -np.trapz(np.exp(logpdf) * logpdf, x_values)
+            return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
 
     def _neg_logpdf(self, x):
         return -self.logpdf(x).sum()

@@ -612,7 +612,7 @@ def _ppf_single(dist, q):
 def get_weighted_rvs(target, size, rng):
     targets = [t[0] for t in target]
     weights = [t[1] for t in target]
-    target_rnd_choices = np.random.choice(len(targets), size=size, p=weights)
+    target_rnd_choices = rng.choice(len(targets), size=size, p=weights)
     samples = [target.rvs(size, random_state=rng) for target in targets]
     return np.choose(target_rnd_choices, samples)
 

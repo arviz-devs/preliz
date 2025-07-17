@@ -101,7 +101,7 @@ from preliz.distributions import (
         (Normal(), -1, 1, 0.683, (-np.inf, np.inf), (0, 1)),
         (Normal(), 10, 12, 0.99, (-np.inf, np.inf), (11, 0.388)),
         (Normal(mu=0.5), -1, 1, 0.8, (-np.inf, np.inf), (0.581)),
-        (Pareto(), 1, 4, 0.9, (1, np.inf), (1.660, 1)),
+        (Pareto(), 1, 4, 0.9, (1, np.inf), (1.694, 0.997)),
         (Pareto(m=2), 1, 4, 0.9, (2, np.inf), (3.321)),
         (Rice(), 0, 4, 0.7, (0, np.inf), (0, 2.577)),
         (Rice(), 1, 10, 0.9, (0, np.inf), (3.454, 3.734)),

@@ -26,10 +26,10 @@ dynamic = ["version"]
 description = "Exploring and eliciting probability distributions."
 dependencies = [
   "arviz_stats>=0.6.0",  
-  "matplotlib>=3.7",
+  "matplotlib>=3.8",
   "numba>=0.59",
-  "numpy>=1.24",
-  "scipy>=1.10, <1.16"
+  "numpy>=2.0",
+  "scipy>=1.12"
 ]
 
 [tool.flit.module]
@@ -89,8 +89,6 @@ ignore = [
     "PLR2004",  # magic value comparison
     "PLR0915",  # too many statements
     "PLC0415",  # import outside of top level
-    "NPY002",   # Replace legacy `np.random.randn` call with `np.random.Generator`
-    "NPY201",   # `np.trapz` will be removed in NumPy 2.0. Use `numpy.trapezoid` on NumPy 2.0, or ignore this warning on earlier versions.
     "D1"    # Missing docstring
 ]
 

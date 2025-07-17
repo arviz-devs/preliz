@@ -118,7 +118,7 @@ class LogLogistic(Continuous):
         x_values = self.xvals("full")
         pdf = self.pdf(x_values)
         return np.where(
-            self.beta > 3, np.trapz(((x_values - mean) / std) ** 3 * pdf, x_values), np.nan
+            self.beta > 3, np.trapezoid(((x_values - mean) / std) ** 3 * pdf, x_values), np.nan
         )
 
     def kurtosis(self):
@@ -127,7 +127,7 @@ class LogLogistic(Continuous):
         x_values = self.xvals("full")
         pdf = self.pdf(x_values)
         return np.where(
-            self.beta > 4, np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3, np.nan
+            self.beta > 4, np.trapezoid(((x_values - mean) / std) ** 4 * pdf, x_values) - 3, np.nan
         )
 
     def rvs(self, size=None, random_state=None):

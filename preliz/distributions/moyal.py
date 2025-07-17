@@ -92,7 +92,7 @@ class Moyal(Continuous):
     def entropy(self):
         x_values = self.xvals("restricted")
         logpdf = self.logpdf(x_values)
-        return -np.trapz(np.exp(logpdf) * logpdf, x_values)
+        return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
 
     def mean(self):
         return self.mu + self.sigma * (np.euler_gamma + np.log(2))

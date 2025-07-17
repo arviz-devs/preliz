@@ -118,12 +118,12 @@ class LogitNormal(Continuous):
     def entropy(self):
         x_values = self.xvals("restricted")
         logpdf = self.logpdf(x_values)
-        return -np.trapz(np.exp(logpdf) * logpdf, x_values)
+        return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
 
     def mean(self):
         x_values = self.xvals("full")
         pdf = self.pdf(x_values)
-        return np.trapz(x_values * pdf, x_values)
+        return np.trapezoid(x_values * pdf, x_values)
 
     def median(self):
         return self.ppf(0.5)
@@ -131,7 +131,7 @@ class LogitNormal(Continuous):
     def var(self):
         x_values = self.xvals("full")
         pdf = self.pdf(x_values)
-        return np.trapz((x_values - self.mean()) ** 2 * pdf, x_values)
+        return np.trapezoid((x_values - self.mean()) ** 2 * pdf, x_values)
 
     def std(self):
         return self.var() ** 0.5
@@ -141,14 +141,14 @@ class LogitNormal(Continuous):
         std = self.std()
         x_values = self.xvals("full")
         pdf = self.pdf(x_values)
-        return np.trapz(((x_values - mean) / std) ** 3 * pdf, x_values)
+        return np.trapezoid(((x_values - mean) / std) ** 3 * pdf, x_values)
 
     def kurtosis(self):
         mean = self.mean()
         std = self.std()
         x_values = self.xvals("full")
         pdf = self.pdf(x_values)
-        return np.trapz(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
+        return np.trapezoid(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
 
     def mode(self):
         return find_mode_logitnormal(self)
