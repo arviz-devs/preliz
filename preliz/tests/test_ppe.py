@@ -9,7 +9,7 @@ from numpy.testing import assert_allclose
 
 import preliz as pz
 
-np.random.seed(42)
+rng = np.random.default_rng(1241)
 
 
 @pytest.mark.parametrize(
@@ -20,7 +20,7 @@ np.random.seed(42)
             "sigma_x": 10,
             "sigma_z": 10,
             "target": pz.Normal(mu=174, sigma=20),
-            "X": np.random.normal(0, 10, 120),
+            "X": rng.normal(0, 10, 120),
             "new_x": 174,
             "new_z": 2.9,
         },
@@ -29,7 +29,7 @@ np.random.seed(42)
             "sigma_x": [10, 10],
             "sigma_z": 10,
             "target": pz.Normal(mu=174, sigma=20),
-            "X": np.random.normal(0, 10, 120),
+            "X": rng.normal(0, 10, 120),
             "new_x": [174, 174],
             "new_z": 2.9,
         },
@@ -38,7 +38,7 @@ np.random.seed(42)
             "sigma_x": 10,
             "sigma_z": 10,
             "target": [(pz.Normal(mu=174, sigma=20), 0.5), (pz.Normal(mu=176, sigma=19.5), 0.5)],
-            "X": np.random.normal(0, 10, 120),
+            "X": rng.normal(0, 10, 120),
             "new_x": 175,
             "new_z": 2.9,
         },
@@ -51,7 +51,7 @@ np.random.seed(42)
                 (pz.Normal(mu=176, sigma=19.5), 0.4),
                 (pz.StudentT(mu=174, sigma=20, nu=3), 0.1),
             ],
-            "X": np.random.normal(0, 10, 120),
+            "X": rng.normal(0, 10, 120),
             "new_x": [175, 175],
             "new_z": 3,
         },
