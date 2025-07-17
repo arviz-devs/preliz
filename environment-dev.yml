@@ -24,7 +24,7 @@ dependencies:
   - ruff
   - ipykernel
   - pymc>=5.24.0
-  - bambi>=0.15.0
+  - bambi>=0.13.0
   - pip:
       - lxml
       - ipytest
