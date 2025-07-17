@@ -227,10 +227,49 @@ def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
             tau_not += 0.5 * tau_not
 
 
-def optimize_hdi(dist, mass):
+def find_hdi(dist, mass):
+    """Find the highest density interval (HDI) for a distribution."""
+    if dist.kind == "continuous":
+        lower, upper = continuous_hdi(dist, mass)
+    else:
+        x_vals = dist.xvals("full")
+        if len(x_vals) < 199:
+            lower, upper = discrete_hdi(dist, mass, x_vals)
+        else:
+            # For discrete distributions with many values, use continuous approximation
+            lower, upper = continuous_hdi(dist, mass)
+
+        lower = int(lower)
+        upper = int(upper)
+
+    return lower, upper
+
+
+def discrete_hdi(dist, mass, x_vals):
+    """Find the highest density interval for a discrete distribution."""
+    pmf_vals = dist.pdf(x_vals)
+
+    sorted_idx = np.argsort(pmf_vals)[::-1]
+    sorted_vals = x_vals[sorted_idx]
+    sorted_pmf = pmf_vals[sorted_idx]
+
+    total = 0.0
+    hdi_vals = []
+    for val, prob in zip(sorted_vals, sorted_pmf):
+        total += prob
+        hdi_vals.append(val)
+        if total >= mass:
+            break
+
+    return min(hdi_vals), max(hdi_vals)
+
+
+def continuous_hdi(dist, mass):
+    """Find the highest density interval for a continuous distribution."""
+
     def interval_loss(params):
         cdf = dist.cdf(params)
-        loss = (cdf[1] - cdf[0] + mass_at_boundaries) - mass
+        loss = (cdf[1] - cdf[0] + censored_mass) - mass
         return loss
 
     def interval_short(params):
@@ -243,17 +282,16 @@ def optimize_hdi(dist, mass):
         "fun": interval_loss,
     }
     lower, upper = dist.support
-    mass_at_boundaries = dist.pdf(lower) + dist.pdf(upper)
+    name = dist.__class__.__name__
+    if name in ["Censored"]:
+        censored_mass = dist.pdf(lower) + dist.pdf(upper)
+    else:
+        censored_mass = 0
     init_vals = dist.eti(mass=mass, fmt="none")
     bounds = [(lower, upper)]
     opt = minimize(interval_short, x0=init_vals, bounds=bounds, constraints=cons)
 
-    lower, upper = opt.x
-    if dist.kind == "discrete":
-        upper = np.floor(upper - 1).astype(int)
-        lower = np.ceil(lower).astype(int)
-
-    return lower, upper
+    return opt.x
 
 
 def optimize_pymc_model(

@@ -11,7 +11,7 @@ except ImportError:
 import numpy as np
 
 from preliz.internal.distribution_helper import init_vals, valid_distribution, valid_scalar_params
-from preliz.internal.optimization import find_mode, optimize_hdi
+from preliz.internal.optimization import find_hdi, find_mode
 from preliz.internal.plot_helper import (
     check_inside_notebook,
     get_slider,
@@ -340,7 +340,7 @@ class Distribution:
             warnings.warn("HDI may not be correct for multimodal distributions")
 
         if valid_scalar_params(self):
-            lower_tail, upper_tail = optimize_hdi(self, mass)
+            lower_tail, upper_tail = find_hdi(self, mass)
             if self.kind == "continuous" and fmt != "none":
                 lower_tail = float(f"{lower_tail:{fmt}}")
                 upper_tail = float(f"{upper_tail:{fmt}}")

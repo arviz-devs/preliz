@@ -6,7 +6,7 @@ from sys import modules
 import numpy as np
 
 try:
-    from pymc.pytensorf import compile_pymc, join_nonshared_inputs
+    from pymc.pytensorf import compile, join_nonshared_inputs
     from pymc.util import get_untransformed_name, is_transformed_name
     from pytensor import function
     from pytensor.graph.basic import ancestors
@@ -82,7 +82,7 @@ def compile_mllk(model):
         point=initial_point, outputs=[model.datalogp], inputs=vars_
     )
 
-    rv_logp_fn = compile_pymc([raveled_inp, new_y_value], logp)
+    rv_logp_fn = compile([raveled_inp, new_y_value], logp)
     rv_logp_fn.trust_input = True
 
     def fmodel(params, obs):
