@@ -1,3 +1,21 @@
+<a id="0.20.0"></a>
+# [0.20.0](https://github.com/arviz-devs/preliz/releases/tag/0.20.0) - 2025-07-18
+
+## What's Changed
+* Make predictive explorer more flexible (in particular for PyMC and Bambi) by [@aloctavodia](https://github.com/aloctavodia) in [#672](https://github.com/arviz-devs/preliz/pull/672)
+* PPE: add alternative family option, remove "method" by [@aloctavodia](https://github.com/aloctavodia) in [#673](https://github.com/arviz-devs/preliz/pull/673)
+* Use arviz_stats by [@aloctavodia](https://github.com/aloctavodia) in [#675](https://github.com/arviz-devs/preliz/pull/675)
+* improve hdi computation by [@aloctavodia](https://github.com/aloctavodia) in [#676](https://github.com/arviz-devs/preliz/pull/676)
+* use trapezoid, update requirements by [@aloctavodia](https://github.com/aloctavodia) in [#678](https://github.com/arviz-devs/preliz/pull/678)
+* remove obsolete code by [@aloctavodia](https://github.com/aloctavodia) in [#679](https://github.com/arviz-devs/preliz/pull/679)
+
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.19.0...0.20.0
+
+[Changes][0.20.0]
+
+
 <a id="0.19.0"></a>
 # [0.19.0](https://github.com/arviz-devs/preliz/releases/tag/0.19.0) - 2025-05-22
 
@@ -851,6 +869,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.20.0]: https://github.com/arviz-devs/preliz/compare/0.19.0...0.20.0
 [0.19.0]: https://github.com/arviz-devs/preliz/compare/0.18.0...0.19.0
 [0.18.0]: https://github.com/arviz-devs/preliz/compare/0.17.0...0.18.0
 [0.17.0]: https://github.com/arviz-devs/preliz/compare/0.16.0...0.17.0
