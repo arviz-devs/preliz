@@ -127,7 +127,8 @@ class Categorical(Discrete):
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.choice(self.p, size)
+        support_array = np.arange(self.support[0], self.support[1] + 1)
+        return random_state.choice(support_array, size, p=self.p)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
