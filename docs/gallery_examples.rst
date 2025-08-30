@@ -71,7 +71,7 @@ Direct Elicitation demonstrates how to interactively elicit a probability distri
 Predictive Elicitation
 ----------------------
 
-This section illustrates how PreliZ can be used to perform elicitation on the observed space, instead of the parameters space like in the previous examples. In all these example the prior predictive distribution is key.
+This section illustrates how PreliZ can be used to perform elicitation on the observed space, instead of the parameters space like in the previous examples. In all these examples, the prior predictive distribution is key.
 
 .. grid:: 1 2 3 3
    :gutter: 2 2 3 3
