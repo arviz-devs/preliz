@@ -180,8 +180,11 @@ def plot_pdfpmf(
             # we compute pmf at non-integer values to get a continuous curve
             mass_c = np.clip(dist.pdf(x_c), np.min(mass), np.max(mass))
 
-            p = ax.plot(x_c, mass_c, ls="dotted", **kwargs)
-            ax.plot(x, mass, "o", label=label, color=p[0].get_color())
+            ls = kwargs.pop("ls", "dotted")
+            marker = kwargs.pop("marker", "o")
+            p = ax.plot(x_c, mass_c, ls=ls, **kwargs)
+            color = kwargs.get("color", p[0].get_color())
+            ax.plot(x, mass, ls="none", label=label, marker=marker, color=color)
 
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         if baseline:
