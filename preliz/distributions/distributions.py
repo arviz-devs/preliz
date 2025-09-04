@@ -536,11 +536,11 @@ class Distribution:
         interval=None,
         levels=None,
         support="restricted",
+        baseline=True,
         legend="legend",
-        color=None,
-        alpha=1,
         figsize=None,
         ax=None,
+        **kwargs,
     ):
         """
         Plot the  pdf (continuous) or pmf (discrete).
@@ -565,17 +565,17 @@ class Distribution:
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        baseline : bool
+            Whether to include a horizontal line at y=0.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
-        color : str
-            Valid matplotlib color. Defaults to None, colors will be selected from the active
-            color cycle.
-        alpha : float
-            Transparency of the line. Defaults to 1 (no transparency).
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
+        kwargs : keyword arguments
+            Additional keyword arguments passed to matplotlib plot function.
+            For example, ``color``, ``alpha``, ``linewidth``, etc.
         """
         if valid_scalar_params(self):
             return plot_pdfpmf(
@@ -585,11 +585,11 @@ class Distribution:
                 interval,
                 levels,
                 support,
+                baseline,
                 legend,
-                color,
-                alpha,
                 figsize,
                 ax,
+                kwargs,
             )
         else:
             return None
@@ -602,10 +602,9 @@ class Distribution:
         levels=None,
         support="restricted",
         legend="legend",
-        color=None,
-        alpha=1,
         figsize=None,
         ax=None,
+        **kwargs,
     ):
         """
         Plot the cumulative distribution function.
@@ -630,17 +629,15 @@ class Distribution:
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
-        color : str
-            Valid matplotlib color. Defaults to None, colors will be selected from the active
-            color cycle.
-        alpha : float
-            Transparency of the line. Defaults to 1 (no transparency).
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
+        kwargs : keyword arguments
+            Additional keyword arguments passed to matplotlib plot function.
+            For example, ``color``, ``alpha``, ``linewidth``, etc.
         """
         if valid_scalar_params(self):
             return plot_cdf(
@@ -651,10 +648,9 @@ class Distribution:
                 levels,
                 support,
                 legend,
-                color,
-                alpha,
                 figsize,
                 ax,
+                kwargs,
             )
         else:
             return None
@@ -666,10 +662,9 @@ class Distribution:
         interval=None,
         levels=None,
         legend="legend",
-        color=None,
-        alpha=1,
         figsize=None,
         ax=None,
+        **kwargs,
     ):
         """
         Plot the quantile function.
@@ -694,18 +689,13 @@ class Distribution:
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"legend"`` a
             ``"title"`` or not include them ``None``.
-        color : str
-            Valid matplotlib color. Defaults to None, colors will be selected from the active
-            color cycle.
-        alpha : float
-            Transparency of the line. Defaults to 1 (no transparency).
         figsize : tuple
             Size of the figure
         ax : matplotlib axes
         """
         if valid_scalar_params(self):
             return plot_ppf(
-                self, moments, pointinterval, interval, levels, legend, color, alpha, figsize, ax
+                self, moments, pointinterval, interval, levels, legend, figsize, ax, kwargs
             )
         else:
             return None

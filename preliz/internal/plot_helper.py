@@ -126,8 +126,20 @@ def _plot_sub_iterval(q_s, lw, rotated, ax):
 
 
 def plot_pdfpmf(
-    dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
+    dist,
+    moments,
+    pointinterval,
+    interval,
+    levels,
+    support,
+    baseline,
+    legend,
+    figsize,
+    ax,
+    kwargs,
 ):
+    if kwargs is None:
+        kwargs = {}
     ax = get_ax(ax, figsize)
     label = set_label(dist, legend, moments, ax)
 
@@ -144,11 +156,13 @@ def plot_pdfpmf(
             x = x[x != dist.support[1]]
 
         density = dist.pdf(x)
-        ax.axhline(0, color="0.8", ls="--", zorder=0)
-        p = ax.plot(x, density, label=label, color=color, alpha=alpha)
+        if baseline:
+            ax.axhline(0, color="0.8", ls="--", zorder=0)
+        p = ax.plot(x, density, label=label, **kwargs)
         ax.set_yticks([])
 
         if dist.__class__.__name__ == "Censored":
+            alpha = kwargs.get("alpha", 1)
             if disc_vals[0] is not None:
                 ax.vlines(lower, 0, disc_vals[0], ls="--", color=p[0].get_color(), alpha=alpha)
             if disc_vals[1] is not None:
@@ -156,20 +170,22 @@ def plot_pdfpmf(
 
     else:
         mass = dist.pdf(x)
-
+        alpha = kwargs.get("alpha", 1)
         if dist.__class__.__name__ in ["Categorical", "Bernoulli"]:
-            p = ax.plot(x, mass, "o", label=label, color=color, alpha=alpha)
+            p = ax.plot(x, mass, "o", label=label, **kwargs)
+            alpha = kwargs.get("alpha", 1)
             ax.vlines(x, 0, mass, ls="dotted", color=p[0].get_color(), alpha=alpha)
         else:
             x_c = np.linspace(x[0], x[-1], 1000)
             # we compute pmf at non-integer values to get a continuous curve
             mass_c = np.clip(dist.pdf(x_c), np.min(mass), np.max(mass))
 
-            p = ax.plot(x_c, mass_c, ls="dotted", color=color, alpha=alpha)
-            ax.plot(x, mass, "o", label=label, color=p[0].get_color(), alpha=alpha)
+            p = ax.plot(x_c, mass_c, ls="dotted", **kwargs)
+            ax.plot(x, mass, "o", label=label, color=p[0].get_color())
 
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.axhline(0, color="0.8", ls="--", zorder=0)
+        if baseline:
+            ax.axhline(0, color="0.8", ls="--", zorder=0)
 
     if pointinterval:
         plot_pointinterval(dist, interval, levels, ax=ax)
@@ -179,9 +195,9 @@ def plot_pdfpmf(
     return ax
 
 
-def plot_cdf(
-    dist, moments, pointinterval, interval, levels, support, legend, color, alpha, figsize, ax
-):
+def plot_cdf(dist, moments, pointinterval, interval, levels, support, legend, figsize, ax, kwargs):
+    if kwargs is None:
+        kwargs = {}
     ax = get_ax(ax, figsize)
     label = set_label(dist, legend, moments, ax)
 
@@ -195,10 +211,10 @@ def plot_cdf(
         cdf = dist.cdf(x)
         ax.set_xlim(lower - 0.1, upper + 0.1)
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.step(x, cdf, where="post", label=label, color=color, alpha=alpha)
+        ax.step(x, cdf, where="post", label=label, **kwargs)
     else:
         cdf = dist.cdf(x)
-        ax.plot(x, cdf, label=label, color=color, alpha=alpha)
+        ax.plot(x, cdf, label=label, **kwargs)
 
     if pointinterval:
         plot_pointinterval(dist, interval, levels, ax=ax)
@@ -208,12 +224,14 @@ def plot_cdf(
     return ax
 
 
-def plot_ppf(dist, moments, pointinterval, interval, levels, legend, color, alpha, figsize, ax):
+def plot_ppf(dist, moments, pointinterval, interval, levels, legend, figsize, ax, kwargs):
+    if kwargs is None:
+        kwargs = {}
     ax = get_ax(ax, figsize)
     label = set_label(dist, legend, moments, ax)
 
     x = np.linspace(0, 1, 1000)
-    ax.plot(x, dist.ppf(x), label=label, color=color, alpha=alpha)
+    ax.plot(x, dist.ppf(x), label=label, **kwargs)
     if dist.kind == "discrete":
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
