@@ -26,13 +26,14 @@ def two_dist():
         {"pointinterval": True, "interval": "quantiles", "levels": [0.1, 0.5, 0.9]},
         {"support": "restricted"},
         {"color": "C1", "alpha": 0.1},
-        {"figsize": (4, 4)},
+        {"baseline": False, "figsize": (4, 4)},
         {"ax": plt.subplots()[1]},
     ],
 )
 def test_continuous_plot_pdf_cdf_ppf(two_dist, kwargs):
     for a_dist in two_dist:
         a_dist.plot_pdf(**kwargs)
+        kwargs.pop("baseline", None)
         a_dist.plot_cdf(**kwargs)
         kwargs.pop("support", None)
         a_dist.plot_ppf(**kwargs)
