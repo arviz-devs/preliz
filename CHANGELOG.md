@@ -1,3 +1,25 @@
+<a id="0.21.0"></a>
+# [0.21.0](https://github.com/arviz-devs/preliz/releases/tag/0.21.0) - 2025-09-05
+
+## What's Changed
+
+### New Features
+* Add scaled inverse chi2 by [@aloctavodia](https://github.com/aloctavodia) in [#687](https://github.com/arviz-devs/preliz/pull/687)
+* Add kwargs to plot methods by [@aloctavodia](https://github.com/aloctavodia) in [#686](https://github.com/arviz-devs/preliz/pull/686)
+
+###  Maintenance and bug fixes
+
+* Fix bug in  `Categorical.rvs` by [@fietensen](https://github.com/fietensen) in [#684](https://github.com/arviz-devs/preliz/pull/684)
+* remove obsolete code, add more tests by [@aloctavodia](https://github.com/aloctavodia) in [#689](https://github.com/arviz-devs/preliz/pull/689)
+
+## New Contributors
+* [@fietensen](https://github.com/fietensen) made their first contribution in [#684](https://github.com/arviz-devs/preliz/pull/684)
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.20.0...0.21.0
+
+[Changes][0.21.0]
+
+
 <a id="0.20.0"></a>
 # [0.20.0](https://github.com/arviz-devs/preliz/releases/tag/0.20.0) - 2025-07-18
 
@@ -869,6 +891,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.21.0]: https://github.com/arviz-devs/preliz/compare/0.20.0...0.21.0
 [0.20.0]: https://github.com/arviz-devs/preliz/compare/0.19.0...0.20.0
 [0.19.0]: https://github.com/arviz-devs/preliz/compare/0.18.0...0.19.0
 [0.18.0]: https://github.com/arviz-devs/preliz/compare/0.17.0...0.18.0
