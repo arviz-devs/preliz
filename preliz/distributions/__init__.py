@@ -1,7 +1,4 @@
-# Continuous Distributions
 from preliz.distributions.asymmetric_laplace import AsymmetricLaplace
-
-# Discrete Distributions
 from preliz.distributions.bernoulli import Bernoulli
 from preliz.distributions.beta import Beta
 from preliz.distributions.betabinomial import BetaBinomial
@@ -11,8 +8,6 @@ from preliz.distributions.categorical import Categorical
 from preliz.distributions.cauchy import Cauchy
 from preliz.distributions.censored import Censored
 from preliz.distributions.chi_squared import ChiSquared
-
-# Multivariate Distributions
 from preliz.distributions.continuous_multivariate import Dirichlet, MvNormal
 from preliz.distributions.discrete_uniform import DiscreteUniform
 from preliz.distributions.discrete_weibull import DiscreteWeibull
@@ -33,8 +28,6 @@ from preliz.distributions.logistic import Logistic
 from preliz.distributions.logitnormal import LogitNormal
 from preliz.distributions.loglogistic import LogLogistic
 from preliz.distributions.lognormal import LogNormal
-
-# Transform Distributions
 from preliz.distributions.mixture import Mixture
 from preliz.distributions.moyal import Moyal
 from preliz.distributions.negativebinomial import NegativeBinomial
@@ -42,6 +35,7 @@ from preliz.distributions.normal import Normal
 from preliz.distributions.pareto import Pareto
 from preliz.distributions.poisson import Poisson
 from preliz.distributions.rice import Rice
+from preliz.distributions.scaled_inverse_chi_squared import ScaledInverseChiSquared
 from preliz.distributions.skew_studentt import SkewStudentT
 from preliz.distributions.skewnormal import SkewNormal
 from preliz.distributions.studentt import StudentT
@@ -80,6 +74,7 @@ all_continuous = [
     Normal,
     Pareto,
     Rice,
+    ScaledInverseChiSquared,
     SkewNormal,
     SkewStudentT,
     StudentT,

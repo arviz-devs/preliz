@@ -121,6 +121,7 @@ init_vals = {
     "Normal": {"mu": 0.0, "sigma": 1.0},
     "Pareto": {"alpha": 5, "m": 2.0},
     "Rice": {"nu": 2.0, "sigma": 1.0},
+    "ScaledInverseChiSquared": {"nu": 10, "tau2": 1.0},
     "SkewNormal": {"mu": 0.0, "sigma": 1, "alpha": 6.0},
     "SkewStudentT": {"mu": 0.0, "sigma": 1, "a": 2, "b": 2},
     "StudentT": {"nu": 7, "mu": 0.0, "sigma": 1},

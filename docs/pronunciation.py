@@ -45,6 +45,7 @@ names = {
         ("BetaBinomial", "βήταsBinomial"),
         ("Gamma", "γάμμα"),
         ("chisquared", "χι-squared"),
+        ("ScaledInverseChiSquared", "scaled inverse χι-squared"),
     ],
     "fr": ["Cauchy", "Dirichlet", "Laplace", "Poisson", "ZeroInflatedPoisson"],
     "it": ["pareto"],

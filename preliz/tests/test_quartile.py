@@ -35,6 +35,7 @@ from preliz.distributions import (
     Pareto,
     Poisson,
     Rice,
+    ScaledInverseChiSquared,
     SkewStudentT,
     StudentT,
     Triangular,
@@ -75,6 +76,7 @@ from preliz.distributions import (
         (Normal(), -1, 0, 1, (0, 1.482)),
         (Pareto(), 0.5, 1, 4, (0.541, 0.289)),
         (Rice(), 2, 4, 6, (0, 3.395)),
+        (ScaledInverseChiSquared(), 0.9, 1.4, 2.4, (4.366, 1.199)),
         (SkewStudentT(), 2, 4, 6, (4.000, 2.648, 1.663, 1.663)),
         pytest.param(
             StudentT(),
