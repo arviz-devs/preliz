@@ -70,7 +70,6 @@ def maxent(
         :context: close-figs
         :include-source: true
 
-        >>>
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
         >>> pz.maxent(pz.Gamma(), 1, 8, 0.9)
@@ -82,7 +81,6 @@ def maxent(
         :context: close-figs
         :include-source: true
 
-        >>>
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
         >>> pz.maxent(pz.HalfStudentT(nu=4), 0, 12, 0.9)

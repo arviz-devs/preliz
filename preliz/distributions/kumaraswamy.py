@@ -2,7 +2,7 @@ import numba as nb
 import numpy as np
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import eps
 from preliz.internal.optimization import optimize_ml, optimize_moments
 from preliz.internal.special import beta, cdf_bounds, digamma, ppf_bounds_cont, xlog1py, xlogy
 
@@ -56,12 +56,6 @@ class Kumaraswamy(Continuous):
         self.params_support = ((eps, np.inf), (eps, np.inf))
         if (a and b) is not None:
             self._update(a, b)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.a, self.b)
-        return frozen
 
     def _update(self, a, b):
         self.a = np.float64(a)

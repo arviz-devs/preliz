@@ -46,7 +46,7 @@ class ZeroInflatedNegativeBinomial(Discrete):
     ========  ==========================
     Support   :math:`x \in \mathbb{N}_0`
     Mean      :math:`\psi\mu`
-    Var       .. math::
+    Variance .. math::
                   \psi \left(\frac{{\mu^2}}{{\alpha}}\right) +\
                   \psi \mu + \psi \mu^2 - \psi^2 \mu^2
     ========  ==========================

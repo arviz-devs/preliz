@@ -60,7 +60,6 @@ def quartile(
         :context: close-figs
         :include-source: true
 
-        >>>
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
         >>> pz.quartile(pz.Gamma(), 3, 6, 8)
@@ -72,7 +71,6 @@ def quartile(
         :context: close-figs
         :include-source: true
 
-        >>>
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
         >>> pz.quartile(pz.HalfStudentT(nu=7), 2, 9, 12)

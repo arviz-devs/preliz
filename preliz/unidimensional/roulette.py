@@ -51,7 +51,7 @@ class Roulette:
         The object has many attributes, but the most important are:
         - dist: The fitted distribution.
         - inputs: A tuple with the x values, the empirical pdf, the total
-            chips, the x_min, the x_max, the number of rows, and the number of columns.
+        chips, the x_min, the x_max, the number of rows, and the number of columns.
 
     """
 

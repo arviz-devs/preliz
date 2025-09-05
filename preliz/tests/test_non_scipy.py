@@ -3,7 +3,17 @@ from numpy.testing import assert_almost_equal
 from scipy import integrate
 from scipy.stats import kurtosis, skew
 
-from preliz.distributions import DiscreteWeibull, ScaledInverseChiSquared
+from preliz.distributions import Categorical, DiscreteWeibull, ScaledInverseChiSquared
+
+
+def test_categorical():
+    p = [0.2, 0.5, 0.3]
+    q = [0.2, 0.7, 1]
+    dist = Categorical(p)
+    assert dist.p.sum() == 1.0
+    assert all(dist.pdf([0, 1, 2]) == p)
+    assert all(dist.cdf([0, 1, 2]) == np.cumsum(p))
+    assert all(dist.cdf(dist.ppf(q)) == q)
 
 
 def test_disc_weibull_vs_random():
