@@ -35,9 +35,10 @@ class ScaledInverseChiSquared(Continuous):
     ========  ===============================
     Support   :math:`x \in [0, \infty)`
     Mean      :math:`\nu \tau^2 / (\nu - 2)` for :math:`\nu > 2`, else :math:`\infty`
-    Variance  :math: `2 \nu^2 \tau^4 / [(\nu - 2)^2 (\nu - 4)]` for :math:`\nu > 4`, else
-              :math: `\infty`
+    Variance  :math:`\frac{2 \nu^2 \tau^4}{(\nu - 2)^2 (\nu - 4)}`
+            for :math:`\nu > 4`, else :math:`\infty`
     ========  ===============================
+
 
     Parameters
     ----------
