@@ -74,6 +74,9 @@ Distributions
 .. automodule:: preliz.distributions.rice
    :members:
 
+.. automodule:: preliz.distributions.scaled_inverse_chi_squared
+   :members:
+
 .. automodule:: preliz.distributions.skewnormal
    :members:
 
