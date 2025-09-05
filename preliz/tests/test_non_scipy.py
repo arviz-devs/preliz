@@ -49,7 +49,7 @@ def test_scaled_inverse_chi2():
     for x in np.arange(6):
         assert_almost_equal(dist.cdf(x), np.mean(rvs <= x), decimal=2)
 
-    assert_almost_equal(integrate.quad(lambda x: dist.pdf(x), 0.1, 50)[0], 1, decimal=5)
+    assert_almost_equal(integrate.quad(dist.pdf, 0.1, 50)[0], 1, decimal=5)
 
     for x in np.linspace(0.2, 10, 5):
         val, _ = integrate.quad(dist.pdf, 0, x)
