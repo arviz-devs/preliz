@@ -4,7 +4,7 @@ import numpy as np
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import expit, logit, xlogx
+from preliz.internal.special import expit, logit, ppf_bounds_disc, xlogx
 
 
 class Categorical(Discrete):
@@ -63,12 +63,6 @@ class Categorical(Discrete):
 
     def _to_logit_p(self, p):
         return logit(p)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(n=1, p=self.p)
-        return frozen
 
     def _update(self, p):
         self.p = np.array(p)
@@ -152,7 +146,7 @@ def nb_cdf(x, p):
 
 def nb_ppf(q, p):
     cumsum = np.cumsum(p)
-    return np.searchsorted(cumsum, q)
+    return ppf_bounds_disc(np.searchsorted(cumsum, q, side="left"), q, 0, len(p) - 1).astype(int)
 
 
 @nb.njit(cache=True)

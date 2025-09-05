@@ -3,7 +3,7 @@ import numpy as np
 from scipy.special import gammainc, gammaincinv
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import eps
 from preliz.internal.optimization import optimize_ml
 from preliz.internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 
@@ -55,12 +55,6 @@ class ChiSquared(Continuous):
         self.params = (self.nu,)
         if self.nu is not None:
             self._update(self.nu)
-
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.nu)
-        return frozen
 
     def _update(self, nu):
         self.nu = np.float64(nu)

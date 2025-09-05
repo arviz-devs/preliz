@@ -283,6 +283,18 @@ Continuous Distributions
       Rice
 
    .. grid-item-card::
+      :link: ./distributions/gallery/scaledinversechisquared.html
+      :text-align: center
+      :shadow: none
+      :class-card: example-gallery
+
+      .. image:: distributions/img/ScaledInverseChiSquared.png
+         :alt: ScaledInverseChiSquared
+
+      +++
+      Scaled-Inverse-Chi-Squared
+
+   .. grid-item-card::
       :link: ./distributions/gallery/skewnormal.html
       :text-align: center
       :shadow: none

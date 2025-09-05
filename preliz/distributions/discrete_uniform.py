@@ -61,12 +61,6 @@ class DiscreteUniform(Discrete):
             self.lower = lower
             self.upper = upper
 
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.lower, self.upper + 1)
-        return frozen
-
     def _update(self, lower, upper):
         self.lower = np.floor(lower)
         self.upper = np.ceil(upper)

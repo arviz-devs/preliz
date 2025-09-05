@@ -79,12 +79,6 @@ class LogitNormal(Continuous):
         if all_not_none(mu, sigma):
             self._update(mu, sigma)
 
-    def _get_frozen(self):
-        frozen = None
-        if all_not_none(self.params):
-            frozen = self.dist(self.mu, self.sigma)
-        return frozen
-
     def _update(self, mu, sigma):
         self.mu = np.float64(mu)
         self.sigma = np.float64(sigma)
