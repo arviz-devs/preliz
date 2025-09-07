@@ -11,7 +11,6 @@ def maxent(
     lower=-1,
     upper=1,
     mass=None,
-    mode=None,
     fixed_stat=None,
     plot=None,
     plot_kwargs=None,
@@ -35,11 +34,9 @@ def maxent(
     mass: float
         Probability mass between ``lower`` and ``upper`` bounds. Defaults to None,
         which results in the value of rcParams["stats.ci_prob"] being used.
-    mode: float
-        Mode of the distribution. Pass a value to fix the mode of the distribution.
     fixed_stat: tuple
         Summary statistic to fix. The first element should be a name and the second a
-        numerical value. Valid names are: "mean", "mode", "median", "variance", "std",
+        numerical value. Valid names are: "mean", "mode", "median", "var", "std",
         "skewness", "kurtosis". Defaults to None.
     plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defaults to None,
@@ -87,14 +84,6 @@ def maxent(
     """
     valid_distribution(distribution)
 
-    if mode is not None:
-        fixed_stat = ("mode", mode)
-        warnings.warn(
-            "The parameter `mode` is deprecated and will be removed in a future release. "
-            "Use `fixed_stat=('mode', mode)` instead.",
-            FutureWarning,
-        )
-
     if mass is None:
         mass = rcParams["stats.ci_prob"]
 
@@ -104,7 +93,7 @@ def maxent(
     if fixed_stat is None:
         fixed_stat = ()
     else:
-        valid_stats = ["mean", "mode", "median", "variance", "std", "skewness", "kurtosis"]
+        valid_stats = ["mean", "mode", "median", "var", "std", "skewness", "kurtosis"]
         if fixed_stat[0] not in valid_stats:
             raise ValueError("fixed_stat should be one of the following: " + ", ".join(valid_stats))
 
