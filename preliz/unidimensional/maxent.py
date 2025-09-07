@@ -11,7 +11,6 @@ def maxent(
     lower=-1,
     upper=1,
     mass=None,
-    mode=None,
     fixed_stat=None,
     plot=None,
     plot_kwargs=None,
@@ -35,8 +34,6 @@ def maxent(
     mass: float
         Probability mass between ``lower`` and ``upper`` bounds. Defaults to None,
         which results in the value of rcParams["stats.ci_prob"] being used.
-    mode: float
-        Mode of the distribution. Pass a value to fix the mode of the distribution.
     fixed_stat: tuple
         Summary statistic to fix. The first element should be a name and the second a
         numerical value. Valid names are: "mean", "mode", "median", "var", "std",
