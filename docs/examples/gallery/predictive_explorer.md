@@ -115,7 +115,7 @@ pz.predictive_explorer(a_pymc_model)
 After the parameter name, you will see a tuple indicating the valid range of the parameter. These values are inferred automatically by `predictive_explorer`.
 
 Currently, we use a very simple heuristic to find the range, so take the suggestion with a pinch of salt 
-`predictive_explorer` supports three types of plots: empirical cumulative distribution functions (CDFs), kernel density estimations (KDEs), and histograms. Additionally, you can also add custom Matplotlib code using the ``plot_func` parameter
+`predictive_explorer` supports three types of plots: empirical cumulative distribution functions (CDFs), kernel density estimations (KDEs), and histograms. Additionally, you can also add custom Matplotlib code using the `plot_func` parameter
 
 ```{jupyter-execute}
 
