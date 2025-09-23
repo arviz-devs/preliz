@@ -1,12 +1,17 @@
-import numba as nb
 import numpy as np
-from scipy.special import owens_t
+from pytensor_distributions import skewnormal as ptd_skewnormal
 from scipy.stats import skew
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from preliz.internal.optimization import find_ppf, optimize_mean_sigma, optimize_ml
-from preliz.internal.special import erf, norm_logcdf
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    eps,
+    from_precision,
+    pytensor_jit,
+    pytensor_rng_jit,
+    to_precision,
+)
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 
 
 class SkewNormal(Continuous):
@@ -102,61 +107,41 @@ class SkewNormal(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.mu, self.sigma, self.alpha)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.sigma, self.alpha)
+        return ptd_cdf(x, self.mu, self.sigma, self.alpha)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return find_ppf(self, q)
+        return ptd_ppf(q, self.mu, self.sigma, self.alpha)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.sigma, self.alpha)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.sigma, self.alpha)
+        return ptd_logpdf(x, self.mu, self.sigma, self.alpha)
 
     def entropy(self):
-        x_values = self.xvals("restricted")
-        logpdf = self.logpdf(x_values)
-        return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
+        return ptd_entropy(self.mu, self.sigma, self.alpha)
 
     def mean(self):
-        return self.mu + self.sigma * np.sqrt(2 / np.pi) * self.alpha / np.sqrt(1 + self.alpha**2)
+        return ptd_mean(self.mu, self.sigma, self.alpha)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.mu, self.sigma, self.alpha)
 
     def var(self):
-        delta = self.alpha / (1 + self.alpha**2) ** 0.5
-        return self.sigma**2 * (1 - 2 * delta**2 / np.pi)
+        return ptd_var(self.mu, self.sigma, self.alpha)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.sigma, self.alpha)
 
     def skewness(self):
-        delta = self.alpha / (1 + self.alpha**2) ** 0.5
-        mean_z = (2 / np.pi) ** 0.5 * delta
-        return ((4 - np.pi) / 2) * (mean_z**3 / (1 - mean_z**2) ** (3 / 2))
+        return ptd_skewness(self.mu, self.sigma, self.alpha)
 
     def kurtosis(self):
-        delta = self.alpha / (1 + self.alpha**2) ** 0.5
-        return (
-            2
-            * (np.pi - 3)
-            * ((delta * np.sqrt(2 / np.pi)) ** 4 / (1 - 2 * (delta**2) / np.pi) ** 2)
-        )
+        return ptd_kurtosis(self.mu, self.sigma, self.alpha)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        u_0 = random_state.normal(size=size)
-        v = random_state.normal(size=size)
-        d = self.alpha / np.sqrt(1 + self.alpha**2)
-        u_1 = d * u_0 + v * np.sqrt(1 - d**2)
-        return np.sign(u_0) * u_1 * self.sigma + self.mu
+        return ptd_rvs(self.mu, self.sigma, self.alpha, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         if self.alpha is None:
@@ -169,27 +154,66 @@ class SkewNormal(Continuous):
         optimize_ml(self, sample)
 
 
-def nb_cdf(x, mu, sigma, alpha):
-    return 0.5 * (1 + erf((x - mu) / (sigma * 2**0.5))) - 2 * owens_t((x - mu) / sigma, alpha)
+@pytensor_jit
+def ptd_pdf(x, mu, sigma, alpha):
+    return ptd_skewnormal.pdf(x, mu, sigma, alpha)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, mu, sigma, alpha):
-    if x == np.inf:
-        return -np.inf
-    elif x == -np.inf:
-        return -np.inf
-    else:
-        z_val = (x - mu) / sigma
-        return (
-            np.log(2)
-            - np.log(sigma)
-            - z_val**2 / 2.0
-            - np.log((2 * np.pi) ** 0.5)
-            + norm_logcdf(alpha * z_val)
-        )
+@pytensor_jit
+def ptd_cdf(x, mu, sigma, alpha):
+    return ptd_skewnormal.cdf(x, mu, sigma, alpha)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, sigma, alpha):
-    return -(nb_logpdf(x, mu, sigma, alpha)).sum()
+@pytensor_jit
+def ptd_ppf(q, mu, sigma, alpha):
+    return ptd_skewnormal.ppf(q, mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_logpdf(x, mu, sigma, alpha):
+    return ptd_skewnormal.logpdf(x, mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_entropy(mu, sigma, alpha):
+    return ptd_skewnormal.entropy(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_mean(mu, sigma, alpha):
+    return ptd_skewnormal.mean(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_mode(mu, sigma, alpha):
+    return ptd_skewnormal.mode(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_median(mu, sigma, alpha):
+    return ptd_skewnormal.median(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_var(mu, sigma, alpha):
+    return ptd_skewnormal.var(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_std(mu, sigma, alpha):
+    return ptd_skewnormal.std(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_skewness(mu, sigma, alpha):
+    return ptd_skewnormal.skewness(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, sigma, alpha):
+    return ptd_skewnormal.kurtosis(mu, sigma, alpha)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, sigma, alpha, size, rng):
+    return ptd_skewnormal.rvs(mu, sigma, alpha, size=size, random_state=rng)

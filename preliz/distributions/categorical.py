@@ -1,10 +1,10 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import categorical as ptd_categorical
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import expit, logit, ppf_bounds_disc, xlogx
+from preliz.internal.special import expit, logit
 
 
 class Categorical(Discrete):
@@ -77,89 +77,109 @@ class Categorical(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.atleast_1d(x)
-        return nb_pdf(x, self.p)
+        return ptd_pdf(x, self.p)
 
     def cdf(self, x):
-        x = np.atleast_1d(x)
-        return nb_cdf(x, self.p)
+        return ptd_cdf(x, self.p)
 
     def ppf(self, q):
-        q = np.atleast_1d(q)
-        return nb_ppf(q, self.p)
+        return ptd_ppf(q, self.p)
 
     def logpdf(self, x):
-        x = np.atleast_1d(x)
-        return nb_logpdf(x, self.p)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.p)
+        return ptd_logpdf(x, self.p)
 
     def entropy(self):
-        return nb_entropy(self.p)
+        return ptd_entropy(self.p)
 
     def mean(self):
-        return NotImplemented
+        return ptd_mean(self.p)
 
     def mode(self):
-        return self.p.argmax()
+        return ptd_mode(self.p)
 
     def median(self):
-        return NotImplemented
+        return ptd_median(self.p)
 
     def var(self):
-        return NotImplemented
+        return ptd_var(self.p)
 
     def std(self):
-        return NotImplemented
+        return ptd_std(self.p)
 
     def skewness(self):
-        return NotImplemented
+        return ptd_skewness(self.p)
 
     def kurtosis(self):
-        return NotImplemented
+        return ptd_kurtosis(self.p)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        support_array = np.arange(self.support[0], self.support[1] + 1)
-        return random_state.choice(support_array, size, p=self.p)
+        return ptd_rvs(self.p, size=size, rng=random_state)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
 
 
-def nb_pdf(x, p):
-    pmf = np.zeros_like(x, dtype=float)
-    valid_categories = np.where((x >= 0) & (x < len(p)))[0]
-    pmf[valid_categories] = p[x[valid_categories]]
-    return pmf
+@pytensor_jit
+def ptd_pdf(x, p):
+    return ptd_categorical.pdf(x, p)
 
 
-def nb_cdf(x, p):
-    x = np.asarray(x, dtype=int)
-    cdf = np.ones_like(x, dtype=float)
-    cdf[x < 0] = 0
-    valid_categories = np.where((x >= 0) & (x < len(p)))[0]
-    cdf[valid_categories] = np.cumsum(p)[x[valid_categories]]
-    return cdf
+@pytensor_jit
+def ptd_cdf(x, p):
+    return ptd_categorical.cdf(x, p)
 
 
-def nb_ppf(q, p):
-    cumsum = np.cumsum(p)
-    return ppf_bounds_disc(np.searchsorted(cumsum, q, side="left"), q, 0, len(p) - 1).astype(int)
+@pytensor_jit
+def ptd_ppf(q, p):
+    return ptd_categorical.ppf(q, p)
 
 
-@nb.njit(cache=True)
-def nb_entropy(p):
-    return -np.sum(xlogx(p))
+@pytensor_jit
+def ptd_logpdf(x, p):
+    return ptd_categorical.logpdf(x, p)
 
 
-def nb_logpdf(x, p):
-    log_pmf = np.full_like(x, -np.inf, dtype=float)
-    valid_categories = np.where((x >= 0) & (x < len(p)))[0]
-    log_pmf[valid_categories] = np.log(p[x[valid_categories]])
-    return log_pmf
+@pytensor_jit
+def ptd_entropy(p):
+    return ptd_categorical.entropy(p)
 
 
-def nb_neg_logpdf(x, p):
-    return -(nb_logpdf(x, p)).sum()
+@pytensor_jit
+def ptd_mean(p):
+    return ptd_categorical.mean(p)
+
+
+@pytensor_jit
+def ptd_mode(p):
+    return ptd_categorical.mode(p)
+
+
+@pytensor_jit
+def ptd_median(p):
+    return ptd_categorical.median(p)
+
+
+@pytensor_jit
+def ptd_var(p):
+    return ptd_categorical.var(p)
+
+
+@pytensor_jit
+def ptd_std(p):
+    return ptd_categorical.std(p)
+
+
+@pytensor_jit
+def ptd_skewness(p):
+    return ptd_categorical.skewness(p)
+
+
+@pytensor_jit
+def ptd_kurtosis(p):
+    return ptd_categorical.kurtosis(p)
+
+
+@pytensor_rng_jit
+def ptd_rvs(p, size, rng):
+    return ptd_categorical.rvs(p, size=size, random_state=rng)

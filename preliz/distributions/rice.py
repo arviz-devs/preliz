@@ -1,10 +1,9 @@
 import numpy as np
-from scipy.special import chndtr, chndtrix, i0, i0e, i1
+from pytensor_distributions import rice as ptd_rice
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml, optimize_moments_rice
-from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class Rice(Continuous):
@@ -105,53 +104,41 @@ class Rice(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.nu, self.sigma)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.nu, self.sigma)
+        return ptd_cdf(x, self.nu, self.sigma)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.nu, self.sigma)
+        return ptd_ppf(q, self.nu, self.sigma)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.nu, self.sigma)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.nu, self.sigma)
+        return ptd_logpdf(x, self.nu, self.sigma)
 
     def entropy(self):
-        x_values = self.xvals("restricted")
-        logpdf = self.logpdf(x_values)
-        return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
+        return ptd_entropy(self.nu, self.sigma)
 
     def mean(self):
-        return self.sigma * np.sqrt(np.pi / 2) * _l_half(-(self.nu**2) / (2 * self.sigma**2))
+        return ptd_mean(self.nu, self.sigma)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.nu, self.sigma)
 
     def var(self):
-        return (
-            2 * self.sigma**2
-            + self.nu**2
-            - np.pi / 2 * self.sigma**2 * _l_half(-(self.nu**2) / (2 * self.sigma**2)) ** 2
-        )
+        return ptd_var(self.nu, self.sigma)
 
     def std(self):
-        return self.var() ** 2
+        return ptd_std(self.nu, self.sigma)
 
     def skewness(self):
-        return NotImplemented
+        return ptd_skewness(self.nu, self.sigma)
 
     def kurtosis(self):
-        return NotImplemented
+        return ptd_kurtosis(self.nu, self.sigma)
 
     def rvs(self, size=1, random_state=None):
         random_state = np.random.default_rng(random_state)
-        t_v = (self.nu / self.sigma) / np.sqrt(2) + random_state.standard_normal(size=(2, size))
-        return np.sqrt((t_v * t_v).sum(axis=0)) * self.sigma
+        return ptd_rvs(self.nu, self.sigma, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         nu, sigma = optimize_moments_rice(mean, sigma)
@@ -161,25 +148,66 @@ class Rice(Continuous):
         optimize_ml(self, sample)
 
 
-def nb_cdf(x, nu, sigma):
-    return cdf_bounds(chndtr((x / sigma) ** 2, 2, (nu / sigma) ** 2), x, 0, np.inf)
+@pytensor_jit
+def ptd_pdf(x, nu, sigma):
+    return ptd_rice.pdf(x, nu, sigma)
 
 
-def nb_ppf(q, nu, sigma):
-    return ppf_bounds_cont(np.sqrt(chndtrix(q, 2, (nu / sigma) ** 2)) * sigma, q, 0, np.inf)
+@pytensor_jit
+def ptd_cdf(x, nu, sigma):
+    return ptd_rice.cdf(x, nu, sigma)
 
 
-def nb_logpdf(x, nu, sigma):
-    b = nu / sigma
-    x = x / sigma
-    return np.where(
-        x < 0, -np.inf, np.log(x * np.exp((-(x - b) * (x - b)) / 2) * i0e(x * b) / sigma)
-    )
+@pytensor_jit
+def ptd_ppf(q, nu, sigma):
+    return ptd_rice.ppf(q, nu, sigma)
 
 
-def nb_neg_logpdf(x, nu, sigma):
-    return -(nb_logpdf(x, nu, sigma)).sum()
+@pytensor_jit
+def ptd_logpdf(x, nu, sigma):
+    return ptd_rice.logpdf(x, nu, sigma)
 
 
-def _l_half(x):
-    return np.exp(x / 2) * ((1 - x) * i0(-x / 2) - x * i1(-x / 2))
+@pytensor_jit
+def ptd_entropy(nu, sigma):
+    return ptd_rice.entropy(nu, sigma)
+
+
+@pytensor_jit
+def ptd_mean(nu, sigma):
+    return ptd_rice.mean(nu, sigma)
+
+
+@pytensor_jit
+def ptd_mode(nu, sigma):
+    return ptd_rice.mode(nu, sigma)
+
+
+@pytensor_jit
+def ptd_median(nu, sigma):
+    return ptd_rice.median(nu, sigma)
+
+
+@pytensor_jit
+def ptd_var(nu, sigma):
+    return ptd_rice.var(nu, sigma)
+
+
+@pytensor_jit
+def ptd_std(nu, sigma):
+    return ptd_rice.std(nu, sigma)
+
+
+@pytensor_jit
+def ptd_skewness(nu, sigma):
+    return ptd_rice.skewness(nu, sigma)
+
+
+@pytensor_jit
+def ptd_kurtosis(nu, sigma):
+    return ptd_rice.kurtosis(nu, sigma)
+
+
+@pytensor_rng_jit
+def ptd_rvs(nu, sigma, size, rng):
+    return ptd_rice.rvs(nu, sigma, size=size, random_state=rng)

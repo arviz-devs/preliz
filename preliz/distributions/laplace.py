@@ -1,8 +1,9 @@
 import numba as nb
 import numpy as np
+from pytensor_distributions import laplace as ptd_laplace
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 
 
 class Laplace(Continuous):
@@ -62,50 +63,44 @@ class Laplace(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.mu, self.b))
+        return ptd_pdf(x, self.mu, self.b)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.b)
+        return ptd_cdf(x, self.mu, self.b)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.mu, self.b)
+        return ptd_ppf(q, self.mu, self.b)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.b)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.b)
+        return ptd_logpdf(x, self.mu, self.b)
 
     def entropy(self):
-        return nb_entropy(self.b)
+        return ptd_entropy(self.mu, self.b)
 
     def median(self):
-        return self.mu
+        return ptd_median(self.mu, self.b)
 
     def mean(self):
-        return self.mu
+        return ptd_mean(self.mu, self.b)
 
     def mode(self):
-        return self.mu
+        return ptd_mode(self.mu, self.b)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.b)
 
     def var(self):
-        return 2 * self.b**2
+        return ptd_var(self.mu, self.b)
 
     def skewness(self):
-        return 0.0
+        return ptd_skewness(self.mu, self.b)
 
     def kurtosis(self):
-        return 3.0
+        return ptd_kurtosis(self.mu, self.b)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.laplace(self.mu, self.b, size)
+        return ptd_rvs(self.mu, self.b, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         b = (sigma / 2) * (2**0.5)
@@ -116,37 +111,69 @@ class Laplace(Continuous):
         self._update(mu, b)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, mu, b):
-    x = (x - mu) / b
-    if x > 0:
-        return 1.0 - 0.5 * np.exp(-x)
-    return 0.5 * np.exp(x)
+@pytensor_jit
+def ptd_pdf(x, mu, b):
+    return ptd_laplace.pdf(x, mu, b)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_ppf(q, mu, b):
-    if q > 0.5:
-        q = -np.log(2 * (1 - q))
-    else:
-        q = np.log(2 * q)
-    return q * b + mu
+@pytensor_jit
+def ptd_cdf(x, mu, b):
+    return ptd_laplace.cdf(x, mu, b)
 
 
-@nb.njit(cache=True)
-def nb_logpdf(x, mu, b):
-    x = (x - mu) / b
-    return np.log(0.5) - np.abs(x) - np.log(b)
+@pytensor_jit
+def ptd_ppf(q, mu, b):
+    return ptd_laplace.ppf(q, mu, b)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, b):
-    return (-nb_logpdf(x, mu, b)).sum()
+@pytensor_jit
+def ptd_logpdf(x, mu, b):
+    return ptd_laplace.logpdf(x, mu, b)
 
 
-@nb.njit(cache=True)
-def nb_entropy(b):
-    return np.log(2) + 1 + np.log(b)
+@pytensor_jit
+def ptd_entropy(mu, b):
+    return ptd_laplace.entropy(mu, b)
+
+
+@pytensor_jit
+def ptd_mean(mu, b):
+    return ptd_laplace.mean(mu, b)
+
+
+@pytensor_jit
+def ptd_mode(mu, b):
+    return ptd_laplace.mode(mu, b)
+
+
+@pytensor_jit
+def ptd_median(mu, b):
+    return ptd_laplace.median(mu, b)
+
+
+@pytensor_jit
+def ptd_var(mu, b):
+    return ptd_laplace.var(mu, b)
+
+
+@pytensor_jit
+def ptd_std(mu, b):
+    return ptd_laplace.std(mu, b)
+
+
+@pytensor_jit
+def ptd_skewness(mu, b):
+    return ptd_laplace.skewness(mu, b)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, b):
+    return ptd_laplace.kurtosis(mu, b)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, b, size, rng):
+    return ptd_laplace.rvs(mu, b, size=size, random_state=rng)
 
 
 @nb.njit(cache=True)

@@ -1,11 +1,9 @@
 import numpy as np
-from scipy.integrate import quad
-from scipy.optimize import bisect
-from scipy.special import i0e, i1e
+from pytensor_distributions import vonmises as ptd_vonmises
 from scipy.stats import circmean
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import find_kappa, optimize_mean_sigma
 
 
@@ -67,48 +65,44 @@ class VonMises(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.mu, self.kappa)
 
     def cdf(self, x):
-        return nb_cdf(x, self.pdf)
+        return ptd_cdf(x, self.mu, self.kappa)
 
     def ppf(self, q):
-        return nb_ppf(q, self.pdf)
+        return ptd_ppf(q, self.mu, self.kappa)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.kappa)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.kappa)
+        return ptd_logpdf(x, self.mu, self.kappa)
 
     def entropy(self):
-        return nb_entropy(self.kappa, self.var())
+        return ptd_entropy(self.mu, self.kappa)
 
     def mean(self):
-        return self.mu
+        return ptd_mean(self.mu, self.kappa)
 
     def mode(self):
-        return self.mu
+        return ptd_mode(self.mu, self.kappa)
 
     def median(self):
-        return self.mu
+        return ptd_median(self.mu, self.kappa)
 
     def var(self):
-        return 1 - i1e(self.kappa) / i0e(self.kappa)
+        return ptd_var(self.mu, self.kappa)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.kappa)
 
     def skewness(self):
-        return 0
+        return ptd_skewness(self.mu, self.kappa)
 
     def kurtosis(self):
-        return 0
+        return ptd_kurtosis(self.mu, self.kappa)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.vonmises(self.mu, self.kappa, size)
+        return ptd_rvs(self.mu, self.kappa, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         params = mean, 1 / sigma**1.8
@@ -136,58 +130,6 @@ class VonMises(Continuous):
         return _warp_interval(hdi_min, hdi_max, self.mu, fmt)
 
 
-def nb_cdf(x, pdf):
-    if isinstance(x, int | float):
-        x = [x]
-        scalar_input = True
-    else:
-        scalar_input = False
-
-    cdf_values = np.array([quad(pdf, -np.pi, xi)[0] if xi <= np.pi else 1 for xi in x])
-
-    return cdf_values[0] if scalar_input else cdf_values
-
-
-def nb_ppf(q, pdf):
-    def root_func(x, q):
-        return nb_cdf(x, pdf) - q
-
-    if isinstance(q, int | float):
-        q = [q]
-        scalar_input = True
-    else:
-        scalar_input = False
-
-    ppf_values = []
-    for q_i in q:
-        if q_i < 0:
-            val = np.nan
-        elif q_i > 1:
-            val = np.nan
-        elif q_i == 0:
-            val = -np.inf
-        elif q_i == 1:
-            val = np.inf
-        else:
-            val = bisect(root_func, -np.pi, np.pi, args=(q_i,))
-
-        ppf_values.append(val)
-
-    return ppf_values[0] if scalar_input else np.array(ppf_values)
-
-
-def nb_entropy(kappa, var):
-    return np.log(2 * np.pi * i0e(kappa)) + kappa * var
-
-
-def nb_logpdf(x, mu, kappa):
-    return kappa * (np.cos(x - mu) - 1) - np.log(2 * np.pi) - np.log(i0e(kappa))
-
-
-def nb_neg_logpdf(x, mu, kappa):
-    return -(nb_logpdf(x, mu, kappa)).sum()
-
-
 def _warp_interval(hdi_min, hdi_max, mu, fmt):
     hdi_min = hdi_min + mu
     hdi_max = hdi_max + mu
@@ -198,3 +140,68 @@ def _warp_interval(hdi_min, hdi_max, mu, fmt):
         lower_tail = float(f"{lower_tail:{fmt}}")
         upper_tail = float(f"{upper_tail:{fmt}}")
     return (lower_tail, upper_tail)
+
+
+@pytensor_jit
+def ptd_pdf(x, mu, kappa):
+    return ptd_vonmises.pdf(x, mu, kappa)
+
+
+@pytensor_jit
+def ptd_cdf(x, mu, kappa):
+    return ptd_vonmises.cdf(x, mu, kappa)
+
+
+@pytensor_jit
+def ptd_ppf(q, mu, kappa):
+    return ptd_vonmises.ppf(q, mu, kappa)
+
+
+@pytensor_jit
+def ptd_logpdf(x, mu, kappa):
+    return ptd_vonmises.logpdf(x, mu, kappa)
+
+
+@pytensor_jit
+def ptd_entropy(mu, kappa):
+    return ptd_vonmises.entropy(mu, kappa)
+
+
+@pytensor_jit
+def ptd_mean(mu, kappa):
+    return ptd_vonmises.mean(mu, kappa)
+
+
+@pytensor_jit
+def ptd_mode(mu, kappa):
+    return ptd_vonmises.mode(mu, kappa)
+
+
+@pytensor_jit
+def ptd_median(mu, kappa):
+    return ptd_vonmises.median(mu, kappa)
+
+
+@pytensor_jit
+def ptd_var(mu, kappa):
+    return ptd_vonmises.var(mu, kappa)
+
+
+@pytensor_jit
+def ptd_std(mu, kappa):
+    return ptd_vonmises.std(mu, kappa)
+
+
+@pytensor_jit
+def ptd_skewness(mu, kappa):
+    return ptd_vonmises.skewness(mu, kappa)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, kappa):
+    return ptd_vonmises.kurtosis(mu, kappa)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, kappa, size, rng):
+    return ptd_vonmises.rvs(mu, kappa, size=size, random_state=rng)

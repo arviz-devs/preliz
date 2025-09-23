@@ -1,10 +1,9 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import hypergeometric as ptd_hypergeometric
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none
-from preliz.internal.optimization import find_ppf, optimize_mean_sigma, optimize_ml
-from preliz.internal.special import betaln, cdf_bounds
+from preliz.internal.distribution_helper import all_not_none, pytensor_jit, pytensor_rng_jit
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 
 eps = np.finfo(float).eps
 
@@ -70,86 +69,44 @@ class HyperGeometric(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.N, self.k, self.n)
 
     def cdf(self, x):
-        if isinstance(x, np.ndarray | list | tuple):
-            cdf_values = np.zeros_like(x, dtype=float)
-            for i, val in enumerate(x):
-                x_vals = np.arange(self.support[0], val + 1)
-                cdf_values[i] = np.sum(self.pdf(x_vals))
-            return cdf_bounds(cdf_values, x, *self.support)
-        else:
-            x_vals = np.arange(self.support[0], x + 1)
-            return cdf_bounds(np.sum(self.pdf(x_vals)), x, *self.support)
+        return ptd_cdf(x, self.N, self.k, self.n)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return find_ppf(self, q)
+        return ptd_ppf(q, self.N, self.k, self.n)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.N, self.k, self.n, *self.support)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.N, self.k, self.n, *self.support)
+        return ptd_logpdf(x, self.N, self.k, self.n)
 
     def entropy(self):
-        x_values = self.xvals("full")
-        logpdf = self.logpdf(x_values)
-        return -np.sum(np.exp(logpdf) * logpdf)
+        return ptd_entropy(self.N, self.k, self.n)
 
     def mean(self):
-        return self.n * self.k / self.N
+        return ptd_mean(self.N, self.k, self.n)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.N, self.k, self.n)
 
     def var(self):
-        return (
-            self.n * self.k / self.N * (self.N - self.k) / self.N * (self.N - self.n) / (self.N - 1)
-        )
+        return ptd_var(self.N, self.k, self.n)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.N, self.k, self.n)
 
     def skewness(self):
-        numerator = (self.N - 2 * self.k) * (self.N - 1) ** 0.5 * (self.N - 2 * self.n)
-        denominator = (self.n * self.k * (self.N - self.k) * (self.N - self.n)) ** 0.5 * (
-            self.N - 2
-        )
-        return numerator / denominator
+        return ptd_skewness(self.N, self.k, self.n)
 
     def kurtosis(self):
-        return (
-            1
-            / (
-                self.n
-                * self.k
-                * (self.N - self.k)
-                * (self.N - self.n)
-                * (self.N - 2)
-                * (self.N - 3)
-            )
-            * (
-                (self.N - 1)
-                * self.N**2
-                * (
-                    self.N * (self.N + 1)
-                    - 6 * self.k * (self.N - self.k)
-                    - 6 * self.n * (self.N - self.n)
-                )
-                + 6 * self.n * self.k * (self.N - self.k) * (self.N - self.n) * (5 * self.N - 6)
-            )
-        )
+        return ptd_kurtosis(self.N, self.k, self.n)
 
     def mode(self):
-        value = (self.n + 1) * (self.k + 1) / (self.N + 2)
-        return max(np.ceil(value) - 1, np.floor(value))
+        return ptd_mode(self.N, self.k, self.n)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.hypergeometric(self.k, self.N - self.k, self.n, size=size)
+        return ptd_rvs(self.N, self.k, self.n, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         optimize_mean_sigma(self, mean, sigma)
@@ -158,27 +115,66 @@ class HyperGeometric(Discrete):
         optimize_ml(self, sample)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, N, k, n, lower, upper):
-    if x < lower:
-        return -np.inf
-    if x > upper:
-        return -np.inf
-    else:
-        good = k
-        bad = N - k
-        tot = good + bad
-        result = (
-            betaln(good + 1, 1)
-            + betaln(bad + 1, 1)
-            + betaln(tot - n + 1, n + 1)
-            - betaln(x + 1, good - x + 1)
-            - betaln(n - x + 1, bad - n + x + 1)
-            - betaln(tot + 1, 1)
-        )
-        return result
+@pytensor_jit
+def ptd_pdf(x, N, k, n):
+    return ptd_hypergeometric.pdf(x, N, k, n)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, N, k, n, lower, upper):
-    return -(nb_logpdf(x, N, k, n, lower, upper)).sum()
+@pytensor_jit
+def ptd_cdf(x, N, k, n):
+    return ptd_hypergeometric.cdf(x, N, k, n)
+
+
+@pytensor_jit
+def ptd_ppf(q, N, k, n):
+    return ptd_hypergeometric.ppf(q, N, k, n)
+
+
+@pytensor_jit
+def ptd_logpdf(x, N, k, n):
+    return ptd_hypergeometric.logpdf(x, N, k, n)
+
+
+@pytensor_jit
+def ptd_entropy(N, k, n):
+    return ptd_hypergeometric.entropy(N, k, n)
+
+
+@pytensor_jit
+def ptd_mean(N, k, n):
+    return ptd_hypergeometric.mean(N, k, n)
+
+
+@pytensor_jit
+def ptd_mode(N, k, n):
+    return ptd_hypergeometric.mode(N, k, n)
+
+
+@pytensor_jit
+def ptd_median(N, k, n):
+    return ptd_hypergeometric.median(N, k, n)
+
+
+@pytensor_jit
+def ptd_var(N, k, n):
+    return ptd_hypergeometric.var(N, k, n)
+
+
+@pytensor_jit
+def ptd_std(N, k, n):
+    return ptd_hypergeometric.std(N, k, n)
+
+
+@pytensor_jit
+def ptd_skewness(N, k, n):
+    return ptd_hypergeometric.skewness(N, k, n)
+
+
+@pytensor_jit
+def ptd_kurtosis(N, k, n):
+    return ptd_hypergeometric.kurtosis(N, k, n)
+
+
+@pytensor_rng_jit
+def ptd_rvs(N, k, n, size, rng):
+    return ptd_hypergeometric.rvs(N, k, n, size=size, random_state=rng)

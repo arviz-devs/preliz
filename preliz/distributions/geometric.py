@@ -1,9 +1,8 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import geometric as ptd_geometric
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import eps
-from preliz.internal.special import cdf_bounds, mean_sample, ppf_bounds_disc, xlog1py, xlogx
+from preliz.internal.distribution_helper import eps, pytensor_jit, pytensor_rng_jit
 
 
 class Geometric(Discrete):
@@ -56,86 +55,114 @@ class Geometric(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.p))
+        return ptd_pdf(x, self.p)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.p, self.support[0], self.support[1])
+        return ptd_cdf(x, self.p)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.p, self.support[0], self.support[1])
+        return ptd_ppf(q, self.p)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.p)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.p)
+        return ptd_logpdf(x, self.p)
 
     def entropy(self):
-        return nb_entropy(self.p)
+        return ptd_entropy(self.p)
 
     def mean(self):
-        return 1 / self.p
+        return ptd_mean(self.p)
 
     def mode(self):
-        return np.ones_like(self.p)
+        return ptd_mode(self.p)
 
     def median(self):
-        return np.ceil(-1 / np.log(1 - self.p))
+        return ptd_median(self.p)
 
     def var(self):
-        return (1 - self.p) / self.p**2
+        return ptd_var(self.p)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.p)
 
     def skewness(self):
-        return (2 - self.p) / (1 - self.p) ** 0.5
+        return ptd_skewness(self.p)
 
     def kurtosis(self):
-        return 6 + (self.p**2) / (1 - self.p)
+        return ptd_kurtosis(self.p)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.geometric(self.p, size=size)
+        return ptd_rvs(self.p, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         p = 1 / mean
         self._update(p)
 
     def _fit_mle(self, sample):
-        p = 1 / mean_sample(sample)
+        p = 1 / np.mean(sample)
         self._update(p)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, p, lower, upper):
-    x = np.floor(x)
-    prob = 1 - (1 - p) ** x
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, p):
+    return ptd_geometric.pdf(x, p)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, p, lower, upper):
-    x_vals = np.ceil(np.log(1 - q) / np.log(1 - p))
-    return ppf_bounds_disc(x_vals, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, p):
+    return ptd_geometric.cdf(x, p)
 
 
-@nb.njit(cache=True)
-def nb_entropy(p):
-    return (xlog1py((-1 + p), -p) - xlogx(p)) / p
+@pytensor_jit
+def ptd_ppf(q, p):
+    return ptd_geometric.ppf(q, p)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, p):
-    if x < 1:
-        return -np.inf
-    else:
-        return xlog1py(x - 1, -p) + np.log(p)
+@pytensor_jit
+def ptd_logpdf(x, p):
+    return ptd_geometric.logpdf(x, p)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, p):
-    return -(nb_logpdf(x, p)).sum()
+@pytensor_jit
+def ptd_entropy(p):
+    return ptd_geometric.entropy(p)
+
+
+@pytensor_jit
+def ptd_mean(p):
+    return ptd_geometric.mean(p)
+
+
+@pytensor_jit
+def ptd_mode(p):
+    return ptd_geometric.mode(p)
+
+
+@pytensor_jit
+def ptd_median(p):
+    return ptd_geometric.median(p)
+
+
+@pytensor_jit
+def ptd_var(p):
+    return ptd_geometric.var(p)
+
+
+@pytensor_jit
+def ptd_std(p):
+    return ptd_geometric.std(p)
+
+
+@pytensor_jit
+def ptd_skewness(p):
+    return ptd_geometric.skewness(p)
+
+
+@pytensor_jit
+def ptd_kurtosis(p):
+    return ptd_geometric.kurtosis(p)
+
+
+@pytensor_rng_jit
+def ptd_rvs(p, size, rng):
+    return ptd_geometric.rvs(p, size=size, random_state=rng)

@@ -1,7 +1,12 @@
 import re
+from functools import wraps
 from sys import modules
 
 import numpy as np
+from pytensor import function
+from pytensor.compile.function.types import Function, In
+from pytensor.tensor import tensor
+from pytensor.tensor.random.type import random_generator_type
 
 eps = np.finfo(float).eps
 
@@ -98,6 +103,101 @@ def num_kurtosis(dist):
         return np.sum(((x_values - mean) / std) ** 4 * pdf) - 3
     else:
         return np.trapezoid(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
+
+
+def pytensor_jit(func, **compile_kwargs):
+    # trust_input can be a problem if the user passes aliased inputs
+    # (including the same values twice)
+    # But it really reduces the overhead!
+    # Removing inplace rewrites would make this safe always (I think)
+    compile_kwargs.setdefault("trust_input", True)
+    compile_kwargs.setdefault("mode", "NUMBA")
+    compile_kwargs.setdefault("on_unused_input", "ignore")
+    signature_to_function: tuple[int, Function] = {}
+
+    @wraps(func)
+    def inner_func(*args, signature_to_function=signature_to_function):
+        args = [np.asarray(a) for a in args]
+        signature = tuple((tuple(s == 1 for s in a.shape), a.dtype) for a in args)
+
+        try:
+            return signature_to_function[signature](*args)
+        except KeyError:
+            pass
+        symbolic_args = [
+            tensor(broadcastable=bcast_pattern, dtype=dtype) for (bcast_pattern, dtype) in signature
+        ]
+        symbolic_out = func(*symbolic_args)
+        signature_to_function[signature] = compiled_func = function(
+            symbolic_args, symbolic_out, **compile_kwargs
+        )
+        return compiled_func(*args)
+
+    return inner_func
+
+
+def pytensor_rng_jit(_func=None, **compile_kwargs):
+    """Compile pytensor function with RNG on demand."""
+
+    def decorator(func):
+        compile_kwargs.setdefault("trust_input", True)
+        compile_kwargs.setdefault("mode", "NUMBA")
+
+        signature_to_function: dict[tuple, Function] = {}
+
+        @wraps(func)
+        def inner_func(*args, size, rng, signature_to_function=signature_to_function):
+            args = tuple(np.asarray(a) for a in args)
+
+            try:
+                if size is None:
+                    signature = (
+                        *((tuple(s == 1 for s in a.shape), a.dtype) for a in args),
+                        None,
+                    )
+                    return signature_to_function[signature](*args, rng)
+                else:
+                    if isinstance(size, (int | np.integer)):
+                        size = (size,)
+                    size = np.asarray(size, dtype="int64")
+                    signature = (
+                        *((tuple(s == 1 for s in a.shape), a.dtype) for a in args),
+                        tuple(size),
+                    )
+                    return signature_to_function[signature](*args, size, rng)
+            except KeyError:
+                pass
+
+            symbolic_args = [
+                tensor(broadcastable=bcast_pattern, dtype=dtype)
+                for (bcast_pattern, dtype) in signature[:-1]
+            ]
+            symbolic_size = (
+                None if size is None else tensor(shape=(len(size),), dtype="int64", name="size")
+            )
+            symbolic_rng = random_generator_type("rng")
+            symbolic_out = func(*symbolic_args, size=symbolic_size, rng=symbolic_rng)
+
+            # We allow PyTensor to modify the RNG
+            mutable_rng = In(symbolic_rng, mutable=True)
+            if size is None:
+                symbolic_inputs = [*symbolic_args, mutable_rng]
+            else:
+                symbolic_inputs = [*symbolic_args, symbolic_size, mutable_rng]
+
+            signature_to_function[signature] = compiled_func = function(
+                symbolic_inputs,
+                symbolic_out,
+                **compile_kwargs,
+            )
+            return compiled_func(*args, rng) if size is None else compiled_func(*args, size, rng)
+
+        return inner_func
+
+    if _func is None:
+        return decorator
+    else:
+        return decorator(_func)
 
 
 init_vals = {

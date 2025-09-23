@@ -328,7 +328,7 @@ def test_cdf(a_few_poissons):
     _, d_1, d_2 = a_few_poissons
     result1 = d_1.cdf(1)
     result2 = d_2.cdf(1)
-    assert round(result2, 2) == 0.06
+    assert np.round(result2, 2) == 0.06
     assert np.allclose(result1, (0.73, 0.41), 2)
 
 

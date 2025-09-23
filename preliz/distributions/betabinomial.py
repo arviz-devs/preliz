@@ -1,12 +1,11 @@
 """BetaBinomial probability distribution."""
 
-import numba as nb
 import numpy as np
+from pytensor_distributions import betabinomial as ptd_betabinomial
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_ppf, optimize_mean_sigma, optimize_ml
-from preliz.internal.special import betaln, cdf_bounds
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 
 
 class BetaBinomial(Discrete):
@@ -76,98 +75,44 @@ class BetaBinomial(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.n, self.alpha, self.beta)
 
     def cdf(self, x):
-        if isinstance(x, np.ndarray | list | tuple):
-            cdf_values = np.zeros_like(x, dtype=float)
-            for i, val in enumerate(x):
-                x_vals = np.arange(0, val + 1)
-                cdf_values[i] = np.sum(self.pdf(x_vals))
-            return cdf_bounds(cdf_values, x, *self.support)
-        else:
-            x_vals = np.arange(0, x + 1)
-            return cdf_bounds(np.sum(self.pdf(x_vals)), x, *self.support)
+        return ptd_cdf(x, self.n, self.alpha, self.beta)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return find_ppf(self, q)
+        return ptd_ppf(q, self.n, self.alpha, self.beta)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.alpha, self.beta, self.n, *self.support)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.alpha, self.beta, self.n, *self.support)
+        return ptd_logpdf(x, self.n, self.alpha, self.beta)
 
     def entropy(self):
-        x_values = self.xvals("full")
-        logpdf = self.logpdf(x_values)
-        return -np.sum(np.exp(logpdf) * logpdf)
+        return ptd_entropy(self.n, self.alpha, self.beta)
 
     def mean(self):
-        return self.n * self.alpha / (self.alpha + self.beta)
+        return ptd_mean(self.n, self.alpha, self.beta)
 
     def mode(self):
-        return np.clip(
-            np.floor((self.n + 1) * ((self.alpha - 1) / (self.alpha + self.beta - 2))).astype(int),
-            0,
-            self.n,
-        )
+        return ptd_mode(self.n, self.alpha, self.beta)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.n, self.alpha, self.beta)
 
     def var(self):
-        return (
-            self.n
-            * self.alpha
-            * self.beta
-            * (self.alpha + self.beta + self.n)
-            / ((self.alpha + self.beta) ** 2 * (self.alpha + self.beta + 1))
-        )
+        return ptd_var(self.n, self.alpha, self.beta)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.n, self.alpha, self.beta)
 
     def skewness(self):
-        return (
-            (self.alpha + self.beta + 2 * self.n)
-            * (self.beta - self.alpha)
-            / (self.alpha + self.beta + 2)
-            * (
-                (1 + self.alpha + self.beta)
-                / (self.n * self.alpha * self.beta * (self.alpha + self.beta + self.n))
-            )
-            ** 0.5
-        )
+        return ptd_skewness(self.n, self.alpha, self.beta)
 
     def kurtosis(self):
-        alpha, beta, n = self.alpha, self.beta, self.n
-        alpha_beta_sum = alpha + beta
-        alpha_beta_product = alpha * beta
-        numerator = ((alpha_beta_sum) ** 2) * (1 + alpha_beta_sum)
-        denominator = (
-            (n * alpha_beta_product)
-            * (alpha_beta_sum + 2)
-            * (alpha_beta_sum + 3)
-            * (alpha_beta_sum + n)
-        )
-        left = numerator / denominator
-        right = (
-            (alpha_beta_sum) * (alpha_beta_sum - 1 + 6 * n)
-            + 3 * alpha_beta_product * (n - 2)
-            + 6 * n**2
-        )
-        right -= (3 * alpha_beta_product * n * (6 - n)) / alpha_beta_sum
-        right -= (18 * alpha_beta_product * n**2) / (alpha_beta_sum) ** 2
-        return (left * right) - 3
+        return ptd_kurtosis(self.n, self.alpha, self.beta)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.binomial(
-            n=self.n, p=random_state.beta(self.alpha, self.beta, size=size)
-        )
+        return ptd_rvs(self.n, self.alpha, self.beta, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         optimize_mean_sigma(self, mean, sigma)
@@ -176,17 +121,66 @@ class BetaBinomial(Discrete):
         optimize_ml(self, sample)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, alpha, beta, n, lower, upper):
-    if x < lower:
-        return -np.inf
-    if x > upper:
-        return -np.inf
-    else:
-        combiln = -np.log(n + 1) - betaln(n - x + 1, x + 1)
-        return combiln + betaln(x + alpha, n - x + beta) - betaln(alpha, beta)
+@pytensor_jit
+def ptd_pdf(x, n, alpha, beta):
+    return ptd_betabinomial.pdf(x, n, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, alpha, beta, n, lower, upper):
-    return -(nb_logpdf(x, alpha, beta, n, lower, upper)).sum()
+@pytensor_jit
+def ptd_cdf(x, n, alpha, beta):
+    return ptd_betabinomial.cdf(x, n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_ppf(q, n, alpha, beta):
+    return ptd_betabinomial.ppf(q, n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_logpdf(x, n, alpha, beta):
+    return ptd_betabinomial.logpdf(x, n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_entropy(n, alpha, beta):
+    return ptd_betabinomial.entropy(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_mean(n, alpha, beta):
+    return ptd_betabinomial.mean(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_mode(n, alpha, beta):
+    return ptd_betabinomial.mode(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_median(n, alpha, beta):
+    return ptd_betabinomial.median(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_var(n, alpha, beta):
+    return ptd_betabinomial.var(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_std(n, alpha, beta):
+    return ptd_betabinomial.std(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_skewness(n, alpha, beta):
+    return ptd_betabinomial.skewness(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_kurtosis(n, alpha, beta):
+    return ptd_betabinomial.kurtosis(n, alpha, beta)
+
+
+@pytensor_rng_jit
+def ptd_rvs(n, alpha, beta, size, rng):
+    return ptd_betabinomial.rvs(n, alpha, beta, size=size, random_state=rng)

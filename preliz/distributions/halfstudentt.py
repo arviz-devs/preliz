@@ -1,18 +1,18 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import halfstudentt as ptd_halfstudentt
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    eps,
+    from_precision,
+    pytensor_jit,
+    pytensor_rng_jit,
+    to_precision,
+)
 from preliz.internal.optimization import optimize_ml
 from preliz.internal.special import (
-    beta,
-    betainc,
-    betaincinv,
-    cdf_bounds,
-    digamma,
     gamma,
-    gammaln,
-    ppf_bounds_cont,
 )
 
 
@@ -109,70 +109,44 @@ class HalfStudentT(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.nu, self.sigma))
+        return ptd_pdf(x, self.nu, self.sigma)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.nu, self.sigma)
+        return ptd_cdf(x, self.nu, self.sigma)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.nu, self.sigma)
+        return ptd_ppf(q, self.nu, self.sigma)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.nu, self.sigma)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.nu, self.sigma)
+        return ptd_logpdf(x, self.nu, self.sigma)
 
     def entropy(self):
-        return nb_entropy(self.nu, self.sigma)
+        return ptd_entropy(self.nu, self.sigma)
 
     def mean(self):
-        if self.nu > 1:
-            gamma0 = gamma((self.nu + 1) / 2)
-            gamma1 = gamma(self.nu / 2)
-            if np.isfinite(gamma0) and np.isfinite(gamma1):
-                mean = (
-                    2 * self.sigma * (self.nu / np.pi) ** 0.5 * (gamma0 / (gamma1 * (self.nu - 1)))
-                )
-            else:
-                mean = self.sigma * (2 / np.pi) ** 0.5
-        return mean
+        return ptd_mean(self.nu, self.sigma)
 
     def mode(self):
-        return np.zeros_like(self.sigma)
+        return ptd_mode(self.nu, self.sigma)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.nu, self.sigma)
 
     def var(self):
-        gamma0 = gamma((self.nu + 1) / 2)
-        gamma1 = gamma(self.nu / 2)
-        if self.nu > 2:
-            if np.isfinite(gamma0) and np.isfinite(gamma1):
-                var = self.sigma**2 * (
-                    (self.nu / (self.nu - 2))
-                    - ((4 * self.nu) / (np.pi * (self.nu - 1) ** 2)) * (gamma0 / gamma1) ** 2
-                )
-            else:
-                # assume nu is large enough that the std of the halfnormal is a good approximation
-                var = self.sigma**2 * (1 - 2.0 / np.pi)
-        return var
+        return ptd_var(self.nu, self.sigma)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.nu, self.sigma)
 
     def skewness(self):
-        return NotImplemented
+        return ptd_skewness(self.nu, self.sigma)
 
     def kurtosis(self):
-        return NotImplemented
+        return ptd_kurtosis(self.nu, self.sigma)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return np.abs(random_state.standard_t(self.nu, size) * self.sigma)
+        return ptd_rvs(self.nu, self.sigma, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         # if nu is smaller than 2 the variance is not defined,
@@ -199,48 +173,66 @@ class HalfStudentT(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, nu, sigma):
-    x = x / sigma
-    factor = 0.5 * betainc(0.5 * nu, 0.5, nu / (x**2 + nu))
-    return cdf_bounds(np.where(x < 0, factor, 1 - factor) * 2 - 1, x, 0, np.inf)
+@pytensor_jit
+def ptd_pdf(x, nu, sigma):
+    return ptd_halfstudentt.pdf(x, nu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_ppf(p, nu, sigma):
-    p_factor = (p + 1) / 2
-    inv_factor = np.where(
-        p_factor < 0.5,
-        betaincinv(0.5 * nu, 0.5, 2 * p_factor),
-        np.sqrt(nu / betaincinv(0.5 * nu, 0.5, 2 - 2 * p_factor) - nu),
-    )
-    return ppf_bounds_cont(inv_factor * sigma, p, 0, np.inf)
+@pytensor_jit
+def ptd_cdf(x, nu, sigma):
+    return ptd_halfstudentt.cdf(x, nu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_entropy(nu, sigma):
-    return (
-        np.log(sigma)
-        + 0.5 * (nu + 1) * (digamma(0.5 * (nu + 1)) - digamma(0.5 * nu))
-        + np.log(np.sqrt(nu) * beta(0.5 * nu, 0.5))
-        - np.log(2)
-    )
+@pytensor_jit
+def ptd_ppf(q, nu, sigma):
+    return ptd_halfstudentt.ppf(q, nu, sigma)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, nu, sigma):
-    if x < 0:
-        return -np.inf
-    else:
-        return (
-            gammaln((nu + 1) / 2)
-            - gammaln(nu / 2)
-            - 0.5 * np.log(nu * np.pi * sigma**2)
-            - 0.5 * (nu + 1) * np.log(1 + (x / sigma) ** 2 / nu)
-            + np.log(2)
-        )
+@pytensor_jit
+def ptd_logpdf(x, nu, sigma):
+    return ptd_halfstudentt.logpdf(x, nu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, nu, sigma):
-    return -(nb_logpdf(x, nu, sigma)).sum()
+@pytensor_jit
+def ptd_entropy(nu, sigma):
+    return ptd_halfstudentt.entropy(nu, sigma)
+
+
+@pytensor_jit
+def ptd_mean(nu, sigma):
+    return ptd_halfstudentt.mean(nu, sigma)
+
+
+@pytensor_jit
+def ptd_mode(nu, sigma):
+    return ptd_halfstudentt.mode(nu, sigma)
+
+
+@pytensor_jit
+def ptd_median(nu, sigma):
+    return ptd_halfstudentt.median(nu, sigma)
+
+
+@pytensor_jit
+def ptd_var(nu, sigma):
+    return ptd_halfstudentt.var(nu, sigma)
+
+
+@pytensor_jit
+def ptd_std(nu, sigma):
+    return ptd_halfstudentt.std(nu, sigma)
+
+
+@pytensor_jit
+def ptd_skewness(nu, sigma):
+    return ptd_halfstudentt.skewness(nu, sigma)
+
+
+@pytensor_jit
+def ptd_kurtosis(nu, sigma):
+    return ptd_halfstudentt.kurtosis(nu, sigma)
+
+
+@pytensor_rng_jit
+def ptd_rvs(nu, sigma, size, rng):
+    return ptd_halfstudentt.rvs(nu, sigma, size=size, random_state=rng)

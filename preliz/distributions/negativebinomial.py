@@ -1,11 +1,15 @@
-import numba as nb
 import numpy as np
-from scipy.special import nbdtrik
+from pytensor_distributions import negativebinomial as ptd_negativebinomial
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    any_not_none,
+    eps,
+    pytensor_jit,
+    pytensor_rng_jit,
+)
 from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
-from preliz.internal.special import betainc, cdf_bounds, gammaln, ppf_bounds_disc, xlogy
 
 
 class NegativeBinomial(Discrete):
@@ -113,52 +117,44 @@ class NegativeBinomial(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.n, self.p))
+        return ptd_pdf(x, self.n, self.p)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.n, self.p, self.support[0], self.support[1])
+        return ptd_cdf(x, self.n, self.p)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.n, self.p, self.support[0], self.support[1])
+        return ptd_ppf(q, self.n, self.p)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.n, self.p)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.n, self.p)
+        return ptd_logpdf(x, self.n, self.p)
 
     def entropy(self):
-        x = self.xvals("full", 5000)
-        logpdf = self.logpdf(x)
-        return -np.sum(np.exp(logpdf) * logpdf)
+        return ptd_entropy(self.n, self.p)
 
     def mean(self):
-        return self.mu
+        return ptd_mean(self.n, self.p)
 
     def mode(self):
-        return np.where(self.n < 1, 0, np.floor((self.n - 1) * (1 - self.p) / self.p))
+        return ptd_mode(self.n, self.p)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.n, self.p)
 
     def var(self):
-        return self.mu**2 / self.alpha + self.mu
+        return ptd_var(self.n, self.p)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.n, self.p)
 
     def skewness(self):
-        return (2 - self.p) / ((1 - self.p) * self.n) ** 0.5
+        return ptd_skewness(self.n, self.p)
 
     def kurtosis(self):
-        return 6 / self.n + self.p**2 / ((1 - self.p) * self.n)
+        return ptd_kurtosis(self.n, self.p)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.negative_binomial(self.n, self.p, size=size)
+        return ptd_rvs(self.n, self.p, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma=None):
         optimize_mean_sigma(self, mean, sigma)
@@ -167,27 +163,66 @@ class NegativeBinomial(Discrete):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, n, p, lower, upper):
-    prob = betainc(n, x + 1, p)
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, n, p):
+    return ptd_negativebinomial.pdf(x, n, p)
 
 
-# @nb.jit
-# bdtrik not supported by numba
-def nb_ppf(q, n, p, lower, upper):
-    x_vals = np.ceil(nbdtrik(q, n, p))
-    return ppf_bounds_disc(x_vals, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, n, p):
+    return ptd_negativebinomial.cdf(x, n, p)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(y, n, p):
-    if y < 0:
-        return -np.inf
-    else:
-        return gammaln(y + n) - gammaln(n) - gammaln(y + 1) + xlogy(n, p) + xlogy(y, 1 - p)
+@pytensor_jit
+def ptd_ppf(q, n, p):
+    return ptd_negativebinomial.ppf(q, n, p)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(y, n, p):
-    return -(nb_logpdf(y, n, p)).sum()
+@pytensor_jit
+def ptd_logpdf(x, n, p):
+    return ptd_negativebinomial.logpdf(x, n, p)
+
+
+@pytensor_jit
+def ptd_entropy(n, p):
+    return ptd_negativebinomial.entropy(n, p)
+
+
+@pytensor_jit
+def ptd_mean(n, p):
+    return ptd_negativebinomial.mean(n, p)
+
+
+@pytensor_jit
+def ptd_mode(n, p):
+    return ptd_negativebinomial.mode(n, p)
+
+
+@pytensor_jit
+def ptd_median(n, p):
+    return ptd_negativebinomial.median(n, p)
+
+
+@pytensor_jit
+def ptd_var(n, p):
+    return ptd_negativebinomial.var(n, p)
+
+
+@pytensor_jit
+def ptd_std(n, p):
+    return ptd_negativebinomial.std(n, p)
+
+
+@pytensor_jit
+def ptd_skewness(n, p):
+    return ptd_negativebinomial.skewness(n, p)
+
+
+@pytensor_jit
+def ptd_kurtosis(n, p):
+    return ptd_negativebinomial.kurtosis(n, p)
+
+
+@pytensor_rng_jit
+def ptd_rvs(n, p, size, rng):
+    return ptd_negativebinomial.rvs(n, p, size=size, random_state=rng)

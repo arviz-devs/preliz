@@ -1,11 +1,15 @@
-import numba as nb
 import numpy as np
-from scipy.special import gammainc, gammaincinv
+from pytensor_distributions import gamma as ptd_gamma
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    any_not_none,
+    eps,
+    pytensor_jit,
+    pytensor_rng_jit,
+)
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 
 
 class Gamma(Continuous):
@@ -110,50 +114,44 @@ class Gamma(Continuous):
         return mu, sigma
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.alpha, self.beta))
+        return ptd_pdf(x, self.alpha, self.beta)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.alpha, self.beta, 0, np.inf)
+        return ptd_cdf(x, self.alpha, self.beta)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.alpha, self.beta, 0, np.inf)
+        return ptd_ppf(q, self.alpha, self.beta)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.alpha, self.beta)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.alpha, self.beta)
+        return ptd_logpdf(x, self.alpha, self.beta)
 
     def entropy(self):
-        return nb_entropy(self.alpha, self.beta)
+        return ptd_entropy(self.alpha, self.beta)
 
     def mean(self):
-        return self.alpha / self.beta
+        return ptd_mean(self.alpha, self.beta)
 
     def mode(self):
-        return np.where(self.alpha <= 1, 0, (self.alpha - 1) / self.beta)
+        return ptd_mode(self.alpha, self.beta)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.alpha, self.beta)
 
     def var(self):
-        return self.alpha / self.beta**2
+        return ptd_var(self.alpha, self.beta)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.alpha, self.beta)
 
     def skewness(self):
-        return 2 / self.alpha**0.5
+        return ptd_skewness(self.alpha, self.beta)
 
     def kurtosis(self):
-        return 6 / self.alpha
+        return ptd_kurtosis(self.alpha, self.beta)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.gamma(self.alpha, 1 / self.beta, size)
+        return ptd_rvs(self.alpha, self.beta, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         alpha, beta = self._from_mu_sigma(mean, sigma)
@@ -163,30 +161,66 @@ class Gamma(Continuous):
         optimize_ml(self, sample)
 
 
-def nb_cdf(x, alpha, beta, lower, upper):
-    prob = gammainc(alpha, x / (1 / beta))
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, alpha, beta):
+    return ptd_gamma.pdf(x, alpha, beta)
 
 
-def nb_ppf(q, alpha, beta, lower, upper):
-    x_val = gammaincinv(alpha, q) * (1 / beta)
-    return ppf_bounds_cont(x_val, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, alpha, beta):
+    return ptd_gamma.cdf(x, alpha, beta)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, alpha, beta):
-    if x <= 0:
-        return -np.inf
-    else:
-        x = x / (1 / beta)
-        return xlogy(alpha - 1.0, x) - x - gammaln(alpha) - np.log(1 / beta)
+@pytensor_jit
+def ptd_ppf(q, alpha, beta):
+    return ptd_gamma.ppf(q, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, alpha, beta):
-    return -(nb_logpdf(x, alpha, beta)).sum()
+@pytensor_jit
+def ptd_logpdf(x, alpha, beta):
+    return ptd_gamma.logpdf(x, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_entropy(alpha, beta):
-    return alpha - np.log(beta) + gammaln(alpha) + (1 - alpha) * digamma(alpha)
+@pytensor_jit
+def ptd_entropy(alpha, beta):
+    return ptd_gamma.entropy(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mean(alpha, beta):
+    return ptd_gamma.mean(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mode(alpha, beta):
+    return ptd_gamma.mode(alpha, beta)
+
+
+@pytensor_jit
+def ptd_median(alpha, beta):
+    return ptd_gamma.median(alpha, beta)
+
+
+@pytensor_jit
+def ptd_var(alpha, beta):
+    return ptd_gamma.var(alpha, beta)
+
+
+@pytensor_jit
+def ptd_std(alpha, beta):
+    return ptd_gamma.std(alpha, beta)
+
+
+@pytensor_jit
+def ptd_skewness(alpha, beta):
+    return ptd_gamma.skewness(alpha, beta)
+
+
+@pytensor_jit
+def ptd_kurtosis(alpha, beta):
+    return ptd_gamma.kurtosis(alpha, beta)
+
+
+@pytensor_rng_jit
+def ptd_rvs(alpha, beta, size, rng):
+    return ptd_gamma.rvs(alpha, beta, size=size, random_state=rng)

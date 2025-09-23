@@ -1,11 +1,10 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import exgaussian as ptd_exgaussian
 from scipy.stats import skew
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_ppf
-from preliz.internal.special import erf, mean_and_std, norm_logcdf
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
+from preliz.internal.special import mean_and_std
 
 
 class ExGaussian(Continuous):
@@ -79,55 +78,41 @@ class ExGaussian(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.mu, self.sigma, self.nu)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.sigma, self.nu)
+        return ptd_cdf(x, self.mu, self.sigma, self.nu)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return find_ppf(self, q)
+        return ptd_ppf(q, self.mu, self.sigma, self.nu)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.sigma, self.nu)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.sigma, self.nu)
+        return ptd_logpdf(x, self.mu, self.sigma, self.nu)
 
     def entropy(self):
-        x_values = self.xvals("restricted")
-        logpdf = self.logpdf(x_values)
-        return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
+        return ptd_entropy(self.mu, self.sigma, self.nu)
 
     def mean(self):
-        return self.mu + self.nu
+        return ptd_mean(self.mu, self.sigma, self.nu)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.mu, self.sigma, self.nu)
 
     def var(self):
-        return self.sigma**2 + self.nu**2
+        return ptd_var(self.mu, self.sigma, self.nu)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.sigma, self.nu)
 
     def skewness(self):
-        nus2 = (self.nu / self.sigma) ** 2
-        opnus2 = 1.0 + nus2
-        return 2 * (self.nu / self.sigma) ** 3 * opnus2 ** (-1.5)
+        return ptd_skewness(self.mu, self.sigma, self.nu)
 
     def kurtosis(self):
-        nus2 = (self.nu / self.sigma) ** 2
-        opnus2 = 1.0 + nus2
-        return 6.0 * nus2 * nus2 * opnus2 ** (-2)
+        return ptd_kurtosis(self.mu, self.sigma, self.nu)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.normal(self.mu, self.sigma, size) + random_state.exponential(
-            self.nu, size
-        )
+        return ptd_rvs(self.mu, self.sigma, self.nu, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         # Just assume this is approximately Gaussian
@@ -142,32 +127,66 @@ class ExGaussian(Continuous):
         self._update(mu, var**0.5, nu)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, mu, sigma, nu):
-    cdf_n = 0.5 * (1 + erf((x - mu) / (sigma * 2**0.5)))
-    if x == -np.inf:
-        return 0
-    elif nu > 0.05 * sigma:
-        return cdf_n - 0.5 * np.exp(0.5 / nu * (2 * mu + sigma**2 / nu - 2 * x)) * (
-            1 + erf((x - (mu + (sigma**2) / nu)) / (sigma * 2**0.5))
-        )
-    else:
-        return cdf_n
+@pytensor_jit
+def ptd_pdf(x, mu, sigma, nu):
+    return ptd_exgaussian.pdf(x, mu, sigma, nu)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, mu, sigma, nu):
-    if nu > 0.05 * sigma:
-        return (
-            -np.log(nu)
-            + (mu - x) / nu
-            + 0.5 * (sigma / nu) ** 2
-            + norm_logcdf((x - (mu + (sigma**2) / nu)) / sigma)
-        )
-    else:
-        return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
+@pytensor_jit
+def ptd_cdf(x, mu, sigma, nu):
+    return ptd_exgaussian.cdf(x, mu, sigma, nu)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, sigma, nu):
-    return -(nb_logpdf(x, mu, sigma, nu)).sum()
+@pytensor_jit
+def ptd_ppf(q, mu, sigma, nu):
+    return ptd_exgaussian.ppf(q, mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_logpdf(x, mu, sigma, nu):
+    return ptd_exgaussian.logpdf(x, mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_entropy(mu, sigma, nu):
+    return ptd_exgaussian.entropy(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_mean(mu, sigma, nu):
+    return ptd_exgaussian.mean(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_mode(mu, sigma, nu):
+    return ptd_exgaussian.mode(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_median(mu, sigma, nu):
+    return ptd_exgaussian.median(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_var(mu, sigma, nu):
+    return ptd_exgaussian.var(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_std(mu, sigma, nu):
+    return ptd_exgaussian.std(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_skewness(mu, sigma, nu):
+    return ptd_exgaussian.skewness(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, sigma, nu):
+    return ptd_exgaussian.kurtosis(mu, sigma, nu)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, sigma, nu, size, rng):
+    return ptd_exgaussian.rvs(mu, sigma, nu, size=size, random_state=rng)

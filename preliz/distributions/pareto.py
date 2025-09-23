@@ -1,10 +1,9 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import pareto as ptd_pareto
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import ppf_bounds_cont, xlogy
 
 
 class Pareto(Continuous):
@@ -64,65 +63,44 @@ class Pareto(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.alpha, self.m))
+        return ptd_pdf(x, self.alpha, self.m)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.alpha, self.m)
+        return ptd_cdf(x, self.alpha, self.m)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.alpha, self.m, 1, np.inf)
+        return ptd_ppf(q, self.alpha, self.m)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.alpha, self.m)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.alpha, self.m)
+        return ptd_logpdf(x, self.alpha, self.m)
 
     def entropy(self):
-        return nb_entropy(self.alpha, self.m)
+        return ptd_entropy(self.alpha, self.m)
 
     def mean(self):
-        return np.where(self.alpha > 1, self.alpha * self.m / (self.alpha - 1), np.inf)
+        return ptd_mean(self.alpha, self.m)
 
     def mode(self):
-        return self.m
+        return ptd_mode(self.alpha, self.m)
 
     def median(self):
-        return self.m * 2 ** (1 / self.alpha)
+        return ptd_median(self.alpha, self.m)
 
     def var(self):
-        return np.where(
-            self.alpha > 2,
-            self.m**2 * self.alpha / ((self.alpha - 1) ** 2 * (self.alpha - 2)),
-            np.inf,
-        )
+        return ptd_var(self.alpha, self.m)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.alpha, self.m)
 
     def skewness(self):
-        return np.where(
-            self.alpha > 3,
-            2 * (1 + self.alpha) / (self.alpha - 3) * (1 - 2 / self.alpha) ** 0.5,
-            np.nan,
-        )
+        return ptd_skewness(self.alpha, self.m)
 
     def kurtosis(self):
-        return np.where(
-            self.alpha > 4,
-            6
-            * (self.alpha**3 + self.alpha**2 - 6 * self.alpha - 2)
-            / (self.alpha * (self.alpha - 3) * (self.alpha - 4)),
-            np.nan,
-        )
+        return ptd_kurtosis(self.alpha, self.m)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        random_samples = random_state.uniform(0, 1, size)
-        return nb_rvs(random_samples, self.alpha, self.m)
+        return ptd_rvs(self.alpha, self.m, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         alpha = 1 + (1 + (mean / sigma) ** 2) ** (1 / 2)
@@ -133,35 +111,66 @@ class Pareto(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, alpha, m):
-    if x < m:
-        return 0
-    return 1 - (m / x) ** alpha
+@pytensor_jit
+def ptd_pdf(x, alpha, m):
+    return ptd_pareto.pdf(x, alpha, m)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, alpha, m, lower, upper):
-    return ppf_bounds_cont(m * (1 - q) ** (-1 / alpha), q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, alpha, m):
+    return ptd_pareto.cdf(x, alpha, m)
 
 
-@nb.njit(cache=True)
-def nb_entropy(alpha, m):
-    return np.log((m / alpha) * np.exp(1 + 1 / alpha))
+@pytensor_jit
+def ptd_ppf(q, alpha, m):
+    return ptd_pareto.ppf(q, alpha, m)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, alpha, m):
-    if x < m:
-        return -np.inf
-    return np.log(alpha) + xlogy(alpha, m) - xlogy((alpha + 1), x)
+@pytensor_jit
+def ptd_logpdf(x, alpha, m):
+    return ptd_pareto.logpdf(x, alpha, m)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, alpha, m):
-    return -(nb_logpdf(x, alpha, m)).sum()
+@pytensor_jit
+def ptd_entropy(alpha, m):
+    return ptd_pareto.entropy(alpha, m)
 
 
-@nb.njit(cache=True)
-def nb_rvs(random_samples, alpha, m):
-    return m / (1 - random_samples) ** (1 / alpha)
+@pytensor_jit
+def ptd_mean(alpha, m):
+    return ptd_pareto.mean(alpha, m)
+
+
+@pytensor_jit
+def ptd_mode(alpha, m):
+    return ptd_pareto.mode(alpha, m)
+
+
+@pytensor_jit
+def ptd_median(alpha, m):
+    return ptd_pareto.median(alpha, m)
+
+
+@pytensor_jit
+def ptd_var(alpha, m):
+    return ptd_pareto.var(alpha, m)
+
+
+@pytensor_jit
+def ptd_std(alpha, m):
+    return ptd_pareto.std(alpha, m)
+
+
+@pytensor_jit
+def ptd_skewness(alpha, m):
+    return ptd_pareto.skewness(alpha, m)
+
+
+@pytensor_jit
+def ptd_kurtosis(alpha, m):
+    return ptd_pareto.kurtosis(alpha, m)
+
+
+@pytensor_rng_jit
+def ptd_rvs(alpha, m, size, rng):
+    return ptd_pareto.rvs(alpha, m, size=size, random_state=rng)

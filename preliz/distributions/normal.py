@@ -1,9 +1,17 @@
-import numba as nb
 import numpy as np
+import pytensor.tensor as pt
+from pytensor_distributions import normal as ptd_normal
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from preliz.internal.special import erf, erfinv, mean_and_std, ppf_bounds_cont
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    eps,
+    from_precision,
+    pytensor_jit,
+    pytensor_rng_jit,
+    to_precision,
+)
+from preliz.internal.special import mean_and_std
 
 
 class Normal(Continuous):
@@ -20,7 +28,6 @@ class Normal(Continuous):
 
     .. plot::
         :context: close-figs
-
 
         from preliz import Normal, style
         style.use('preliz-doc')
@@ -56,7 +63,7 @@ class Normal(Continuous):
 
     def __init__(self, mu=None, sigma=None, tau=None):
         super().__init__()
-        self.support = (-np.inf, np.inf)
+        self.support = (-pt.inf, pt.inf)
         self._parametrization(mu, sigma, tau)
 
     def _parametrization(self, mu=None, sigma=None, tau=None):
@@ -66,7 +73,7 @@ class Normal(Continuous):
             )
 
         names = ("mu", "sigma")
-        self.params_support = ((-np.inf, np.inf), (eps, np.inf))
+        self.params_support = ((-pt.inf, pt.inf), (eps, pt.inf))
 
         if tau is not None:
             self.tau = tau
@@ -80,8 +87,8 @@ class Normal(Continuous):
             self._update(mu, sigma)
 
     def _update(self, mu, sigma):
-        self.mu = np.float64(mu)
-        self.sigma = np.float64(sigma)
+        self.mu = mu  # np.float64(mu)
+        self.sigma = sigma  # np.float64(sigma)
         self.tau = to_precision(sigma)
 
         if self.param_names[1] == "sigma":
@@ -91,89 +98,153 @@ class Normal(Continuous):
 
         self.is_frozen = True
 
-    def pdf(self, x):
-        return nb_pdf(x, self.mu, self.sigma)
-
-    def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.sigma)
-
-    def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.mu, self.sigma)
-
-    def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.sigma)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.sigma)
-
-    def entropy(self):
-        return nb_entropy(self.sigma)
-
-    def mean(self):
-        return self.mu
-
-    def mode(self):
-        return self.mu
-
-    def median(self):
-        return self.mu
-
-    def var(self):
-        return self.sigma**2
-
-    def std(self):
-        return self.sigma
-
-    def skewness(self):
-        return 0
-
-    def kurtosis(self):
-        return 0
-
-    def rvs(self, size=None, random_state=None):
-        random_state = np.random.default_rng(random_state)
-        return random_state.normal(self.mu, self.sigma, size)
-
     def _fit_moments(self, mean, sigma):
         self._update(mean, sigma)
 
     def _fit_mle(self, sample):
-        self._update(*nb_fit_mle(sample))
+        self._update(*mean_and_std(sample))
+
+    def pdf(self, x):
+        return ptd_pdf(x, self.mu, self.sigma)
+
+    def cdf(self, x):
+        return ptd_cdf(x, self.mu, self.sigma)
+
+    def ppf(self, q):
+        return ptd_ppf(q, self.mu, self.sigma)
+
+    def sf(self, x):
+        return ptd_sf(x, self.mu, self.sigma)
+
+    def isf(self, q):
+        return ptd_isf(q, self.mu, self.sigma)
+
+    def logpdf(self, x):
+        return ptd_logpdf(x, self.mu, self.sigma)
+
+    def logcdf(self, x):
+        return ptd_logcdf(x, self.mu, self.sigma)
+
+    def logsf(self, x):
+        return ptd_logsf(x, self.mu, self.sigma)
+
+    def logisf(self, q):
+        return ptd_logisf(q, self.mu, self.sigma)
+
+    def entropy(self):
+        return ptd_entropy(self.mu, self.sigma)
+
+    def mean(self):
+        return ptd_mean(self.mu, self.sigma)
+
+    def mode(self):
+        return ptd_mode(self.mu, self.sigma)
+
+    def median(self):
+        return ptd_median(self.mu, self.sigma)
+
+    def var(self):
+        return ptd_var(self.mu, self.sigma)
+
+    def std(self):
+        return ptd_std(self.mu, self.sigma)
+
+    def skewness(self):
+        return ptd_skewness(self.mu, self.sigma)
+
+    def kurtosis(self):
+        return ptd_kurtosis(self.mu, self.sigma)
+
+    def rvs(self, size=None, random_state=None):
+        random_state = np.random.default_rng(random_state)
+        return ptd_rvs(self.mu, self.sigma, size=size, rng=random_state)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, mu, sigma):
-    return 0.5 * (1 + erf((x - mu) / (sigma * 2**0.5)))
+@pytensor_jit
+def ptd_pdf(x, mu, sigma):
+    return ptd_normal.pdf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, mu, sigma):
-    return ppf_bounds_cont(mu + sigma * 2**0.5 * erfinv(2 * q - 1), q, -np.inf, np.inf)
+@pytensor_jit
+def ptd_cdf(x, mu, sigma):
+    return ptd_normal.cdf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_pdf(x, mu, sigma):
-    x = np.asarray(x)
-    return 1 / np.sqrt(2 * np.pi * sigma**2) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+@pytensor_jit
+def ptd_ppf(q, mu, sigma):
+    return ptd_normal.ppf(q, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_entropy(sigma):
-    return 0.5 * (np.log(2 * np.pi * np.e * sigma**2))
+@pytensor_jit
+def ptd_sf(x, mu, sigma):
+    return ptd_normal.sf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_fit_mle(sample):
-    return mean_and_std(sample)
+@pytensor_jit
+def ptd_isf(q, mu, sigma):
+    return ptd_normal.isf(q, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_logpdf(x, mu, sigma):
-    return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
+@pytensor_jit
+def ptd_logpdf(x, mu, sigma):
+    return ptd_normal.logpdf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, sigma):
-    return -(nb_logpdf(x, mu, sigma)).sum()
+@pytensor_jit
+def ptd_logcdf(x, mu, sigma):
+    return ptd_normal.logcdf(x, mu, sigma)
+
+
+@pytensor_jit
+def ptd_logsf(x, mu, sigma):
+    return ptd_normal.logsf(x, mu, sigma)
+
+
+@pytensor_jit
+def ptd_logisf(q, mu, sigma):
+    return ptd_normal.logisf(q, mu, sigma)
+
+
+@pytensor_jit
+def ptd_entropy(mu, sigma):
+    return ptd_normal.entropy(mu, sigma)
+
+
+@pytensor_jit
+def ptd_mean(mu, sigma):
+    return ptd_normal.mean(mu, sigma)
+
+
+@pytensor_jit
+def ptd_mode(mu, sigma):
+    return ptd_normal.mode(mu, sigma)
+
+
+@pytensor_jit
+def ptd_median(mu, sigma):
+    return ptd_normal.median(mu, sigma)
+
+
+@pytensor_jit
+def ptd_var(mu, sigma):
+    return ptd_normal.var(mu, sigma)
+
+
+@pytensor_jit
+def ptd_std(mu, sigma):
+    return ptd_normal.std(mu, sigma)
+
+
+@pytensor_jit
+def ptd_skewness(mu, sigma):
+    return ptd_normal.skewness(mu, sigma)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, sigma):
+    return ptd_normal.kurtosis(mu, sigma)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, sigma, size, rng):
+    return ptd_normal.rvs(mu, sigma, size=size, random_state=rng)

@@ -1,11 +1,9 @@
-import numba as nb
 import numpy as np
-from scipy.special import pdtr, pdtrik
+from pytensor_distributions import zi_poisson as ptd_zipoisson
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_discrete_mode, optimize_mean_sigma, optimize_ml
-from preliz.internal.special import cdf_bounds, gammaln, ppf_bounds_disc, xlogy
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 
 
 class ZeroInflatedPoisson(Discrete):
@@ -76,98 +74,110 @@ class ZeroInflatedPoisson(Discrete):
 
     def pdf(self, x):
         x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.psi, self.mu))
+        result = ptd_pdf(x, self.psi, self.mu)
+        # Return 0 for negative values and NaN for infinity, consistent with scipy.stats.poisson
+        result = np.where(x < 0, 0, result)
+        result = np.where(~np.isfinite(x), np.nan, result)
+        return result
 
     def cdf(self, x):
-        return nb_cdf(x, self.psi, self.mu, self.support[0], self.support[1])
+        return ptd_cdf(x, self.psi, self.mu)
 
     def ppf(self, q):
-        return nb_ppf(q, self.psi, self.mu, self.support[0], self.support[1])
+        return ptd_ppf(q, self.psi, self.mu)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.psi, self.mu)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.psi, self.mu)
+        return ptd_logpdf(x, self.psi, self.mu)
 
     def entropy(self):
-        if self.mu < 50:
-            x = self.xvals("full", 5000)
-            logpdf = self.logpdf(x)
-            return -np.sum(np.exp(logpdf) * logpdf)
-        else:
-            poisson_entropy = (
-                0.5 * np.log(2 * np.pi * np.e * self.mu)
-                - 1 / (12 * self.mu)
-                - 1 / (24 * self.mu**2)
-                - 19 / (360 * self.mu**3)
-            )
-            if self.psi == 1:
-                return poisson_entropy
-            else:
-                # The var can be 0 with probability 1-psi or something else with probability psi
-                zero_entropy = -(1 - self.psi) * np.logp(1 - self.psi) - self.psi * np.log(self.psi)
-                # The total entropy is the weighted sum of the two entropies
-                return (1 - self.psi) * zero_entropy + self.psi * poisson_entropy
+        return ptd_entropy(self.psi, self.mu)
 
     def mean(self):
-        return self.psi * self.mu
+        return ptd_mean(self.psi, self.mu)
 
     def mode(self):
-        return find_discrete_mode(self)
+        return ptd_mode(self.psi, self.mu)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.psi, self.mu)
 
     def var(self):
-        return self.psi * self.mu * (1 + (1 - self.psi) * self.mu)
+        return ptd_var(self.psi, self.mu)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.psi, self.mu)
 
     def skewness(self):
-        return np.nan
+        return ptd_skewness(self.psi, self.mu)
 
     def kurtosis(self):
-        return np.nan
+        return ptd_kurtosis(self.psi, self.mu)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        zeros = random_state.uniform(size=size) > (1 - self.psi)
-        poisson = random_state.poisson(self.mu, size=size)
-        return zeros * poisson
+        return ptd_rvs(self.psi, self.mu, size=size, rng=random_state)
 
 
-# @nb.jit
-# pdtr not supported by numba
-def nb_cdf(x, psi, mu, lower, upper):
-    p_prob = pdtr(x, mu)
-    prob = (1 - psi) + psi * p_prob
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, psi, mu):
+    return ptd_zipoisson.pdf(x, psi, mu)
 
 
-# @nb.jit
-# pdtr not supported by numba
-def nb_ppf(q, psi, mu, lower, upper):
-    q = np.asarray(q)
-    vals = np.ceil(pdtrik(q, mu))
-    vals1 = np.maximum(vals - 1, 0)
-    temp = pdtr(vals1, mu)
-    p_vals = np.where(temp >= q, vals1, vals)
-    x_vals = (1 - psi) + psi * p_vals
-    return ppf_bounds_disc(x_vals, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, psi, mu):
+    return ptd_zipoisson.cdf(x, psi, mu)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, psi, mu):
-    if x < 0:
-        return -np.inf
-    elif x == 0:
-        return np.log(np.exp(-mu) * psi - psi + 1)
-    else:
-        return np.log(psi) + xlogy(x, mu) - gammaln(x + 1) - mu
+@pytensor_jit
+def ptd_ppf(q, psi, mu):
+    return ptd_zipoisson.ppf(q, psi, mu)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, psi, mu):
-    return -(nb_logpdf(x, psi, mu)).sum()
+@pytensor_jit
+def ptd_logpdf(x, psi, mu):
+    return ptd_zipoisson.logpdf(x, psi, mu)
+
+
+@pytensor_jit
+def ptd_entropy(psi, mu):
+    return ptd_zipoisson.entropy(psi, mu)
+
+
+@pytensor_jit
+def ptd_mean(psi, mu):
+    return ptd_zipoisson.mean(psi, mu)
+
+
+@pytensor_jit
+def ptd_mode(psi, mu):
+    return ptd_zipoisson.mode(psi, mu)
+
+
+@pytensor_jit
+def ptd_median(psi, mu):
+    return ptd_zipoisson.median(psi, mu)
+
+
+@pytensor_jit
+def ptd_var(psi, mu):
+    return ptd_zipoisson.var(psi, mu)
+
+
+@pytensor_jit
+def ptd_std(psi, mu):
+    return ptd_zipoisson.std(psi, mu)
+
+
+@pytensor_jit
+def ptd_skewness(psi, mu):
+    return ptd_zipoisson.skewness(psi, mu)
+
+
+@pytensor_jit
+def ptd_kurtosis(psi, mu):
+    return ptd_zipoisson.kurtosis(psi, mu)
+
+
+@pytensor_rng_jit
+def ptd_rvs(psi, mu, size, rng):
+    return ptd_zipoisson.rvs(psi, mu, size=size, random_state=rng)

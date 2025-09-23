@@ -1,10 +1,10 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import bernoulli as ptd_bernoulli
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import expit, logit, xlogx
+from preliz.internal.special import expit, logit
 
 
 class Bernoulli(Discrete):
@@ -93,103 +93,106 @@ class Bernoulli(Discrete):
         optimize_ml(self, sample)
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return nb_pdf(x, self.p)
+        return ptd_pdf(x, self.p)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.p)
+        return ptd_cdf(x, self.p)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.p)
+        return ptd_ppf(q, self.p)
 
     def logpdf(self, x):
-        x = np.asarray(x)
-        return nb_logpdf(x, self.p)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.p)
+        return ptd_logpdf(x, self.p)
 
     def entropy(self):
-        return nb_entropy(self.p)
+        return ptd_entropy(self.p)
 
     def mean(self):
-        return self.p
+        return ptd_mean(self.p)
 
     def mode(self):
-        return self.median()
+        return ptd_mode(self.p)
 
     def median(self):
-        return np.where(self.p <= 0.5, 0, 1)
+        return ptd_median(self.p)
 
     def var(self):
-        return self.p * self._q
+        return ptd_var(self.p)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.p)
 
     def skewness(self):
-        return (self._q - self.p) / self.std()
+        return ptd_skewness(self.p)
 
     def kurtosis(self):
-        return (1 - 6 * self.p * self._q) / (self.p * self._q)
+        return ptd_kurtosis(self.p)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.binomial(1, self.p, size=size)
+        return ptd_rvs(self.p, size=size, rng=random_state)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, p):
-    if x < 0:
-        return 0
-    elif x < 1:
-        return 1 - p
-    else:
-        return 1
+@pytensor_jit
+def ptd_pdf(x, p):
+    return ptd_bernoulli.pdf(x, p)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_ppf(q, p):
-    if q < 0:
-        return np.nan
-    elif q > 1:
-        return np.nan
-    elif q == 0:
-        return -1
-    elif q < 1 - p:
-        return 0
-    else:
-        return 1
+@pytensor_jit
+def ptd_cdf(x, p):
+    return ptd_bernoulli.cdf(x, p)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_pdf(x, p):
-    if x == 1:
-        return p
-    elif x == 0:
-        return 1 - p
-    else:
-        return 0.0
+@pytensor_jit
+def ptd_ppf(q, p):
+    return ptd_bernoulli.ppf(q, p)
 
 
-@nb.njit(cache=True)
-def nb_entropy(p):
-    q = 1 - p
-    return -xlogx(q) - xlogx(p)
+@pytensor_jit
+def ptd_logpdf(x, p):
+    return ptd_bernoulli.logpdf(x, p)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, p):
-    if x == 1:
-        return np.log(p)
-    elif x == 0:
-        return np.log(1 - p)
-    else:
-        return -np.inf
+@pytensor_jit
+def ptd_entropy(p):
+    return ptd_bernoulli.entropy(p)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, p):
-    return -(nb_logpdf(x, p)).sum()
+@pytensor_jit
+def ptd_mean(p):
+    return ptd_bernoulli.mean(p)
+
+
+@pytensor_jit
+def ptd_mode(p):
+    return ptd_bernoulli.mode(p)
+
+
+@pytensor_jit
+def ptd_median(p):
+    return ptd_bernoulli.median(p)
+
+
+@pytensor_jit
+def ptd_var(p):
+    return ptd_bernoulli.var(p)
+
+
+@pytensor_jit
+def ptd_std(p):
+    return ptd_bernoulli.std(p)
+
+
+@pytensor_jit
+def ptd_skewness(p):
+    return ptd_bernoulli.skewness(p)
+
+
+@pytensor_jit
+def ptd_kurtosis(p):
+    return ptd_bernoulli.kurtosis(p)
+
+
+@pytensor_rng_jit
+def ptd_rvs(p, size, rng):
+    return ptd_bernoulli.rvs(p, size=size, random_state=rng)

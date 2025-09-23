@@ -313,10 +313,16 @@ def from_pymc(dist):
         )
 
     else:
-        if name in ["HalfNormal", "HalfCauchy"]:
+        if name == "HalfNormal":
             params_inputs = [v.eval() for v in dist.owner.inputs[3:]]
+        elif name == "LogitNormal":
+            params_inputs = [v.eval() for v in dist.owner.inputs[1:]]
         else:
             params_inputs = [v.eval() for v in dist.owner.inputs[2:]]
+
+        params_inputs = [
+            p for p in params_inputs if isinstance(p, (int, float, np.number, np.ndarray))
+        ]
 
         try:
             Dist = getattr(modules["preliz.distributions"], name)

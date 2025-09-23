@@ -214,9 +214,6 @@ class Censored(DistributionTransformer):
         entropy_interval = trunc_ent * p_int - xlogx(p_int) + xlogx_pl + xlogx_pu
         return entropy_interval + entropy_bound
 
-    def _neg_logpdf(self, x):
-        return -self.logpdf(x).sum()
-
     def _fit_moments(self, mean, sigma):
         self.dist._fit_moments(mean, sigma)
         self._parametrization(**dict(zip(self.dist.param_names, self.dist.params)))

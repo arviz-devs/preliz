@@ -1,8 +1,8 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import logistic as ptd_logistic
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
 
 
@@ -63,50 +63,44 @@ class Logistic(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.mu, self.s))
+        return ptd_pdf(x, self.mu, self.s)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.s)
+        return ptd_cdf(x, self.mu, self.s)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.mu, self.s)
+        return ptd_ppf(q, self.mu, self.s)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.s)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.s)
+        return ptd_logpdf(x, self.mu, self.s)
 
     def entropy(self):
-        return nb_entropy(self.s)
+        return ptd_entropy(self.mu, self.s)
 
     def mean(self):
-        return self.mu
+        return ptd_mean(self.mu, self.s)
 
     def mode(self):
-        return self.mu
+        return ptd_mode(self.mu, self.s)
 
     def median(self):
-        return self.mu
+        return ptd_median(self.mu, self.s)
 
     def var(self):
-        return self.s**2 * np.pi**2 / 3
+        return ptd_var(self.mu, self.s)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.s)
 
     def skewness(self):
-        return 0
+        return ptd_skewness(self.mu, self.s)
 
     def kurtosis(self):
-        return 6 / 5
+        return ptd_kurtosis(self.mu, self.s)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.logistic(self.mu, self.s, size)
+        return ptd_rvs(self.mu, self.s, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         s = (3 * sigma**2 / np.pi**2) ** 0.5
@@ -116,29 +110,66 @@ class Logistic(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, mu, s):
-    return 1 / (1 + np.exp(-(x - mu) / s))
+@pytensor_jit
+def ptd_pdf(x, mu, s):
+    return ptd_logistic.pdf(x, mu, s)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, mu, s):
-    return mu + s * np.log(q / (1 - q))
+@pytensor_jit
+def ptd_cdf(x, mu, s):
+    return ptd_logistic.cdf(x, mu, s)
 
 
-@nb.njit(cache=True)
-def nb_entropy(s):
-    return np.log(s) + 2
+@pytensor_jit
+def ptd_ppf(q, mu, s):
+    return ptd_logistic.ppf(q, mu, s)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, mu, s):
-    if x == -np.inf:
-        return -np.inf
-    else:
-        return -np.log(s) - 2 * np.log1p(np.exp(-(x - mu) / s)) - (x - mu) / s
+@pytensor_jit
+def ptd_logpdf(x, mu, s):
+    return ptd_logistic.logpdf(x, mu, s)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, s):
-    return -(nb_logpdf(x, mu, s)).sum()
+@pytensor_jit
+def ptd_entropy(mu, s):
+    return ptd_logistic.entropy(mu, s)
+
+
+@pytensor_jit
+def ptd_mean(mu, s):
+    return ptd_logistic.mean(mu, s)
+
+
+@pytensor_jit
+def ptd_mode(mu, s):
+    return ptd_logistic.mode(mu, s)
+
+
+@pytensor_jit
+def ptd_median(mu, s):
+    return ptd_logistic.median(mu, s)
+
+
+@pytensor_jit
+def ptd_var(mu, s):
+    return ptd_logistic.var(mu, s)
+
+
+@pytensor_jit
+def ptd_std(mu, s):
+    return ptd_logistic.std(mu, s)
+
+
+@pytensor_jit
+def ptd_skewness(mu, s):
+    return ptd_logistic.skewness(mu, s)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, s):
+    return ptd_logistic.kurtosis(mu, s)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, s, size, rng):
+    return ptd_logistic.rvs(mu, s, size=size, random_state=rng)

@@ -152,9 +152,6 @@ class Truncated(DistributionTransformer):
         else:
             return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
 
-    def _neg_logpdf(self, x):
-        return -self.logpdf(x).sum()
-
     def _fit_moments(self, mean, sigma):
         self.dist._fit_moments(mean, sigma)
         self._parametrization(**dict(zip(self.dist.param_names, self.dist.params)))

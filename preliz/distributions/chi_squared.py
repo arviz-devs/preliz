@@ -1,11 +1,9 @@
-import numba as nb
 import numpy as np
-from scipy.special import gammainc, gammaincinv
+from pytensor_distributions import chisquared as ptd_chisquared
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import eps
+from preliz.internal.distribution_helper import eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 
 
 class ChiSquared(Continuous):
@@ -62,50 +60,44 @@ class ChiSquared(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.nu))
+        return ptd_pdf(x, self.nu)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.nu)
+        return ptd_cdf(x, self.nu)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.nu)
+        return ptd_ppf(q, self.nu)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.nu)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.nu)
+        return ptd_logpdf(x, self.nu)
 
     def entropy(self):
-        return nb_entropy(self.nu)
+        return ptd_entropy(self.nu)
 
     def mean(self):
-        return self.nu
+        return ptd_mean(self.nu)
 
     def mode(self):
-        return np.maximum(self.nu - 2, 0)
+        return ptd_mode(self.nu)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.nu)
 
     def var(self):
-        return self.nu * 2
+        return ptd_var(self.nu)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.nu)
 
     def skewness(self):
-        return (8 / self.nu) ** 0.5
+        return ptd_skewness(self.nu)
 
     def kurtosis(self):
-        return 12 / self.nu
+        return ptd_kurtosis(self.nu)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.chisquare(self.nu, size)
+        return ptd_rvs(self.nu, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma=None):
         self._update(mean)
@@ -114,31 +106,66 @@ class ChiSquared(Continuous):
         optimize_ml(self, sample)
 
 
-# @nb.njit(cache=True)
-def nb_cdf(x, nu):
-    return cdf_bounds(gammainc(nu / 2, x / 2), x, 0, np.inf)
+@pytensor_jit
+def ptd_pdf(x, nu):
+    return ptd_chisquared.pdf(x, nu)
 
 
-# @nb.njit(cache=True)
-def nb_ppf(q, nu):
-    vals = 2 * gammaincinv(nu / 2, q)
-    return ppf_bounds_cont(vals, q, 0, np.inf)
+@pytensor_jit
+def ptd_cdf(x, nu):
+    return ptd_chisquared.cdf(x, nu)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, nu):
-    if x < 0:
-        return -np.inf
-    else:
-        return xlogy(nu / 2 - 1, x) - x / 2 - gammaln(nu / 2) - (nu * np.log(2)) / 2
+@pytensor_jit
+def ptd_ppf(q, nu):
+    return ptd_chisquared.ppf(q, nu)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, lam):
-    return (-nb_logpdf(x, lam)).sum()
+@pytensor_jit
+def ptd_logpdf(x, nu):
+    return ptd_chisquared.logpdf(x, nu)
 
 
-@nb.njit(cache=True)
-def nb_entropy(nu):
-    h_nu = nu / 2
-    return h_nu + np.log(2) + gammaln(h_nu) + (1 - h_nu) * digamma(h_nu)
+@pytensor_jit
+def ptd_entropy(nu):
+    return ptd_chisquared.entropy(nu)
+
+
+@pytensor_jit
+def ptd_mean(nu):
+    return ptd_chisquared.mean(nu)
+
+
+@pytensor_jit
+def ptd_mode(nu):
+    return ptd_chisquared.mode(nu)
+
+
+@pytensor_jit
+def ptd_median(nu):
+    return ptd_chisquared.median(nu)
+
+
+@pytensor_jit
+def ptd_var(nu):
+    return ptd_chisquared.var(nu)
+
+
+@pytensor_jit
+def ptd_std(nu):
+    return ptd_chisquared.std(nu)
+
+
+@pytensor_jit
+def ptd_skewness(nu):
+    return ptd_chisquared.skewness(nu)
+
+
+@pytensor_jit
+def ptd_kurtosis(nu):
+    return ptd_chisquared.kurtosis(nu)
+
+
+@pytensor_rng_jit
+def ptd_rvs(nu, size, rng):
+    return ptd_chisquared.rvs(nu, size=size, random_state=rng)

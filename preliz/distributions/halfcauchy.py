@@ -1,10 +1,9 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import halfcauchy as ptd_halfcauchy
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import eps
+from preliz.internal.distribution_helper import eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import cdf_bounds, ppf_bounds_cont
 
 
 class HalfCauchy(Continuous):
@@ -58,51 +57,44 @@ class HalfCauchy(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.beta))
+        return ptd_pdf(x, self.beta)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.beta, 0, np.inf)
+        return ptd_cdf(x, self.beta)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.beta, 0, np.inf)
+        return ptd_ppf(q, self.beta)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.beta)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.beta)
+        return ptd_logpdf(x, self.beta)
 
     def entropy(self):
-        return nb_entropy(self.beta)
+        return ptd_entropy(self.beta)
 
     def mean(self):
-        return np.inf
+        return ptd_mean(self.beta)
 
     def mode(self):
-        return np.zeros_like(self.beta)
+        return ptd_mode(self.beta)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.beta)
 
     def var(self):
-        return np.inf
+        return ptd_var(self.beta)
 
     def std(self):
-        return np.inf
+        return ptd_std(self.beta)
 
     def skewness(self):
-        return np.nan
+        return ptd_skewness(self.beta)
 
     def kurtosis(self):
-        return np.nan
+        return ptd_kurtosis(self.beta)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        random_samples = random_state.uniform(0, 1, size)
-        return nb_rvs(random_samples, self.beta)
+        return ptd_rvs(self.beta, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         self._update(sigma)
@@ -111,36 +103,66 @@ class HalfCauchy(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, beta, lower, upper):
-    prob = 2 / np.pi * np.arctan(x / beta)
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, beta):
+    return ptd_halfcauchy.pdf(x, beta)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, beta, lower, upper):
-    x_val = beta * np.tan(np.pi / 2 * q)
-    return ppf_bounds_cont(x_val, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, beta):
+    return ptd_halfcauchy.cdf(x, beta)
 
 
-@nb.njit(cache=True)
-def nb_entropy(beta):
-    return np.log(2 * beta * np.pi)
+@pytensor_jit
+def ptd_ppf(q, beta):
+    return ptd_halfcauchy.ppf(q, beta)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, beta):
-    if x < 0:
-        return -np.inf
-    else:
-        return np.log(2) - np.log(np.pi * beta) - np.log(1 + (x / beta) ** 2)
+@pytensor_jit
+def ptd_logpdf(x, beta):
+    return ptd_halfcauchy.logpdf(x, beta)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, beta):
-    return (-nb_logpdf(x, beta)).sum()
+@pytensor_jit
+def ptd_entropy(beta):
+    return ptd_halfcauchy.entropy(beta)
 
 
-@nb.njit(cache=True)
-def nb_rvs(random_samples, beta):
-    return beta * np.tan(np.pi / 2 * random_samples)
+@pytensor_jit
+def ptd_mean(beta):
+    return ptd_halfcauchy.mean(beta)
+
+
+@pytensor_jit
+def ptd_mode(beta):
+    return ptd_halfcauchy.mode(beta)
+
+
+@pytensor_jit
+def ptd_median(beta):
+    return ptd_halfcauchy.median(beta)
+
+
+@pytensor_jit
+def ptd_var(beta):
+    return ptd_halfcauchy.var(beta)
+
+
+@pytensor_jit
+def ptd_std(beta):
+    return ptd_halfcauchy.std(beta)
+
+
+@pytensor_jit
+def ptd_skewness(beta):
+    return ptd_halfcauchy.skewness(beta)
+
+
+@pytensor_jit
+def ptd_kurtosis(beta):
+    return ptd_halfcauchy.kurtosis(beta)
+
+
+@pytensor_rng_jit
+def ptd_rvs(beta, size, rng):
+    return ptd_halfcauchy.rvs(beta, size=size, random_state=rng)

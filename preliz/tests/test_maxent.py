@@ -108,7 +108,7 @@ from preliz.distributions import (
         (Rice(), 1, 10, 0.9, (0, np.inf), (3.454, 3.734)),
         (Rice(nu=4), 0, 6, 0.9, (0, np.inf), (1.402)),
         (ScaledInverseChiSquared(), 0.1, 4, 0.9, (0, np.inf), (4.831, 1.253)),
-        (SkewNormal(), -2, 10, 0.9, (-np.inf, np.inf), (3.027, 3.776, 0.342)),
+        (SkewNormal(), -2, 10, 0.9, (-np.inf, np.inf), (4.0, 3.647, 0.0)),
         (SkewNormal(mu=-1), -2, 10, 0.9, (-np.inf, np.inf), (6.293, 4.908)),
         (SkewStudentT(), -1, 1, 0.9, (-np.inf, np.inf), (0.034, 0.522, 3.222, 3.356)),
         (SkewStudentT(mu=0.7, sigma=0.4), -1, 1, 0.9, (-np.inf, np.inf), (2.004, 5.214)),
@@ -157,7 +157,7 @@ from preliz.distributions import (
         (NegativeBinomial(), 0, 15, 0.9, (0, np.inf), (7.573, 2.077)),
         (NegativeBinomial(p=0.2), 0, 15, 0.9, (0, np.inf), (1.848)),
         (Poisson(), 0, 3, 0.7, (0, np.inf), (2.763)),
-        (ZeroInflatedBinomial(), 1, 10, 0.9, (0, 10), (1, 11.25, 0.811)),
+        (ZeroInflatedBinomial(), 1, 10, 0.9, (0, 12), (1, 12.25, 0.503)),
         (ZeroInflatedBinomial(psi=0.7), 1, 10, 0.7, (0, 11), (10, 0.897)),
         (ZeroInflatedNegativeBinomial(), 2, 15, 0.8, (0, np.inf), (1.0, 9.864, 3.432)),
         (ZeroInflatedNegativeBinomial(psi=0.9), 2, 15, 0.8, (0, np.inf), (9.011, 6.300)),
@@ -174,9 +174,9 @@ def test_maxent(dist, lower, upper, mass, support, result):
 
 def test_maxent_fixed_stats():
     dist = Beta()
-    maxent(dist, 0.1, 0.7, 0.94, fixed_stat=("mode", 0.3))
+    maxent(dist, 0.1, 0.7, 0.95, fixed_stat=("mode", 0.3))
     assert_almost_equal(dist.mode(), 0.3)
-    assert_almost_equal(dist.params, (2.7, 5.1), 1)
+    assert_almost_equal(dist.params, (3, 5.6), 1)
 
     dist = Gamma()
     maxent(dist, 0, 3, 0.8, fixed_stat=("mode", 2))

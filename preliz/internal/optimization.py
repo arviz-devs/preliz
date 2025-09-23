@@ -5,7 +5,7 @@ from copy import copy
 
 import numpy as np
 from scipy.optimize import brentq, least_squares, minimize, minimize_scalar, root_scalar
-from scipy.special import i0, i0e, i1, i1e, logit
+from scipy.special import i0, i0e, i1, i1e
 
 from preliz.internal.distribution_helper import init_vals as default_vals
 
@@ -179,7 +179,7 @@ def optimize_mean_sigma(dist, mean, sigma, params=None):
 
     init_vals = np.array(dist.params)[none_idx]
 
-    if dist.__class__.__name__ in ["HyperGeometric", "BetaBinomial"]:
+    if dist.__class__.__name__ in ["HyperGeometric"]:
         opt = least_squares(func, x0=init_vals, args=(dist, mean, sigma))
     else:
         bounds = np.array(dist.params_support)[none_idx]
@@ -237,7 +237,7 @@ def optimize_moments_rice(mean, std_dev):
 def optimize_ml(dist, sample):
     def negll(params, dist, sample):
         dist._update(*params)
-        return dist._neg_logpdf(sample)
+        return -dist.logpdf(sample).sum()
 
     dist._fit_moments(np.mean(sample), np.std(sample))
     init_vals = dist.params
@@ -273,19 +273,6 @@ def optimize_dirichlet_mode(lower_bounds, mode, target_mass, _dist):
         new_prob, alpha = prob_approx(tau, lower_bounds, mode, _dist)
 
     return new_prob, alpha
-
-
-def optimize_beta_mode(lower, upper, tau_not, mode, dist, mass, prob):
-    while abs(prob - mass) > 0.0001:
-        alpha = 1 + mode * tau_not
-        beta = 1 + (1 - mode) * tau_not
-        dist._parametrization(alpha, beta)
-        prob = dist.cdf(upper) - dist.cdf(lower)
-
-        if prob > mass:
-            tau_not -= 0.5 * tau_not
-        else:
-            tau_not += 0.5 * tau_not
 
 
 def find_hdi(dist, mass):
@@ -439,7 +426,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
                 for s in sample:
                     dist_i = copy(dist)
                     dist_i._fit_mle(s)
-                    neg_logpdf += dist_i._neg_logpdf(s)
+                    neg_logpdf += -dist_i.logpdf(s).sum()
                     dists.append(dist_i)
                 new_dict = {}
                 for d in dists:
@@ -453,7 +440,7 @@ def fit_to_sample(selected_distributions, sample, x_min, x_max):
                 dist._parametrization(**{k: np.asarray(v) for k, v in new_dict.items()})
             else:
                 dist._fit_mle(sample)
-                neg_logpdf = dist._neg_logpdf(sample)
+                neg_logpdf = -dist.logpdf(sample).sum()
             corr = get_penalization(sample.size, dist)
             loss = neg_logpdf + corr
         fitted.update(loss, dist)
@@ -553,40 +540,6 @@ def find_kappa(data, mu):
         return np.finfo(float).tiny
 
 
-def find_mode_logitnormal(distribution):
-    eps = np.finfo(float).eps
-
-    def mode_equation(x):
-        # The equation is: logit(x) = σ²(2x-1) + μ
-        # We want to find the root of: logit(x) - σ²(2x-1) - μ = 0
-        return logit(x) - (distribution.sigma**2 * (2 * x - 1)) - distribution.mu
-
-    # Left side
-    try:
-        sol1 = root_scalar(mode_equation, bracket=(eps, 0.5 - eps)).root
-    except ValueError:
-        sol1 = None
-
-    # Right side
-    try:
-        sol2 = root_scalar(mode_equation, bracket=(0.5 + eps, 1 - eps)).root
-    except ValueError:
-        sol2 = None
-
-    if sol1 is None and sol2 is None:
-        # If no solutions found, return the median as an approximation
-        return distribution.median()
-    elif sol1 is None:
-        return sol2
-    elif sol2 is None:
-        return sol1
-    else:
-        # Return the solution with higher density
-        if distribution.pdf(sol1) >= distribution.pdf(sol2):
-            return sol1
-        return sol2
-
-
 def find_mode(distribution):
     """
     Find mode of a distribution through numerical optimization.
@@ -676,64 +629,3 @@ def get_weighted_rvs(target, size, rng):
     target_rnd_choices = rng.choice(len(targets), size=size, p=weights)
     samples = [target.rvs(size, random_state=rng) for target in targets]
     return np.choose(target_rnd_choices, samples)
-
-
-def _root(n_p, k_sq, a_sq, x):
-    def _fixed_point(t_s, x_len, k_sq, a_sq):
-        """Calculate t-zeta*gamma^[l](t).
-
-        Implementation of the function t-zeta*gamma^[l](t) derived from equation (30) in [1].
-
-        References
-        ----------
-        .. [1] Kernel density estimation via diffusion.
-        Z. I. Botev, J. F. Grotowski, and D. P. Kroese.
-        Ann. Statist. 38 (2010), no. 5, 2916--2957.
-        """
-        k_sq = np.asarray(k_sq, dtype=np.float64)
-        a_sq = np.asarray(a_sq, dtype=np.float64)
-
-        k_o = 7
-        func = np.sum(np.power(k_sq, k_o) * a_sq * np.exp(-k_sq * np.pi**2 * t_s))
-        func *= 0.5 * np.pi ** (2.0 * k_o)
-
-        for ite in np.arange(k_o - 1, 2 - 1, -1):
-            c_1 = (1 + 0.5 ** (ite + 0.5)) / 3
-            c_2 = np.prod(np.arange(1.0, 2 * ite + 1, 2, dtype=np.float64))
-            c_2 /= (np.pi / 2) ** 0.5
-            t_j = np.power((c_1 * (c_2 / (x_len * func))), (2.0 / (3.0 + 2.0 * ite)))
-            func = np.sum(k_sq**ite * a_sq * np.exp(-k_sq * np.pi**2.0 * t_j))
-            func *= 0.5 * np.pi ** (2 * ite)
-
-        out = t_s - (2 * x_len * np.pi**0.5 * func) ** (-0.4)
-        return out
-
-    # The right bound is at most 0.01
-    found = False
-    n_p = max(min(1050, n_p), 50)
-    tol = 10e-12 + 0.01 * (n_p - 50) / 1000
-
-    while not found:
-        try:
-            band_w, res = brentq(
-                _fixed_point, 0, 0.01, args=(n_p, k_sq, a_sq), full_output=True, disp=False
-            )
-            found = res.converged
-        except ValueError:
-            band_w = 0
-            tol *= 2.0
-            found = False
-        if band_w <= 0 or tol >= 1:
-            band_w = (_bw_silverman(x) / np.ptp(x)) ** 2
-            return band_w
-    return band_w
-
-
-def _bw_silverman(x, x_std=None):
-    """Silverman's Rule."""
-    x_std = np.std(x)
-    q75, q25 = np.percentile(x, [75, 25])
-    x_iqr = q75 - q25
-    a = min(x_std, x_iqr / 1.34)
-    band_w = 0.9 * a * len(x) ** (-0.2)
-    return band_w

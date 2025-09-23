@@ -1,9 +1,8 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import discreteuniform as ptd_discreteuniform
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none
-from preliz.internal.special import cdf_bounds, ppf_bounds_disc
+from preliz.internal.distribution_helper import all_not_none, pytensor_jit, pytensor_rng_jit
 
 
 class DiscreteUniform(Discrete):
@@ -71,50 +70,44 @@ class DiscreteUniform(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return nb_pdf(x, self._n, self.lower, self.upper)
+        return ptd_pdf(x, self.lower, self.upper)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self._n, self.lower, self.upper)
+        return ptd_cdf(x, self.lower, self.upper)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self._n, self.lower, self.upper)
+        return ptd_ppf(q, self.lower, self.upper)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self._n, self.lower, self.upper)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self._n, self.lower, self.upper)
+        return ptd_logpdf(x, self.lower, self.upper)
 
     def entropy(self):
-        return nb_entropy(self._n)
+        return ptd_entropy(self.lower, self.upper)
 
     def mean(self):
-        return (self.upper + self.lower) / 2
+        return ptd_mean(self.lower, self.upper)
 
     def mode(self):
-        return (self.upper + self.lower) / 2
+        return ptd_mode(self.lower, self.upper)
 
     def median(self):
-        return np.floor((self.upper + self.lower) / 2)
+        return ptd_median(self.lower, self.upper)
 
     def var(self):
-        return (self._n**2 - 1) / 12
+        return ptd_var(self.lower, self.upper)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.lower, self.upper)
 
     def skewness(self):
-        return 0
+        return ptd_skewness(self.lower, self.upper)
 
     def kurtosis(self):
-        return -(6 * (self._n**2 + 1)) / (5 * (self._n**2 - 1))
+        return ptd_kurtosis(self.lower, self.upper)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.integers(self.lower, self.upper + 1, size)
+        return ptd_rvs(self.lower, self.upper, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         spr = (12 * sigma**2 + 1) ** 0.5
@@ -128,39 +121,66 @@ class DiscreteUniform(Discrete):
         self._update(lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, n, lower, upper):
-    prob = (np.floor(x) - lower + 1) / n
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, lower, upper):
+    return ptd_discreteuniform.pdf(x, lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, n, lower, upper):
-    x_vals = np.ceil(q * n + lower - 1)
-    return ppf_bounds_disc(x_vals, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, lower, upper):
+    return ptd_discreteuniform.cdf(x, lower, upper)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_pdf(x, n, lower, upper):
-    if lower <= x <= upper:
-        return 1 / n
-    else:
-        return 0
+@pytensor_jit
+def ptd_ppf(q, lower, upper):
+    return ptd_discreteuniform.ppf(q, lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_entropy(n):
-    return np.log(n)
+@pytensor_jit
+def ptd_logpdf(x, lower, upper):
+    return ptd_discreteuniform.logpdf(x, lower, upper)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, n, lower, upper):
-    if lower <= x <= upper:
-        return -np.log(n)
-    else:
-        return -np.inf
+@pytensor_jit
+def ptd_entropy(lower, upper):
+    return ptd_discreteuniform.entropy(lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, n, lower, upper):
-    return -(nb_logpdf(x, n, lower, upper)).sum()
+@pytensor_jit
+def ptd_mean(lower, upper):
+    return ptd_discreteuniform.mean(lower, upper)
+
+
+@pytensor_jit
+def ptd_mode(lower, upper):
+    return ptd_discreteuniform.mode(lower, upper)
+
+
+@pytensor_jit
+def ptd_median(lower, upper):
+    return ptd_discreteuniform.median(lower, upper)
+
+
+@pytensor_jit
+def ptd_var(lower, upper):
+    return ptd_discreteuniform.var(lower, upper)
+
+
+@pytensor_jit
+def ptd_std(lower, upper):
+    return ptd_discreteuniform.std(lower, upper)
+
+
+@pytensor_jit
+def ptd_skewness(lower, upper):
+    return ptd_discreteuniform.skewness(lower, upper)
+
+
+@pytensor_jit
+def ptd_kurtosis(lower, upper):
+    return ptd_discreteuniform.kurtosis(lower, upper)
+
+
+@pytensor_rng_jit
+def ptd_rvs(lower, upper, size, rng):
+    return ptd_discreteuniform.rvs(lower, upper, size=size, random_state=rng)

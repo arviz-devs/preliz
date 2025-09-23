@@ -1,11 +1,9 @@
-import numba as nb
 import numpy as np
-from scipy.special import gammaincc, gammaincinv
+from pytensor_distributions import scaledinversechisquared as ptd_scaledinversechisquared
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont
 
 
 class ScaledInverseChiSquared(Continuous):
@@ -71,56 +69,44 @@ class ScaledInverseChiSquared(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.nu, self.tau2))
+        return ptd_pdf(x, self.nu, self.tau2)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.nu, self.tau2)
+        return ptd_cdf(x, self.nu, self.tau2)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.nu, self.tau2)
+        return ptd_ppf(q, self.nu, self.tau2)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.nu, self.tau2)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.nu, self.tau2)
+        return ptd_logpdf(x, self.nu, self.tau2)
 
     def entropy(self):
-        return nb_entropy(self.nu, self.tau2)
+        return ptd_entropy(self.nu, self.tau2)
 
     def mean(self):
-        return np.where(self.nu > 2, self.nu * self.tau2 / (self.nu - 2), np.inf)
+        return ptd_mean(self.nu, self.tau2)
 
     def mode(self):
-        return self.nu * self.tau2 / (self.nu + 2)
+        return ptd_mode(self.nu, self.tau2)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.nu, self.tau2)
 
     def var(self):
-        return np.where(
-            self.nu > 4,
-            2 * self.nu**2 * self.tau2**2 / ((self.nu - 2) ** 2 * (self.nu - 4)),
-            np.inf,
-        )
+        return ptd_var(self.nu, self.tau2)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.nu, self.tau2)
 
     def skewness(self):
-        return np.where(self.nu > 6, 4 / (self.nu - 6) * np.sqrt(2 * (self.nu - 4)), np.inf)
+        return ptd_skewness(self.nu, self.tau2)
 
     def kurtosis(self):
-        return np.where(
-            self.nu > 8, (12 * (5 * self.nu - 22)) / ((self.nu - 6) * (self.nu - 8)), np.inf
-        )
+        return ptd_kurtosis(self.nu, self.tau2)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return (self.nu * self.tau2) / random_state.chisquare(self.nu, size)
+        return ptd_rvs(self.nu, self.tau2, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         cv2 = sigma**2 / mean**2
@@ -132,40 +118,66 @@ class ScaledInverseChiSquared(Continuous):
         optimize_ml(self, sample)
 
 
-# @nb.njit(cache=True)
-def nb_cdf(x, nu, tau2):
-    h_nu = nu / 2
-    return cdf_bounds(gammaincc(h_nu, h_nu * tau2 / x), x, 0, np.inf)
+@pytensor_jit
+def ptd_pdf(x, nu, tau2):
+    return ptd_scaledinversechisquared.pdf(x, nu, tau2)
 
 
-# @nb.njit(cache=True)
-def nb_ppf(q, nu, tau2):
-    h_nu = nu / 2
-    vals = h_nu * tau2 / gammaincinv(h_nu, 1 - q)
-    return ppf_bounds_cont(vals, q, 0, np.inf)
+@pytensor_jit
+def ptd_cdf(x, nu, tau2):
+    return ptd_scaledinversechisquared.cdf(x, nu, tau2)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, nu, tau2):
-    if x < 0:
-        return -np.inf
-    else:
-        h_nu = nu / 2
-        return (
-            -(np.log(x) * (h_nu + 1))
-            - (h_nu * tau2) / x
-            + np.log(tau2) * h_nu
-            - gammaln(h_nu)
-            + np.log(h_nu) * h_nu
-        )
+@pytensor_jit
+def ptd_ppf(q, nu, tau2):
+    return ptd_scaledinversechisquared.ppf(q, nu, tau2)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, nu, tau2):
-    return (-nb_logpdf(x, nu, tau2)).sum()
+@pytensor_jit
+def ptd_logpdf(x, nu, tau2):
+    return ptd_scaledinversechisquared.logpdf(x, nu, tau2)
 
 
-@nb.njit(cache=True)
-def nb_entropy(nu, tau2):
-    h_nu = nu / 2
-    return h_nu + np.log(h_nu * tau2) + gammaln(h_nu) - (1 + h_nu) * digamma(h_nu)
+@pytensor_jit
+def ptd_entropy(nu, tau2):
+    return ptd_scaledinversechisquared.entropy(nu, tau2)
+
+
+@pytensor_jit
+def ptd_mean(nu, tau2):
+    return ptd_scaledinversechisquared.mean(nu, tau2)
+
+
+@pytensor_jit
+def ptd_mode(nu, tau2):
+    return ptd_scaledinversechisquared.mode(nu, tau2)
+
+
+@pytensor_jit
+def ptd_median(nu, tau2):
+    return ptd_scaledinversechisquared.median(nu, tau2)
+
+
+@pytensor_jit
+def ptd_var(nu, tau2):
+    return ptd_scaledinversechisquared.var(nu, tau2)
+
+
+@pytensor_jit
+def ptd_std(nu, tau2):
+    return ptd_scaledinversechisquared.std(nu, tau2)
+
+
+@pytensor_jit
+def ptd_skewness(nu, tau2):
+    return ptd_scaledinversechisquared.skewness(nu, tau2)
+
+
+@pytensor_jit
+def ptd_kurtosis(nu, tau2):
+    return ptd_scaledinversechisquared.kurtosis(nu, tau2)
+
+
+@pytensor_rng_jit
+def ptd_rvs(nu, tau2, size, rng):
+    return ptd_scaledinversechisquared.rvs(nu, tau2, size=size, random_state=rng)
