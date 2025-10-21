@@ -9,7 +9,7 @@ try:
     from pymc.pytensorf import compile, join_nonshared_inputs
     from pymc.util import get_untransformed_name, is_transformed_name
     from pytensor import function
-    from pytensor.graph.basic import ancestors
+    from pytensor.graph.traversal import ancestors
     from pytensor.tensor import TensorConstant, matrix
 except ModuleNotFoundError:
     pass
