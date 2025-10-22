@@ -19,7 +19,6 @@ Thank you so much for your PR! To help us review your contribution, please consi
 - [ ] Includes new or updated tests to cover the new feature
 - [ ] New features are properly documented (with an example if appropriate)
 - [ ] Includes a sample plot to visually illustrate the changes (only for plot-related functions)
-- [ ] Widget states have been properly saved (only for notebooks with widgets) [see](https://github.com/arviz-devs/preliz/wiki/Save-widgets-state) for details.
 
 <!--
 Also, please consider reading the contributing guidelines and code of conduct carefully before submitting the PR. They are available at
