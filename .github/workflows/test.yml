@@ -43,8 +43,6 @@ jobs:
       - name: Run linters
         shell: bash -l {0}
         run: |
-          python -m black preliz --check
-          echo "Success!"
           echo "Checking code style with ruff..."
           ruff check preliz/
       - name: Run tests

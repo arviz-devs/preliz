@@ -6,7 +6,7 @@ Exploring and eliciting probability distributions
 [![PyPi version](https://badge.fury.io/py/preliz.svg)](https://badge.fury.io/py/preliz)
 [![Build Status](https://github.com/arviz-devs/preliz/actions/workflows/test.yml/badge.svg)](https://github.com/arviz-devs/preliz/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/arviz-devs/preliz/branch/master/graph/badge.svg?token=SLJIK2O4C5 )](https://codecov.io/gh/arviz-devs/preliz/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.05499/status.svg)](https://doi.org/10.21105/joss.05499)
 
 ## Overview

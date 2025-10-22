@@ -14,7 +14,6 @@ dependencies:
   - ipympl
   - jupyterlab
   - notebook
-  - black==22.3.0
   - click
   - pytest-cov>=2.6.1
   - pytest>=4.4.0
