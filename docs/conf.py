@@ -52,7 +52,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx_design",
     "jupyter_sphinx",
-    "sphinxcontrib.bibtex"
+    "sphinxcontrib.bibtex",
 ]
 
 # -- Extension configuration -------------------------------------------------
@@ -146,7 +146,7 @@ htmlhelp_basename = "prelizdoc"
 
 # -- For Bibtex files ---------------------------------------------
 
-bibtex_bibfiles = ['../preliz/internal/reference.bib']
+bibtex_bibfiles = ["../preliz/internal/reference.bib"]
 
 # -- Options for LaTeX output ------------------------------------------------
 

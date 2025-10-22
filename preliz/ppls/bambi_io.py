@@ -36,9 +36,9 @@ def write_bambi_string(new_priors, var_info):
                 dist_name, dist_params = repr(cp_dist).split("(")
                 size = var_info[nkey][1]
                 if size > 1:
-                    variables[
-                        i
-                    ] = f'"{nkey}" : bmb.Prior("{dist_name}", {dist_params}, shape={size}),\n'
+                    variables[i] = (
+                        f'"{nkey}" : bmb.Prior("{dist_name}", {dist_params}, shape={size}),\n'
+                    )
                 else:
                     variables[i] = f'"{nkey}" : bmb.Prior("{dist_name}", {dist_params}),\n'
         else:
@@ -83,7 +83,7 @@ def from_bambi(fmodel, draws):
             f"{indentation}{variable_name}.build()\n"
             f"{indentation}variables = [{variable_name}.backend.model.named_vars[v] "
             f"for v in {return_variables}]\n"
-            f'{indentation}{", ".join(return_variables)} = pm.draw(variables, draws={draws})',
+            f"{indentation}{', '.join(return_variables)} = pm.draw(variables, draws={draws})",
         )
 
         # Find the priors we want to change

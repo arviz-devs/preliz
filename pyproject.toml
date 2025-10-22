@@ -26,8 +26,8 @@ dynamic = ["version"]
 description = "Exploring and eliciting probability distributions."
 dependencies = [
   "arviz_stats>=0.6.0",  
-  "matplotlib>=3.8",
-  "numba>=0.59",
+  "matplotlib>=3.9",
+  "numba>=0.62",
   "numpy>=2.0",
   "scipy>=1.12"
 ]
@@ -50,8 +50,6 @@ full = [
 lab = ["jupyterlab"]
 notebook = ["notebook"]
 
-[tool.black]
-line-length = 100
 
 [tool.isort]
 profile = "black"

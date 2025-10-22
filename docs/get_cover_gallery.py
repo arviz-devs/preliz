@@ -19,7 +19,7 @@ init_vals["SkewStudentT"] = {"mu": 0.0, "sigma": 1, "a": 2.5, "b": 1.5}
 for name, params in init_vals.items():
     try:
         dist_kind = getattr(distributions, name)().kind
-    except:
+    except TypeError:
         dist_kind = "modifier"
     color = category_colors.get(dist_kind, "C3")
     _, ax = plt.subplots(figsize=(3.5, 2.3))
