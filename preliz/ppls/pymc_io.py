@@ -1,5 +1,6 @@
 """Methods to communicate with PyMC."""
 
+import warnings
 from copy import copy
 from sys import modules
 
@@ -11,8 +12,8 @@ try:
     from pytensor import function
     from pytensor.graph.traversal import ancestors
     from pytensor.tensor import TensorConstant, matrix
-except ModuleNotFoundError:
-    pass
+except ImportError:
+    warnings.warn("PyMC not installed. PyMC related functions will not work.")
 
 from preliz.distributions import Gamma, HalfNormal, Normal
 from preliz.internal.distribution_helper import get_distributions
