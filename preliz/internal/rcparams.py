@@ -42,7 +42,7 @@ def _make_validate_choice(accepted_values, allow_none=False, typeof=str):
             value = {"true": True, "false": False}.get(value, value)
             return value
         raise ValueError(
-            f'{value} is not one of {accepted_values}{" nor None" if allow_none else ""}'
+            f"{value} is not one of {accepted_values}{' nor None' if allow_none else ''}"
         )
 
     return validate_choice

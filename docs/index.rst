@@ -4,7 +4,7 @@ Exploring and eliciting probability distributions
 |PyPI version|
 |Tests|
 |Coverage|
-|Black|
+|Ruff|
 |DOI|
 
 .. |PyPI version| image:: https://badge.fury.io/py/preliz.svg
@@ -16,8 +16,8 @@ Exploring and eliciting probability distributions
 .. |Coverage| image:: https://codecov.io/gh/arviz-devs/preliz/branch/main/graph/badge.svg?token=SLJIK2O4C5 
     :target: https://codecov.io/gh/arviz-devs/preliz
 
-.. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/ambv/black
+.. |Ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+    :target: https://github.com/astral-sh/ruff
 
 .. |DOI| image:: https://joss.theoj.org/papers/10.21105/joss.05499/status.svg
    :target: https://doi.org/10.21105/joss.05499

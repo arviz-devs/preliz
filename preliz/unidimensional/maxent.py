@@ -147,7 +147,7 @@ def maxent(
 
     if r_error > 0.01:
         warnings.warn(
-            f"\nThe requested mass is {mass:.3g},\n" f"but the computed one is {computed_mass:.3g}",
+            f"\nThe requested mass is {mass:.3g},\nbut the computed one is {computed_mass:.3g}",
             stacklevel=2,
         )
 

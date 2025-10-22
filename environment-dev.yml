@@ -5,8 +5,8 @@ channels:
 dependencies:
   - python >= 3.11
   - pip
-  - matplotlib>=3.8
-  - numba>=0.60
+  - matplotlib>=3.9
+  - numba>=0.62
   - numpy>=2.0
   - scipy>=1.12
   - nbclient>=0.2
@@ -14,7 +14,6 @@ dependencies:
   - ipympl
   - jupyterlab
   - notebook
-  - black==22.3.0
   - click
   - pytest-cov>=2.6.1
   - pytest>=4.4.0

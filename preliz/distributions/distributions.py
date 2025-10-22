@@ -267,8 +267,7 @@ class Distribution:
         for m_t in types:
             if m_t not in "mdvsk":
                 raise ValueError(
-                    "The input string should only contain the letters "
-                    "'m', 'd', 'v', 's', or 'k'."
+                    "The input string should only contain the letters 'm', 'd', 'v', 's', or 'k'."
                 )
             if m_t == "m":
                 moments.append(self.mean())
