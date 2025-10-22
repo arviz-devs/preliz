@@ -30,7 +30,7 @@ from preliz.unidimensional.mle import mle
 try:
     from pymc import sample_prior_predictive
 except ImportError:
-    pass
+    warnings.warn("PyMC not installed. PyMC related functions will not work.")
 
 
 def posterior_to_prior(model, idata, new_families=None, engine="auto"):
