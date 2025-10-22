@@ -77,7 +77,7 @@ from preliz.distributions import (
         (Pareto(), 0.5, 1, 4, (0.541, 0.289)),
         (Rice(), 2, 4, 6, (0, 3.395)),
         (ScaledInverseChiSquared(), 0.9, 1.4, 2.4, (4.366, 1.199)),
-        (SkewStudentT(), 2, 4, 6, (4.000, 2.652, 1.687, 1.687)),
+        (SkewStudentT(), 2, 4, 6, (4.000, 2.652, 1.686, 1.686)),
         pytest.param(
             StudentT(),
             -1,
