@@ -87,7 +87,9 @@ ignore = [
     "PLR2004",  # magic value comparison
     "PLR0915",  # too many statements
     "PLC0415",  # import outside of top level
+    "PLR0911",  # too many return statements
     "D1"    # Missing docstring
+
 ]
 
 [tool.ruff.lint.per-file-ignores]

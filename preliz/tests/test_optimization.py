@@ -20,7 +20,7 @@ from preliz.internal.optimization import find_ppf
     "p_dist, p_params",
     [
         (Beta, {"alpha": 2, "beta": 5}),
-        (Exponential, {"beta": 3.7}),
+        (Exponential, {"scale": 3.7}),
         (HalfNormal, {"sigma": 2}),
         (Laplace, {"mu": 2.5, "b": 4}),
         (Normal, {"mu": 0, "sigma": 2}),

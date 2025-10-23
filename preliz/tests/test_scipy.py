@@ -74,7 +74,7 @@ from preliz import (
             {"mu": -1, "sigma": 2, "nu": 5},
             {"loc": -1, "scale": 2, "K": 5 / 2},
         ),
-        (Exponential, stats.expon, {"beta": 3.7}, {"scale": 3.7}),
+        (Exponential, stats.expon, {"scale": 3.7}, {"scale": 3.7}),
         (Gamma, stats.gamma, {"alpha": 2, "beta": 1 / 3}, {"a": 2, "scale": 3}),
         (Gumbel, stats.gumbel_r, {"mu": 2.5, "beta": 3.5}, {"loc": 2.5, "scale": 3.5}),
         (HalfCauchy, stats.halfcauchy, {"beta": 3.5}, {"scale": 3.5}),

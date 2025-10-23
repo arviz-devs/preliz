@@ -30,13 +30,43 @@ def two_dist():
         {"ax": plt.subplots()[1]},
     ],
 )
-def test_continuous_plot_pdf_cdf_ppf(two_dist, kwargs):
+def test_plot_methods(two_dist, kwargs):
     for a_dist in two_dist:
         a_dist.plot_pdf(**kwargs)
         kwargs.pop("baseline", None)
         a_dist.plot_cdf(**kwargs)
+        a_dist.plot_sf(**kwargs)
         kwargs.pop("support", None)
         a_dist.plot_ppf(**kwargs)
+        a_dist.plot_isf(**kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {},
+        {"moments": "mdsk"},
+        {"moments": "mdsk", "legend": "title"},
+        {"pointinterval": True},
+        {"pointinterval": True, "levels": [0.1, 0.9]},
+        {"pointinterval": True, "interval": "eti", "levels": [0.9]},
+        {"pointinterval": True, "interval": "quantiles"},
+        {"pointinterval": True, "interval": "quantiles", "levels": [0.1, 0.5, 0.9]},
+        {"support": "restricted"},
+        {"color": "C1", "alpha": 0.1},
+        {"baseline": False, "figsize": (4, 4)},
+        {"ax": plt.subplots()[1]},
+    ],
+)
+def test_plot_function(two_dist, kwargs):
+    for a_dist in two_dist:
+        pz.plot(a_dist, **kwargs)
+        kwargs.pop("baseline", None)
+        pz.plot(a_dist, **kwargs, kind="cdf")
+        pz.plot(a_dist, **kwargs, kind="sf")
+        kwargs.pop("support", None)
+        pz.plot(a_dist, **kwargs, kind="ppf")
+        pz.plot(a_dist, **kwargs, kind="isf")
 
 
 @pytest.mark.parametrize(

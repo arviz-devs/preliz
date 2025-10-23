@@ -246,6 +246,54 @@ def plot_ppf(dist, moments, pointinterval, interval, levels, legend, figsize, ax
     return ax
 
 
+def plot_sf(dist, moments, pointinterval, interval, levels, support, legend, figsize, ax, kwargs):
+    if kwargs is None:
+        kwargs = {}
+    ax = get_ax(ax, figsize)
+    label = set_label(dist, legend, moments, ax)
+
+    ax.set_ylim(-0.05, 1.05)
+    x = dist.xvals(support)
+
+    if dist.kind == "discrete":
+        lower = x[0]
+        upper = x[-1]
+        x = np.insert(x, [0, len(x)], (lower - 1, upper + 1))
+        sf = dist.sf(x)
+        ax.set_xlim(lower - 0.1, upper + 0.1)
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.step(x, sf, where="post", label=label, **kwargs)
+    else:
+        sf = dist.sf(x)
+        ax.plot(x, sf, label=label, **kwargs)
+
+    if pointinterval:
+        plot_pointinterval(dist, interval, levels, ax=ax)
+
+    side_legend(legend, ax)
+
+    return ax
+
+
+def plot_isf(dist, moments, pointinterval, interval, levels, legend, figsize, ax, kwargs):
+    if kwargs is None:
+        kwargs = {}
+    ax = get_ax(ax, figsize)
+    label = set_label(dist, legend, moments, ax)
+
+    x = np.linspace(0, 1, 1000)
+    ax.plot(x, dist.isf(x), label=label, **kwargs)
+    if dist.kind == "discrete":
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+
+    if pointinterval:
+        plot_pointinterval(dist, interval, levels, rotated=True, ax=ax)
+
+    side_legend(legend, ax)
+
+    return ax
+
+
 def get_ax(ax, figsize):
     if ax is None:
         fig_manager = _pylab_helpers.Gcf.get_active()
