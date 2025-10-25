@@ -274,8 +274,8 @@ Or even
 
 ```{jupyter-execute}
 with pm.Model():
-    x = pm.Truncated("x", pm.NegativeBinomial.dist(2.5, 3), 0, 7);
-pz.plot(x)
+    x = pm.Truncated("x", pm.NegativeBinomial.dist(2.5, 3), 0, 7)
+pz.plot(x);
 ```
 
 
