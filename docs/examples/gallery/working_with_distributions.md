@@ -11,7 +11,6 @@ kernelspec:
 # Working with Distributions
 
 ```{jupyter-execute}
-import numpy as np
 import preliz as pz
 ```
 
@@ -172,13 +171,13 @@ Other functions that can be plotted are the inverse of the CDF, `plot_ppf` (also
 Alternatively, we can use the top-level `pz.plot()` function to plot any of these functions. 
 
 ```{jupyter-execute}
-pz.plot(pz.Gamma(2, 0.5))
+pz.plot(pz.Gamma(2, 0.5));
 ```
 
 The default is to plot the PDF. But we can plot any other function as well. For instance, for the survival function:
 
 ```{jupyter-execute}
-pz.plot(pz.Gamma(2, 0.5), kind="sf")
+pz.plot(pz.Gamma(2, 0.5), kind="sf");
 ```
 
 
@@ -237,20 +236,6 @@ dist.plot_pdf()
 censored_dist.plot_pdf();
 ```
 
-## Global configuration
-
-PreliZ has a global configuration system that allows you to set default values for some parameters:
-
-```{jupyter-execute}
-pz.rcParams
-```
-
-For instance, we can change the default probability mass for the intervals computed in summaries and plots.
-
-```{jupyter-execute}
-pz.rcParams["stats.ci_prob"] = 0.80
-```
-
 ## Integration with probabilistic programming languages
 
 So far all the functionality we have discussed is very general and can be used in many settings where we need to work or explore with probability distributions. But the main focus of PreliZ is prior elicitation, that is how to define suitable prior distributions for Bayesian models. Thus, often PreliZ will be used together with probabilistic programming languages.
@@ -262,13 +247,17 @@ PreliZ supports exporting distributions. Currently, only PyMC and Bambi are supp
 ```{jupyter-execute}
 
 pz.Normal(0, 1).to_pymc()
+```
+
+```{jupyter-execute}
+
 pz.Normal(0, 1).to_bambi()
 ```
 
 For these methods to work you need to have installed PyMC and/or Bambi.
 
 
-We can also create PreliZ distributions from PyMC distributions.
+We can also go into the opposite direction and create PreliZ distributions from PyMC distributions.
 
 ```{jupyter-execute}
 import pymc as pm
@@ -278,14 +267,14 @@ pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
 For some functions (currently the only supported is `pz.plot`) you can directly pass a PyMC distribution, and it will work as expected.
 
 ```{jupyter-execute}
-pz.plot(pm.Normal.dist(mu=0, sigma=1))
+pz.plot(pm.Normal.dist(mu=0, sigma=1));
 ```
 
 Or even
 
 ```{jupyter-execute}
 with pm.Model():
-    x = pm.Truncated("x", pm.NegativeBinomial.dist(np.array([2, 3]), 4), [0, 4])
+    x = pm.Truncated("x", pm.NegativeBinomial.dist(2.5, 3), 0, 7);
 pz.plot(x)
 ```
 
