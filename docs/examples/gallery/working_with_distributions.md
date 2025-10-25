@@ -272,7 +272,7 @@ We can also create PreliZ distributions from PyMC distributions.
 
 ```{jupyter-execute}
 import pymc as pm
-pz.from_pymc(pm.Normal(mu=0, sigma=1)).summary()
+pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
 ```
 
 For some functions (currently the only supported is `pz.plot`) you can directly pass a PyMC distribution, and it will work as expected.
