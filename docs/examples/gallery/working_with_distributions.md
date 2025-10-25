@@ -11,7 +11,7 @@ kernelspec:
 # Working with Distributions
 
 ```{jupyter-execute}
-
+import numpy as np
 import preliz as pz
 ```
 
