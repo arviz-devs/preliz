@@ -1,4 +1,4 @@
-from preliz.ppls.pymc_io import pymc_to_preliz
+from preliz.ppls.pymc_io import from_pymc
 
 
 def plot(
@@ -19,7 +19,7 @@ def plot(
         raise ValueError(f"kind should be one of {['pdf', 'cdf', 'ppf', 'sf', 'isf']}")
 
     if dist.__class__.__name__ == "TensorVariable":
-        dist = pymc_to_preliz(dist)
+        dist = from_pymc(dist)
 
     mandatory_kwargs = {
         "moments": moments,

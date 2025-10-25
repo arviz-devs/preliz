@@ -230,15 +230,24 @@ def non_constant_parents(rvs, model):
     return parents
 
 
-def pymc_to_preliz(dist):
-    """Convert a PyMC distribution to a PreliZ distribution."""
+def from_pymc(dist):
+    """Convert a PyMC distribution to a PreliZ distribution.
+
+    Parameters
+    ----------
+    dist : PyMC distribution
+
+    Returns
+    -------
+    PreliZ distribution
+    """
     name = dist.owner.op._print_name[0]
 
     if name == "Censored":
         base_dist = dist.owner.inputs[0]
         lower = _as_scalar(dist.owner.inputs[1].eval())
         upper = _as_scalar(dist.owner.inputs[2].eval())
-        BaseDist = pymc_to_preliz(base_dist)
+        BaseDist = from_pymc(base_dist)
         return modules["preliz.distributions"].Censored(BaseDist, lower=lower, upper=upper)
 
     if "Truncated" in name:
@@ -272,7 +281,7 @@ def pymc_to_preliz(dist):
         else:
             components = dist.owner.inputs[2:]
             weights = dist.owner.inputs[1]
-            PreliZ_components = [pymc_to_preliz(comp) for comp in components]
+            PreliZ_components = [from_pymc(comp) for comp in components]
             weights_eval = weights.eval()
             return modules["preliz.distributions"].Mixture(PreliZ_components, weights=weights_eval)
 
