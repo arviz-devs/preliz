@@ -321,7 +321,7 @@ def test_eti(a_few_poissons):
     with pytest.raises(ValueError):
         d_1.eti()
     result = d_2.eti()
-    assert result == (1.0, 9.0)
+    assert result == (1, 8)
 
 
 def test_cdf(a_few_poissons):
