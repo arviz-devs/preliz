@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath("../"))
 
 project = "PreliZ"
 author = "ArviZ contributors"
-copyright = f"2022, {author}"
+copyright = f"2025, {author}"
 
 # The short X.Y version
 version = __version__
