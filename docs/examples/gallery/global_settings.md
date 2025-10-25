@@ -19,7 +19,7 @@ Some of the PreliZ default values are regulated by `preliz.rcParams`, a class si
 
 ## Preliz Configuration File
 
-The `rcParams` class is generated and populated at import time. Preliz checks several locations for a file named `prelizrc` and, if found, prefers those settings over the library ones.
+The `rcParams` class is generated and populated at import time. PreliZ checks several locations for a file named `prelizrc` and, if found, prefers those settings over the library ones.
 
 The locations checked are the following:
 
@@ -32,9 +32,8 @@ The locations checked are the following:
 The file is a simple text file with a structure similar to the following:
 
 ```text
-
-stats.ci_kind : hdi
-stats.ci_prob : 0.95
+stats.ci_kind : eti
+stats.ci_prob : 0.89
 ```
 
 All available keys are listed below. The `prelizrc` file can have any subset of the keys, it isn't necessary to include them all. For those keys without a user defined default, the library one is used.

@@ -120,8 +120,8 @@ def make_iterable_validator(scalar_validator, length=None, allow_none=False, all
 
 
 defaultParams = {
-    "stats.ci_kind": ("hdi", _make_validate_choice({"eti", "hdi"})),
-    "stats.ci_prob": (0.94, _validate_probability),
+    "stats.ci_kind": ("eti", _make_validate_choice({"eti", "hdi"})),
+    "stats.ci_prob": (0.89, _validate_probability),
     "plots.show_plot": (True, _validate_boolean),
 }
 

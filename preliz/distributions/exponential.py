@@ -33,51 +33,51 @@ class Exponential(Continuous):
     ========  ============================
 
     Exponential distribution has 2 alternative parametrizations. In terms of lambda (rate)
-    or in terms of beta (scale).
+    or in terms of scale.
 
     The link between the two alternatives is given by:
 
     .. math::
 
-        \beta = \dfrac{1}{\lambda}
+        scale = \dfrac{1}{\lambda}
 
     Parameters
     ----------
     lam : float
         Rate or inverse scale (lam > 0).
-    beta : float
-        Scale (beta > 0).
+    scale : float
+        Scale (scale > 0).
     """
 
-    def __init__(self, lam=None, beta=None):
+    def __init__(self, lam=None, scale=None):
         super().__init__()
         self.support = (0, np.inf)
-        self._parametrization(lam, beta)
+        self._parametrization(lam, scale)
 
-    def _parametrization(self, lam=None, beta=None):
-        if all_not_none(lam, beta):
-            raise ValueError("Incompatible parametrization. Either use 'lam' or 'beta'.")
+    def _parametrization(self, lam=None, scale=None):
+        if all_not_none(lam, scale):
+            raise ValueError("Incompatible parametrization. Either use 'lam' or 'scale'.")
 
         self.param_names = ("lam",)
         self.params_support = ((eps, np.inf),)
 
-        if beta is not None:
-            lam = 1 / beta
-            self.param_names = ("beta",)
+        if scale is not None:
+            lam = 1 / scale
+            self.param_names = ("scale",)
 
         self.lam = lam
-        self.beta = beta
+        self.scale = scale
         if self.lam is not None:
             self._update(self.lam)
 
     def _update(self, lam):
         self.lam = np.float64(lam)
-        self.beta = 1 / self.lam
+        self.scale = 1 / self.lam
 
         if self.param_names[0] == "lam":
             self.params = (self.lam,)
-        elif self.param_names[0] == "beta":
-            self.params = (self.beta,)
+        elif self.param_names[0] == "scale":
+            self.params = (self.scale,)
 
         self.is_frozen = True
 
@@ -91,7 +91,7 @@ class Exponential(Continuous):
 
     def ppf(self, q):
         q = np.asarray(q)
-        return nb_ppf(q, self.beta)
+        return nb_ppf(q, self.scale)
 
     def logpdf(self, x):
         return nb_logpdf(x, self.lam)
@@ -100,22 +100,22 @@ class Exponential(Continuous):
         return nb_neg_logpdf(x, self.lam)
 
     def entropy(self):
-        return nb_entropy(self.beta)
+        return nb_entropy(self.scale)
 
     def median(self):
-        return np.log(2) * self.beta
+        return np.log(2) * self.scale
 
     def mean(self):
-        return self.beta
+        return self.scale
 
     def mode(self):
-        return np.zeros_like(self.beta)
+        return np.zeros_like(self.scale)
 
     def std(self):
-        return self.beta
+        return self.scale
 
     def var(self):
-        return self.beta**2
+        return self.scale**2
 
     def skewness(self):
         return 2
@@ -125,7 +125,7 @@ class Exponential(Continuous):
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.exponential(self.beta, size)
+        return random_state.exponential(self.scale, size)
 
     def _fit_moments(self, mean, sigma=None):
         lam = 1 / mean
@@ -143,8 +143,8 @@ def nb_cdf(x, lam):
 
 
 @nb.njit(cache=True)
-def nb_ppf(q, beta):
-    return ppf_bounds_cont(-xlog1py(beta, -q), q, 0, np.inf)
+def nb_ppf(q, scale):
+    return ppf_bounds_cont(-xlog1py(scale, -q), q, 0, np.inf)
 
 
 @nb.vectorize(nopython=True, cache=True)
@@ -161,5 +161,5 @@ def nb_neg_logpdf(x, lam):
 
 
 @nb.njit(cache=True)
-def nb_entropy(beta):
-    return 1 + np.log(beta)
+def nb_entropy(scale):
+    return 1 + np.log(scale)

@@ -16,8 +16,10 @@ from preliz.internal.plot_helper import (
     check_inside_notebook,
     get_slider,
     plot_cdf,
+    plot_isf,
     plot_pdfpmf,
     plot_ppf,
+    plot_sf,
 )
 from preliz.internal.rcparams import rcParams
 
@@ -51,11 +53,16 @@ class Distribution:
                 bolded_name = "\033[1m" + name + "\033[0m"
 
             description = "".join(
-                f"{n}={v:.3g}, "
-                if np.isscalar(v)
-                else f"{n}=[" + "".join(f"{vi:.3g}, " for vi in v).strip(", ") + "], "
+                (
+                    f"{n}={v:.3g}, "
+                    if np.isscalar(v) or np.ndim(v) == 0
+                    else f"{n}=["
+                    + "".join(f"{vi:.3g}, " for vi in np.atleast_1d(v)).strip(", ")
+                    + "], "
+                )
                 for n, v in zip(self.param_names, self.params)
             ).strip(", ")
+
             return f"{bolded_name}({description})"
         else:
             return name
@@ -576,7 +583,7 @@ class Distribution:
             Additional keyword arguments passed to matplotlib plot function.
             For example, ``color``, ``alpha``, ``linewidth``, etc.
         """
-        if valid_scalar_params(self):
+        if valid_scalar_params(self, raise_error=False):
             return plot_pdfpmf(
                 self,
                 moments,
@@ -591,7 +598,24 @@ class Distribution:
                 kwargs,
             )
         else:
-            return None
+            unpacked_dist = self._unpack_distribution()
+            for param_set in unpacked_dist:
+                other = copy(self)
+                other._parametrization(**param_set)
+                ax = plot_pdfpmf(
+                    other,
+                    moments,
+                    pointinterval,
+                    interval,
+                    levels,
+                    support,
+                    baseline,
+                    legend,
+                    figsize,
+                    ax,
+                    kwargs,
+                )
+            return ax
 
     def plot_cdf(
         self,
@@ -652,7 +676,23 @@ class Distribution:
                 kwargs,
             )
         else:
-            return None
+            unpacked_dist = self._unpack_distribution()
+            for param_set in unpacked_dist:
+                other = copy(self)
+                other._parametrization(**param_set)
+                ax = plot_cdf(
+                    other,
+                    moments,
+                    pointinterval,
+                    interval,
+                    levels,
+                    support,
+                    legend,
+                    figsize,
+                    ax,
+                    kwargs,
+                )
+            return ax
 
     def plot_ppf(
         self,
@@ -697,7 +737,159 @@ class Distribution:
                 self, moments, pointinterval, interval, levels, legend, figsize, ax, kwargs
             )
         else:
-            return None
+            unpacked_dist = self._unpack_distribution()
+            for param_set in unpacked_dist:
+                other = copy(self)
+                other._parametrization(**param_set)
+                ax = plot_ppf(
+                    other,
+                    moments,
+                    pointinterval,
+                    interval,
+                    levels,
+                    legend,
+                    figsize,
+                    ax,
+                    kwargs,
+                )
+            return ax
+
+    def plot_sf(
+        self,
+        moments=None,
+        pointinterval=False,
+        interval=None,
+        levels=None,
+        support="restricted",
+        legend="legend",
+        figsize=None,
+        ax=None,
+        **kwargs,
+    ):
+        """
+        Plot the survival distribution function (1 - CDF).
+
+        Parameters
+        ----------
+        moments : str
+            Compute moments. Use any combination of the strings ``m``, ``d``, ``v``, ``s`` or ``k``
+            for the mean (μ), standard deviation (σ), variance (σ²), skew (γ) or kurtosis (κ)
+            respectively. Other strings will be ignored. Defaults to None.
+        pointinterval : bool
+            Whether to include a plot of the quantiles. Defaults to False. If True the default is to
+            plot the median and two interquantiles ranges.
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"` (default),
+            equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            Defaults to the value in rcParams["stats.ci_kind"].
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
+        support : str:
+            If ``full`` use the finite end-points to set the limits of the plot. For unbounded
+            end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"legend"`` a
+            ``"title"`` or not include them ``None``.
+        figsize : tuple
+            Size of the figure
+        ax : matplotlib axes
+        kwargs : keyword arguments
+            Additional keyword arguments passed to matplotlib plot function.
+            For example, ``color``, ``alpha``, ``linewidth``, etc.
+        """
+        if valid_scalar_params(self):
+            return plot_sf(
+                self,
+                moments,
+                pointinterval,
+                interval,
+                levels,
+                support,
+                legend,
+                figsize,
+                ax,
+                kwargs,
+            )
+        else:
+            unpacked_dist = self._unpack_distribution()
+            for param_set in unpacked_dist:
+                other = copy(self)
+                other._parametrization(**param_set)
+                ax = plot_sf(
+                    other,
+                    moments,
+                    pointinterval,
+                    interval,
+                    levels,
+                    support,
+                    legend,
+                    figsize,
+                    ax,
+                    kwargs,
+                )
+            return ax
+
+    def plot_isf(
+        self,
+        moments=None,
+        pointinterval=False,
+        interval=None,
+        levels=None,
+        legend="legend",
+        figsize=None,
+        ax=None,
+        **kwargs,
+    ):
+        """
+        Plot the inverse survival function.
+
+        Parameters
+        ----------
+        moments : str
+            Compute moments. Use any combination of the strings ``m``, ``d``, ``v``, ``s`` or ``k``
+            for the mean (μ), standard deviation (σ), variance (σ²), skew (γ) or kurtosis (κ)
+            respectively. Other strings will be ignored. Defaults to None.
+        pointinterval : bool
+            Whether to include a plot of the quantiles. Defaults to False. If True the default is to
+            plot the median and two interquantiles ranges.
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"` (default),
+            equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+            Defaults to the value in rcParams["stats.ci_kind"].
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"legend"`` a
+            ``"title"`` or not include them ``None``.
+        figsize : tuple
+            Size of the figure
+        ax : matplotlib axes
+        """
+        if valid_scalar_params(self):
+            return plot_isf(
+                self, moments, pointinterval, interval, levels, legend, figsize, ax, kwargs
+            )
+        else:
+            unpacked_dist = self._unpack_distribution()
+            for param_set in unpacked_dist:
+                other = copy(self)
+                other._parametrization(**param_set)
+                ax = plot_isf(
+                    other,
+                    moments,
+                    pointinterval,
+                    interval,
+                    levels,
+                    legend,
+                    figsize,
+                    ax,
+                    kwargs,
+                )
+            return ax
 
     def plot_interactive(
         self,
@@ -815,6 +1007,14 @@ class Distribution:
                 ax.set_ylim(*ylim)
 
         return interactive(plot, **sliders)
+
+    def _unpack_distribution(self):
+        params_dict = self.params_dict
+        arrays = [np.atleast_1d(v) for v in params_dict.values()]
+
+        broadcasted = np.broadcast_arrays(*arrays)
+
+        return [{k: v_i for k, v_i in zip(params_dict.keys(), vals)} for vals in zip(*broadcasted)]
 
 
 class Continuous(Distribution):

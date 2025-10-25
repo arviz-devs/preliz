@@ -11,7 +11,6 @@ kernelspec:
 # Working with Distributions
 
 ```{jupyter-execute}
-
 import preliz as pz
 ```
 
@@ -41,22 +40,21 @@ When we define the parameters of a distribution we will get more interesting pro
 
 ## Properties of Distributions
 
-Once we have set the parameters of a distribution we can obtain a few of its properties. The summary method, returns the mean, median, standard deviation and lower and upper values for the highest density interval.
+Once we have set the parameters of a distribution we can obtain a few of its properties. The summary method, returns the mean, median, standard deviation and lower and upper values for the equal-tailed interval (ETI). 
 
 ```{jupyter-execute}
 
 dist = pz.Beta(2, 5)
 dist.summary()
 ```
-
-The highest density interval is the shorter interval with a given mass. Following ArviZ, the default mass for these intervals is 0.94. For `az.summary()` and other functions in PreliZ, you can change it with the argument `mass`.
+The ETI is the interval that contains a given mass of the distribution, with equal mass in both tails.cFollowing ArviZ, the default mass for these intervals is 0.89. For `pz.summary()` and other functions in PreliZ, you can change it with the argument `mass`.
 
 ```{jupyter-execute}
 
 dist.summary(mass=0.7)
 ```
 
-Additionally, out-of-the-box, we can compute the equal-tailed interval. This interval will define two tails with an equal mass of `(1-mass)/2`.
+Additionally, out-of-the-box, we can compute the highest density interval (HDI), which is the shortest interval containing a given mass of the distribution.
 
 ```{jupyter-execute}
 
@@ -121,8 +119,13 @@ Many distributions in PreliZ can be defined using different sets of parameters. 
 ```{jupyter-execute}
 
 dist = pz.Gamma(mu=2, sigma=1)
-dist.plot_pdf()
-pz.Gamma(dist.alpha, dist.beta).plot_pdf(); # same distribution different parametrization.
+dist.summary()
+```
+
+Now we can create the same distribution using the `alpha` and `beta` parameters.
+
+```{jupyter-execute}
+pz.Gamma(dist.alpha, dist.beta).summary() 
 ```
 
 ## Visualizing distributions
@@ -163,13 +166,20 @@ pz.Gamma(2, 0.5).plot_cdf()
 pz.Gamma(2, 1).plot_cdf()
 ```
 
-and the inverse of the cdf.
+Other functions that can be plotted are the inverse of the CDF, `plot_ppf` (also known as percent point function), survival function (`plot_sf`), and the inverse survival function (`plot_isf`).
+
+Alternatively, we can use the top-level `pz.plot()` function to plot any of these functions. 
 
 ```{jupyter-execute}
-
-pz.Gamma(2, 0.5).plot_ppf()
-pz.Gamma(2, 1).plot_ppf()
+pz.plot(pz.Gamma(2, 0.5));
 ```
+
+The default is to plot the PDF. But we can plot any other function as well. For instance, for the survival function:
+
+```{jupyter-execute}
+pz.plot(pz.Gamma(2, 0.5), kind="sf");
+```
+
 
 If we are not very familiar with a distribution, we may want to explore how the parameters affects the “shape” of the distribution. This could be easier to do interactively.
 
@@ -237,9 +247,37 @@ PreliZ supports exporting distributions. Currently, only PyMC and Bambi are supp
 ```{jupyter-execute}
 
 pz.Normal(0, 1).to_pymc()
+```
+
+```{jupyter-execute}
+
 pz.Normal(0, 1).to_bambi()
 ```
 
 For these methods to work you need to have installed PyMC and/or Bambi.
 
-In other notebooks we will discuss methods more directly focus on prior elicitation, and also other ways to interact with PPLs.
+
+We can also go into the opposite direction and create PreliZ distributions from PyMC distributions.
+
+```{jupyter-execute}
+import pymc as pm
+pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
+```
+
+For some functions (currently the only supported is `pz.plot`) you can directly pass a PyMC distribution, and it will work as expected.
+
+```{jupyter-execute}
+pz.plot(pm.Normal.dist(mu=0, sigma=1));
+```
+
+Or even
+
+```{jupyter-execute}
+with pm.Model():
+    x = pm.Truncated("x", pm.NegativeBinomial.dist(2.5, 3), 0, 7)
+pz.plot(x);
+```
+
+
+In other examples we will discuss methods more directly focus on prior elicitation, and also other ways to interact with PPLs.
+

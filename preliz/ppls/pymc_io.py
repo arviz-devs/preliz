@@ -15,9 +15,7 @@ try:
 except ImportError:
     warnings.warn("PyMC not installed. PyMC related functions will not work.")
 
-from preliz.distributions import Gamma, HalfNormal, Normal
 from preliz.internal.distribution_helper import get_distributions
-from preliz.unidimensional import mle
 
 
 def back_fitting_pymc(prior, preliz_model, var_info, new_families=None):
@@ -43,6 +41,7 @@ def back_fitting_pymc(prior, preliz_model, var_info, new_families=None):
         else:
             opt_values = prior[rv_name]
             dists = set_families(preliz_model[rv_name], rv_name, new_families)
+            mle = getattr(modules["preliz.unidimensional"], "mle")
             idx, _ = mle(dists, opt_values, plot=False)
             dist = dists[idx[0]]
 
@@ -55,7 +54,10 @@ def set_families(dist, var, new_families):
     dists = [dist]
     if new_families is not None:
         if new_families == "auto":
-            alt = [Normal(), HalfNormal(), Gamma()]
+            alt = [
+                getattr(modules["preliz.distributions"], d)
+                for d in ["Normal", "HalfNormal", "Gamma"]
+            ]
             dists += [a for a in alt if dist.__class__.__name__ != a.__class__.__name__]
         elif isinstance(new_families, list):
             dists += new_families
@@ -226,3 +228,117 @@ def non_constant_parents(rvs, model):
                 if free_rv in list(ancestors([variable])) and free_rv not in parents:
                     parents.append(free_rv)
     return parents
+
+
+def from_pymc(dist):
+    """Convert a PyMC distribution to a PreliZ distribution.
+
+    Parameters
+    ----------
+    dist : PyMC distribution
+
+    Returns
+    -------
+    PreliZ distribution
+    """
+    name = dist.owner.op._print_name[0]
+
+    if name == "Censored":
+        base_dist = dist.owner.inputs[0]
+        lower = _as_scalar(dist.owner.inputs[1].eval())
+        upper = _as_scalar(dist.owner.inputs[2].eval())
+        BaseDist = from_pymc(base_dist)
+        return modules["preliz.distributions"].Censored(BaseDist, lower=lower, upper=upper)
+
+    if "Truncated" in name:
+        base_dist_name = name.split("Truncated")[1]
+        base_params = [v.eval() for v in dist.owner.inputs[2:-2]]
+        lower = _as_scalar(dist.owner.inputs[-2].eval())
+        upper = _as_scalar(dist.owner.inputs[-1].eval())
+
+        BaseDist = getattr(modules["preliz.distributions"], base_dist_name)
+
+        return modules["preliz.distributions"].Truncated(
+            _reparametrize(BaseDist, base_dist_name, base_params), lower=lower, upper=upper
+        )
+
+    elif name == "Mixture":
+        name_0 = dist.owner.inputs[2].owner.op._print_name[0]
+        if name_0 == "DiracDelta":
+            base_node = dist.owner.inputs[-1]
+            base_name = base_node.owner.op._print_name[0]
+            base_params = [v.eval() for v in base_node.owner.inputs[2:]]
+            BaseDist = getattr(modules["preliz.distributions"], base_name)(*base_params)
+            psi = dist.owner.inputs[1].eval()[1]
+            ZeroInflated = getattr(modules["preliz.distributions"], f"ZeroInflated{base_name}")
+            if base_name == "NegativeBinomial":
+                n, p = base_params
+                mu = n * (1 - p) / p
+                base_params = [mu, n]
+
+            return ZeroInflated(psi, *base_params)
+
+        else:
+            components = dist.owner.inputs[2:]
+            weights = dist.owner.inputs[1]
+            PreliZ_components = [from_pymc(comp) for comp in components]
+            weights_eval = weights.eval()
+            return modules["preliz.distributions"].Mixture(PreliZ_components, weights=weights_eval)
+
+    elif name == "Hurdle":
+        base_type_name = dist.owner.inputs[-1].owner.op._print_name[0].replace("Truncated", "")
+        psi = dist.owner.inputs[1].eval()[-1]
+        base_params = [v.eval() for v in dist.owner.inputs[-1].owner.inputs[2:]]
+        BaseDist = getattr(modules["preliz.distributions"], base_type_name)(*base_params)
+        return getattr(modules["preliz.distributions"], "Hurdle")(BaseDist, psi)
+
+    else:
+        if name in ["HalfNormal", "HalfCauchy"]:
+            params_inputs = [v.eval() for v in dist.owner.inputs[3:]]
+        else:
+            params_inputs = [v.eval() for v in dist.owner.inputs[2:]]
+
+        try:
+            Dist = getattr(modules["preliz.distributions"], name)
+        except AttributeError:
+            raise NotImplementedError(f"No PreliZ distribution named {name}")
+
+        return _reparametrize(Dist, name, params_inputs)
+
+
+def _as_scalar(x):
+    x = np.asarray(x)
+    return x.item() if x.shape == () or x.size == 1 else x
+
+
+def _reparametrize(Dist, name, params_inputs):
+    if name == "Exponential":
+        (rate,) = params_inputs
+        return Dist(1 / rate)
+    if name == "Gamma":
+        alpha, inv_beta = params_inputs
+        return Dist(alpha=alpha, beta=1 / inv_beta)
+    if name == "Rice":
+        b, sigma = params_inputs
+        return Dist(nu=b * sigma, sigma=sigma)
+    if name == "SkewNormal":
+        alpha, mu, sigma = params_inputs
+        return Dist(alpha=alpha, m=mu, sd=sigma)
+    if name == "Triangular":
+        lower, upper, c = params_inputs
+        return Dist(lower=lower, c=c, upper=upper)
+    if name == "Wald":
+        mu, lam, _ = params_inputs
+        return Dist(mu=mu, lam=lam)
+    if name == "BetaBinomial":
+        n, alpha, beta = params_inputs
+        return Dist(alpha=alpha, beta=beta, n=n)
+    if name == "NegativeBinomial":
+        n, p = params_inputs
+        mu = n * (1 - p) / p
+        return Dist(mu=mu, alpha=n)
+    if name == "HyperGeometric":
+        good, bad, n = params_inputs
+        return Dist(N=good + bad, k=good, n=n)
+
+    return Dist(*params_inputs)

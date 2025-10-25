@@ -33,16 +33,16 @@ Variance  :math:`\frac{1}{\lambda^2}`
 **Parameters:**
 
 - $\lambda$ : (float) Rate parameter, $\lambda > 0$.
-- $\beta$ : (float) Scale parameter, $\beta > 0$.
+- scale : (float) Scale parameter, $\text{scale} > 0$.
 
 **Alternative parametrization**
 
-The exponential distribution can be parametrized in terms of the rate parameter $\lambda$ or the scale parameter $\beta$.
+The exponential distribution can be parametrized in terms of the rate parameter $\lambda$ or the scale parameter scale.
 
 The link between the 2 alternatives is given by:
 
 $$
-\beta = \frac{1}{\lambda}
+\text{scale} = \frac{1}{\lambda}
 $$
 
 ### Probability Density Function (PDF)
@@ -68,14 +68,14 @@ for lam in lambdas:
 ```
 :::::
 
-:::::{tab-item} Parameter $\beta$
+:::::{tab-item} Parameter scale
 :sync: scale
 ```{jupyter-execute}
 :hide-code:
 
-betas = [2., 1., 0.5]
-for beta in betas:
-    Exponential(beta=beta).plot_pdf(support=(0, 5))
+scales = [2., 1., 0.5]
+for scale in scales:
+    Exponential(scale=scale).plot_pdf(support=(0, 5))
 ```
 :::::
 ::::::
@@ -99,13 +99,13 @@ for lam in lambdas:
 ```
 :::::
 
-:::::{tab-item} Parameter $\beta$
+:::::{tab-item} Parameter scale
 :sync: scale
 ```{jupyter-execute}
 :hide-code:
 
-for beta in betas:
-    Exponential(beta=beta).plot_cdf(support=(0, 5))
+for scale in scales:
+    Exponential(scale=scale).plot_cdf(support=(0, 5))
 ```
 :::::
 ::::::

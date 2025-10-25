@@ -10,7 +10,9 @@ from matplotlib import rcParams as mpl_rcParams
 from matplotlib import style
 
 from preliz.distributions import *
+from preliz.distributions.plot import plot
 from preliz.predictive import *
+from preliz.ppls import *
 from preliz.unidimensional import *
 from preliz.multidimensional import *
 from preliz.internal.rcparams import rc_context, rcParams

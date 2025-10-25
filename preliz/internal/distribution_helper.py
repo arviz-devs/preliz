@@ -30,7 +30,7 @@ def any_not_none(*args):
     return False
 
 
-def valid_scalar_params(self, check_frozen=True):
+def valid_scalar_params(self, check_frozen=True, raise_error=True):
     if not self.is_frozen:
         if check_frozen:
             raise ValueError(
@@ -47,7 +47,10 @@ def valid_scalar_params(self, check_frozen=True):
     ) or self.__class__.__name__ in ["Categorical", "Mixture"]:
         return True
 
-    raise ValueError("parameters must be integers or floats")
+    if raise_error:
+        raise ValueError("parameters must be integers or floats")
+
+    return False
 
 
 def valid_distribution(self):
