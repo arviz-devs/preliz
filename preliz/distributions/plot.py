@@ -5,6 +5,7 @@ def plot(
     dist,
     kind="pdf",
     moments=None,
+    marginals=True,
     pointinterval=False,
     interval=None,
     levels=None,
@@ -32,7 +33,12 @@ def plot(
     moments : str
         Compute moments. Use any combination of the strings ``m``, ``d``, ``v``, ``s`` or ``k``
         for the mean (μ), standard deviation (σ), variance (σ²), skew (γ) or kurtosis (κ)
-        respectively. Other strings will be ignored. Defaults to None.
+        respectively. Other strings will be ignored. Defaults to None. Ignored for multivariate
+        distributions.
+    marginals : bool
+        Whether to plot the marginals of the distribution. Only used when plotting multivariate
+        distributions and ``kind="pdf"``. Defaults to True. If False the joint distribution will be
+        plotted when possible.
     pointinterval : bool
         Whether to include a plot of the quantiles. Defaults to False. If True the default is to
         plot the median and two interquantiles ranges.
@@ -84,5 +90,10 @@ def plot(
 
     if kind in ["ppf", "isf"]:
         mandatory_kwargs.pop("support")
+
+    if dist.__class__.__name__ in ["MvNormal", "Dirichlet"]:
+        mandatory_kwargs.pop("moments")
+        if kind == "pdf":
+            mandatory_kwargs["marginals"] = marginals
 
     return getattr(dist, f"plot_{kind}")(**mandatory_kwargs, **kwargs)

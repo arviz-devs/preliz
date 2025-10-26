@@ -173,3 +173,9 @@ Distributions
 
 .. automodule:: preliz.distributions.truncated
    :members:
+
+:mod:`preliz.distributions`
+====================================
+
+.. automodule:: preliz.distributions.plot
+   :members:

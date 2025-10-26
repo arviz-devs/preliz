@@ -105,6 +105,7 @@ def plot_dirichlet(
     interval,
     levels,
     support,
+    baseline,
     legend,
     figsize,
     axes,
@@ -149,6 +150,7 @@ def plot_dirichlet(
                     interval=interval,
                     levels=levels,
                     support=support,
+                    baseline=baseline,
                     legend=False,
                     ax=ax,
                 )
@@ -163,6 +165,23 @@ def plot_dirichlet(
                 )
             elif representation == "ppf":
                 marginal_dist.plot_ppf(
+                    pointinterval=pointinterval,
+                    interval=interval,
+                    levels=levels,
+                    legend=False,
+                    ax=ax,
+                )
+            elif representation == "sf":
+                marginal_dist.plot_sf(
+                    pointinterval=pointinterval,
+                    interval=interval,
+                    levels=levels,
+                    support=support,
+                    legend=False,
+                    ax=ax,
+                )
+            elif representation == "isf":
+                marginal_dist.plot_isf(
                     pointinterval=pointinterval,
                     interval=interval,
                     levels=levels,

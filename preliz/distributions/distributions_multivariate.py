@@ -3,7 +3,6 @@
 from collections import namedtuple
 
 import numpy as np
-from scipy.special import betainc
 
 from preliz.internal.distribution_helper import valid_distribution, valid_scalar_params
 
@@ -57,6 +56,18 @@ class Multivariate:
         else:
             return None
 
+    def mean(self):
+        """Mean of the distribution."""
+        return self.rv_frozen.mean()
+
+    def var(self):
+        """Variance of the distribution."""
+        return self.rv_frozen.var()
+
+    def entropy(self):
+        """Entropy of the distribution."""
+        return self.rv_frozen.entropy()
+
     def rvs(self, *args, **kwds):
         """Random sample.
 
@@ -68,17 +79,6 @@ class Multivariate:
             Defaults to None
         """
         return self.rv_frozen.rvs(*args, **kwds)
-
-    def cdf(self, x):
-        """Cumulative distribution function.
-
-        Parameters
-        ----------
-        x : array_like
-            Values on which to evaluate the cdf
-        """
-        # not sure if this is right
-        return betainc(self.alpha, self.alpha.sum(), x)
 
     def _check_endpoints(self, lower, upper, raise_error=True):
         """
@@ -187,6 +187,15 @@ class Continuous(Multivariate):
         """
         return self.rv_frozen.pdf(x)
 
+    def logpdf(self, x):
+        """Logarithm of the probability density function at x.
+
+        Parameters
+        ----------
+        x : array_like
+            Values on which to evaluate the logpdf
+        """
+        return self.rv_frozen.logpdf(x)
 
 class Discrete(Multivariate):
     """Base class for discrete distributions."""

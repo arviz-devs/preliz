@@ -99,6 +99,7 @@ class Dirichlet(Continuous):
         interval=None,
         levels=None,
         support="full",
+        baseline=True,
         legend="title",
         figsize=None,
         ax=None,
@@ -127,6 +128,9 @@ class Dirichlet(Continuous):
         support : str:
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        baseline : bool
+            Whether to include a baseline in the plot. Defaults to True. Only used when
+            ``marginals=True``.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"title"``
             or not include them ``None``.
@@ -140,7 +144,7 @@ class Dirichlet(Continuous):
         ax : matplotlib axis
         """
         return plot_dirichlet(
-            self, "pdf", marginals, pointinterval, interval, levels, support, legend, figsize, ax
+            self, "pdf", marginals, pointinterval, interval, levels, support, baseline, legend, figsize, ax
         )
 
     def plot_cdf(
@@ -185,7 +189,7 @@ class Dirichlet(Continuous):
         ax : matplotlib axis
         """
         return plot_dirichlet(
-            self, "cdf", "marginals", pointinterval, interval, levels, support, legend, figsize, ax
+            self, "cdf", "marginals", pointinterval, interval, levels, support, None, legend, figsize, ax
         )
 
     def plot_ppf(
@@ -226,8 +230,98 @@ class Dirichlet(Continuous):
         ax : matplotlib axis
         """
         return plot_dirichlet(
-            self, "ppf", "marginals", pointinterval, interval, levels, None, legend, figsize, ax
+            self, "ppf", "marginals", pointinterval, interval, levels, None, None, legend, figsize, ax
         )
+
+
+
+    def plot_sf(
+        self,
+        pointinterval=False,
+        interval=None,
+        levels=None,
+        support="full",
+        legend="title",
+        figsize=None,
+        ax=None,
+    ):
+        """
+        Plot the survival function (1 - CDF).
+
+        Parameters
+        ----------
+        pointinterval : bool
+            Whether to include a plot of the quantiles. Defaults to False. If True the default is to
+            plot the median and two interquantile ranges.
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"`,
+        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
+        support : str:
+            If ``full`` use the finite end-points to set the limits of the plot. For unbounded
+            end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
+        figsize : tuple
+            Size of the figure
+        ax : matplotlib axis
+            Axis to plot on
+
+        Returns
+        -------
+        ax : matplotlib axis
+        """
+        return plot_dirichlet(
+            self, "sf", "marginals", pointinterval, interval, levels, support, None, legend, figsize, ax
+        )
+
+    def plot_isf(
+        self,
+        pointinterval=False,
+        interval=None,
+        levels=None,
+        legend="title",
+        figsize=None,
+        ax=None,
+    ):
+        """
+        Plot the inverse survival function.
+
+        Parameters
+        ----------
+        pointinterval : bool
+            Whether to include a plot of the quantiles. Defaults to False. If True the default is to
+            plot the median and two interquantile ranges.
+        interval : str
+            Type of interval. Available options are highest density interval `"hdi"`,
+        equal tailed interval `"eti"` or intervals defined by arbitrary `"quantiles"`.
+        Defaults to the value in rcParams["stats.ci_kind"].
+        levels : list
+            Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
+            For quantiles the number of elements should be 5, 3, 1 or 0
+            (in this last case nothing will be plotted).
+        legend : str
+            Whether to include a string with the distribution and its parameter as a ``"title"``
+            or not include them ``None``.
+        figsize : tuple
+            Size of the figure
+        ax : matplotlib axis
+            Axis to plot on
+
+        Returns
+        -------
+        ax : matplotlib axis
+        """
+        return plot_dirichlet(
+            self, "isf", "marginals", pointinterval, interval, levels, None, None, legend, figsize, ax
+        )
+
+
 
     def plot_interactive(
         self,
