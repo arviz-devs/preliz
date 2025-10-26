@@ -242,6 +242,8 @@ def from_pymc(dist):
     PreliZ distribution
     """
     name = dist.owner.op._print_name[0]
+    if name == "MultivariateNormal":
+        name = "MvNormal"
 
     if name == "Censored":
         base_dist = dist.owner.inputs[0]
