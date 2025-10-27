@@ -12,6 +12,7 @@ def match_moments(
     from_dist,
     to_dist,
     moments="mv",
+    weights=None,
     plot=None,
     plot_kwargs=None,
     ax=None,
@@ -33,6 +34,9 @@ def match_moments(
         where 'm' = mean, 'v' = variance, 's' = skewness, and 'k' = kurtosis.
         To compute the standard deviation use 'd'
         Valid combinations are any subset of 'mvdsk'.
+    weights : array-like, optional
+        Weights for each moment when optimizing. If None (default) all moments
+        are equally weighted.
     plot : bool
         Whether to plot the distributions. Defaults to None, which results in
         the value of rcParams["plots.show_plot"] being used.
@@ -92,12 +96,23 @@ def match_moments(
     none_idx, fixed = get_fixed_params(to_dist)
 
     target_values = np.array(from_dist.moments(moments))
+
+    if weights is None:
+        weights = np.ones_like(target_values)
+    else:
+        weights = np.asarray(weights)
+        if weights.shape != target_values.shape:
+            raise ValueError(
+                f"The number of weights {weights.shape} "
+                f"does not match number of moments {target_values.shape}"
+            )
+
     # Initialize `to_dist` to a distribution matching the mean and standard deviation
     # of `from_dist`, for some distributions and if `moments="mv"` this solves the problem
     # directly for others we need to optimize further.
     to_dist._fit_moments(from_dist.mean(), from_dist.std())
 
-    opt = optimize_moments(to_dist, moments, target_values, none_idx, fixed)
+    opt = optimize_moments(to_dist, moments, target_values, none_idx, fixed, weights)
     to_dist.opt = opt
     requested_moments = to_dist.moments(moments)
 
