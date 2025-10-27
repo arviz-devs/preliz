@@ -6,7 +6,7 @@ from scipy.stats import circmean
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_kappa, optimize_moments
+from preliz.internal.optimization import find_kappa, optimize_mean_sigma
 
 
 class VonMises(Continuous):
@@ -112,7 +112,7 @@ class VonMises(Continuous):
 
     def _fit_moments(self, mean, sigma):
         params = mean, 1 / sigma**1.8
-        optimize_moments(self, mean, sigma, params)
+        optimize_mean_sigma(self, mean, sigma, params)
 
     def _fit_mle(self, sample):
         data = np.mod(sample, 2 * np.pi)
