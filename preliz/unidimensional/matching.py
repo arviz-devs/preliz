@@ -56,7 +56,7 @@ def match_moments(
 
     See Also
     --------
-    moment_quantiles : Match the distribution to the specified quantiles.
+    match_quantiles : Match the distribution to the specified quantiles.
 
     Examples
     --------
@@ -68,7 +68,7 @@ def match_moments(
 
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
-        >>> match_moments(pz.Normal(14, 1), pz.Gamma())
+        >>> pz.match_moments(pz.Normal(14, 1), pz.Gamma())
 
 
     Moment matching between a known Normal and a StudentT distribution with nu fixed to 5:
@@ -79,7 +79,7 @@ def match_moments(
 
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
-        >>> pz.maxent(pz.Normal(14, 1), pz.StudentT(nu=5))
+        >>> pz.match_moments(pz.Normal(14, 1), pz.StudentT(nu=5))
     """
     if from_dist.__class__.__name__ == "TensorVariable":
         from_dist = from_pymc(from_dist)
@@ -172,7 +172,7 @@ def match_quantiles(
 
     See Also
     --------
-    moment_quantiles : Match the distribution to the specified quantiles.
+    match_moments : Match the distribution to the specified moments.
 
     Examples
     --------
@@ -184,7 +184,7 @@ def match_quantiles(
 
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
-        >>> match_moments(pz.Normal(14, 1), pz.Gamma())
+        >>> pz.match_quantiles(pz.Normal(14, 1), pz.Gamma())
 
 
     Moment matching between a known Normal and a StudentT distribution with nu fixed to 5:
@@ -195,7 +195,7 @@ def match_quantiles(
 
         >>> import preliz as pz
         >>> pz.style.use('preliz-doc')
-        >>> pz.maxent(pz.Normal(14, 1), pz.StudentT(nu=5))
+        >>> pz.match_quantiles(pz.Normal(14, 1), pz.StudentT(nu=5))
     """
     if from_dist.__class__.__name__ == "TensorVariable":
         from_dist = from_pymc(from_dist)
