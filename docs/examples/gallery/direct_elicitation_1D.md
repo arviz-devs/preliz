@@ -180,6 +180,24 @@ dist2 = pz.Laplace()
 pz.mle([dist0, dist1, dist2], sample, plot=3);  # we ask to plot all 3 distribution
 ```
 
+## From one distribution to another
+
+Moment matching is a technique that allows us to approximate a distribution with another one by matching a set of
+moments (like mean and variance). For instance, we may want to approximate a known Normal distribution with a Gamma
+distribution by matching the first
+
+```{jupyter-execute}
+
+pz.match_moments(pz.Normal(4, 1),
+                 pz.Gamma())
+```
+
+By default, `match_moments` matches the first two moments (mean and variance). But we can also match other moments, like
+skewness and kurtosis, by passing the `moments` argument.
+
+
+
+
 ## The roulette method
 
 The roulette method allows us to find a prior distribution by *drawing*. The name roulette comes from the analogy that

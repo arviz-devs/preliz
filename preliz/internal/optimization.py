@@ -112,6 +112,22 @@ def optimize_moments(dist, moments, target, none_idx, fixed, weights):
     return opt
 
 
+def optimize_quantiles(dist, quantiles, target, none_idx, fixed):
+    def func(params):
+        params = get_params(dist, params, none_idx, fixed)
+        dist._parametrization(**params)
+        vals = dist.ppf(quantiles)
+        return np.sum((vals - target) ** 2)
+
+    init_vals = np.array(dist.params)[none_idx]
+    bounds = np.array(dist.params_support)[none_idx]
+
+    opt = minimize(func, init_vals, bounds=bounds, method="powell")
+    params = get_params(dist, opt["x"], none_idx, fixed)
+    dist._parametrization(**params)
+    return opt
+
+
 def optimize_mean_sigma(dist, mean, sigma, params=None):
     def func(params, dist, mean, sigma):
         params = get_params(dist, params, none_idx, fixed)
