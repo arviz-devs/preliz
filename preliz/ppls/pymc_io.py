@@ -264,7 +264,7 @@ def from_pymc(dist):
         BaseDist = from_pymc(base_dist)
         return modules["preliz.distributions"].Censored(BaseDist, lower=lower, upper=upper)
 
-    if "Truncated" in name:
+    if "Truncated" in name and name != "TruncatedNormal":
         base_dist_name = name.split("Truncated")[1]
         base_params = [v.eval() for v in dist.owner.inputs[2:-2]]
         lower = _as_scalar(dist.owner.inputs[-2].eval())
@@ -304,9 +304,11 @@ def from_pymc(dist):
     elif name == "Hurdle":
         base_type_name = dist.owner.inputs[-1].owner.op._print_name[0].replace("Truncated", "")
         psi = _nan_to_none(dist.owner.inputs[1].eval())[-1]
-        base_params = _nan_to_none([v.eval() for v in dist.owner.inputs[-1].owner.inputs[2:]])
-        BaseDist = getattr(modules["preliz.distributions"], base_type_name)(*base_params)
-        return getattr(modules["preliz.distributions"], "Hurdle")(BaseDist, psi)
+        base_params = [v.eval() for v in dist.owner.inputs[-1].owner.inputs[2:]]
+        BaseDist = getattr(modules["preliz.distributions"], base_type_name)
+        return getattr(modules["preliz.distributions"], "Hurdle")(
+            _reparametrize(BaseDist, base_type_name, base_params), psi
+        )
 
     else:
         if name in ["HalfNormal", "HalfCauchy"]:
@@ -328,23 +330,30 @@ def _as_scalar(x):
 
 
 def _reparametrize(Dist, name, params_inputs):
+    if name == "AsymmetricLaplace":
+        b, kappa, mu = _nan_to_none(params_inputs)
+        return Dist(mu=mu, b=b, kappa=kappa)
     if name == "Exponential":
-        lamda_ = _nan_to_none(1 / params_inputs[0])
-        return Dist(lamda_)
+        scale = _nan_to_none(params_inputs)[0]
+        if scale is not None:
+            lam_ = 1 / scale
+        else:
+            lam_ = None
+        return Dist(lam_)
     if name == "Gamma":
-        alpha, inv_beta = params_inputs
-        alpha, beta = _nan_to_none((alpha, 1 / inv_beta))
+        alpha, inv_beta = _nan_to_none(params_inputs)
+        if inv_beta is not None:
+            beta = 1 / inv_beta
+        else:
+            beta = None
         return Dist(alpha=alpha, beta=beta)
     if name == "Rice":
         b, sigma = params_inputs
         nu, sigma = _nan_to_none((b * sigma, sigma))
         return Dist(nu=nu, sigma=sigma)
-    if name == "SkewNormal":
-        alpha, mu, sigma = _nan_to_none(params_inputs)
-        return Dist(alpha=alpha, mu=mu, sigma=sigma)
-    if name == "Triangular":
-        lower, upper, c = _nan_to_none(params_inputs)
-        return Dist(lower=lower, c=c, upper=upper)
+    if name == "SkewStudentT":
+        a, b, mu, sigma = _nan_to_none(params_inputs)
+        return Dist(mu=mu, sigma=sigma, a=a, b=b)
     if name == "Wald":
         mu, lam, _ = _nan_to_none(params_inputs)
         return Dist(mu=mu, lam=lam)
@@ -352,18 +361,40 @@ def _reparametrize(Dist, name, params_inputs):
         n, alpha, beta = _nan_to_none(params_inputs)
         return Dist(alpha=alpha, beta=beta, n=n)
     if name == "NegativeBinomial":
-        n, p = params_inputs
-        mu, n = _nan_to_none((n * (1 - p) / p, n))
+        n, p = _nan_to_none(params_inputs)
+        if p is not None and n is not None:
+            mu = n * (1 - p) / p
+        else:
+            mu = None
         return Dist(mu=mu, alpha=n)
     if name == "HyperGeometric":
-        good, bad, n = params_inputs
-        N, good, n = _nan_to_none((good + bad, good, n))
+        good, bad, n = _nan_to_none(params_inputs)
+        if good is not None and bad is not None:
+            N = good + bad
+        else:
+            N = None
         return Dist(N=N, k=good, n=n)
 
     return Dist(*_nan_to_none(params_inputs))
 
 
 def _nan_to_none(params):
-    if isinstance(params, (float, int, np.integer, np.floating)):
+    if np.isscalar(params):
         return None if np.isnan(params) else params
-    return [None if np.isnan(p) else p for p in params]
+
+    result = []
+    for p in params:
+        arr = np.asarray(p)
+        if arr.size == 1:
+            val = arr.item()
+            result.append(None if np.isnan(val) else val)
+        else:
+            mask = np.isnan(arr)
+            if np.any(mask):
+                out = arr.astype(object)
+                out[mask] = None
+                result.append(out)
+            else:
+                result.append(p)
+
+    return result
