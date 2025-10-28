@@ -6,6 +6,7 @@ from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import valid_distribution
 from preliz.internal.optimization import get_fixed_params, optimize_quartile, relative_error
 from preliz.internal.rcparams import rcParams
+from preliz.ppls.pymc_io import if_pymc_get_preliz
 
 
 def quartile(
@@ -22,8 +23,13 @@ def quartile(
 
     Parameters
     ----------
-    distribution : PreliZ distribution
-        Instance of a PreliZ distribution
+    distribution : PreliZ or PyMC distribution
+        Notice that the distribution will be updated inplace. If the distribution is from PyMC,
+        it will be converted to a PreliZ distribution, use `.to_pymc()` to convert it back to PyMC.
+        Distributions can be partially initialized, i.e. some parameters can be fixed
+        while others are left free to be estimated. For PreliZ distributions, set the parameters
+        you want to fix and don't set the rest. For PyMC distributions, set the parameters you want
+        to fix and use `np.nan` for the rest to indicate free parameters.
     q1 : float
         First quartile, i.e 0.25 of the mass is below this point.
     q2 : float
@@ -76,6 +82,7 @@ def quartile(
         >>> pz.quartile(pz.HalfStudentT(nu=7), 2, 9, 12)
 
     """
+    distribution = if_pymc_get_preliz(distribution)
     valid_distribution(distribution)
 
     if plot is None:

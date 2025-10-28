@@ -4,6 +4,7 @@ from preliz.distributions.normal import Normal
 from preliz.internal.distribution_helper import valid_distribution
 from preliz.internal.optimization import get_fixed_params, optimize_max_ent, relative_error
 from preliz.internal.rcparams import rcParams
+from preliz.ppls.pymc_io import if_pymc_get_preliz
 
 
 def maxent(
@@ -24,9 +25,13 @@ def maxent(
 
     Parameters
     ----------
-    name : PreliZ distribution
-        Instance of a PreliZ distribution. Notice that the distribution will be
-        updated inplace.
+    name : PreliZ or PyMC distribution
+        Notice that the distribution will be updated inplace. If the distribution is from PyMC,
+        it will be converted to a PreliZ distribution, use `.to_pymc()` to convert it back to PyMC.
+        Distributions can be partially initialized, i.e. some parameters can be fixed
+        while others are left free to be estimated. For PreliZ distributions, set the parameters
+        you want to fix and don't set the rest. For PyMC distributions, set the parameters you want
+        to fix and use `np.nan` for the rest to indicate free parameters.
     lower : float
         Lower end-point
     upper: float
@@ -82,6 +87,7 @@ def maxent(
         >>> pz.style.use('preliz-doc')
         >>> pz.maxent(pz.HalfStudentT(nu=4), 0, 12, 0.9)
     """
+    distribution = if_pymc_get_preliz(distribution)
     valid_distribution(distribution)
 
     if mass is None:

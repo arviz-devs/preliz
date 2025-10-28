@@ -230,6 +230,13 @@ def non_constant_parents(rvs, model):
     return parents
 
 
+def if_pymc_get_preliz(dist):
+    """Check if dist is a PyMC distribution and if so convert to PreliZ."""
+    if dist.__class__.__name__ == "TensorVariable":
+        dist = from_pymc(dist)
+    return dist
+
+
 def from_pymc(dist):
     """Convert a PyMC distribution to a PreliZ distribution.
 
@@ -249,6 +256,11 @@ def from_pymc(dist):
         base_dist = dist.owner.inputs[0]
         lower = _as_scalar(dist.owner.inputs[1].eval())
         upper = _as_scalar(dist.owner.inputs[2].eval())
+        if np.isnan(lower):
+            lower = -np.inf
+        if np.isnan(upper):
+            upper = np.inf
+
         BaseDist = from_pymc(base_dist)
         return modules["preliz.distributions"].Censored(BaseDist, lower=lower, upper=upper)
 
@@ -257,9 +269,12 @@ def from_pymc(dist):
         base_params = [v.eval() for v in dist.owner.inputs[2:-2]]
         lower = _as_scalar(dist.owner.inputs[-2].eval())
         upper = _as_scalar(dist.owner.inputs[-1].eval())
+        if np.isnan(lower):
+            lower = -np.inf
+        if np.isnan(upper):
+            upper = np.inf
 
         BaseDist = getattr(modules["preliz.distributions"], base_dist_name)
-
         return modules["preliz.distributions"].Truncated(
             _reparametrize(BaseDist, base_dist_name, base_params), lower=lower, upper=upper
         )
@@ -270,27 +285,26 @@ def from_pymc(dist):
             base_node = dist.owner.inputs[-1]
             base_name = base_node.owner.op._print_name[0]
             base_params = [v.eval() for v in base_node.owner.inputs[2:]]
-            BaseDist = getattr(modules["preliz.distributions"], base_name)(*base_params)
-            psi = dist.owner.inputs[1].eval()[1]
+            psi = _nan_to_none(dist.owner.inputs[1].eval())[1]
             ZeroInflated = getattr(modules["preliz.distributions"], f"ZeroInflated{base_name}")
             if base_name == "NegativeBinomial":
                 n, p = base_params
                 mu = n * (1 - p) / p
                 base_params = [mu, n]
 
+            base_params = _nan_to_none(base_params)
             return ZeroInflated(psi, *base_params)
 
         else:
             components = dist.owner.inputs[2:]
-            weights = dist.owner.inputs[1]
+            weights = _nan_to_none(dist.owner.inputs[1].eval())
             PreliZ_components = [from_pymc(comp) for comp in components]
-            weights_eval = weights.eval()
-            return modules["preliz.distributions"].Mixture(PreliZ_components, weights=weights_eval)
+            return modules["preliz.distributions"].Mixture(PreliZ_components, weights=weights)
 
     elif name == "Hurdle":
         base_type_name = dist.owner.inputs[-1].owner.op._print_name[0].replace("Truncated", "")
-        psi = dist.owner.inputs[1].eval()[-1]
-        base_params = [v.eval() for v in dist.owner.inputs[-1].owner.inputs[2:]]
+        psi = _nan_to_none(dist.owner.inputs[1].eval())[-1]
+        base_params = _nan_to_none([v.eval() for v in dist.owner.inputs[-1].owner.inputs[2:]])
         BaseDist = getattr(modules["preliz.distributions"], base_type_name)(*base_params)
         return getattr(modules["preliz.distributions"], "Hurdle")(BaseDist, psi)
 
@@ -315,32 +329,41 @@ def _as_scalar(x):
 
 def _reparametrize(Dist, name, params_inputs):
     if name == "Exponential":
-        (rate,) = params_inputs
-        return Dist(1 / rate)
+        lamda_ = _nan_to_none(1 / params_inputs[0])
+        return Dist(lamda_)
     if name == "Gamma":
         alpha, inv_beta = params_inputs
-        return Dist(alpha=alpha, beta=1 / inv_beta)
+        alpha, beta = _nan_to_none((alpha, 1 / inv_beta))
+        return Dist(alpha=alpha, beta=beta)
     if name == "Rice":
         b, sigma = params_inputs
-        return Dist(nu=b * sigma, sigma=sigma)
+        nu, sigma = _nan_to_none((b * sigma, sigma))
+        return Dist(nu=nu, sigma=sigma)
     if name == "SkewNormal":
-        alpha, mu, sigma = params_inputs
+        alpha, mu, sigma = _nan_to_none(params_inputs)
         return Dist(alpha=alpha, mu=mu, sigma=sigma)
     if name == "Triangular":
-        lower, upper, c = params_inputs
+        lower, upper, c = _nan_to_none(params_inputs)
         return Dist(lower=lower, c=c, upper=upper)
     if name == "Wald":
-        mu, lam, _ = params_inputs
+        mu, lam, _ = _nan_to_none(params_inputs)
         return Dist(mu=mu, lam=lam)
     if name == "BetaBinomial":
-        n, alpha, beta = params_inputs
+        n, alpha, beta = _nan_to_none(params_inputs)
         return Dist(alpha=alpha, beta=beta, n=n)
     if name == "NegativeBinomial":
         n, p = params_inputs
-        mu = n * (1 - p) / p
+        mu, n = _nan_to_none((n * (1 - p) / p, n))
         return Dist(mu=mu, alpha=n)
     if name == "HyperGeometric":
         good, bad, n = params_inputs
-        return Dist(N=good + bad, k=good, n=n)
+        N, good, n = _nan_to_none((good + bad, good, n))
+        return Dist(N=N, k=good, n=n)
 
-    return Dist(*params_inputs)
+    return Dist(*_nan_to_none(params_inputs))
+
+
+def _nan_to_none(params):
+    if isinstance(params, (float, int, np.integer, np.floating)):
+        return None if np.isnan(params) else params
+    return [None if np.isnan(p) else p for p in params]
