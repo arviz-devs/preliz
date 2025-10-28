@@ -104,7 +104,41 @@ dist = pz.Normal()
 pz.maxent(dist, -2, 2, 0.9, fixed_stat=("median", 2), plot=False)
 ```
 
-## From intervals and quartiles to distributions
+### PyMC interoperability
+
+We can also use PyMC distributions with `maxent`. One difference is that we need to explicitly pass `np.nan` for the
+parameters we want to estimate. So we can not pass uninitialized distributions as we do with PreliZ distributions.
+
+```{jupyter-execute}
+dist = pm.Gamma.dist(np.nan, np.nan)
+new_dist, _ = pz.maxent(dist, 1, 10, 0.9);
+new_dist
+```
+
+And if we want to fix some parameters we just pass their values instead of `np.nan`. 
+
+```{jupyter-execute}
+dist = pm.StudentT.dist(nu=7, mu=np.nan, sigma=np.nan)
+pz.maxent(dist, 1, 10, 0.9);
+```
+
+The caveat, is that fixing the parameters for PyMC distributions only works properly for the "canonical" parameters. For example, for the Gamma it will work as expected for `alpha` or `beta` but not for  `mu` or `sigma`. So with PyMC distributions it is better to use `fixed_params` to fix parameters by name.
+
+```{jupyter-execute}
+dist = pm.Gamma.dist(np.nan, np.nan)
+new_dist, _ = pz.maxent(dist, 1, 10, 0.9, fixed_params={"mu": 4});
+new_dist
+```
+
+In this case we can also use `fixed_stat` to fix the mean, as both ways are equivalent for the Gamma distribution.
+
+```{jupyter-execute}
+dist = pm.Gamma.dist(np.nan, np.nan)
+new_dist, _ = pz.maxent(dist, 1, 10, 0.9, fixed_stat=("mean", 4));
+new_dist
+```
+
+## From quartiles to distributions
 
 One alternative to `maxent` is to define a distribution by its [quartiles](https://en.wikipedia.org/wiki/Quartile), that
 is by the 3 points which divides the distribution into 4 parts each with 25% of the total mass.
@@ -114,12 +148,16 @@ is by the 3 points which divides the distribution into 4 parts each with 25% of 
 pz.quartile(pz.Gamma(), 2.6, 4.3, 6.6);
 ```
 
+In many aspects `quartile` works similarly to `maxent`, we can also fix parameters, either by partially initializing PreliZ distributions or by using `fixed_params`. For PyMC distributions it's better to use `fixed_params`.
+
+
+## From quartiles to distributions interactively
+
 Another function that allows to specify distribution in terms of quartiles is `quartile_int`. This is like `quartile`,
 but it is interactive and we can pass a list of distribution families. The function will return the closest 1D
 distribution to that input.
 
 ```{jupyter-execute}
-
 %matplotlib widget
 pz.QuartileInt(1, 2, 3, ["StudentT", "TruncatedNormal", "BetaScaled"]);
 ```

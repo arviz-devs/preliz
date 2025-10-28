@@ -13,6 +13,7 @@ def maxent(
     upper=1,
     mass=None,
     fixed_stat=None,
+    fixed_params=None,
     plot=None,
     plot_kwargs=None,
     ax=None,
@@ -26,12 +27,13 @@ def maxent(
     Parameters
     ----------
     name : PreliZ or PyMC distribution
-        Notice that the distribution will be updated inplace. If the distribution is from PyMC,
-        it will be converted to a PreliZ distribution, use `.to_pymc()` to convert it back to PyMC.
+        PreliZ distribution are updated inplace, while PyMC distributions are converted
+        to PreliZ distributions.
         Distributions can be partially initialized, i.e. some parameters can be fixed
         while others are left free to be estimated. For PreliZ distributions, set the parameters
-        you want to fix and don't set the rest. For PyMC distributions, set the parameters you want
-        to fix and use `np.nan` for the rest to indicate free parameters.
+        you want to fix and don't set the rest. As an alternative `fixed_params` can be used.
+        For PyMC distributions, set the parameters to `np.nan`, and use `fixed_params` in case
+        you want to fix any of them.
     lower : float
         Lower end-point
     upper: float
@@ -43,6 +45,10 @@ def maxent(
         Summary statistic to fix. The first element should be a name and the second a
         numerical value. Valid names are: "mean", "mode", "median", "var", "std",
         "skewness", "kurtosis". Defaults to None.
+    fixed_params: dict
+        Dictionary with parameter names as keys and the values to fix them to as values.
+        If using a PreliZ distribution, parameters can also be fixed by setting them
+        when initializing the distribution. Defaults to None.
     plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defaults to None,
         which results in the value of rcParams["plots.show_plot"] being used.
@@ -89,6 +95,9 @@ def maxent(
     """
     distribution = if_pymc_get_preliz(distribution)
     valid_distribution(distribution)
+
+    if fixed_params is not None:
+        distribution._parametrization(**fixed_params)
 
     if mass is None:
         mass = rcParams["stats.ci_prob"]

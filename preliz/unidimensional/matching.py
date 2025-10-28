@@ -25,10 +25,10 @@ def match_moments(
     from_dist : PreliZ distribution or PyMC distribution
         Instance of a fully parametrized PreliZ distribution. We will take the moments
         from this distribution.
-    to_dist : PreliZ distribution
-        Instance of a PreliZ distribution to be fitted to match the moments of `from_dist`.
-        It can have some parameters fixed. Notice that the distribution will be
-        updated inplace.
+    to_dist : PreliZ distribution or PyMC distribution
+        Instance of a distribution to be fitted to match the moments of `from_dist`.
+        If a PreliZ distribution then it can have some parameters fixed.
+        PreliZ distributions are updated inplace.
     moments : str
         The type of moments to compute. Default is 'mv'
         where 'm' = mean, 'v' = variance, 's' = skewness, and 'k' = kurtosis.
@@ -83,6 +83,9 @@ def match_moments(
     """
     if from_dist.__class__.__name__ == "TensorVariable":
         from_dist = from_pymc(from_dist)
+
+    if to_dist.__class__.__name__ == "TensorVariable":
+        to_dist = from_pymc(to_dist)
 
     valid_distribution(from_dist)
     valid_distribution(to_dist)

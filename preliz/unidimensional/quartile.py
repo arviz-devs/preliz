@@ -14,6 +14,7 @@ def quartile(
     q1=-1,
     q2=0,
     q3=1,
+    fixed_params=None,
     plot=None,
     plot_kwargs=None,
     ax=None,
@@ -24,12 +25,13 @@ def quartile(
     Parameters
     ----------
     distribution : PreliZ or PyMC distribution
-        Notice that the distribution will be updated inplace. If the distribution is from PyMC,
-        it will be converted to a PreliZ distribution, use `.to_pymc()` to convert it back to PyMC.
+        PreliZ distribution are updated inplace, while PyMC distributions are converted
+        to PreliZ distributions.
         Distributions can be partially initialized, i.e. some parameters can be fixed
         while others are left free to be estimated. For PreliZ distributions, set the parameters
-        you want to fix and don't set the rest. For PyMC distributions, set the parameters you want
-        to fix and use `np.nan` for the rest to indicate free parameters.
+        you want to fix and don't set the rest. As an alternative `fixed_params` can be used.
+        For PyMC distributions, set the parameters to `np.nan`, and use `fixed_params` in case
+        you want to fix any of them.
     q1 : float
         First quartile, i.e 0.25 of the mass is below this point.
     q2 : float
@@ -37,6 +39,10 @@ def quartile(
         as the median.
     q3 : float
         Third quartile, i.e 0.75 of the mass is below this point.
+    fixed_params: dict
+        Dictionary with parameter names as keys and the values to fix them to as values.
+        If using a PreliZ distribution, parameters can also be fixed by setting them
+        when initializing the distribution. Defaults to None.
     plot : bool
         Whether to plot the distribution, and lower and upper bounds. Defaults to None,
         which results in the value of rcParams["plots.show_plot"] being used.
@@ -84,6 +90,9 @@ def quartile(
     """
     distribution = if_pymc_get_preliz(distribution)
     valid_distribution(distribution)
+
+    if fixed_params is not None:
+        distribution._parametrization(**fixed_params)
 
     if plot is None:
         plot = rcParams["plots.show_plot"]

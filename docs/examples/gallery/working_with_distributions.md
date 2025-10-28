@@ -264,7 +264,7 @@ import pymc as pm
 pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
 ```
 
-For some functions (currently the only supported is `pz.plot`) you can directly pass a PyMC distribution, and it will work as expected.
+For some functions (including `pz.plot`, `pz.maxent`, `pz.quartile`, `pz.mle`) you can directly pass a PyMC distribution, and it will work as expected.
 
 ```{jupyter-execute}
 pz.plot(pm.Normal.dist(mu=0, sigma=1));
