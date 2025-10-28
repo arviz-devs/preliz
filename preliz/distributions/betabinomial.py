@@ -5,7 +5,7 @@ import numpy as np
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_ppf, optimize_ml, optimize_moments
+from preliz.internal.optimization import find_ppf, optimize_mean_sigma, optimize_ml
 from preliz.internal.special import betaln, cdf_bounds
 
 
@@ -64,7 +64,7 @@ class BetaBinomial(Discrete):
         self.params = (self.alpha, self.beta, self.n)
         self.param_names = ("alpha", "beta", "n")
         self.params_support = ((eps, np.inf), (eps, np.inf), (eps, np.inf))
-        if all_not_none(alpha, beta):
+        if all_not_none(alpha, beta, n):
             self._update(alpha, beta, n)
 
     def _update(self, alpha, beta, n):
@@ -170,7 +170,7 @@ class BetaBinomial(Discrete):
         )
 
     def _fit_moments(self, mean, sigma):
-        optimize_moments(self, mean, sigma)
+        optimize_mean_sigma(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)

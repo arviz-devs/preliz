@@ -4,7 +4,7 @@ from scipy.special import nbdtrik
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
-from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 from preliz.internal.special import betainc, cdf_bounds, gammaln, ppf_bounds_disc, xlogy
 
 
@@ -161,7 +161,7 @@ class NegativeBinomial(Discrete):
         return random_state.negative_binomial(self.n, self.p, size=size)
 
     def _fit_moments(self, mean, sigma=None):
-        optimize_moments(self, mean, sigma)
+        optimize_mean_sigma(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)

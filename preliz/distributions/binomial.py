@@ -4,7 +4,7 @@ from scipy.special import bdtr, bdtrik
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import optimize_moments
+from preliz.internal.optimization import optimize_mean_sigma
 from preliz.internal.special import (
     cdf_bounds,
     gammaln,
@@ -79,7 +79,7 @@ class Binomial(Discrete):
         n = mean + sigma * 2
         p = mean / n
         params = n, p
-        optimize_moments(self, mean, sigma, params)
+        optimize_mean_sigma(self, mean, sigma, params)
 
     def _fit_mle(self, sample):
         self._update(*nb_fit_mle(sample))
@@ -136,7 +136,7 @@ class Binomial(Discrete):
         n = mean + sigma * 2
         p = mean / n
         params = n, p
-        return optimize_moments(self, mean, sigma, params)
+        return optimize_mean_sigma(self, mean, sigma, params)
 
     def _fit_mle(self, sample):
         self._update(*nb_fit_mle(sample))

@@ -4,7 +4,7 @@ from scipy.special import pdtr, pdtrik
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_discrete_mode, optimize_ml, optimize_moments
+from preliz.internal.optimization import find_discrete_mode, optimize_mean_sigma, optimize_ml
 from preliz.internal.special import cdf_bounds, gammaln, ppf_bounds_disc, xlogy
 
 
@@ -69,7 +69,7 @@ class ZeroInflatedPoisson(Discrete):
         self.is_frozen = True
 
     def _fit_moments(self, mean, sigma):
-        optimize_moments(self, mean, sigma)
+        optimize_mean_sigma(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)

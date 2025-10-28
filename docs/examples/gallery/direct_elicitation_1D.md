@@ -180,6 +180,35 @@ dist2 = pz.Laplace()
 pz.mle([dist0, dist1, dist2], sample, plot=3);  # we ask to plot all 3 distribution
 ```
 
+## From one distribution to another
+
+Moment matching is a technique that allows us to approximate a distribution with another one by matching a set of
+moments (like mean and variance). For instance, we may want to approximate a known Gamma distribution with a Normal
+distribution by matching the first two moments.
+
+```{jupyter-execute}
+
+pz.match_moments(pz.Gamma(7.8, 2),
+                   pz.Normal(),
+                   )
+```
+
+By default, `match_moments` matches the first two moments (mean and variance). But we can also match other moments, like
+skewness and kurtosis, by passing the `moments` argument.
+
+We can also match distributions by their quantiles instead of their moments. This may be useful when the moments are not
+defined, or simply when we need to match specific quantiles. For instance, we can approximate a known Weibull distribution
+with a LogNormal distribution.
+
+```{jupyter-execute}
+pz.match_quantiles(pz.Weibull(3.5, 2),
+                   pz.LogNormal(),
+                   )
+```
+
+As with other functions we get a warning when the matching is worst than a threshold, so we can decide if the result is acceptable
+for our purposes.
+
 ## The roulette method
 
 The roulette method allows us to find a prior distribution by *drawing*. The name roulette comes from the analogy that

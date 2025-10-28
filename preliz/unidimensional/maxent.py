@@ -47,7 +47,7 @@ def maxent(
 
     Returns
     -------
-    dict: dict with the parameters of the distribution
+    dict: PreliZ distribution
     axes: matplotlib axes (only if `plot=True`)
 
     Notes

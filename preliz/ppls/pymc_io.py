@@ -325,7 +325,7 @@ def _reparametrize(Dist, name, params_inputs):
         return Dist(nu=b * sigma, sigma=sigma)
     if name == "SkewNormal":
         alpha, mu, sigma = params_inputs
-        return Dist(alpha=alpha, m=mu, sd=sigma)
+        return Dist(alpha=alpha, mu=mu, sigma=sigma)
     if name == "Triangular":
         lower, upper, c = params_inputs
         return Dist(lower=lower, c=c, upper=upper)

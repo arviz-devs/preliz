@@ -4,7 +4,7 @@ from scipy.special import comb
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from preliz.internal.optimization import optimize_ml, optimize_moments
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 from preliz.internal.special import beta, betainc, betaincinv, cdf_bounds, gamma, ppf_bounds_cont
 
 
@@ -228,7 +228,7 @@ class SkewStudentT(Continuous):
         ) * self.sigma + self.mu
 
     def _fit_moments(self, mean, sigma):
-        optimize_moments(self, mean, sigma)
+        optimize_mean_sigma(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)

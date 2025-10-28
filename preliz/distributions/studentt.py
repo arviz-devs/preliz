@@ -133,7 +133,7 @@ class StudentT(Continuous):
         return nb_entropy(self.nu, self.sigma)
 
     def mean(self):
-        return self.mu
+        return self.mu if self.nu > 1 else np.nan
 
     def mode(self):
         return self.mu

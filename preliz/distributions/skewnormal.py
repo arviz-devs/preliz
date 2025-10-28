@@ -5,7 +5,7 @@ from scipy.stats import skew
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from preliz.internal.optimization import find_ppf, optimize_ml, optimize_moments
+from preliz.internal.optimization import find_ppf, optimize_mean_sigma, optimize_ml
 from preliz.internal.special import erf, norm_logcdf
 
 
@@ -161,7 +161,7 @@ class SkewNormal(Continuous):
     def _fit_moments(self, mean, sigma):
         if self.alpha is None:
             self.alpha = 0
-        optimize_moments(self, mean, sigma)
+        optimize_mean_sigma(self, mean, sigma)
 
     def _fit_mle(self, sample):
         skewness = skew(sample)

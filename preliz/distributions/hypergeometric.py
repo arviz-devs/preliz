@@ -3,7 +3,7 @@ import numpy as np
 
 from preliz.distributions.distributions import Discrete
 from preliz.internal.distribution_helper import all_not_none
-from preliz.internal.optimization import find_ppf, optimize_ml, optimize_moments
+from preliz.internal.optimization import find_ppf, optimize_mean_sigma, optimize_ml
 from preliz.internal.special import betaln, cdf_bounds
 
 eps = np.finfo(float).eps
@@ -152,7 +152,7 @@ class HyperGeometric(Discrete):
         return random_state.hypergeometric(self.k, self.N - self.k, self.n, size=size)
 
     def _fit_moments(self, mean, sigma):
-        optimize_moments(self, mean, sigma)
+        optimize_mean_sigma(self, mean, sigma)
 
     def _fit_mle(self, sample):
         optimize_ml(self, sample)
