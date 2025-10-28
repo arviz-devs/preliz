@@ -93,39 +93,44 @@ def test_from_pymc_model():
 
 
 @pytest.mark.parametrize(
-    "preliz_dist, pymc_dist, lower, upper",
+    "preliz_dist, pymc_dist, lower, upper, fixed_params",
     [
-        (pz.Beta(), pm.Beta.dist(alpha=np.nan, beta=np.nan), 0.4, 0.7),
-        (pz.Gamma(), pm.Gamma.dist(np.nan, np.nan), 1, 5),
+        (pz.Beta(), pm.Beta.dist(alpha=np.nan, beta=np.nan), 0.4, 0.7, None),
+        (pz.Gamma(), pm.Gamma.dist(np.nan, np.nan), 1, 5, None),
+        (pz.Gamma(mu=3), pm.Gamma.dist(np.nan, np.nan), 1, 5, {"mu": 3}),
         (
             pz.Truncated(pz.Laplace(), lower=0),
             pm.Truncated.dist(pm.Laplace.dist(np.nan, np.nan), lower=0),
             1,
             10,
+            None,
         ),
         (
             pz.Censored(pz.HalfNormal(), lower=2),
             pm.Censored.dist(pm.HalfNormal.dist(np.nan), lower=2),
             2,
             7,
+            None,
         ),
         (
             pz.ZeroInflatedNegativeBinomial(),
             pm.ZeroInflatedNegativeBinomial.dist(mu=np.nan, alpha=np.nan, psi=np.nan),
             1,
             10,
+            None,
         ),
         (
             pz.Hurdle(pz.Gamma(), psi=0.5),
             pm.HurdleGamma.dist(mu=np.nan, sigma=np.nan, psi=0.5),
             0,
             10,
+            None,
         ),
     ],
 )
-def test_from_pymc_maxent(preliz_dist, pymc_dist, lower, upper):
+def test_from_pymc_maxent(preliz_dist, pymc_dist, lower, upper, fixed_params):
     original_dist, _ = pz.maxent(preliz_dist, lower, upper)
-    converted_dist, _ = pz.maxent(pymc_dist, lower, upper)
+    converted_dist, _ = pz.maxent(pymc_dist, lower, upper, fixed_params=fixed_params)
     assert_allclose(converted_dist.params, original_dist.params)
 
 
