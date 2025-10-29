@@ -327,6 +327,16 @@ def from_pymc(dist):
 
 
 def from_prior(prior):
+    """Convert a Prior distribution (from pymc-extras).
+
+    Parameters
+    ----------
+    dist : Prior distribution
+
+    Returns
+    -------
+    PreliZ distribution
+    """
     dist_name = prior.distribution
     kwargs = prior.to_dict().get("kwargs", {})
 

@@ -284,7 +284,7 @@ PreliZ can also work with `Prior` objects from [PyMC-extras](https://www.pymc.io
 ```{jupyter-execute}
 from pymc_extras.prior import Prior
 
-pz.plot(Prior("Gamma"));
+pz.plot(Prior("Gamma", mu=4, sigma=2));
 ```
 
 In other examples we will discuss methods more directly focus on prior elicitation, and also other ways to interact with PPLs.
