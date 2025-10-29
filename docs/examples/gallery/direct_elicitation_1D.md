@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import preliz as pz
-import pymc as pm
 ```
 
 ```{jupyter-execute}
@@ -108,10 +107,11 @@ pz.maxent(dist, -2, 2, 0.9, fixed_stat=("median", 2), plot=False)
 
 ### PyMC interoperability
 
-We can also use PyMC distributions with `maxent`. One difference is that we need to explicitly pass `np.nan` for the
-parameters we want to estimate. So we can not pass uninitialized distributions as we do with PreliZ distributions.
+We can also use PyMC distributions with `maxent`, assuming we have PyMC installed. One difference is that we need to explicitly pass `np.nan` for the parameters we want to estimate. So we can not pass uninitialized distributions as we do with PreliZ distributions.
 
 ```{jupyter-execute}
+import pymc as pm
+
 dist = pm.Gamma.dist(np.nan, np.nan)
 new_dist, _ = pz.maxent(dist, 1, 10, 0.9);
 new_dist
@@ -142,9 +142,11 @@ new_dist
 
 ### PyMC-extras interoperability
 
-We can pass `Prior` objects from [PyMC-extras](https://www.pymc.io/projects/extras/en/latest/generated/pymc_extras.prior.Prior.html#pymc_extras.prior.Prior) to `maxent`. As long as the resulting distribution is implemented in PreliZ, it will as expected,for instance we can partially initialize a `Prior` as a regular PreliZ distribution:
+We can pass `Prior` objects from [PyMC-extras](https://www.pymc.io/projects/extras/en/latest/generated/pymc_extras.prior.Prior.html#pymc_extras.prior.Prior) to `maxent` (and other functions), assuming we have PyMC-extras installed. As long as the resulting distribution is implemented in PreliZ, it will as expected,for instance we can partially initialize a `Prior` as a regular PreliZ distribution:
 
 ```{jupyter-execute}
+from pymc_extras.prior import Prior
+
 dist = Prior("Gamma", mu=4)
 pz.maxent(dist, 1, 10, 0.9);
 ```

@@ -12,7 +12,6 @@ kernelspec:
 
 ```{jupyter-execute}
 import preliz as pz
-import pymc as pm
 ```
 
 ```{jupyter-execute}
@@ -258,9 +257,11 @@ pz.Normal(0, 1).to_bambi()
 For these methods to work you need to have installed PyMC and/or Bambi.
 
 
-We can also go into the opposite direction and create PreliZ distributions from PyMC distributions.
+We can also go into the opposite direction and create PreliZ distributions from PyMC distributions, assuming we have PyMC installed.
 
 ```{jupyter-execute}
+import pymc as pm
+
 pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
 ```
 
@@ -278,9 +279,11 @@ with pm.Model():
 pz.plot(x);
 ```
 
-PreliZ can also work with `Prior` objects from [PyMC-extras](https://www.pymc.io/projects/extras/en/latest/generated/pymc_extras.prior.Prior.html#pymc_extras.prior.Prior), as long as the resulting distribution is implemented in PreliZ.
+PreliZ can also work with `Prior` objects from [PyMC-extras](https://www.pymc.io/projects/extras/en/latest/generated/pymc_extras.prior.Prior.html#pymc_extras.prior.Prior), as long as we have PyMC-extras installed and the resulting distribution is implemented in PreliZ.
 
 ```{jupyter-execute}
+from pymc_extras.prior import Prior
+
 pz.plot(Prior("Gamma"));
 ```
 
