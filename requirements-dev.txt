@@ -10,4 +10,5 @@ ipykernel
 pandas
 pymc>=5.24.0
 bambi>=0.13.0
+pymc-extras
 ruff
