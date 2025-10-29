@@ -13,8 +13,10 @@ kernelspec:
 ```{jupyter-execute}
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 import preliz as pz
+import pymc as pm
 ```
 
 ```{jupyter-execute}

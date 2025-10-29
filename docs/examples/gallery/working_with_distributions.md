@@ -12,6 +12,7 @@ kernelspec:
 
 ```{jupyter-execute}
 import preliz as pz
+import pymc as pm
 ```
 
 ```{jupyter-execute}
@@ -260,7 +261,6 @@ For these methods to work you need to have installed PyMC and/or Bambi.
 We can also go into the opposite direction and create PreliZ distributions from PyMC distributions.
 
 ```{jupyter-execute}
-import pymc as pm
 pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
 ```
 
