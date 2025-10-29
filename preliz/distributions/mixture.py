@@ -68,10 +68,10 @@ class Mixture(DistributionTransformer):
             np.max([dist.support[1] for dist in self.dist]),
         )
         self.weights = np.asarray(weights)
-        self.weights = self.weights / np.sum(self.weights)
 
         if all_not_none(*self.params):
             self.is_frozen = True
+            self.weights = self.weights / np.sum(self.weights)
 
     def pdf(self, x):
         return np.sum(

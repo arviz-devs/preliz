@@ -230,6 +230,15 @@ def non_constant_parents(rvs, model):
     return parents
 
 
+def if_pymc_get_preliz(dist):
+    """Check if dist is a PyMC or Prior distribution and if so convert to PreliZ."""
+    if dist.__class__.__name__ == "TensorVariable":
+        dist = from_pymc(dist)
+    elif dist.__class__.__name__ == "Prior":
+        dist = from_prior(dist)
+    return dist
+
+
 def from_pymc(dist):
     """Convert a PyMC distribution to a PreliZ distribution.
 
@@ -249,17 +258,25 @@ def from_pymc(dist):
         base_dist = dist.owner.inputs[0]
         lower = _as_scalar(dist.owner.inputs[1].eval())
         upper = _as_scalar(dist.owner.inputs[2].eval())
+        if np.isnan(lower):
+            lower = -np.inf
+        if np.isnan(upper):
+            upper = np.inf
+
         BaseDist = from_pymc(base_dist)
         return modules["preliz.distributions"].Censored(BaseDist, lower=lower, upper=upper)
 
-    if "Truncated" in name:
+    if "Truncated" in name and name != "TruncatedNormal":
         base_dist_name = name.split("Truncated")[1]
         base_params = [v.eval() for v in dist.owner.inputs[2:-2]]
         lower = _as_scalar(dist.owner.inputs[-2].eval())
         upper = _as_scalar(dist.owner.inputs[-1].eval())
+        if np.isnan(lower):
+            lower = -np.inf
+        if np.isnan(upper):
+            upper = np.inf
 
         BaseDist = getattr(modules["preliz.distributions"], base_dist_name)
-
         return modules["preliz.distributions"].Truncated(
             _reparametrize(BaseDist, base_dist_name, base_params), lower=lower, upper=upper
         )
@@ -270,29 +287,30 @@ def from_pymc(dist):
             base_node = dist.owner.inputs[-1]
             base_name = base_node.owner.op._print_name[0]
             base_params = [v.eval() for v in base_node.owner.inputs[2:]]
-            BaseDist = getattr(modules["preliz.distributions"], base_name)(*base_params)
-            psi = dist.owner.inputs[1].eval()[1]
+            psi = _nan_to_none(dist.owner.inputs[1].eval())[1]
             ZeroInflated = getattr(modules["preliz.distributions"], f"ZeroInflated{base_name}")
             if base_name == "NegativeBinomial":
                 n, p = base_params
                 mu = n * (1 - p) / p
                 base_params = [mu, n]
 
+            base_params = _nan_to_none(base_params)
             return ZeroInflated(psi, *base_params)
 
         else:
             components = dist.owner.inputs[2:]
-            weights = dist.owner.inputs[1]
+            weights = _nan_to_none(dist.owner.inputs[1].eval())
             PreliZ_components = [from_pymc(comp) for comp in components]
-            weights_eval = weights.eval()
-            return modules["preliz.distributions"].Mixture(PreliZ_components, weights=weights_eval)
+            return modules["preliz.distributions"].Mixture(PreliZ_components, weights=weights)
 
     elif name == "Hurdle":
         base_type_name = dist.owner.inputs[-1].owner.op._print_name[0].replace("Truncated", "")
-        psi = dist.owner.inputs[1].eval()[-1]
+        psi = _nan_to_none(dist.owner.inputs[1].eval())[-1]
         base_params = [v.eval() for v in dist.owner.inputs[-1].owner.inputs[2:]]
-        BaseDist = getattr(modules["preliz.distributions"], base_type_name)(*base_params)
-        return getattr(modules["preliz.distributions"], "Hurdle")(BaseDist, psi)
+        BaseDist = getattr(modules["preliz.distributions"], base_type_name)
+        return getattr(modules["preliz.distributions"], "Hurdle")(
+            _reparametrize(BaseDist, base_type_name, base_params), psi
+        )
 
     else:
         if name in ["HalfNormal", "HalfCauchy"]:
@@ -308,39 +326,117 @@ def from_pymc(dist):
         return _reparametrize(Dist, name, params_inputs)
 
 
+def from_prior(prior):
+    """Convert a Prior distribution (from pymc-extras).
+
+    Parameters
+    ----------
+    dist : Prior distribution
+
+    Returns
+    -------
+    PreliZ distribution
+    """
+    dist_name = prior.distribution
+    kwargs = prior.to_dict().get("kwargs", {})
+
+    if dist_name in ["Truncated", "Censored"]:
+        dist_arg = kwargs["dist"]
+        base = getattr(modules["preliz.distributions"], dist_arg["dist"])(
+            **dist_arg.get("kwargs", {})
+        )
+        return getattr(modules["preliz.distributions"], dist_name)(
+            base, lower=kwargs.get("lower"), upper=kwargs.get("upper")
+        )
+
+    if dist_name.startswith("Hurdle"):
+        base_name = dist_name.replace("Hurdle", "")
+        base_kwargs = {k: v for k, v in kwargs.items() if k != "psi"}
+        base = getattr(modules["preliz.distributions"], base_name)(**base_kwargs)
+        return getattr(modules["preliz.distributions"], "Hurdle")(base, psi=kwargs["psi"])
+
+    if dist_name == "Mixture":
+        comp_dists = [from_prior(d) for d in kwargs["comp_dists"]]
+        w = kwargs["w"]
+        return getattr(modules["preliz.distributions"], "Mixture")(comp_dists, weights=w)
+
+    if hasattr(modules["preliz.distributions"], dist_name):
+        return getattr(modules["preliz.distributions"], dist_name)(**kwargs)
+
+    raise ValueError(f"Unknown PreliZ distribution: {dist_name}")
+
+
 def _as_scalar(x):
     x = np.asarray(x)
     return x.item() if x.shape == () or x.size == 1 else x
 
 
 def _reparametrize(Dist, name, params_inputs):
+    if name == "AsymmetricLaplace":
+        b, kappa, mu = _nan_to_none(params_inputs)
+        return Dist(mu=mu, b=b, kappa=kappa)
     if name == "Exponential":
-        (rate,) = params_inputs
-        return Dist(1 / rate)
+        scale = _nan_to_none(params_inputs)[0]
+        if scale is not None:
+            lam_ = 1 / scale
+        else:
+            lam_ = None
+        return Dist(lam_)
     if name == "Gamma":
-        alpha, inv_beta = params_inputs
-        return Dist(alpha=alpha, beta=1 / inv_beta)
+        alpha, inv_beta = _nan_to_none(params_inputs)
+        if inv_beta is not None:
+            beta = 1 / inv_beta
+        else:
+            beta = None
+        return Dist(alpha=alpha, beta=beta)
     if name == "Rice":
         b, sigma = params_inputs
-        return Dist(nu=b * sigma, sigma=sigma)
-    if name == "SkewNormal":
-        alpha, mu, sigma = params_inputs
-        return Dist(alpha=alpha, mu=mu, sigma=sigma)
-    if name == "Triangular":
-        lower, upper, c = params_inputs
-        return Dist(lower=lower, c=c, upper=upper)
+        nu, sigma = _nan_to_none((b * sigma, sigma))
+        return Dist(nu=nu, sigma=sigma)
+    if name == "SkewStudentT":
+        a, b, mu, sigma = _nan_to_none(params_inputs)
+        return Dist(mu=mu, sigma=sigma, a=a, b=b)
     if name == "Wald":
-        mu, lam, _ = params_inputs
+        mu, lam, _ = _nan_to_none(params_inputs)
         return Dist(mu=mu, lam=lam)
     if name == "BetaBinomial":
-        n, alpha, beta = params_inputs
+        n, alpha, beta = _nan_to_none(params_inputs)
         return Dist(alpha=alpha, beta=beta, n=n)
     if name == "NegativeBinomial":
-        n, p = params_inputs
-        mu = n * (1 - p) / p
+        n, p = _nan_to_none(params_inputs)
+        if p is not None and n is not None:
+            mu = n * (1 - p) / p
+        else:
+            mu = None
         return Dist(mu=mu, alpha=n)
     if name == "HyperGeometric":
-        good, bad, n = params_inputs
-        return Dist(N=good + bad, k=good, n=n)
+        good, bad, n = _nan_to_none(params_inputs)
+        if good is not None and bad is not None:
+            N = good + bad
+        else:
+            N = None
+        return Dist(N=N, k=good, n=n)
 
-    return Dist(*params_inputs)
+    return Dist(*_nan_to_none(params_inputs))
+
+
+def _nan_to_none(params):
+    if np.isscalar(params):
+        return None if np.isnan(params) else params
+
+    result = []
+    for p in params:
+        arr = np.asarray(p)
+        if arr.size == 1:
+            val = arr.item()
+            result.append(None if np.isnan(val) else val)
+        else:
+            mask = np.isnan(arr)
+            if np.any(mask):
+                out = arr.astype(object)
+                out[mask] = None
+                result.append(out)
+            else:
+                result.append(p)
+
+    return result

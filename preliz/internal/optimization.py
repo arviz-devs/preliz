@@ -96,12 +96,12 @@ def optimize_pdf(dist, x_vals, epdf, none_idx, fixed):
     return loss
 
 
-def optimize_moments(dist, moments, target, none_idx, fixed, weights):
+def optimize_moments(dist, moments, target, none_idx, fixed):
     def func(params):
         params = get_params(dist, params, none_idx, fixed)
         dist._parametrization(**params)
         vals = dist.moments(moments)
-        return np.sum(weights * (vals - target) ** 2)
+        return np.sum((vals - target) ** 2)
 
     init_vals = np.array(dist.params)[none_idx]
     bounds = np.array(dist.params_support)[none_idx]

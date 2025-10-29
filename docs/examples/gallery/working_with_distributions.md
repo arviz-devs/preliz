@@ -257,14 +257,15 @@ pz.Normal(0, 1).to_bambi()
 For these methods to work you need to have installed PyMC and/or Bambi.
 
 
-We can also go into the opposite direction and create PreliZ distributions from PyMC distributions.
+We can also go into the opposite direction and create PreliZ distributions from PyMC distributions, assuming we have PyMC installed.
 
 ```{jupyter-execute}
 import pymc as pm
+
 pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
 ```
 
-For some functions (currently the only supported is `pz.plot`) you can directly pass a PyMC distribution, and it will work as expected.
+For some functions (including `pz.plot`, `pz.maxent`, `pz.quartile`, `pz.mle`, `pz.match_moment`, `pz.match_quantiles`) you can directly pass a PyMC distribution, and it will work as expected.
 
 ```{jupyter-execute}
 pz.plot(pm.Normal.dist(mu=0, sigma=1));
@@ -278,6 +279,13 @@ with pm.Model():
 pz.plot(x);
 ```
 
+PreliZ can also work with `Prior` objects from [PyMC-extras](https://www.pymc.io/projects/extras/en/latest/generated/pymc_extras.prior.Prior.html#pymc_extras.prior.Prior), as long as we have PyMC-extras installed and the resulting distribution is implemented in PreliZ.
+
+```{jupyter-execute}
+from pymc_extras.prior import Prior
+
+pz.plot(Prior("Gamma", mu=4, sigma=2));
+```
 
 In other examples we will discuss methods more directly focus on prior elicitation, and also other ways to interact with PPLs.
 
