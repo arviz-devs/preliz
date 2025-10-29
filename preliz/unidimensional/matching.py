@@ -12,7 +12,6 @@ def match_moments(
     from_dist,
     to_dist,
     moments="mv",
-    weights=None,
     plot=None,
     plot_kwargs=None,
     ax=None,
@@ -30,13 +29,10 @@ def match_moments(
         If a PreliZ distribution then it can have some parameters fixed.
         PreliZ distributions are updated inplace.
     moments : str
-        The type of moments to compute. Default is 'mv'
-        where 'm' = mean, 'v' = variance, 's' = skewness, and 'k' = kurtosis.
-        To compute the standard deviation use 'd'
-        Valid combinations are any subset of 'mvdsk'.
-    weights : array-like, optional
-        Weights for each moment when optimizing. If None (default) all moments
-        are equally weighted.
+        The type of moments to compute. Default is 'mv' (mean and variance).
+        Valid combinations are any subset of 'mvdsk', where 'm' = mean,
+        'v' = variance, 's' = skewness, and 'k' = kurtosis.
+        'd' = standard deviation is also valid.
     plot : bool
         Whether to plot the distributions. Defaults to None, which results in
         the value of rcParams["plots.show_plot"] being used.
@@ -99,32 +95,26 @@ def match_moments(
     none_idx, fixed = get_fixed_params(to_dist)
 
     target_values = np.array(from_dist.moments(moments))
-    if np.all(~np.isfinite(target_values)):
-        raise ValueError(f"The moments ({moments}) of `from_dist` are not finite.")
-
-    if weights is None:
-        weights = np.ones_like(target_values)
-    else:
-        weights = np.asarray(weights)
-        if weights.shape != target_values.shape:
-            raise ValueError(
-                f"The number of weights {weights.shape} "
-                f"does not match number of moments {target_values.shape}"
-            )
+    if not np.any(np.isfinite(target_values)):
+        raise ValueError(
+            f"At least one of the requested moments ({moments}) of `from_dist` is not finite."
+        )
 
     # Initialize `to_dist` to a distribution matching the mean and standard deviation
-    # of `from_dist`, for some distributions and if `moments="mv"` this solves the problem
-    # directly for others we need to optimize further.
+    # of `from_dist`. The ``_fit_moments`` method is correct for some distributions,
+    # but just an heuristic for others.
     to_dist._fit_moments(from_dist.mean(), from_dist.std())
 
-    opt = optimize_moments(to_dist, moments, target_values, none_idx, fixed, weights)
+    opt = optimize_moments(to_dist, moments, target_values, none_idx, fixed)
     to_dist.opt = opt
     requested_moments = to_dist.moments(moments)
 
-    if np.all(~np.isfinite(requested_moments)):
-        raise ValueError("The moments of `to_dist` are not finite.")
+    if not np.all(np.isfinite(requested_moments)):
+        raise ValueError(
+            f"At least one of the requested moments ({moments}) of `to_dist` is not finite."
+        )
 
-    check_relative_error(moments, target_values, requested_moments)
+    _check_relative_error(moments, target_values, requested_moments)
 
     if plot:
         ax = from_dist.plot_pdf(**plot_kwargs)
@@ -150,10 +140,10 @@ def match_quantiles(
     from_dist : PreliZ distribution or PyMC distribution
         Instance of a fully parametrized PreliZ distribution. We will take the moments
         from this distribution.
-    to_dist : PreliZ distribution
-        Instance of a PreliZ distribution to be fitted to match the moments of `from_dist`.
-        It can have some parameters fixed. Notice that the distribution will be
-        updated inplace.
+    to_dist : PreliZ distribution or PyMC distribution
+        Instance of a distribution to be fitted to match the quantiles of `from_dist`.
+        If a PreliZ distribution then it can have some parameters fixed.
+        PreliZ distributions are updated inplace.
     quantiles : array-like, optional
         Quantiles to match. Default is [0.25, 0.5, 0.75].
     plot : bool
@@ -224,15 +214,15 @@ def match_quantiles(
     target_values = np.array(from_dist.ppf(quantiles))
 
     # Initialize `to_dist` to a distribution matching the mean and standard deviation
-    # of `from_dist`, for some distributions and if `moments="mv"` this solves the problem
-    # directly for others we need to optimize further.
+    # of `from_dist`. The ``_fit_moments`` method is correct for some distributions,
+    # but just an heuristic for others.
     to_dist._fit_moments(from_dist.mean(), from_dist.std())
 
     opt = optimize_quantiles(to_dist, quantiles, target_values, none_idx, fixed)
     to_dist.opt = opt
     requested_moments = to_dist.ppf(quantiles)
 
-    check_relative_error(quantiles, target_values, requested_moments, tol=0.1)
+    _check_relative_error(quantiles, target_values, requested_moments, tol=0.1)
 
     if plot:
         ax = from_dist.plot_pdf(**plot_kwargs)
@@ -242,7 +232,7 @@ def match_quantiles(
     return to_dist
 
 
-def check_relative_error(values, target_values, requested_moments, tol=0.01):
+def _check_relative_error(values, target_values, requested_moments, tol=0.01):
     errors = abs((requested_moments - target_values) / (target_values + 1e-6) * 100)
 
     if np.any(errors > tol):

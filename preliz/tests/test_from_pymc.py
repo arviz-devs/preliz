@@ -19,6 +19,8 @@ def test_from_pymc():
             "Censored",
             "Mixture",
             "Dirichlet",
+            "LogitNormal",  # Remove after PyMC 5.26.1 is out
+            "DiscreteWeibull",  # Remove after PyMC 5.26.1 is out
         ]:
             continue
         pymc_dist = getattr(pm, dist_name).dist(**params)
