@@ -140,6 +140,15 @@ new_dist, _ = pz.maxent(dist, 1, 10, 0.9, fixed_stat=("mean", 4));
 new_dist
 ```
 
+### PyMC-extras interoperability
+
+We can pass `Prior` objects from [PyMC-extras](https://www.pymc.io/projects/extras/en/latest/generated/pymc_extras.prior.Prior.html#pymc_extras.prior.Prior) to `maxent`. As long as the resulting distribution is implemented in PreliZ, it will as expected,for instance we can partially initialize a `Prior` as a regular PreliZ distribution:
+
+```{jupyter-execute}
+dist = Prior("Gamma", mu=4)
+pz.maxent(dist, 1, 10, 0.9);
+```
+
 ## From quartiles to distributions
 
 One alternative to `maxent` is to define a distribution by its [quartiles](https://en.wikipedia.org/wiki/Quartile), that

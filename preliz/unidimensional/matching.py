@@ -5,7 +5,7 @@ import numpy as np
 from preliz.internal.distribution_helper import valid_distribution
 from preliz.internal.optimization import get_fixed_params, optimize_moments, optimize_quantiles
 from preliz.internal.rcparams import rcParams
-from preliz.ppls.pymc_io import from_pymc
+from preliz.ppls.pymc_io import if_pymc_get_preliz
 
 
 def match_moments(
@@ -77,11 +77,8 @@ def match_moments(
         >>> pz.style.use('preliz-doc')
         >>> pz.match_moments(pz.Normal(14, 1), pz.StudentT(nu=5))
     """
-    if from_dist.__class__.__name__ == "TensorVariable":
-        from_dist = from_pymc(from_dist)
-
-    if to_dist.__class__.__name__ == "TensorVariable":
-        to_dist = from_pymc(to_dist)
+    from_dist = if_pymc_get_preliz(from_dist)
+    to_dist = if_pymc_get_preliz(to_dist)
 
     valid_distribution(from_dist)
     valid_distribution(to_dist)
@@ -190,8 +187,8 @@ def match_quantiles(
         >>> pz.style.use('preliz-doc')
         >>> pz.match_quantiles(pz.Normal(14, 1), pz.StudentT(nu=5))
     """
-    if from_dist.__class__.__name__ == "TensorVariable":
-        from_dist = from_pymc(from_dist)
+    from_dist = if_pymc_get_preliz(from_dist)
+    to_dist = if_pymc_get_preliz(to_dist)
 
     valid_distribution(from_dist)
     valid_distribution(to_dist)

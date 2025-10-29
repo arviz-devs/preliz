@@ -231,9 +231,11 @@ def non_constant_parents(rvs, model):
 
 
 def if_pymc_get_preliz(dist):
-    """Check if dist is a PyMC distribution and if so convert to PreliZ."""
+    """Check if dist is a PyMC or Prior distribution and if so convert to PreliZ."""
     if dist.__class__.__name__ == "TensorVariable":
         dist = from_pymc(dist)
+    elif dist.__class__.__name__ == "Prior":
+        dist = from_prior(dist)
     return dist
 
 
@@ -322,6 +324,36 @@ def from_pymc(dist):
             raise NotImplementedError(f"No PreliZ distribution named {name}")
 
         return _reparametrize(Dist, name, params_inputs)
+
+
+def from_prior(prior):
+    dist_name = prior.distribution
+    kwargs = prior.to_dict().get("kwargs", {})
+
+    if dist_name in ["Truncated", "Censored"]:
+        dist_arg = kwargs["dist"]
+        base = getattr(modules["preliz.distributions"], dist_arg["dist"])(
+            **dist_arg.get("kwargs", {})
+        )
+        return getattr(modules["preliz.distributions"], dist_name)(
+            base, lower=kwargs.get("lower"), upper=kwargs.get("upper")
+        )
+
+    if dist_name.startswith("Hurdle"):
+        base_name = dist_name.replace("Hurdle", "")
+        base_kwargs = {k: v for k, v in kwargs.items() if k != "psi"}
+        base = getattr(modules["preliz.distributions"], base_name)(**base_kwargs)
+        return getattr(modules["preliz.distributions"], "Hurdle")(base, psi=kwargs["psi"])
+
+    if dist_name == "Mixture":
+        comp_dists = [from_prior(d) for d in kwargs["comp_dists"]]
+        w = kwargs["w"]
+        return getattr(modules["preliz.distributions"], "Mixture")(comp_dists, weights=w)
+
+    if hasattr(modules["preliz.distributions"], dist_name):
+        return getattr(modules["preliz.distributions"], dist_name)(**kwargs)
+
+    raise ValueError(f"Unknown PreliZ distribution: {dist_name}")
 
 
 def _as_scalar(x):

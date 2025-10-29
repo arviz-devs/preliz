@@ -2,6 +2,7 @@ import numpy as np
 import pymc as pm
 import pytest
 from numpy.testing import assert_allclose
+from pymc_extras.prior import Prior
 
 import preliz as pz
 from preliz.internal.distribution_helper import init_vals
@@ -95,14 +96,15 @@ def test_from_pymc_model():
 
 
 @pytest.mark.parametrize(
-    "preliz_dist, pymc_dist, lower, upper, fixed_params",
+    "preliz_dist, pymc_dist, prior_dist, lower, upper, fixed_params",
     [
-        (pz.Beta(), pm.Beta.dist(alpha=np.nan, beta=np.nan), 0.4, 0.7, None),
-        (pz.Gamma(), pm.Gamma.dist(np.nan, np.nan), 1, 5, None),
-        (pz.Gamma(mu=3), pm.Gamma.dist(np.nan, np.nan), 1, 5, {"mu": 3}),
+        (pz.Beta(), pm.Beta.dist(alpha=np.nan, beta=np.nan), Prior("Beta"), 0.4, 0.7, None),
+        (pz.Gamma(), pm.Gamma.dist(np.nan, np.nan), Prior("Gamma"), 1, 5, None),
+        (pz.Gamma(mu=3), pm.Gamma.dist(np.nan, np.nan), Prior("Gamma", mu=3), 1, 5, {"mu": 3}),
         (
             pz.Truncated(pz.Laplace(), lower=0),
             pm.Truncated.dist(pm.Laplace.dist(np.nan, np.nan), lower=0),
+            Prior("Truncated", dist=Prior("Laplace"), lower=0),
             1,
             10,
             None,
@@ -110,6 +112,7 @@ def test_from_pymc_model():
         (
             pz.Censored(pz.HalfNormal(), lower=2),
             pm.Censored.dist(pm.HalfNormal.dist(np.nan), lower=2),
+            Prior("Censored", dist=Prior("HalfNormal"), lower=2),
             2,
             7,
             None,
@@ -117,6 +120,7 @@ def test_from_pymc_model():
         (
             pz.ZeroInflatedNegativeBinomial(),
             pm.ZeroInflatedNegativeBinomial.dist(mu=np.nan, alpha=np.nan, psi=np.nan),
+            Prior("ZeroInflatedNegativeBinomial"),
             1,
             10,
             None,
@@ -124,26 +128,30 @@ def test_from_pymc_model():
         (
             pz.Hurdle(pz.Gamma(), psi=0.5),
             pm.HurdleGamma.dist(mu=np.nan, sigma=np.nan, psi=0.5),
+            Prior("HurdleGamma", psi=0.5),
             0,
             10,
             None,
         ),
     ],
 )
-def test_from_pymc_maxent(preliz_dist, pymc_dist, lower, upper, fixed_params):
+def test_from_pymc_maxent(preliz_dist, pymc_dist, prior_dist, lower, upper, fixed_params):
     original_dist, _ = pz.maxent(preliz_dist, lower, upper)
     converted_dist, _ = pz.maxent(pymc_dist, lower, upper, fixed_params=fixed_params)
+    assert_allclose(converted_dist.params, original_dist.params)
+    converted_dist, _ = pz.maxent(prior_dist, lower, upper)
     assert_allclose(converted_dist.params, original_dist.params)
 
 
 @pytest.mark.parametrize(
-    "preliz_dist, pymc_dist, q1, q2, q3",
+    "preliz_dist, pymc_dist, prior_dist, q1, q2, q3",
     [
-        (pz.Beta(), pm.Beta.dist(alpha=np.nan, beta=np.nan), 0.3, 0.5, 0.7),
-        (pz.Gamma(), pm.Gamma.dist(np.nan, np.nan), 0.5, 1, 2.5),
+        (pz.Beta(), pm.Beta.dist(alpha=np.nan, beta=np.nan), Prior("Beta"), 0.3, 0.5, 0.7),
+        (pz.Gamma(), pm.Gamma.dist(np.nan, np.nan), Prior("Gamma"), 0.5, 1, 2.5),
         (
             pz.Truncated(pz.Laplace(), lower=0),
             pm.Truncated.dist(pm.Laplace.dist(np.nan, np.nan), lower=0),
+            Prior("Truncated", dist=Prior("Laplace"), lower=0),
             0.45,
             1,
             2,
@@ -151,6 +159,7 @@ def test_from_pymc_maxent(preliz_dist, pymc_dist, lower, upper, fixed_params):
         (
             pz.Censored(pz.HalfNormal(), lower=2),
             pm.Censored.dist(pm.HalfNormal.dist(np.nan), lower=2),
+            Prior("Censored", dist=Prior("HalfNormal"), lower=2),
             2,
             3,
             4,
@@ -158,6 +167,7 @@ def test_from_pymc_maxent(preliz_dist, pymc_dist, lower, upper, fixed_params):
         (
             pz.ZeroInflatedNegativeBinomial(),
             pm.ZeroInflatedNegativeBinomial.dist(mu=np.nan, alpha=np.nan, psi=np.nan),
+            Prior("ZeroInflatedNegativeBinomial"),
             1,
             3,
             4,
@@ -165,13 +175,16 @@ def test_from_pymc_maxent(preliz_dist, pymc_dist, lower, upper, fixed_params):
         (
             pz.Hurdle(pz.Gamma(), psi=0.75),
             pm.HurdleGamma.dist(mu=np.nan, sigma=np.nan, psi=0.75),
+            Prior("HurdleGamma", psi=0.75),
             0.5,
             3,
             4,
         ),
     ],
 )
-def test_from_pymc_quartile(preliz_dist, pymc_dist, q1, q2, q3):
+def test_from_pymc_quartile(preliz_dist, pymc_dist, prior_dist, q1, q2, q3):
     original_dist, _ = pz.quartile(preliz_dist, q1, q2, q3)
     converted_dist, _ = pz.quartile(pymc_dist, q1, q2, q3)
+    assert_allclose(converted_dist.params, original_dist.params)
+    converted_dist, _ = pz.quartile(prior_dist, q1, q2, q3)
     assert_allclose(converted_dist.params, original_dist.params)

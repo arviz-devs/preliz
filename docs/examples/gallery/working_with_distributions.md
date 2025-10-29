@@ -264,7 +264,7 @@ We can also go into the opposite direction and create PreliZ distributions from 
 pz.from_pymc(pm.Normal.dist(mu=0, sigma=1)).summary()
 ```
 
-For some functions (including `pz.plot`, `pz.maxent`, `pz.quartile`, `pz.mle`) you can directly pass a PyMC distribution, and it will work as expected.
+For some functions (including `pz.plot`, `pz.maxent`, `pz.quartile`, `pz.mle`, `pz.match_moment`, `pz.match_quantiles`) you can directly pass a PyMC distribution, and it will work as expected.
 
 ```{jupyter-execute}
 pz.plot(pm.Normal.dist(mu=0, sigma=1));
@@ -278,6 +278,11 @@ with pm.Model():
 pz.plot(x);
 ```
 
+PreliZ can also work with `Prior` objects from [PyMC-extras](https://www.pymc.io/projects/extras/en/latest/generated/pymc_extras.prior.Prior.html#pymc_extras.prior.Prior), as long as the resulting distribution is implemented in PreliZ.
+
+```{jupyter-execute}
+pz.plot(Prior("Gamma"));
+```
 
 In other examples we will discuss methods more directly focus on prior elicitation, and also other ways to interact with PPLs.
 
