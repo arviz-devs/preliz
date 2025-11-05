@@ -1,6 +1,6 @@
 import numba as nb
 import numpy as np
-from scipy.special import erf, erfinv, zeta
+from scipy.special import erf, erfinv
 
 from preliz.distributions.distributions import Continuous
 from preliz.internal.distribution_helper import all_not_none, eps
@@ -90,9 +90,7 @@ class Moyal(Continuous):
         return nb_neg_logpdf(x, self.mu, self.sigma)
 
     def entropy(self):
-        x_values = self.xvals("restricted")
-        logpdf = self.logpdf(x_values)
-        return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
+        return np.log(self.sigma) + 2.0541199
 
     def mean(self):
         return self.mu + self.sigma * (np.euler_gamma + np.log(2))
@@ -101,7 +99,7 @@ class Moyal(Continuous):
         return self.mu
 
     def median(self):
-        return self.ppf(0.5)
+        return self.mu + self.sigma * 0.7875976
 
     def var(self):
         return self.sigma**2 * (np.pi**2) / 2
@@ -110,7 +108,7 @@ class Moyal(Continuous):
         return self.var() ** 0.5
 
     def skewness(self):
-        return 28 * np.sqrt(2) * zeta(3) / np.pi**3
+        return 1.5351416
 
     def kurtosis(self):
         return 4

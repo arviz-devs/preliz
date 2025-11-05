@@ -142,10 +142,7 @@ def maxent(
     # Heuristic to provide an initial guess for the optimization step
     # We obtain those guesses by first approximating the mean and standard deviation
     # from intervals and mass and then use those values for moment matching
-    if distribution.__class__.__name__ == "Uniform":
-        distribution._fit_moments(mean=(lower + upper) / 2, sigma=((upper - lower) / 3.4) / mass)
-    else:
-        distribution._fit_moments(mean=(lower + upper) / 2, sigma=((upper - lower) / 4) / mass)
+    distribution._fit_moments(mean=(lower + upper) / 2, sigma=((upper - lower) / 4) / mass)
 
     if "mode" in fixed_stat:
         try:

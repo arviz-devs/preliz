@@ -33,16 +33,45 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_sta
         "fun": prob_bound,
         "args": (dist, lower, upper, mass),
     }
-    init_vals = np.array(dist.params)[none_idx]
+
     bounds = np.array(dist.params_support)[none_idx]
+    current_params = np.array(dist.params)[none_idx]
+
+    init_vals_list = [current_params]
+    for scale in [0.75, 0.9, 1.1, 1.25]:
+        perturbed = np.clip(current_params * scale, [b[0] for b in bounds], [b[1] for b in bounds])
+        init_vals_list.append(perturbed)
+
+    all_results = []
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", message="Values in x were outside bounds")
-        opt = minimize(entropy_loss, x0=init_vals, bounds=bounds, args=(dist), constraints=cons)
 
-    params = get_params(dist, opt["x"], none_idx, fixed_params)
+        try:
+            for init_vals in init_vals_list:
+                opt = minimize(
+                    entropy_loss, x0=init_vals, bounds=bounds, args=(dist,), constraints=cons
+                )
+                all_results.append(opt)
+        except Exception:
+            pass
+
+    best_opt = None
+    best_entropy = -np.inf
+
+    for opt in all_results:
+        constraint_error = abs(prob_bound(opt.x, dist, lower, upper, mass))
+        if constraint_error < 1e-4:
+            current_entropy = -opt.fun
+            if current_entropy > best_entropy:
+                best_entropy = current_entropy
+                best_opt = opt
+
+    if best_opt is None:
+        best_opt = all_results[0]
+
+    params = get_params(dist, best_opt.x, none_idx, fixed_params)
     dist._parametrization(**params)
-
-    return opt
+    return best_opt
 
 
 def get_params(dist, params, none_idx, fixed):

@@ -1053,9 +1053,14 @@ def _discrete_xvals(lower_ep, upper_ep, n_points):
     upper_ep = int(upper_ep)
     lower_ep = int(lower_ep)
     range_x = upper_ep - lower_ep
+
     if range_x <= n_points:
         x_vals = np.arange(lower_ep, upper_ep + 1, dtype=int)
     else:
+        if range_x > np.iinfo(np.int64).max:
+            upper_ep = lower_ep + np.iinfo(np.int64).max
+            range_x = np.iinfo(np.int64).max
+
         x_vals = np.linspace(lower_ep, upper_ep + 1, n_points, dtype=int)
 
     return x_vals
