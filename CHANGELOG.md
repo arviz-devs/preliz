@@ -1,3 +1,30 @@
+<a id="0.23.0"></a>
+# [0.23.0](https://github.com/arviz-devs/preliz/releases/tag/0.23.0) - 2025-11-05
+
+## What's Changed
+
+### New Features
+* Add plot function by [@aloctavodia](https://github.com/aloctavodia) in [#697](https://github.com/arviz-devs/preliz/pull/697)
+* Add `from_pymc` function and `from_prior`  function (pymc-extras distributions)  by [@aloctavodia](https://github.com/aloctavodia) in [#697](https://github.com/arviz-devs/preliz/pull/697), [#698](https://github.com/arviz-devs/preliz/pull/698) and [@aloctavodia](https://github.com/aloctavodia) in [#701](https://github.com/arviz-devs/preliz/pull/701)
+* Add moment matching by [@aloctavodia](https://github.com/aloctavodia) in [#699](https://github.com/arviz-devs/preliz/pull/699)
+
+###  Maintenance and bug fixes
+* miscelaneous fixes, including a more robust optimization routine for maxent by [@aloctavodia](https://github.com/aloctavodia) in [#702](https://github.com/arviz-devs/preliz/pull/702)
+* Make maxent and quartile tests less stringent by [@aloctavodia](https://github.com/aloctavodia) in [#700](https://github.com/arviz-devs/preliz/pull/700)
+* use warnings by [@aloctavodia](https://github.com/aloctavodia) in [#695](https://github.com/arviz-devs/preliz/pull/695)
+* removes black in favor of ruff by [@aloctavodia](https://github.com/aloctavodia) in [#696](https://github.com/arviz-devs/preliz/pull/696)
+
+
+### Documentation
+* Update the formatting in references by [@star1327p](https://github.com/star1327p) in [#693](https://github.com/arviz-devs/preliz/pull/693)
+* Add examples about using PyMC and Prior distributions directly (see PR links above)
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.22.0...0.23.0
+
+[Changes][0.23.0]
+
+
 <a id="0.22.0"></a>
 # [0.22.0](https://github.com/arviz-devs/preliz/releases/tag/0.22.0) - 2025-10-21
 
@@ -914,6 +941,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.23.0]: https://github.com/arviz-devs/preliz/compare/0.22.0...0.23.0
 [0.22.0]: https://github.com/arviz-devs/preliz/compare/0.21.0...0.22.0
 [0.21.0]: https://github.com/arviz-devs/preliz/compare/0.20.0...0.21.0
 [0.20.0]: https://github.com/arviz-devs/preliz/compare/0.19.0...0.20.0
