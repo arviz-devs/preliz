@@ -244,7 +244,7 @@ def nb_cdf(x, mu, sigma, a, b, lower, upper):
 
 @nb.njit(cache=True)
 def nb_ppf(q, mu, sigma, a, b, lower, upper):
-    x_val = betaincinv(a, b, q)
+    x_val = np.minimum(betaincinv(a, b, q), 1 - 1e-10)
     return ppf_bounds_cont(
         ((2 * x_val - 1) * np.sqrt(a + b)) / (2 * np.sqrt(x_val * (1 - x_val))) * sigma + mu,
         q,
