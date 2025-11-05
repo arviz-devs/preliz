@@ -172,26 +172,26 @@ def test_maxent(dist, lower, upper, mass, support, result):
     assert_allclose(dist.opt.x, result, rtol=0.1, atol=0.01)
 
 
-# def test_maxent_fixed_stats():
-#     dist = Beta()
-#     maxent(dist, 0.1, 0.7, 0.94, fixed_stat=("mode", 0.3))
-#     assert_almost_equal(dist.mode(), 0.3)
-#     assert_almost_equal(dist.params, (2.7, 5.1), 1)
+def test_maxent_fixed_stats():
+    dist = Beta()
+    maxent(dist, 0.1, 0.7, 0.94, fixed_stat=("mode", 0.3))
+    assert_almost_equal(dist.mode(), 0.3)
+    assert_almost_equal(dist.params, (2.7, 5.1), 1)
 
-#     dist = Gamma()
-#     maxent(dist, 0, 3, 0.8, fixed_stat=("mode", 2))
-#     assert_almost_equal(dist.mode(), 2)
-#     assert_almost_equal(dist.params, (7.2, 3.1), 1)
+    dist = Gamma()
+    maxent(dist, 0, 3, 0.8, fixed_stat=("mode", 2))
+    assert_almost_equal(dist.mode(), 2)
+    assert_almost_equal(dist.params, (7.2, 3.1), 1)
 
-#     dist = Gamma()
-#     maxent(dist, 0.1, 3, 0.8, fixed_stat=("mean", 2))
-#     assert_almost_equal(dist.mean(), 2)
-#     assert_almost_equal(dist.params, (2.1, 1.0), 1)
+    dist = Gamma()
+    maxent(dist, 0.1, 3, 0.8, fixed_stat=("mean", 2))
+    assert_almost_equal(dist.mean(), 2)
+    assert_almost_equal(dist.params, (2.1, 1.0), 1)
 
-#     with pytest.raises(ValueError, match="fixed_stat should be one of the following"):
-#         dist = Gamma()
-#         maxent(dist, 0, 3, 0.8, fixed_stat=("bad", 2))
+    with pytest.raises(ValueError, match="fixed_stat should be one of the following"):
+        dist = Gamma()
+        maxent(dist, 0, 3, 0.8, fixed_stat=("bad", 2))
 
 
-# def test_maxent_plot():
-#     maxent(Normal(), plot_kwargs={"support": "restricted", "pointinterval": True})
+def test_maxent_plot():
+    maxent(Normal(), plot_kwargs={"support": "restricted", "pointinterval": True})
