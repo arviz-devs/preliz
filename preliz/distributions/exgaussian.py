@@ -130,7 +130,7 @@ class ExGaussian(Continuous):
         )
 
     def _fit_moments(self, mean, sigma):
-        # Just assume this is a approximately Gaussian
+        # Just assume this is approximately Gaussian
         self._update(mean, sigma, 1e-4)
 
     def _fit_mle(self, sample):

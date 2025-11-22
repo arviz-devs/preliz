@@ -203,7 +203,7 @@ texinfo_documents = [
 # Bibliographic Dublin Core info.
 epub_title = project
 
-# The unique identifier of the text. This can be a ISBN number
+# The unique identifier of the text. This can be an ISBN number
 # or the project homepage.
 #
 # epub_identifier = ''
