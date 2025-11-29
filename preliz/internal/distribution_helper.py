@@ -101,7 +101,7 @@ def num_kurtosis(dist):
 
 
 init_vals = {
-    "AsymmetricLaplace": {"kappa": 1.0, "mu": 0.0, "b": 1.0},
+    "AsymmetricLaplace": {"kappa": 1.3, "mu": 0.0, "b": 1.0},
     "Beta": {"alpha": 2, "beta": 2},
     "BetaScaled": {"alpha": 2, "beta": 2, "lower": -1.0, "upper": 2.0},
     "Cauchy": {"alpha": 0.0, "beta": 1.0},
