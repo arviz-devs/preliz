@@ -53,7 +53,6 @@ from preliz.distributions.zi_poisson import ZeroInflatedPoisson
 all_continuous = [
     AsymmetricLaplace,
     Beta,
-    # PyBeta,
     BetaScaled,
     Cauchy,
     ChiSquared,
