@@ -47,13 +47,11 @@ class ZeroInflatedNegativeBinomial(Discrete):
         for psi, mu, alpha in zip(psis, mus, alphas):
             ZeroInflatedNegativeBinomial(psi, mu=mu, alpha=alpha).plot_pdf(support=(0,25))
 
-    ========  ==========================
+    ========  ===================================
     Support   :math:`x \in \mathbb{N}_0`
     Mean      :math:`\psi\mu`
-    Variance .. math::
-                  \psi \left(\frac{{\mu^2}}{{\alpha}}\right) +\
-                  \psi \mu + \psi \mu^2 - \psi^2 \mu^2
-    ========  ==========================
+    Variance  :math:`\psi \left(\frac{\mu^2}{\alpha}\right) + \psi \mu + \psi \mu^2 - \psi^2 \mu^2`
+    ========  ==================================
 
     The zero inflated negative binomial distribution can be parametrized
     either in terms of mu and alpha, or in terms of n and p.
