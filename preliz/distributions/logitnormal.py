@@ -1,17 +1,18 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import logitnormal as ptd_logitnormal
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from preliz.internal.optimization import find_mode_logitnormal
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    eps,
+    from_precision,
+    pytensor_jit,
+    pytensor_rng_jit,
+    to_precision,
+)
 from preliz.internal.special import (
-    cdf_bounds,
-    erf,
-    erfinv,
-    expit,
     logit,
     mean_and_std,
-    ppf_bounds_cont,
 )
 
 
@@ -92,64 +93,44 @@ class LogitNormal(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.mu, self.sigma)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.sigma)
+        return ptd_cdf(x, self.mu, self.sigma)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.mu, self.sigma)
+        return ptd_ppf(q, self.mu, self.sigma)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.sigma)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.sigma)
+        return ptd_logpdf(x, self.mu, self.sigma)
 
     def entropy(self):
-        x_values = self.xvals("restricted")
-        logpdf = self.logpdf(x_values)
-        return -np.trapezoid(np.exp(logpdf) * logpdf, x_values)
+        return ptd_entropy(self.mu, self.sigma)
 
     def mean(self):
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.trapezoid(x_values * pdf, x_values)
+        return ptd_mean(self.mu, self.sigma)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.mu, self.sigma)
 
     def var(self):
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.trapezoid((x_values - self.mean()) ** 2 * pdf, x_values)
+        return ptd_var(self.mu, self.sigma)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.sigma)
 
     def skewness(self):
-        mean = self.mean()
-        std = self.std()
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.trapezoid(((x_values - mean) / std) ** 3 * pdf, x_values)
+        return ptd_skewness(self.mu, self.sigma)
 
     def kurtosis(self):
-        mean = self.mean()
-        std = self.std()
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.trapezoid(((x_values - mean) / std) ** 4 * pdf, x_values) - 3
+        return ptd_kurtosis(self.mu, self.sigma)
 
     def mode(self):
-        return find_mode_logitnormal(self)
+        return ptd_mode(self.mu, self.sigma)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return expit(random_state.normal(self.mu, self.sigma, size))
+        return ptd_rvs(self.mu, self.sigma, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         mu = logit(mean)
@@ -161,32 +142,66 @@ class LogitNormal(Continuous):
         self._update(mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, mu, sigma):
-    return cdf_bounds(0.5 * (1 + erf((logit(x) - mu) / (sigma * 2**0.5))), x, 0, 1)
+@pytensor_jit
+def ptd_pdf(x, mu, sigma):
+    return ptd_logitnormal.pdf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, mu, sigma):
-    return ppf_bounds_cont(expit(mu + sigma * 2**0.5 * erfinv(2 * q - 1)), q, 0, 1)
+@pytensor_jit
+def ptd_cdf(x, mu, sigma):
+    return ptd_logitnormal.cdf(x, mu, sigma)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, mu, sigma):
-    if x <= 0:
-        return -np.inf
-    if x >= 1:
-        return -np.inf
-    else:
-        return (
-            -np.log(sigma)
-            - 0.5 * np.log(2 * np.pi)
-            - 0.5 * ((logit(x) - mu) / sigma) ** 2
-            - np.log(x)
-            - np.log1p(-x)
-        )
+@pytensor_jit
+def ptd_ppf(q, mu, sigma):
+    return ptd_logitnormal.ppf(q, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, sigma):
-    return -(nb_logpdf(x, mu, sigma)).sum()
+@pytensor_jit
+def ptd_logpdf(x, mu, sigma):
+    return ptd_logitnormal.logpdf(x, mu, sigma)
+
+
+@pytensor_jit
+def ptd_entropy(mu, sigma):
+    return ptd_logitnormal.entropy(mu, sigma)
+
+
+@pytensor_jit
+def ptd_mean(mu, sigma):
+    return ptd_logitnormal.mean(mu, sigma)
+
+
+@pytensor_jit
+def ptd_mode(mu, sigma):
+    return ptd_logitnormal.mode(mu, sigma)
+
+
+@pytensor_jit
+def ptd_median(mu, sigma):
+    return ptd_logitnormal.median(mu, sigma)
+
+
+@pytensor_jit
+def ptd_var(mu, sigma):
+    return ptd_logitnormal.var(mu, sigma)
+
+
+@pytensor_jit
+def ptd_std(mu, sigma):
+    return ptd_logitnormal.std(mu, sigma)
+
+
+@pytensor_jit
+def ptd_skewness(mu, sigma):
+    return ptd_logitnormal.skewness(mu, sigma)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, sigma):
+    return ptd_logitnormal.kurtosis(mu, sigma)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, sigma, size, rng):
+    return ptd_logitnormal.rvs(mu, sigma, size=size, random_state=rng)

@@ -10,7 +10,11 @@ except ImportError:
     pass
 import numpy as np
 
-from preliz.internal.distribution_helper import init_vals, valid_distribution, valid_scalar_params
+from preliz.internal.distribution_helper import (
+    init_vals,
+    valid_distribution,
+    valid_scalar_params,
+)
 from preliz.internal.optimization import find_hdi, find_mode
 from preliz.internal.plot_helper import (
     check_inside_notebook,
@@ -183,6 +187,9 @@ class Distribution:
             Values on which to evaluate the logpdf
         """
         raise NotImplementedError
+
+    def _neg_logpdf(self, x):
+        return -self.logpdf(x).sum()
 
     def logcdf(self, x):
         """Log cumulative distribution function.

@@ -1,20 +1,16 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import studentt as ptd_studentt
 
 from preliz.distributions.distributions import Continuous
-from preliz.distributions.normal import Normal
-from preliz.internal.distribution_helper import all_not_none, eps, from_precision, to_precision
-from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import (
-    beta,
-    betainc,
-    betaincinv,
-    digamma,
-    erf,
-    erfinv,
-    gammaln,
-    ppf_bounds_cont,
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    eps,
+    from_precision,
+    pytensor_jit,
+    pytensor_rng_jit,
+    to_precision,
 )
+from preliz.internal.optimization import optimize_ml
 
 
 class StudentT(Continuous):
@@ -112,72 +108,44 @@ class StudentT(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.nu, self.mu, self.sigma)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.nu, self.mu, self.sigma)
+        return ptd_cdf(x, self.nu, self.mu, self.sigma)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.nu, self.mu, self.sigma)
+        return ptd_ppf(q, self.nu, self.mu, self.sigma)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.nu, self.mu, self.sigma)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.nu, self.mu, self.sigma)
+        return ptd_logpdf(x, self.nu, self.mu, self.sigma)
 
     def entropy(self):
-        return nb_entropy(self.nu, self.sigma)
+        return ptd_entropy(self.nu, self.mu, self.sigma)
 
     def mean(self):
-        return self.mu if self.nu > 1 else np.nan
+        return ptd_mean(self.nu, self.mu, self.sigma)
 
     def mode(self):
-        return self.mu
+        return ptd_mode(self.nu, self.mu, self.sigma)
 
     def median(self):
-        return self.mu
+        return ptd_median(self.nu, self.mu, self.sigma)
 
     def var(self):
-        if self.nu > 2:
-            return self.sigma**2 * self.nu / (self.nu - 2)
-        elif self.nu > 1:
-            return np.inf
-        else:
-            return np.nan
+        return ptd_var(self.nu, self.mu, self.sigma)
 
     def std(self):
-        if self.nu > 2:
-            return self.var() ** 0.5
-        elif self.nu > 1:
-            return np.inf
-        else:
-            return np.nan
+        return ptd_std(self.nu, self.mu, self.sigma)
 
     def skewness(self):
-        if self.nu > 3:
-            return 0
-        else:
-            return np.nan
+        return ptd_skewness(self.nu, self.mu, self.sigma)
 
     def kurtosis(self):
-        if self.nu > 4:
-            return 6 / (self.nu - 4)
-        elif self.nu > 2:
-            return np.inf
-        else:
-            return np.nan
+        return ptd_kurtosis(self.nu, self.mu, self.sigma)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return np.where(
-            self.nu > 1e10,
-            Normal(self.mu, self.sigma).rvs(size, random_state),
-            random_state.standard_t(self.nu, size) * self.sigma + self.mu,
-        )
+        return ptd_rvs(self.nu, self.mu, self.sigma, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         # if nu is smaller than 2 the variance is not defined,
@@ -196,48 +164,66 @@ class StudentT(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, nu, mu, sigma):
-    x = (x - mu) / sigma
-    factor = 0.5 * betainc(0.5 * nu, 0.5, nu / (x**2 + nu))
-    x_vals = np.where(x < 0, factor, 1 - factor)
-    return np.where(nu > 1e10, 0.5 * (1 + erf((x - mu) / (sigma * 2**0.5))), x_vals)
+@pytensor_jit
+def ptd_pdf(x, nu, mu, sigma):
+    return ptd_studentt.pdf(x, nu, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_ppf(p, nu, mu, sigma):
-    q = np.where(p < 0.5, p, 1 - p)
-    x = betaincinv(0.5 * nu, 0.5, 2 * q)
-    x = np.where(p < 0.5, -np.sqrt(nu * (1 - x) / x), np.sqrt(nu * (1 - x) / x))
-    vals = np.where(nu > 1e10, mu + sigma * 2**0.5 * erfinv(2 * p - 1), mu + sigma * x)
-    return ppf_bounds_cont(vals, p, -np.inf, np.inf)
+@pytensor_jit
+def ptd_cdf(x, nu, mu, sigma):
+    return ptd_studentt.cdf(x, nu, mu, sigma)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_entropy(nu, sigma):
-    if nu > 1e10:
-        return 0.5 * (np.log(2 * np.pi * np.e * sigma**2))
-    else:
-        return (
-            np.log(sigma)
-            + 0.5 * (nu + 1) * (digamma(0.5 * (nu + 1)) - digamma(0.5 * nu))
-            + np.log(np.sqrt(nu) * beta(0.5 * nu, 0.5))
-        )
+@pytensor_jit
+def ptd_ppf(q, nu, mu, sigma):
+    return ptd_studentt.ppf(q, nu, mu, sigma)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, nu, mu, sigma):
-    if nu > 1e10:
-        return -np.log(sigma) - 0.5 * np.log(2 * np.pi) - 0.5 * ((x - mu) / sigma) ** 2
-    else:
-        return (
-            gammaln((nu + 1) / 2)
-            - gammaln(nu / 2)
-            - 0.5 * np.log(nu * np.pi * sigma**2)
-            - 0.5 * (nu + 1) * np.log(1 + ((x - mu) / sigma) ** 2 / nu)
-        )
+@pytensor_jit
+def ptd_logpdf(x, nu, mu, sigma):
+    return ptd_studentt.logpdf(x, nu, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, nu, mu, sigma):
-    return -(nb_logpdf(x, nu, mu, sigma)).sum()
+@pytensor_jit
+def ptd_entropy(nu, mu, sigma):
+    return ptd_studentt.entropy(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_mean(nu, mu, sigma):
+    return ptd_studentt.mean(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_mode(nu, mu, sigma):
+    return ptd_studentt.mode(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_median(nu, mu, sigma):
+    return ptd_studentt.median(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_var(nu, mu, sigma):
+    return ptd_studentt.var(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_std(nu, mu, sigma):
+    return ptd_studentt.std(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_skewness(nu, mu, sigma):
+    return ptd_studentt.skewness(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_kurtosis(nu, mu, sigma):
+    return ptd_studentt.kurtosis(nu, mu, sigma)
+
+
+@pytensor_rng_jit
+def ptd_rvs(nu, mu, sigma, size, rng):
+    return ptd_studentt.rvs(nu, mu, sigma, size=size, random_state=rng)

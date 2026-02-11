@@ -1,21 +1,18 @@
-import numba as nb
+"""Beta distribution."""
+
 import numpy as np
+from pytensor_distributions import beta as ptd_beta
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
-from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import (
-    betainc,
-    betaincinv,
-    betaln,
-    cdf_bounds,
-    digamma,
-    gammaln,
-    mean_and_std,
-    ppf_bounds_cont,
-    xlog1py,
-    xlogy,
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    any_not_none,
+    eps,
+    pytensor_jit,
+    pytensor_rng_jit,
 )
+from preliz.internal.optimization import optimize_ml
+from preliz.internal.special import mean_and_std
 
 
 class Beta(Continuous):
@@ -140,66 +137,6 @@ class Beta(Continuous):
 
         self.is_frozen = True
 
-    def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.alpha, self.beta))
-
-    def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.alpha, self.beta, self.support[0], self.support[1])
-
-    def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.alpha, self.beta, self.support[0], self.support[1])
-
-    def logpdf(self, x):
-        return nb_logpdf(x, self.alpha, self.beta)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.alpha, self.beta)
-
-    def entropy(self):
-        return nb_entropy(self.alpha, self.beta)
-
-    def mean(self):
-        return self.alpha / (self.alpha + self.beta)
-
-    def mode(self):
-        return nb_mode(self.alpha, self.beta)
-
-    def median(self):
-        return self.ppf(0.5)
-
-    def var(self):
-        return (self.alpha * self.beta) / (
-            (self.alpha + self.beta) ** 2 * (self.alpha + self.beta + 1)
-        )
-
-    def std(self):
-        return self.var() ** 0.5
-
-    def skewness(self):
-        if self.alpha == self.beta:
-            return np.zeros_like(self.alpha)
-        else:
-            psc = self.alpha + self.beta
-            return (2 * (self.beta - self.alpha) * np.sqrt(psc + 1)) / (
-                (psc + 2) * np.sqrt(self.alpha * self.beta)
-            )
-
-    def kurtosis(self):
-        psc = self.alpha + self.beta
-        prod = self.alpha * self.beta
-        return (
-            6
-            * (np.abs(self.alpha - self.beta) ** 2 * (psc + 1) - prod * (psc + 2))
-            / (prod * (psc + 2) * (psc + 3))
-        )
-
-    def rvs(self, size=None, random_state=None):
-        random_state = np.random.default_rng(random_state)
-        return random_state.beta(self.alpha, self.beta, size)
-
     def _fit_moments(self, mean, sigma):
         alpha, beta = self._from_mu_sigma(mean, sigma)
         alpha = max(0.5, alpha)
@@ -211,52 +148,147 @@ class Beta(Continuous):
         self._fit_moments(mean, std)
         optimize_ml(self, sample)
 
+    def pdf(self, x):
+        return ptd_pdf(x, self.alpha, self.beta)
 
-@nb.njit(cache=True)
-def nb_cdf(x, alpha, beta, lower, upper):
-    prob = betainc(alpha, beta, x)
-    return cdf_bounds(prob, x, lower, upper)
+    def cdf(self, x):
+        return ptd_cdf(x, self.alpha, self.beta)
+
+    def ppf(self, q):
+        return ptd_ppf(q, self.alpha, self.beta)
+
+    def sf(self, x):
+        return ptd_sf(x, self.alpha, self.beta)
+
+    def isf(self, q):
+        return ptd_isf(q, self.alpha, self.beta)
+
+    def logpdf(self, x):
+        return ptd_logpdf(x, self.alpha, self.beta)
+
+    def logcdf(self, x):
+        return ptd_logcdf(x, self.alpha, self.beta)
+
+    def logsf(self, x):
+        return ptd_logsf(x, self.alpha, self.beta)
+
+    def logisf(self, q):
+        return ptd_logisf(q, self.alpha, self.beta)
+
+    def entropy(self):
+        return ptd_entropy(self.alpha, self.beta)
+
+    def mean(self):
+        return ptd_mean(self.alpha, self.beta)
+
+    def mode(self):
+        return ptd_mode(self.alpha, self.beta)
+
+    def median(self):
+        return ptd_median(self.alpha, self.beta)
+
+    def var(self):
+        return ptd_var(self.alpha, self.beta)
+
+    def std(self):
+        return ptd_std(self.alpha, self.beta)
+
+    def skewness(self):
+        return ptd_skewness(self.alpha, self.beta)
+
+    def kurtosis(self):
+        return ptd_kurtosis(self.alpha, self.beta)
+
+    def rvs(self, size=None, random_state=None):
+        random_state = np.random.default_rng(random_state)
+        return ptd_rvs(self.alpha, self.beta, size=size, rng=random_state)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, alpha, beta, lower, upper):
-    x_val = betaincinv(alpha, beta, q)
-    return ppf_bounds_cont(x_val, q, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, alpha, beta):
+    return ptd_beta.pdf(x, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_entropy(alpha, beta):
-    psc = alpha + beta
-    return (
-        betaln(alpha, beta)
-        - (alpha - 1) * digamma(alpha)
-        - (beta - 1) * digamma(beta)
-        + (psc - 2) * digamma(psc)
-    )
+@pytensor_jit
+def ptd_cdf(x, alpha, beta):
+    return ptd_beta.cdf(x, alpha, beta)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, alpha, beta):
-    if x <= 0 or x >= 1:
-        return -np.inf
-    else:
-        beta_ = gammaln(alpha) + gammaln(beta) - gammaln(alpha + beta)
-        return xlogy((alpha - 1), x) + xlog1py((beta - 1), -x) - beta_
+@pytensor_jit
+def ptd_ppf(q, alpha, beta):
+    return ptd_beta.ppf(q, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, alpha, beta):
-    return -(nb_logpdf(x, alpha, beta)).sum()
+@pytensor_jit
+def ptd_sf(x, alpha, beta):
+    return ptd_beta.sf(x, alpha, beta)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_mode(alpha, beta):
-    if alpha == 1 and beta == 1:
-        return 0.5
-    elif alpha < 1 and beta < 1:
-        return np.nan
-    elif alpha <= 1 < beta:
-        return 0
-    elif beta <= 1 < alpha:
-        return 1
-    return (alpha - 1) / (alpha + beta - 2)
+@pytensor_jit
+def ptd_isf(q, alpha, beta):
+    return ptd_beta.isf(q, alpha, beta)
+
+
+@pytensor_jit
+def ptd_logpdf(x, alpha, beta):
+    return ptd_beta.logpdf(x, alpha, beta)
+
+
+@pytensor_jit
+def ptd_logcdf(x, alpha, beta):
+    return ptd_beta.logcdf(x, alpha, beta)
+
+
+@pytensor_jit
+def ptd_logsf(x, alpha, beta):
+    return ptd_beta.logsf(x, alpha, beta)
+
+
+@pytensor_jit
+def ptd_logisf(q, alpha, beta):
+    return ptd_beta.logisf(q, alpha, beta)
+
+
+@pytensor_jit
+def ptd_entropy(alpha, beta):
+    return ptd_beta.entropy(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mean(alpha, beta):
+    return ptd_beta.mean(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mode(alpha, beta):
+    return ptd_beta.mode(alpha, beta)
+
+
+@pytensor_jit
+def ptd_median(alpha, beta):
+    return ptd_beta.median(alpha, beta)
+
+
+@pytensor_jit
+def ptd_var(alpha, beta):
+    return ptd_beta.var(alpha, beta)
+
+
+@pytensor_jit
+def ptd_std(alpha, beta):
+    return ptd_beta.std(alpha, beta)
+
+
+@pytensor_jit
+def ptd_skewness(alpha, beta):
+    return ptd_beta.skewness(alpha, beta)
+
+
+@pytensor_jit
+def ptd_kurtosis(alpha, beta):
+    return ptd_beta.kurtosis(alpha, beta)
+
+
+@pytensor_rng_jit
+def ptd_rvs(alpha, beta, size, rng):
+    return ptd_beta.rvs(alpha, beta, size=size, random_state=rng)

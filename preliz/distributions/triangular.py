@@ -1,8 +1,8 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import triangular as ptd_triangular
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none
+from preliz.internal.distribution_helper import all_not_none, pytensor_jit, pytensor_rng_jit
 
 
 class Triangular(Continuous):
@@ -74,78 +74,44 @@ class Triangular(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.lower, self.c, self.upper))
+        return ptd_pdf(x, self.lower, self.c, self.upper)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.lower, self.c, self.upper)
+        return ptd_cdf(x, self.lower, self.c, self.upper)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.lower, self.c, self.upper)
+        return ptd_ppf(q, self.lower, self.c, self.upper)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.lower, self.c, self.upper)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.lower, self.c, self.upper)
+        return ptd_logpdf(x, self.lower, self.c, self.upper)
 
     def entropy(self):
-        return nb_entropy(self.lower, self.upper)
+        return ptd_entropy(self.lower, self.c, self.upper)
 
     def mean(self):
-        return (self.lower + self.c + self.upper) / 3
+        return ptd_mean(self.lower, self.c, self.upper)
 
     def mode(self):
-        return self.c
+        return ptd_mode(self.lower, self.c, self.upper)
 
     def median(self):
-        return np.where(
-            self.c >= (self.lower + self.upper) / 2,
-            self.lower + ((self.upper - self.lower) * (self.c - self.lower) / 2) ** 0.5,
-            self.upper - ((self.upper - self.lower) * (self.upper - self.c) / 2) ** 0.5,
-        )
+        return ptd_median(self.lower, self.c, self.upper)
 
     def var(self):
-        return (
-            self.lower**2
-            + self.upper**2
-            + self.c**2
-            - self.lower * self.c
-            - self.c * self.upper
-            - self.lower * self.upper
-        ) / 18
+        return ptd_var(self.lower, self.c, self.upper)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.lower, self.c, self.upper)
 
     def skewness(self):
-        return (
-            2**0.5
-            * (self.lower + self.upper - 2 * self.c)
-            * (2 * self.lower - self.upper - self.c)
-            * (self.lower - 2 * self.upper + self.c)
-        ) / (
-            5
-            * (
-                self.lower**2
-                + self.upper**2
-                + self.c**2
-                - self.lower * self.c
-                - self.c * self.upper
-                - self.lower * self.upper
-            )
-            ** (3 / 2)
-        )
+        return ptd_skewness(self.lower, self.c, self.upper)
 
     def kurtosis(self):
-        return -3 / 5
+        return ptd_kurtosis(self.lower, self.c, self.upper)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        random_samples = random_state.uniform(0, 1, size)
-        return nb_rvs(random_samples, self.lower, self.c, self.upper)
+        return ptd_rvs(self.lower, self.c, self.upper, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         # Assume symmetry
@@ -161,51 +127,66 @@ class Triangular(Continuous):
         self._update(lower, middle, upper)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, lower, c, upper):
-    if x <= lower:
-        return 0
-    elif lower < x <= c:
-        return (x - lower) ** 2 / ((upper - lower) * (c - lower))
-    elif c < x < upper:
-        return 1 - (upper - x) ** 2 / ((upper - lower) * (upper - c))
-    return 1
+@pytensor_jit
+def ptd_pdf(x, lower, c, upper):
+    return ptd_triangular.pdf(x, lower, c, upper)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_ppf(q, lower, c, upper):
-    if 0 <= q < (c - lower) / (upper - lower):
-        return lower + (q * (upper - lower) * (c - lower)) ** 0.5
-    elif (c - lower) / (upper - lower) <= q <= 1:
-        return upper - ((1 - q) * (upper - lower) * (upper - c)) ** 0.5
-    return np.nan
+@pytensor_jit
+def ptd_cdf(x, lower, c, upper):
+    return ptd_triangular.cdf(x, lower, c, upper)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, lower, c, upper):
-    if x < lower:
-        return -np.inf
-    elif lower <= x < c:
-        return np.log(2 * (x - lower) / ((upper - lower) * (c - lower)))
-    elif x == c:
-        return np.log(2 / (upper - lower))
-    elif c < x <= upper:
-        return np.log(2 * (upper - x) / ((upper - lower) * (upper - c)))
-    return -np.inf
+@pytensor_jit
+def ptd_ppf(q, lower, c, upper):
+    return ptd_triangular.ppf(q, lower, c, upper)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, lower, c, upper):
-    return -(nb_logpdf(x, lower, c, upper)).sum()
+@pytensor_jit
+def ptd_logpdf(x, lower, c, upper):
+    return ptd_triangular.logpdf(x, lower, c, upper)
 
 
-@nb.njit(cache=True)
-def nb_entropy(lower, upper):
-    return 0.5 + np.log((upper - lower) / 2)
+@pytensor_jit
+def ptd_entropy(lower, c, upper):
+    return ptd_triangular.entropy(lower, c, upper)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_rvs(random_samples, lower, c, upper):
-    if 0 < random_samples < (c - lower) / (upper - lower):
-        return lower + (random_samples * (upper - lower) * (c - lower)) ** 0.5
-    return upper - ((1 - random_samples) * (upper - lower) * (upper - c)) ** 0.5
+@pytensor_jit
+def ptd_mean(lower, c, upper):
+    return ptd_triangular.mean(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_mode(lower, c, upper):
+    return ptd_triangular.mode(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_median(lower, c, upper):
+    return ptd_triangular.median(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_var(lower, c, upper):
+    return ptd_triangular.var(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_std(lower, c, upper):
+    return ptd_triangular.std(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_skewness(lower, c, upper):
+    return ptd_triangular.skewness(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_kurtosis(lower, c, upper):
+    return ptd_triangular.kurtosis(lower, c, upper)
+
+
+@pytensor_rng_jit
+def ptd_rvs(lower, c, upper, size, rng):
+    return ptd_triangular.rvs(lower, c, upper, size=size, random_state=rng)

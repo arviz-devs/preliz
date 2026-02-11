@@ -1,11 +1,9 @@
-import numba as nb
 import numpy as np
-from scipy.special import erf, erfinv
+from pytensor_distributions import moyal as ptd_moyal
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import erf, erfinv, ppf_bounds_cont  # noqa: F811
 
 
 class Moyal(Continuous):
@@ -72,50 +70,44 @@ class Moyal(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.mu, self.sigma)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.sigma)
+        return ptd_cdf(x, self.mu, self.sigma)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.mu, self.sigma)
+        return ptd_ppf(q, self.mu, self.sigma)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.sigma)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.sigma)
+        return ptd_logpdf(x, self.mu, self.sigma)
 
     def entropy(self):
-        return np.log(self.sigma) + 2.0541199
+        return ptd_entropy(self.mu, self.sigma)
 
     def mean(self):
-        return self.mu + self.sigma * (np.euler_gamma + np.log(2))
+        return ptd_mean(self.mu, self.sigma)
 
     def mode(self):
-        return self.mu
+        return ptd_mode(self.mu, self.sigma)
 
     def median(self):
-        return self.mu + self.sigma * 0.7875976
+        return ptd_median(self.mu, self.sigma)
 
     def var(self):
-        return self.sigma**2 * (np.pi**2) / 2
+        return ptd_var(self.mu, self.sigma)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.sigma)
 
     def skewness(self):
-        return 1.5351416
+        return ptd_skewness(self.mu, self.sigma)
 
     def kurtosis(self):
-        return 4
+        return ptd_kurtosis(self.mu, self.sigma)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return self.ppf(random_state.random(size))
+        return ptd_rvs(self.mu, self.sigma, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         sigma = sigma / np.pi * 2**0.5
@@ -126,29 +118,66 @@ class Moyal(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, mu, sigma):
-    z_val = (x - mu) / sigma
-    return 1 - erf(np.exp(-z_val / 2) * (2**-0.5))
+@pytensor_jit
+def ptd_pdf(x, mu, sigma):
+    return ptd_moyal.pdf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, mu, sigma):
-    x_val = sigma * -np.log(2.0 * erfinv(1 - q) ** 2) + mu
-    return ppf_bounds_cont(x_val, q, -np.inf, np.inf)
+@pytensor_jit
+def ptd_cdf(x, mu, sigma):
+    return ptd_moyal.cdf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_entropy(sigma):
-    return 0.5 * (np.log(2 * np.pi * np.e * sigma**2))
+@pytensor_jit
+def ptd_ppf(q, mu, sigma):
+    return ptd_moyal.ppf(q, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_logpdf(x, mu, sigma):
-    z_val = (x - mu) / sigma
-    return -(1 / 2) * (z_val + np.exp(-z_val)) - np.log(sigma) - (1 / 2) * np.log(2 * np.pi)
+@pytensor_jit
+def ptd_logpdf(x, mu, sigma):
+    return ptd_moyal.logpdf(x, mu, sigma)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, sigma):
-    return -(nb_logpdf(x, mu, sigma)).sum()
+@pytensor_jit
+def ptd_entropy(mu, sigma):
+    return ptd_moyal.entropy(mu, sigma)
+
+
+@pytensor_jit
+def ptd_mean(mu, sigma):
+    return ptd_moyal.mean(mu, sigma)
+
+
+@pytensor_jit
+def ptd_mode(mu, sigma):
+    return ptd_moyal.mode(mu, sigma)
+
+
+@pytensor_jit
+def ptd_median(mu, sigma):
+    return ptd_moyal.median(mu, sigma)
+
+
+@pytensor_jit
+def ptd_var(mu, sigma):
+    return ptd_moyal.var(mu, sigma)
+
+
+@pytensor_jit
+def ptd_std(mu, sigma):
+    return ptd_moyal.std(mu, sigma)
+
+
+@pytensor_jit
+def ptd_skewness(mu, sigma):
+    return ptd_moyal.skewness(mu, sigma)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, sigma):
+    return ptd_moyal.kurtosis(mu, sigma)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, sigma, size, rng):
+    return ptd_moyal.rvs(mu, sigma, size=size, random_state=rng)

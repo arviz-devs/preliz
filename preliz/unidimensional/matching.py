@@ -91,6 +91,9 @@ def match_moments(
 
     none_idx, fixed = get_fixed_params(to_dist)
 
+    if not from_dist.is_frozen:
+        raise ValueError("`from_dist` must be a fully parametrized distribution.")
+
     target_values = np.array(from_dist.moments(moments))
     if not np.any(np.isfinite(target_values)):
         raise ValueError(

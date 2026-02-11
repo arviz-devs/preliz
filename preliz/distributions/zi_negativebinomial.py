@@ -1,11 +1,15 @@
-import numba as nb
 import numpy as np
-from scipy.special import nbdtrik
+from pytensor_distributions import zi_negativebinomial as ptd_zinegativebinomial
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
-from preliz.internal.optimization import find_discrete_mode, optimize_mean_sigma, optimize_ml
-from preliz.internal.special import betainc, cdf_bounds, gammaln, ppf_bounds_disc, xlogy
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    any_not_none,
+    eps,
+    pytensor_jit,
+    pytensor_rng_jit,
+)
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 
 
 class ZeroInflatedNegativeBinomial(Discrete):
@@ -43,13 +47,11 @@ class ZeroInflatedNegativeBinomial(Discrete):
         for psi, mu, alpha in zip(psis, mus, alphas):
             ZeroInflatedNegativeBinomial(psi, mu=mu, alpha=alpha).plot_pdf(support=(0,25))
 
-    ========  ==========================
+    ========  ===================================
     Support   :math:`x \in \mathbb{N}_0`
     Mean      :math:`\psi\mu`
-    Variance .. math::
-                  \psi \left(\frac{{\mu^2}}{{\alpha}}\right) +\
-                  \psi \mu + \psi \mu^2 - \psi^2 \mu^2
-    ========  ==========================
+    Variance  :math:`\psi \left(\frac{\mu^2}{\alpha}\right) + \psi \mu + \psi \mu^2 - \psi^2 \mu^2`
+    ========  ==================================
 
     The zero inflated negative binomial distribution can be parametrized
     either in terms of mu and alpha, or in terms of n and p.
@@ -127,57 +129,48 @@ class ZeroInflatedNegativeBinomial(Discrete):
 
     def pdf(self, x):
         x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.psi, self.n, self.p, self.mu))
+        result = ptd_pdf(x, self.psi, self.n, self.p)
+        # Return 0 for negative values and NaN for infinity, consistent with scipy.stats.nbinom
+        result = np.where(x < 0, 0, result)
+        result = np.where(~np.isfinite(x), np.nan, result)
+        return result
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.psi, self.n, self.p, self.support[0], self.support[1])
+        return ptd_cdf(x, self.psi, self.n, self.p)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.psi, self.n, self.p, self.support[0], self.support[1])
+        return ptd_ppf(q, self.psi, self.n, self.p)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.psi, self.n, self.p, self.mu)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.psi, self.n, self.p, self.mu)
+        return ptd_logpdf(x, self.psi, self.n, self.p)
 
     def entropy(self):
-        x = self.xvals("full", 5000)
-        logpdf = self.logpdf(x)
-        return -np.sum(np.exp(logpdf) * logpdf)
+        return ptd_entropy(self.psi, self.n, self.p)
 
     def mean(self):
-        return self.psi * self.mu
+        return ptd_mean(self.psi, self.n, self.p)
 
     def mode(self):
-        return find_discrete_mode(self)
+        return ptd_mode(self.psi, self.n, self.p)
 
     def median(self):
-        # missing explicit expression
-        return self.ppf(0.5)
+        return ptd_median(self.psi, self.n, self.p)
 
     def var(self):
-        var_nb = self.mu**2 / self.alpha + self.mu
-        return self.psi * (var_nb + self.mu**2) - (self.psi * self.mu) ** 2
+        return ptd_var(self.psi, self.n, self.p)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.psi, self.n, self.p)
 
     def skewness(self):
-        # implement skewness
-        return np.nan
+        return ptd_skewness(self.psi, self.n, self.p)
 
     def kurtosis(self):
-        # implement kurtosis
-        return np.nan
+        return ptd_kurtosis(self.psi, self.n, self.p)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        zeros = random_state.uniform(size=size) > (1 - self.psi)
-        nbinomial = random_state.negative_binomial(self.n, self.p, size=size)
-        return zeros * nbinomial
+        return ptd_rvs(self.psi, self.n, self.p, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         optimize_mean_sigma(self, mean, sigma)
@@ -186,38 +179,66 @@ class ZeroInflatedNegativeBinomial(Discrete):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, psi, n, p, lower, upper):
-    nb_prob = betainc(n, x + 1, p)
-    prob = (1 - psi) + psi * nb_prob
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, psi, n, p):
+    return ptd_zinegativebinomial.pdf(x, psi, n, p)
 
 
-# @nb.jit
-# bdtrik not supported by numba
-def nb_ppf(q, psi, n, p, lower, upper):
-    nb_vals = np.ceil(nbdtrik(q, n, p))
-    x_vals = (1 - psi) + psi * nb_vals
-    return ppf_bounds_disc(x_vals, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, psi, n, p):
+    return ptd_zinegativebinomial.cdf(x, psi, n, p)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(y, psi, n, p, mu):
-    if y < 0:
-        return -np.inf
-    elif y == 0:
-        return np.log((1 - psi) + psi * (n / (n + mu)) ** n)
-    else:
-        return (
-            np.log(psi)
-            + gammaln(y + n)
-            - gammaln(n)
-            - gammaln(y + 1)
-            + xlogy(n, p)
-            + xlogy(y, 1 - p)
-        )
+@pytensor_jit
+def ptd_ppf(q, psi, n, p):
+    return ptd_zinegativebinomial.ppf(q, psi, n, p)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(y, psi, n, p, mu):
-    return -(nb_logpdf(y, psi, n, p, mu)).sum()
+@pytensor_jit
+def ptd_logpdf(x, psi, n, p):
+    return ptd_zinegativebinomial.logpdf(x, psi, n, p)
+
+
+@pytensor_jit
+def ptd_entropy(psi, n, p):
+    return ptd_zinegativebinomial.entropy(psi, n, p)
+
+
+@pytensor_jit
+def ptd_mean(psi, n, p):
+    return ptd_zinegativebinomial.mean(psi, n, p)
+
+
+@pytensor_jit
+def ptd_mode(psi, n, p):
+    return ptd_zinegativebinomial.mode(psi, n, p)
+
+
+@pytensor_jit
+def ptd_median(psi, n, p):
+    return ptd_zinegativebinomial.median(psi, n, p)
+
+
+@pytensor_jit
+def ptd_var(psi, n, p):
+    return ptd_zinegativebinomial.var(psi, n, p)
+
+
+@pytensor_jit
+def ptd_std(psi, n, p):
+    return ptd_zinegativebinomial.std(psi, n, p)
+
+
+@pytensor_jit
+def ptd_skewness(psi, n, p):
+    return ptd_zinegativebinomial.skewness(psi, n, p)
+
+
+@pytensor_jit
+def ptd_kurtosis(psi, n, p):
+    return ptd_zinegativebinomial.kurtosis(psi, n, p)
+
+
+@pytensor_rng_jit
+def ptd_rvs(psi, n, p, size, rng):
+    return ptd_zinegativebinomial.rvs(psi, n, p, size=size, random_state=rng)

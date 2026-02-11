@@ -1,11 +1,9 @@
-import numba as nb
 import numpy as np
-from scipy.special import bdtr, bdtrik
+from pytensor_distributions import zi_binomial as ptd_zibinomial
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_discrete_mode, optimize_mean_sigma, optimize_ml
-from preliz.internal.special import cdf_bounds, gammaln, ppf_bounds_disc
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 
 
 class ZeroInflatedBinomial(Discrete):
@@ -29,7 +27,7 @@ class ZeroInflatedBinomial(Discrete):
         ns = [10, 20]
         ps = [0.5, 0.7]
         psis = [0.7, 0.4]
-        for n, p, psi in zip(ns, ps, psis):
+        for psi, n, p in zip(ns, ps, psis):
             ZeroInflatedBinomial(psi, n, p).plot_pdf(support=(0,25))
 
     ========  ==========================
@@ -76,56 +74,47 @@ class ZeroInflatedBinomial(Discrete):
 
     def pdf(self, x):
         x = np.asarray(x)
-        return np.exp(nb_logpdf(self.psi, self.n, x, self.p))
+        result = ptd_pdf(x, self.psi, self.n, self.p)
+        # Return 0 for values outside support or infinity, consistent with scipy.stats.binom
+        result = np.where((x < 0) | (x > self.n) | ~np.isfinite(x), 0, result)
+        return result
 
     def cdf(self, x):
-        return nb_cdf(x, self.psi, self.n, self.p, self.support[0], self.support[1])
+        return ptd_cdf(x, self.psi, self.n, self.p)
 
     def ppf(self, q):
-        return nb_ppf(q, self.psi, self.n, self.p, self.support[0], self.support[1])
+        return ptd_ppf(q, self.psi, self.n, self.p)
 
     def logpdf(self, x):
-        return nb_logpdf(self.psi, self.n, x, self.p)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(self.psi, self.n, x, self.p)
+        return ptd_logpdf(x, self.psi, self.n, self.p)
 
     def entropy(self):
-        binomial_entropy = 0.5 * np.log(2 * np.pi * np.e * self.n * self.p * (1 - self.p))
-        if self.psi == 1:
-            return binomial_entropy
-        else:
-            zero_entropy = -(1 - self.psi) * np.log(1 - self.psi) - self.psi * np.log(self.psi)
-            return (1 - self.psi) * zero_entropy + self.psi * binomial_entropy
+        return ptd_entropy(self.psi, self.n, self.p)
 
     def mean(self):
-        return self.psi * self.n * self.p
+        return ptd_mean(self.psi, self.n, self.p)
 
     def mode(self):
-        return find_discrete_mode(self)
+        return ptd_mode(self.psi, self.n, self.p)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.psi, self.n, self.p)
 
     def var(self):
-        return self.mean() * (1 - self.p) + self.n**2 * self.p**2 * (self.psi - self.psi**2)
+        return ptd_var(self.psi, self.n, self.p)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.psi, self.n, self.p)
 
     def skewness(self):
-        # implement skewness
-        return np.nan
+        return ptd_skewness(self.psi, self.n, self.p)
 
     def kurtosis(self):
-        # implement kurtosis
-        return np.nan
+        return ptd_kurtosis(self.psi, self.n, self.p)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        zeros = random_state.uniform(size=size) > (1 - self.psi)
-        binomial = random_state.binomial(self.n, self.p, size=size)
-        return zeros * binomial
+        return ptd_rvs(self.psi, self.n, self.p, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         optimize_mean_sigma(self, mean, sigma)
@@ -134,41 +123,66 @@ class ZeroInflatedBinomial(Discrete):
         optimize_ml(self, sample)
 
 
-# @nb.jit
-# bdtr not supported by numba
-def nb_cdf(x, psi, n, p, lower, upper):
-    x = np.asarray(x)
-    b_prob = np.asarray(bdtr(x, n, p))
-    prob = (1 - psi) + psi * b_prob
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, psi, n, p):
+    return ptd_zibinomial.pdf(x, psi, n, p)
 
 
-# @nb.jit
-def nb_ppf(q, psi, n, p, lower, upper):
-    q = np.asarray(q)
-    n_vals = np.ceil(bdtrik(q, n, p))
-    x_vals = (1 - psi) + psi * n_vals
-    return ppf_bounds_disc(x_vals, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, psi, n, p):
+    return ptd_zibinomial.cdf(x, psi, n, p)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(psi, n, y, p):
-    if y < 0:
-        return -np.inf
-    elif y > n:
-        return -np.inf
-    elif y == 0:
-        return np.log((1 - psi) + psi * (1 - p) ** n)
-    else:
-        return (
-            np.log(psi)
-            + gammaln(n + 1)
-            - (gammaln(y + 1) + gammaln(n - y + 1))
-            + y * np.log(p)
-            + (n - y) * np.log1p(-p)
-        )
+@pytensor_jit
+def ptd_ppf(q, psi, n, p):
+    return ptd_zibinomial.ppf(q, psi, n, p)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(psi, n, y, p):
-    return -(nb_logpdf(psi, n, y, p)).sum()
+@pytensor_jit
+def ptd_logpdf(x, psi, n, p):
+    return ptd_zibinomial.logpdf(x, psi, n, p)
+
+
+@pytensor_jit
+def ptd_entropy(psi, n, p):
+    return ptd_zibinomial.entropy(psi, n, p)
+
+
+@pytensor_jit
+def ptd_mean(psi, n, p):
+    return ptd_zibinomial.mean(psi, n, p)
+
+
+@pytensor_jit
+def ptd_mode(psi, n, p):
+    return ptd_zibinomial.mode(psi, n, p)
+
+
+@pytensor_jit
+def ptd_median(psi, n, p):
+    return ptd_zibinomial.median(psi, n, p)
+
+
+@pytensor_jit
+def ptd_var(psi, n, p):
+    return ptd_zibinomial.var(psi, n, p)
+
+
+@pytensor_jit
+def ptd_std(psi, n, p):
+    return ptd_zibinomial.std(psi, n, p)
+
+
+@pytensor_jit
+def ptd_skewness(psi, n, p):
+    return ptd_zibinomial.skewness(psi, n, p)
+
+
+@pytensor_jit
+def ptd_kurtosis(psi, n, p):
+    return ptd_zibinomial.kurtosis(psi, n, p)
+
+
+@pytensor_rng_jit
+def ptd_rvs(psi, n, p, size, rng):
+    return ptd_zibinomial.rvs(psi, n, p, size=size, random_state=rng)

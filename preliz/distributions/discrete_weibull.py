@@ -1,10 +1,14 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import discreteweibull as ptd_discreteweibull
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, eps, num_kurtosis, num_skewness
-from preliz.internal.optimization import find_mode, optimize_mean_sigma, optimize_ml
-from preliz.internal.special import cdf_bounds, ppf_bounds_disc
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    eps,
+    pytensor_jit,
+    pytensor_rng_jit,
+)
+from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
 
 
 class DiscreteWeibull(Discrete):
@@ -63,56 +67,44 @@ class DiscreteWeibull(Discrete):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.q, self.beta))
+        return ptd_pdf(x, self.q, self.beta)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.q, self.beta, self.support[0], self.support[1])
+        return ptd_cdf(x, self.q, self.beta)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.q, self.beta, self.support[0], self.support[1])
+        return ptd_ppf(q, self.q, self.beta)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.q, self.beta)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.q, self.beta)
+        return ptd_logpdf(x, self.q, self.beta)
 
     def entropy(self):
-        x = self.xvals("full", 5000)
-        logpdf = self.logpdf(x)
-        return -np.sum(np.exp(logpdf) * logpdf)
+        return ptd_entropy(self.q, self.beta)
 
     def mean(self):
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.sum(x_values * pdf)
+        return ptd_mean(self.q, self.beta)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.q, self.beta)
 
     def var(self):
-        x_values = self.xvals("full")
-        pdf = self.pdf(x_values)
-        return np.sum((x_values - self.mean()) ** 2 * pdf)
+        return ptd_var(self.q, self.beta)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.q, self.beta)
 
     def skewness(self):
-        return num_skewness(self)
+        return ptd_skewness(self.q, self.beta)
 
     def kurtosis(self):
-        return num_kurtosis(self)
+        return ptd_kurtosis(self.q, self.beta)
 
     def mode(self):
-        return find_mode(self)
+        return ptd_mode(self.q, self.beta)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return self.ppf(random_state.uniform(size=size))
+        return ptd_rvs(self.q, self.beta, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         optimize_mean_sigma(self, mean, sigma)
@@ -121,34 +113,66 @@ class DiscreteWeibull(Discrete):
         optimize_ml(self, sample)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_pdf(x, q, beta):
-    if x < 0:
-        return 0
-    else:
-        return q ** (x**beta) - q ** ((x + 1) ** beta)
+@pytensor_jit
+def ptd_pdf(x, q, beta):
+    return ptd_discreteweibull.pdf(x, q, beta)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, q, beta, lower, upper):
-    prob = 1 - q ** ((x + 1) ** beta)
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, q, beta):
+    return ptd_discreteweibull.cdf(x, q, beta)
 
 
-@nb.njit(cache=True)
-def nb_ppf(p, q, beta, lower, upper):
-    x_val = np.ceil((np.log(1 - p) / np.log(q)) ** (1 / beta) - 1)
-    return ppf_bounds_disc(x_val, p, lower, upper)
+@pytensor_jit
+def ptd_ppf(p, q, beta):
+    return ptd_discreteweibull.ppf(p, q, beta)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, q, beta):
-    if x < 0:
-        return -np.inf
-    else:
-        return np.log(q ** (x**beta) - q ** ((x + 1) ** beta))
+@pytensor_jit
+def ptd_logpdf(x, q, beta):
+    return ptd_discreteweibull.logpdf(x, q, beta)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, q, beta):
-    return -(nb_logpdf(x, q, beta)).sum()
+@pytensor_jit
+def ptd_entropy(q, beta):
+    return ptd_discreteweibull.entropy(q, beta)
+
+
+@pytensor_jit
+def ptd_mean(q, beta):
+    return ptd_discreteweibull.mean(q, beta)
+
+
+@pytensor_jit
+def ptd_mode(q, beta):
+    return ptd_discreteweibull.mode(q, beta)
+
+
+@pytensor_jit
+def ptd_median(q, beta):
+    return ptd_discreteweibull.median(q, beta)
+
+
+@pytensor_jit
+def ptd_var(q, beta):
+    return ptd_discreteweibull.var(q, beta)
+
+
+@pytensor_jit
+def ptd_std(q, beta):
+    return ptd_discreteweibull.std(q, beta)
+
+
+@pytensor_jit
+def ptd_skewness(q, beta):
+    return ptd_discreteweibull.skewness(q, beta)
+
+
+@pytensor_jit
+def ptd_kurtosis(q, beta):
+    return ptd_discreteweibull.kurtosis(q, beta)
+
+
+@pytensor_rng_jit
+def ptd_rvs(q, beta, size, rng):
+    return ptd_discreteweibull.rvs(q, beta, size=size, random_state=rng)

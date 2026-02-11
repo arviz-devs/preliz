@@ -1,8 +1,9 @@
-import numba as nb
 import numpy as np
+import pytensor.tensor as pt
+from pytensor_distributions import asymmetriclaplace as ptd_asymmetriclaplace
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
 
 
@@ -63,7 +64,7 @@ class AsymmetricLaplace(Continuous):
 
     def __init__(self, kappa=None, mu=None, b=None, q=None):
         super().__init__()
-        self.support = (-np.inf, np.inf)
+        self.support = (-pt.inf, pt.inf)
         self._parametrization(kappa, mu, b, q)
 
     def _parametrization(self, kappa=None, mu=None, b=None, q=None):
@@ -71,13 +72,13 @@ class AsymmetricLaplace(Continuous):
             raise ValueError("Incompatible parametrization. Either use kappa or q.")
 
         self.param_names = ("kappa", "mu", "b")
-        self.params_support = ((eps, np.inf), (-np.inf, np.inf), (eps, np.inf))
+        self.params_support = ((eps, pt.inf), (-pt.inf, pt.inf), (eps, pt.inf))
 
         if q is not None:
             self.q = q
-            kappa = self._from_q(q)
+            kappa = _from_q(q)
             self.param_names = ("q", "mu", "b")
-            self.params_support = ((eps, 1 - eps), (-np.inf, np.inf), (eps, np.inf))
+            self.params_support = ((eps, 1 - eps), (-pt.inf, pt.inf), (eps, pt.inf))
 
         self.kappa = kappa
         self.mu = mu
@@ -85,19 +86,11 @@ class AsymmetricLaplace(Continuous):
         if all_not_none(kappa, mu, b):
             self._update(kappa, mu, b)
 
-    def _from_q(self, q):
-        kappa = (q / (1 - q)) ** 0.5
-        return kappa
-
-    def _to_q(self, kappa):
-        q = kappa**2 / (1 + kappa**2)
-        return q
-
     def _update(self, kappa, mu, b):
         self.kappa = np.float64(kappa)
         self.mu = np.float64(mu)
         self.b = np.float64(b)
-        self.q = self._to_q(self.kappa)
+        self.q = _to_q(self.kappa)
 
         if self.param_names[0] == "kappa":
             self.params = (self.kappa, self.mu, self.b)
@@ -107,53 +100,44 @@ class AsymmetricLaplace(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.mu, self.b, self.kappa))
+        return ptd_pdf(x, self.mu, self.b, self.kappa)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.b, self.kappa)
+        return ptd_cdf(x, self.mu, self.b, self.kappa)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.mu, self.b, self.kappa)
+        return ptd_ppf(q, self.mu, self.b, self.kappa)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.b, self.kappa)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.b, self.kappa)
+        return ptd_logpdf(x, self.mu, self.b, self.kappa)
 
     def entropy(self):
-        return nb_entropy(self.b, self.kappa)
+        return ptd_entropy(self.mu, self.b, self.kappa)
 
     def median(self):
-        if self.kappa > 1:
-            return self.mu + self.kappa * self.b * np.log((1 + self.kappa**2) / (2 * self.kappa**2))
-        return self.mu - np.log((1 + self.kappa**2) / 2) / (self.kappa / self.b)
+        return ptd_median(self.mu, self.b, self.kappa)
 
     def mean(self):
-        return (1 / self.kappa - self.kappa) * self.b + self.mu
+        return ptd_mean(self.mu, self.b, self.kappa)
 
     def mode(self):
-        return self.mu
+        return ptd_mode(self.mu, self.b, self.kappa)
 
     def var(self):
-        return ((1 / self.kappa) ** 2 + self.kappa**2) * self.b**2
+        return ptd_var(self.mu, self.b, self.kappa)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.b, self.kappa)
 
     def skewness(self):
-        return 2.0 * (1 - np.power(self.kappa, 6)) / np.power(1 + np.power(self.kappa, 4), 1.5)
+        return ptd_skewness(self.mu, self.b, self.kappa)
 
     def kurtosis(self):
-        return 6.0 * (1 + np.power(self.kappa, 8)) / np.power(1 + np.power(self.kappa, 4), 2)
+        return ptd_kurtosis(self.mu, self.b, self.kappa)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        random_samples = random_state.uniform(-self.kappa, 1 / self.kappa, size)
-        return nb_rvs(random_samples, self.mu, self.b, self.kappa)
+        return ptd_rvs(self.mu, self.b, self.kappa, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         # Assume symmetry
@@ -165,50 +149,76 @@ class AsymmetricLaplace(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_cdf(x, mu, b, kappa):
-    x = (x - mu) / b
-    kap_inv = 1 / kappa
-    kap_kapinv = kappa + kap_inv
-    if x >= 0:
-        return 1 - np.exp(-x * kappa) * (kap_inv / kap_kapinv)
-    return np.exp(x * kap_inv) * (kappa / kap_kapinv)
+@pytensor_jit
+def ptd_pdf(x, mu, b, kappa):
+    return ptd_asymmetriclaplace.pdf(x, mu, b, kappa)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_ppf(q, mu, b, kappa):
-    kap_inv = 1 / kappa
-    kap_kapinv = kappa + kap_inv
-    if q >= kappa / kap_kapinv:
-        q_ppf = -np.log((1 - q) * kap_kapinv * kappa) * kap_inv
-    else:
-        q_ppf = np.log(q * kap_kapinv / kappa) * kappa
-    return q_ppf * b + mu
+@pytensor_jit
+def ptd_cdf(x, mu, b, kappa):
+    return ptd_asymmetriclaplace.cdf(x, mu, b, kappa)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, mu, b, kappa):
-    x = (x - mu) / b
-    kap_inv = 1 / kappa
-    if x >= 0:
-        ald_x = x * -kappa
-    else:
-        ald_x = x * kap_inv
-    ald_x -= np.log(kappa + kap_inv)
-    return ald_x - np.log(b)
+@pytensor_jit
+def ptd_ppf(q, mu, b, kappa):
+    return ptd_asymmetriclaplace.ppf(q, mu, b, kappa)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, b, kappa):
-    return (-nb_logpdf(x, mu, b, kappa)).sum()
+@pytensor_jit
+def ptd_logpdf(x, mu, b, kappa):
+    return ptd_asymmetriclaplace.logpdf(x, mu, b, kappa)
 
 
-@nb.njit(cache=True)
-def nb_rvs(random_samples, mu, b, kappa):
-    sgn = np.sign(random_samples)
-    return mu - (1 / (1 / b * sgn * kappa**sgn)) * np.log(1 - random_samples * sgn * kappa**sgn)
+@pytensor_jit
+def ptd_entropy(mu, b, kappa):
+    return ptd_asymmetriclaplace.entropy(mu, b, kappa)
 
 
-@nb.njit(cache=True)
-def nb_entropy(b, kappa):
-    return 1 + np.log(kappa + 1 / kappa) + np.log(b)
+@pytensor_jit
+def ptd_mean(mu, b, kappa):
+    return ptd_asymmetriclaplace.mean(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_mode(mu, b, kappa):
+    return ptd_asymmetriclaplace.mode(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_median(mu, b, kappa):
+    return ptd_asymmetriclaplace.median(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_var(mu, b, kappa):
+    return ptd_asymmetriclaplace.var(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_std(mu, b, kappa):
+    return ptd_asymmetriclaplace.std(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_skewness(mu, b, kappa):
+    return ptd_asymmetriclaplace.skewness(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, b, kappa):
+    return ptd_asymmetriclaplace.kurtosis(mu, b, kappa)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, b, kappa, size, rng):
+    return ptd_asymmetriclaplace.rvs(mu, b, kappa, size=size, random_state=rng)
+
+
+def _from_q(q):
+    kappa = (q / (1 - q)) ** 0.5
+    return kappa
+
+
+def _to_q(kappa):
+    q = kappa**2 / (1 + kappa**2)
+    return q

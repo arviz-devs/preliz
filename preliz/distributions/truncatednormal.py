@@ -1,10 +1,9 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import truncatednormal as ptd_truncatednormal
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import cdf_bounds, erf, erfinv, ppf_bounds_cont
 
 
 class TruncatedNormal(Continuous):
@@ -89,247 +88,44 @@ class TruncatedNormal(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.mu, self.sigma, self.lower, self.upper))
+        return ptd_pdf(x, self.mu, self.sigma, self.lower, self.upper)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.mu, self.sigma, self.lower, self.upper)
+        return ptd_cdf(x, self.mu, self.sigma, self.lower, self.upper)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.mu, self.sigma, self.lower, self.upper)
+        return ptd_ppf(q, self.mu, self.sigma, self.lower, self.upper)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.sigma, self.lower, self.upper)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.sigma, self.lower, self.upper)
+        return ptd_logpdf(x, self.mu, self.sigma, self.lower, self.upper)
 
     def entropy(self):
-        return nb_entropy(self.mu, self.sigma, self.lower, self.upper)
+        return ptd_entropy(self.mu, self.sigma, self.lower, self.upper)
 
     def mean(self):
-        alpha = (self.lower - self.mu) / self.sigma
-        beta = (self.upper - self.mu) / self.sigma
-        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-        return (
-            self.mu
-            + (
-                (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * alpha**2))
-                - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * beta**2))
-            )
-            / z_val
-            * self.sigma
-        )
+        return ptd_mean(self.mu, self.sigma, self.lower, self.upper)
 
     def mode(self):
-        return np.maximum(self.lower, np.minimum(self.upper, self.mu))
+        return ptd_mode(self.mu, self.sigma, self.lower, self.upper)
 
     def median(self):
-        alpha = (self.lower - self.mu) / self.sigma
-        beta = (self.upper - self.mu) / self.sigma
-        inv_phi = 2**0.5 * erfinv(
-            2 * ((0.5 * (1 + erf(alpha / 2**0.5)) + 0.5 * (1 + erf(beta / 2**0.5))) / 2) - 1
-        )
-        return self.mu + inv_phi * self.sigma
+        return ptd_median(self.mu, self.sigma, self.lower, self.upper)
 
     def var(self):
-        alpha = (self.lower - self.mu) / self.sigma
-        beta = (self.upper - self.mu) / self.sigma
-        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-        # Handle for -np.inf or np.inf
-        psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
-        psi_beta = (0, 0) if beta == np.inf else (1, beta)
-        return self.sigma**2 * (
-            1
-            - (
-                psi_beta[1] * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                - psi_alpha[1] * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-            )
-            / z_val
-            - (
-                (
-                    (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                    - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-                )
-                / z_val
-            )
-            ** 2
-        )
+        return ptd_var(self.mu, self.sigma, self.lower, self.upper)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.sigma, self.lower, self.upper)
 
     def skewness(self):
-        alpha = (self.lower - self.mu) / self.sigma
-        beta = (self.upper - self.mu) / self.sigma
-        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-        # Handle for -np.inf or np.inf
-        psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
-        psi_beta = (0, 0) if beta == np.inf else (1, beta)
-        numerator = (
-            (
-                (psi_alpha[1] ** 2 - 1)
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                * psi_alpha[0]
-                - (psi_beta[1] ** 2 - 1)
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                * psi_beta[0]
-            )
-            / z_val
-            - 3
-            * (
-                psi_alpha[1]
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                * psi_alpha[0]
-                - psi_beta[1]
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                * psi_beta[0]
-            )
-            * (
-                (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-            )
-            / z_val**2
-            + 2
-            * (
-                (
-                    (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                    - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-                )
-                / z_val
-            )
-            ** 3
-        )
-        denominator = (
-            1
-            + (
-                psi_alpha[1]
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                * psi_alpha[0]
-                - psi_beta[1]
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                * psi_beta[0]
-            )
-            / z_val
-            - (
-                (
-                    (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                    - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-                )
-                / z_val
-            )
-            ** 2
-        ) ** (3 / 2)
-        return numerator / denominator
+        return ptd_skewness(self.mu, self.sigma, self.lower, self.upper)
 
     def kurtosis(self):
-        alpha = (self.lower - self.mu) / self.sigma
-        beta = (self.upper - self.mu) / self.sigma
-        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-        # Handle for -np.inf or np.inf
-        psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
-        psi_beta = (0, 0) if beta == np.inf else (1, beta)
-
-        numerator = (
-            (
-                12
-                * (
-                    psi_alpha[1]
-                    * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                    * psi_alpha[0]
-                    - psi_beta[1]
-                    * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                    * psi_beta[0]
-                )
-                * (
-                    (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                    - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-                )
-                ** 2
-                / z_val**3
-            )
-            - (
-                4
-                * (
-                    (psi_alpha[1] ** 2 - 1)
-                    * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                    * psi_alpha[0]
-                    - (psi_beta[1] ** 2 - 1)
-                    * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                    * psi_beta[0]
-                )
-                * (
-                    (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                    - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-                )
-                / z_val**2
-            )
-            - (
-                3
-                * (
-                    (
-                        psi_alpha[1]
-                        * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                        * psi_alpha[0]
-                        - psi_beta[1]
-                        * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                        * psi_beta[0]
-                    )
-                    / z_val
-                )
-                ** 2
-            )
-            - (
-                6
-                * (
-                    (
-                        (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                        - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-                    )
-                    / z_val
-                )
-                ** 4
-            )
-            + (
-                (psi_alpha[1] ** 3 - 3 * psi_alpha[1])
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                * psi_alpha[0]
-                - (psi_beta[1] ** 3 - 3 * psi_beta[1])
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                * psi_beta[0]
-            )
-            / z_val
-        )
-
-        denominator = (
-            1
-            + (
-                psi_alpha[1]
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2))
-                * psi_alpha[0]
-                - psi_beta[1]
-                * (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2))
-                * psi_beta[0]
-            )
-            / z_val
-            - (
-                (
-                    (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[0]
-                    - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[0]
-                )
-                / z_val
-            )
-            ** 2
-        ) ** 2
-
-        return numerator / denominator
+        return ptd_kurtosis(self.mu, self.sigma, self.lower, self.upper)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        random_samples = random_state.uniform(0, 1, size)
-        return nb_rvs(random_samples, self.mu, self.sigma, self.lower, self.upper)
+        return ptd_rvs(self.mu, self.sigma, self.lower, self.upper, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         # Assume gaussian
@@ -340,67 +136,66 @@ class TruncatedNormal(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, mu, sigma, lower, upper):
-    xi = (x - mu) / sigma
-    alpha = (lower - mu) / sigma
-    beta = (upper - mu) / sigma
-    z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-    prob = (0.5 * (1 + erf(xi / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))) / z_val
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, mu, sigma, lower, upper):
+    return ptd_truncatednormal.pdf(x, mu, sigma, lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, mu, sigma, lower, upper):
-    alpha = (lower - mu) / sigma
-    beta = (upper - mu) / sigma
-    inv_phi = 2**0.5 * erfinv(
-        2
-        * (
-            0.5 * (1 + erf(alpha / 2**0.5))
-            + q * (0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5)))
-        )
-        - 1
-    )
-    return ppf_bounds_cont(inv_phi * sigma + mu, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, mu, sigma, lower, upper):
+    return ptd_truncatednormal.cdf(x, mu, sigma, lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_entropy(mu, sigma, lower, upper):
-    alpha = (lower - mu) / sigma
-    beta = (upper - mu) / sigma
-    z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-    # Handle for -np.inf or np.inf
-    psi_alpha = (0, 0) if alpha == -np.inf else (1, alpha)
-    psi_beta = (0, 0) if beta == np.inf else (1, beta)
-    return np.log((2 * np.pi * np.e) ** 0.5 * sigma * z_val) + (
-        (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_alpha[1] ** 2)) * psi_alpha[1] * psi_alpha[0]
-        - (1 / (2 * np.pi) ** 0.5 * np.exp(-0.5 * psi_beta[1] ** 2)) * psi_beta[1] * psi_beta[0]
-    ) / (2 * z_val)
+@pytensor_jit
+def ptd_ppf(q, mu, sigma, lower, upper):
+    return ptd_truncatednormal.ppf(q, mu, sigma, lower, upper)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, mu, sigma, lower, upper):
-    if x < lower or x > upper:
-        return -np.inf
-    else:
-        xi = (x - mu) / sigma
-        alpha = (lower - mu) / sigma
-        beta = (upper - mu) / sigma
-        z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-        logphi = np.log(1 / (2 * np.pi) ** 0.5) - xi**2 / 2
-        return logphi - (np.log(sigma) + np.log(z_val))
+@pytensor_jit
+def ptd_logpdf(x, mu, sigma, lower, upper):
+    return ptd_truncatednormal.logpdf(x, mu, sigma, lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, sigma, lower, upper):
-    return -(nb_logpdf(x, mu, sigma, lower, upper)).sum()
+@pytensor_jit
+def ptd_entropy(mu, sigma, lower, upper):
+    return ptd_truncatednormal.entropy(mu, sigma, lower, upper)
 
 
-@nb.njit(cache=True)
-def nb_rvs(random_samples, mu, sigma, lower, upper):
-    alpha = (lower - mu) / sigma
-    beta = (upper - mu) / sigma
-    z_val = 0.5 * (1 + erf(beta / 2**0.5)) - 0.5 * (1 + erf(alpha / 2**0.5))
-    inv_phi = 2**0.5 * erfinv(2 * (0.5 * (1 + erf(alpha / 2**0.5)) + random_samples * z_val) - 1)
-    return inv_phi * sigma + mu
+@pytensor_jit
+def ptd_mean(mu, sigma, lower, upper):
+    return ptd_truncatednormal.mean(mu, sigma, lower, upper)
+
+
+@pytensor_jit
+def ptd_mode(mu, sigma, lower, upper):
+    return ptd_truncatednormal.mode(mu, sigma, lower, upper)
+
+
+@pytensor_jit
+def ptd_median(mu, sigma, lower, upper):
+    return ptd_truncatednormal.median(mu, sigma, lower, upper)
+
+
+@pytensor_jit
+def ptd_var(mu, sigma, lower, upper):
+    return ptd_truncatednormal.var(mu, sigma, lower, upper)
+
+
+@pytensor_jit
+def ptd_std(mu, sigma, lower, upper):
+    return ptd_truncatednormal.std(mu, sigma, lower, upper)
+
+
+@pytensor_jit
+def ptd_skewness(mu, sigma, lower, upper):
+    return ptd_truncatednormal.skewness(mu, sigma, lower, upper)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, sigma, lower, upper):
+    return ptd_truncatednormal.kurtosis(mu, sigma, lower, upper)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, sigma, lower, upper, size, rng):
+    return ptd_truncatednormal.rvs(mu, sigma, lower, upper, size=size, random_state=rng)

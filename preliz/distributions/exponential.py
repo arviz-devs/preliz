@@ -1,9 +1,8 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import exponential as ptd_exponential
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.special import cdf_bounds, mean_sample, ppf_bounds_cont, xlog1py
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 
 
 class Exponential(Continuous):
@@ -82,84 +81,114 @@ class Exponential(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.lam))
+        return ptd_pdf(x, self.lam)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.lam)
+        return ptd_cdf(x, self.lam)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.scale)
+        return ptd_ppf(q, self.lam)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.lam)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.lam)
+        return ptd_logpdf(x, self.lam)
 
     def entropy(self):
-        return nb_entropy(self.scale)
+        return ptd_entropy(self.lam)
 
     def median(self):
-        return np.log(2) * self.scale
+        return ptd_median(self.lam)
 
     def mean(self):
-        return self.scale
+        return ptd_mean(self.lam)
 
     def mode(self):
-        return np.zeros_like(self.scale)
+        return ptd_mode(self.lam)
 
     def std(self):
-        return self.scale
+        return ptd_std(self.lam)
 
     def var(self):
-        return self.scale**2
+        return ptd_var(self.lam)
 
     def skewness(self):
-        return 2
+        return ptd_skewness(self.lam)
 
     def kurtosis(self):
-        return 6
+        return ptd_kurtosis(self.lam)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.exponential(self.scale, size)
+        return ptd_rvs(self.lam, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma=None):
         lam = 1 / mean
         self._update(lam)
 
     def _fit_mle(self, sample):
-        mean = mean_sample(sample)
+        mean = np.mean(sample)
         self._update(1 / mean)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, lam):
-    x_lam = lam * x
-    return cdf_bounds(1 - np.exp(-x_lam), x, 0, np.inf)
+@pytensor_jit
+def ptd_pdf(x, lam):
+    return ptd_exponential.pdf(x, lam)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, scale):
-    return ppf_bounds_cont(-xlog1py(scale, -q), q, 0, np.inf)
+@pytensor_jit
+def ptd_cdf(x, lam):
+    return ptd_exponential.cdf(x, lam)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, lam):
-    if x < 0:
-        return -np.inf
-    else:
-        return np.log(lam) - lam * x
+@pytensor_jit
+def ptd_ppf(q, lam):
+    return ptd_exponential.ppf(q, lam)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, lam):
-    return (-nb_logpdf(x, lam)).sum()
+@pytensor_jit
+def ptd_logpdf(x, lam):
+    return ptd_exponential.logpdf(x, lam)
 
 
-@nb.njit(cache=True)
-def nb_entropy(scale):
-    return 1 + np.log(scale)
+@pytensor_jit
+def ptd_entropy(lam):
+    return ptd_exponential.entropy(lam)
+
+
+@pytensor_jit
+def ptd_mean(lam):
+    return ptd_exponential.mean(lam)
+
+
+@pytensor_jit
+def ptd_mode(lam):
+    return ptd_exponential.mode(lam)
+
+
+@pytensor_jit
+def ptd_median(lam):
+    return ptd_exponential.median(lam)
+
+
+@pytensor_jit
+def ptd_var(lam):
+    return ptd_exponential.var(lam)
+
+
+@pytensor_jit
+def ptd_std(lam):
+    return ptd_exponential.std(lam)
+
+
+@pytensor_jit
+def ptd_skewness(lam):
+    return ptd_exponential.skewness(lam)
+
+
+@pytensor_jit
+def ptd_kurtosis(lam):
+    return ptd_exponential.kurtosis(lam)
+
+
+@pytensor_rng_jit
+def ptd_rvs(lam, size, rng):
+    return ptd_exponential.rvs(lam, size=size, random_state=rng)

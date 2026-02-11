@@ -1,16 +1,12 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import weibull as ptd_weibull
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_ml
 from preliz.internal.special import (
-    cdf_bounds,
-    gamma,
     garcia_approximation,
     mean_and_std,
-    ppf_bounds_cont,
-    xlogy,
 )
 
 
@@ -72,65 +68,44 @@ class Weibull(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.alpha, self.beta))
+        return ptd_pdf(x, self.alpha, self.beta)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.alpha, self.beta, self.support[0], self.support[1])
+        return ptd_cdf(x, self.alpha, self.beta)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.alpha, self.beta, self.support[0], self.support[1])
+        return ptd_ppf(q, self.alpha, self.beta)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.alpha, self.beta)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.alpha, self.beta)
+        return ptd_logpdf(x, self.alpha, self.beta)
 
     def entropy(self):
-        return nb_entropy(self.alpha, self.beta)
+        return ptd_entropy(self.alpha, self.beta)
 
     def mean(self):
-        return self.beta * gamma(1 + 1 / self.alpha)
+        return ptd_mean(self.alpha, self.beta)
 
     def mode(self):
-        return np.where(
-            self.alpha > 1, self.beta * ((self.alpha - 1) / self.alpha) ** (1 / self.alpha), 0
-        )
+        return ptd_mode(self.alpha, self.beta)
 
     def median(self):
-        return self.beta * np.log(2) ** (1 / self.alpha)
+        return ptd_median(self.alpha, self.beta)
 
     def var(self):
-        return self.beta**2 * gamma(1 + 2 / self.alpha) - self.mean() ** 2
+        return ptd_var(self.alpha, self.beta)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.alpha, self.beta)
 
     def skewness(self):
-        mu = self.mean()
-        sigma = self.std()
-        m_s = mu / sigma
-        return gamma(1 + 3 / self.alpha) * (self.beta / sigma) ** 3 - 3 * m_s - m_s**3
+        return ptd_skewness(self.alpha, self.beta)
 
     def kurtosis(self):
-        mu = self.mean()
-        sigma = self.std()
-        skew = self.skewness()
-        m_s = mu / sigma
-        return (
-            (self.beta / sigma) ** 4 * gamma(1 + 4 / self.alpha)
-            - 4 * skew * m_s
-            - 6 * m_s**2
-            - m_s**4
-            - 3
-        )
+        return ptd_kurtosis(self.alpha, self.beta)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.weibull(self.alpha, size) * self.beta
+        return ptd_rvs(self.alpha, self.beta, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         alpha, beta = garcia_approximation(mean, sigma)
@@ -142,32 +117,66 @@ class Weibull(Continuous):
         optimize_ml(self, sample)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, alpha, beta, lower, upper):
-    prob = 1 - np.exp(-((x / beta) ** alpha))
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, alpha, beta):
+    return ptd_weibull.pdf(x, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, alpha, beta, lower, upper):
-    x_val = beta * (-np.log(1 - q)) ** (1 / alpha)
-    return ppf_bounds_cont(x_val, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, alpha, beta):
+    return ptd_weibull.cdf(x, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_entropy(alpha, beta):
-    return np.euler_gamma * (1 - 1 / alpha) + np.log(beta / alpha) + 1
+@pytensor_jit
+def ptd_ppf(q, alpha, beta):
+    return ptd_weibull.ppf(q, alpha, beta)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, alpha, beta):
-    if x < 0:
-        return -np.inf
-    else:
-        x_b = x / beta
-        return np.log(alpha / beta) + xlogy((alpha - 1), x_b) - x_b**alpha
+@pytensor_jit
+def ptd_logpdf(x, alpha, beta):
+    return ptd_weibull.logpdf(x, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, alpha, beta):
-    return -(nb_logpdf(x, alpha, beta)).sum()
+@pytensor_jit
+def ptd_entropy(alpha, beta):
+    return ptd_weibull.entropy(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mean(alpha, beta):
+    return ptd_weibull.mean(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mode(alpha, beta):
+    return ptd_weibull.mode(alpha, beta)
+
+
+@pytensor_jit
+def ptd_median(alpha, beta):
+    return ptd_weibull.median(alpha, beta)
+
+
+@pytensor_jit
+def ptd_var(alpha, beta):
+    return ptd_weibull.var(alpha, beta)
+
+
+@pytensor_jit
+def ptd_std(alpha, beta):
+    return ptd_weibull.std(alpha, beta)
+
+
+@pytensor_jit
+def ptd_skewness(alpha, beta):
+    return ptd_weibull.skewness(alpha, beta)
+
+
+@pytensor_jit
+def ptd_kurtosis(alpha, beta):
+    return ptd_weibull.kurtosis(alpha, beta)
+
+
+@pytensor_rng_jit
+def ptd_rvs(alpha, beta, size, rng):
+    return ptd_weibull.rvs(alpha, beta, size=size, random_state=rng)

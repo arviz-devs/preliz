@@ -1,18 +1,11 @@
 import numba as nb
 import numpy as np
-from scipy.special import bdtr, bdtrik
+from pytensor_distributions import binomial as ptd_binomial
 
 from preliz.distributions.distributions import Discrete
-from preliz.internal.distribution_helper import all_not_none, eps
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_mean_sigma
-from preliz.internal.special import (
-    cdf_bounds,
-    gammaln,
-    mean_and_std,
-    ppf_bounds_disc,
-    xlog1py,
-    xlogy,
-)
+from preliz.internal.special import mean_and_std
 
 
 class Binomial(Discrete):
@@ -85,51 +78,44 @@ class Binomial(Discrete):
         self._update(*nb_fit_mle(sample))
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.n, self.p)
 
     def cdf(self, x):
-        return nb_cdf(x, self.n, self.p, self.support[0], self.support[1])
+        return ptd_cdf(x, self.n, self.p)
 
     def ppf(self, q):
-        return nb_ppf(q, self.n, self.p, self.support[0], self.support[1])
+        return ptd_ppf(q, self.n, self.p)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.n, self.p)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.n, self.p)
+        return ptd_logpdf(x, self.n, self.p)
 
     def entropy(self):
-        return nb_entropy(self.n, self.p)
+        return ptd_entropy(self.n, self.p)
 
     def mean(self):
-        return self.n * self.p
+        return ptd_mean(self.n, self.p)
 
     def mode(self):
-        y = (self.n + 1) * self.p
-        if np.isscalar(y) and y.is_integer() and 0 < self.p < 1:
-            return y, y - 1
-        return np.where(self.p == 1, self.n, np.floor(y))
+        return ptd_mode(self.n, self.p)
 
     def median(self):
-        return np.ceil(self.n * self.p)
+        return ptd_median(self.n, self.p)
 
     def var(self):
-        return self.n * self.p * self._q
+        return ptd_var(self.n, self.p)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.n, self.p)
 
     def skewness(self):
-        return (self._q - self.p) / self.std()
+        return ptd_skewness(self.n, self.p)
 
     def kurtosis(self):
-        return (1 - 6 * self.p * self._q) / (self.n * self.p * self._q)
+        return ptd_kurtosis(self.n, self.p)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.binomial(self.n, self.p, size=size)
+        return ptd_rvs(self.n, self.p, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         # crude approximation for n and p
@@ -142,24 +128,69 @@ class Binomial(Discrete):
         self._update(*nb_fit_mle(sample))
 
 
-# @nb.jit
-# bdtr not supported by numba
-def nb_cdf(x, n, p, lower, upper):
-    x = np.asarray(x)
-    prob = np.asarray(bdtr(x, n, p))
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, n, p):
+    return ptd_binomial.pdf(x, n, p)
 
 
-# @nb.jit
-def nb_ppf(q, n, p, lower, upper):
-    q = np.asarray(q)
-    x_vals = np.ceil(bdtrik(q, n, p))
-    return ppf_bounds_disc(x_vals, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, n, p):
+    return ptd_binomial.cdf(x, n, p)
 
 
-@nb.njit(cache=True)
-def nb_entropy(n, p):
-    return 0.5 * np.log(2 * np.pi * np.e * n * p * (1 - p))
+@pytensor_jit
+def ptd_ppf(q, n, p):
+    return ptd_binomial.ppf(q, n, p)
+
+
+@pytensor_jit
+def ptd_logpdf(x, n, p):
+    return ptd_binomial.logpdf(x, n, p)
+
+
+@pytensor_jit
+def ptd_entropy(n, p):
+    return ptd_binomial.entropy(n, p)
+
+
+@pytensor_jit
+def ptd_mean(n, p):
+    return ptd_binomial.mean(n, p)
+
+
+@pytensor_jit
+def ptd_mode(n, p):
+    return ptd_binomial.mode(n, p)
+
+
+@pytensor_jit
+def ptd_median(n, p):
+    return ptd_binomial.median(n, p)
+
+
+@pytensor_jit
+def ptd_var(n, p):
+    return ptd_binomial.var(n, p)
+
+
+@pytensor_jit
+def ptd_std(n, p):
+    return ptd_binomial.std(n, p)
+
+
+@pytensor_jit
+def ptd_skewness(n, p):
+    return ptd_binomial.skewness(n, p)
+
+
+@pytensor_jit
+def ptd_kurtosis(n, p):
+    return ptd_binomial.kurtosis(n, p)
+
+
+@pytensor_rng_jit
+def ptd_rvs(n, p, size, rng):
+    return ptd_binomial.rvs(n, p, size=size, random_state=rng)
 
 
 @nb.njit(cache=True)
@@ -170,23 +201,3 @@ def nb_fit_mle(sample):
     n = np.ceil(x_max ** (1.5) * x_std / (x_bar**0.5 * (x_max - x_bar) ** 0.5))
     p = x_bar / n
     return n, p
-
-
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, n, p):
-    if x < 0:
-        return -np.inf
-    elif x > n:
-        return -np.inf
-    else:
-        return (
-            gammaln(n + 1)
-            - (gammaln(x + 1) + gammaln(n - x + 1))
-            + xlogy(x, p)
-            + xlog1py(n - x, -p)
-        )
-
-
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, n, p):
-    return -(nb_logpdf(x, n, p)).sum()

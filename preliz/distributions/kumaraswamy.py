@@ -1,10 +1,9 @@
-import numba as nb
 import numpy as np
+from pytensor_distributions import kumaraswamy as ptd_kumaraswamy
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import eps
+from preliz.internal.distribution_helper import eps, pytensor_jit, pytensor_rng_jit
 from preliz.internal.optimization import optimize_mean_sigma, optimize_ml
-from preliz.internal.special import beta, cdf_bounds, digamma, ppf_bounds_cont, xlog1py, xlogy
 
 
 class Kumaraswamy(Continuous):
@@ -64,62 +63,44 @@ class Kumaraswamy(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(nb_logpdf(x, self.a, self.b))
+        return ptd_pdf(x, self.a, self.b)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.a, self.b)
+        return ptd_cdf(x, self.a, self.b)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.a, self.b)
+        return ptd_ppf(q, self.a, self.b)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.a, self.b)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.a, self.b)
+        return ptd_logpdf(x, self.a, self.b)
 
     def entropy(self):
-        return nb_entropy(self.a, self.b)
+        return ptd_entropy(self.a, self.b)
 
     def mean(self):
-        return _mom(self.a, self.b, 1)
+        return ptd_mean(self.a, self.b)
 
     def mode(self):
-        return np.where(
-            (self.a > 1) | (self.b > 1), ((self.a - 1) / (self.a * self.b - 1)) ** (1 / self.a), 0.5
-        )
+        return ptd_mode(self.a, self.b)
 
     def median(self):
-        return (1 - 2 ** -(1 / self.b)) ** (1 / self.a)
+        return ptd_median(self.a, self.b)
 
     def var(self):
-        m_1 = _mom(self.a, self.b, 1)
-        m_2 = _mom(self.a, self.b, 2)
-        return m_2 - m_1**2
+        return ptd_var(self.a, self.b)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.a, self.b)
 
     def skewness(self):
-        mean = self.mean()
-        var = self.var()
-        m_3 = _mom(self.a, self.b, 3)
-        return (m_3 - 3 * mean * var - mean**3) / var**1.5
+        return ptd_skewness(self.a, self.b)
 
     def kurtosis(self):
-        mean = self.mean()
-        var = self.var()
-        m_2 = _mom(self.a, self.b, 2)
-        m_3 = _mom(self.a, self.b, 3)
-        m_4 = _mom(self.a, self.b, 4)
-        return (m_4 + mean * (-4 * m_3 + mean * (6 * m_2 - 3 * mean**2))) / var**2 - 3
+        return ptd_kurtosis(self.a, self.b)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return self.ppf(random_state.random(size))
+        return ptd_rvs(self.a, self.b, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         optimize_mean_sigma(self, mean, sigma)
@@ -128,36 +109,66 @@ class Kumaraswamy(Continuous):
         optimize_ml(self, sample, **kwargs)
 
 
-@nb.njit(cache=True)
-def nb_cdf(x, a, b):
-    prob = 1 - (1 - x**a) ** b
-    return cdf_bounds(prob, x, 0, 1)
+@pytensor_jit
+def ptd_pdf(x, a, b):
+    return ptd_kumaraswamy.pdf(x, a, b)
 
 
-@nb.njit(cache=True)
-def nb_ppf(q, a, b):
-    x_val = (1 - (1 - q) ** (1 / b)) ** (1 / a)
-    return ppf_bounds_cont(x_val, q, 0, 1)
+@pytensor_jit
+def ptd_cdf(x, a, b):
+    return ptd_kumaraswamy.cdf(x, a, b)
 
 
-@nb.njit(cache=True)
-def nb_entropy(a, b):
-    h_b = digamma(b + 1) + np.euler_gamma
-    return (1 - 1 / b) + (1 - 1 / a) * h_b - np.log(a) - np.log(b)
+@pytensor_jit
+def ptd_ppf(q, a, b):
+    return ptd_kumaraswamy.ppf(q, a, b)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, a, b):
-    if x <= 0 or x >= 1:
-        return -np.inf
-    else:
-        return np.log(a * b) + xlogy((a - 1), x) + xlog1py((b - 1), -(x**a))
+@pytensor_jit
+def ptd_logpdf(x, a, b):
+    return ptd_kumaraswamy.logpdf(x, a, b)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, a, b):
-    return -(nb_logpdf(x, a, b)).sum()
+@pytensor_jit
+def ptd_entropy(a, b):
+    return ptd_kumaraswamy.entropy(a, b)
 
 
-def _mom(a, b, n):
-    return b * beta(1 + n / a, b)
+@pytensor_jit
+def ptd_mean(a, b):
+    return ptd_kumaraswamy.mean(a, b)
+
+
+@pytensor_jit
+def ptd_mode(a, b):
+    return ptd_kumaraswamy.mode(a, b)
+
+
+@pytensor_jit
+def ptd_median(a, b):
+    return ptd_kumaraswamy.median(a, b)
+
+
+@pytensor_jit
+def ptd_var(a, b):
+    return ptd_kumaraswamy.var(a, b)
+
+
+@pytensor_jit
+def ptd_std(a, b):
+    return ptd_kumaraswamy.std(a, b)
+
+
+@pytensor_jit
+def ptd_skewness(a, b):
+    return ptd_kumaraswamy.skewness(a, b)
+
+
+@pytensor_jit
+def ptd_kurtosis(a, b):
+    return ptd_kumaraswamy.kurtosis(a, b)
+
+
+@pytensor_rng_jit
+def ptd_rvs(a, b, size, rng):
+    return ptd_kumaraswamy.rvs(a, b, size=size, random_state=rng)

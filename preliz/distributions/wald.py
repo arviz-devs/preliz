@@ -1,11 +1,9 @@
-import numba as nb
 import numpy as np
-from scipy.special import expi, ndtr
+from pytensor_distributions import wald as ptd_wald
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, eps
-from preliz.internal.optimization import find_ppf, optimize_ml
-from preliz.internal.special import cdf_bounds
+from preliz.internal.distribution_helper import all_not_none, eps, pytensor_jit, pytensor_rng_jit
+from preliz.internal.optimization import optimize_ml
 
 
 class Wald(Continuous):
@@ -114,52 +112,44 @@ class Wald(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.array(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.mu, self.lam)
 
     def cdf(self, x):
-        x = np.array(x)
-        return nb_cdf(x, self.mu, self.lam)
+        return ptd_cdf(x, self.mu, self.lam)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return find_ppf(self, q)
+        return ptd_ppf(q, self.mu, self.lam)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.mu, self.lam)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.mu, self.lam)
+        return ptd_logpdf(x, self.mu, self.lam)
 
     def entropy(self):
-        return nb_entropy(self.mu, self.lam)
+        return ptd_entropy(self.mu, self.lam)
 
     def mean(self):
-        return self.mu
+        return ptd_mean(self.mu, self.lam)
 
     def mode(self):
-        return self.mu * (
-            (1 + (9 * self.mu**2) / (4 * self.lam**2)) ** 0.5 - (3 * self.mu) / (2 * self.lam)
-        )
+        return ptd_mode(self.mu, self.lam)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.mu, self.lam)
 
     def var(self):
-        return self.mu**3 / self.lam
+        return ptd_var(self.mu, self.lam)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.mu, self.lam)
 
     def skewness(self):
-        return 3 * (self.mu / self.lam) ** 0.5
+        return ptd_skewness(self.mu, self.lam)
 
     def kurtosis(self):
-        return 15 * self.mu / self.lam
+        return ptd_kurtosis(self.mu, self.lam)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return random_state.wald(self.mu, self.lam, size)
+        return ptd_rvs(self.mu, self.lam, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         lam = mean**3 / sigma**2
@@ -169,32 +159,66 @@ class Wald(Continuous):
         optimize_ml(self, sample)
 
 
-def nb_cdf(x, mu, lam):
-    x = np.asarray(x)
-    u = (lam / (x + eps)) ** 0.5
-    v = x / mu
-    z = ndtr(u * (v - 1)) + np.exp(2 * lam / mu) * ndtr(-u * (v + 1))
-    return cdf_bounds(z, x, 0, np.inf)
+@pytensor_jit
+def ptd_pdf(x, mu, lam):
+    return ptd_wald.pdf(x, mu, lam)
 
 
-def nb_entropy(mu, lam):
-    return 0.5 * np.log((2 * np.pi * np.e * mu**3) / lam) + 3 / 2 * np.exp(2 * lam / mu) * expi(
-        -2 * lam / mu
-    )
+@pytensor_jit
+def ptd_cdf(x, mu, lam):
+    return ptd_wald.cdf(x, mu, lam)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, mu, lam):
-    if x <= 0:
-        return -np.inf
-    elif x == np.inf:
-        return -np.inf
-    else:
-        return (
-            np.log(lam) - (np.log(2 * np.pi) + 3 * np.log(x)) - lam * (x - mu) ** 2 / (mu**2 * x)
-        ) / 2
+@pytensor_jit
+def ptd_ppf(q, mu, lam):
+    return ptd_wald.ppf(q, mu, lam)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, mu, lam):
-    return -(nb_logpdf(x, mu, lam)).sum()
+@pytensor_jit
+def ptd_logpdf(x, mu, lam):
+    return ptd_wald.logpdf(x, mu, lam)
+
+
+@pytensor_jit
+def ptd_entropy(mu, lam):
+    return ptd_wald.entropy(mu, lam)
+
+
+@pytensor_jit
+def ptd_mean(mu, lam):
+    return ptd_wald.mean(mu, lam)
+
+
+@pytensor_jit
+def ptd_mode(mu, lam):
+    return ptd_wald.mode(mu, lam)
+
+
+@pytensor_jit
+def ptd_median(mu, lam):
+    return ptd_wald.median(mu, lam)
+
+
+@pytensor_jit
+def ptd_var(mu, lam):
+    return ptd_wald.var(mu, lam)
+
+
+@pytensor_jit
+def ptd_std(mu, lam):
+    return ptd_wald.std(mu, lam)
+
+
+@pytensor_jit
+def ptd_skewness(mu, lam):
+    return ptd_wald.skewness(mu, lam)
+
+
+@pytensor_jit
+def ptd_kurtosis(mu, lam):
+    return ptd_wald.kurtosis(mu, lam)
+
+
+@pytensor_rng_jit
+def ptd_rvs(mu, lam, size, rng):
+    return ptd_wald.rvs(mu, lam, size=size, random_state=rng)

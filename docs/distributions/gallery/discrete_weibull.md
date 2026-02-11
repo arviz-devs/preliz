@@ -25,7 +25,7 @@ The Discrete Weibull distribution is predominantly used in reliability engineeri
 Support   :math:`x \in \mathbb{N}_0`
 Mean      :math:`\mu = \sum_{x = 1}^{\infty} q^{x^{\beta}}`
 Variance  :math:`2 \sum_{x = 1}^{\infty} x q^{x^{\beta}} - \mu - \mu^2`
-========  ===============================================
+========  ==========================================
 ```
 
 **Parameters:**

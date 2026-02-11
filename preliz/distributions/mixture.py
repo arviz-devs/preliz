@@ -91,9 +91,6 @@ class Mixture(DistributionTransformer):
             [dist.logpdf(x) * weight for dist, weight in zip(self.dist, self.weights)], axis=0
         )
 
-    def _neg_logpdf(self, x):
-        return -self.logpdf(x).sum()
-
     def entropy(self):
         x_values = self.xvals("restricted")
         logpdf = self.logpdf(x_values)

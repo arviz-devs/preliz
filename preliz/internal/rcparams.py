@@ -48,17 +48,6 @@ def _make_validate_choice(accepted_values, allow_none=False, typeof=str):
     return validate_choice
 
 
-def _validate_positive_int(value):
-    """Validate value is a natural number."""
-    try:
-        value = int(value)
-    except ValueError as err:
-        raise ValueError("Could not convert to int") from err
-    if value > 0:
-        return value
-    raise ValueError("Only positive values are valid")
-
-
 def _validate_float(value):
     """Validate value is a float."""
     try:
@@ -83,19 +72,6 @@ def _validate_boolean(value):
     if value not in {True, False, "true", "false"}:
         raise ValueError("Only boolean values are valid.")
     return value is True or value == "true"
-
-
-def _add_none_to_validator(base_validator):
-    """Create a validator function that catches none and then calls base_fun."""
-    # no blank lines allowed after function docstring by pydocstyle,
-    # but black requires white line before function
-
-    def validate_with_none(value):
-        if value is None or isinstance(value, str) and value.lower() == "none":
-            return None
-        return base_validator(value)
-
-    return validate_with_none
 
 
 def make_iterable_validator(scalar_validator, length=None, allow_none=False, allow_auto=False):

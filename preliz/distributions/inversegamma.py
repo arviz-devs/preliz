@@ -1,11 +1,16 @@
 import numba as nb
 import numpy as np
-from scipy.special import gammaincc, gammainccinv
+from pytensor_distributions import inversegamma as ptd_inversegamma
 
 from preliz.distributions.distributions import Continuous
-from preliz.internal.distribution_helper import all_not_none, any_not_none, eps
+from preliz.internal.distribution_helper import (
+    all_not_none,
+    any_not_none,
+    eps,
+    pytensor_jit,
+    pytensor_rng_jit,
+)
 from preliz.internal.optimization import optimize_ml
-from preliz.internal.special import cdf_bounds, digamma, gammaln, ppf_bounds_cont, xlogy
 
 
 class InverseGamma(Continuous):
@@ -77,7 +82,7 @@ class InverseGamma(Continuous):
             self.sigma = sigma
             self.param_names = ("mu", "sigma")
             if all_not_none(mu, sigma):
-                alpha, beta = _from_mu_sigma(mu, sigma)
+                alpha, beta = ptd_inversegamma.from_mu_sigma(mu, sigma)
 
         self.alpha = alpha
         self.beta = beta
@@ -98,56 +103,44 @@ class InverseGamma(Continuous):
         self.is_frozen = True
 
     def pdf(self, x):
-        x = np.asarray(x)
-        return np.exp(self.logpdf(x))
+        return ptd_pdf(x, self.alpha, self.beta)
 
     def cdf(self, x):
-        x = np.asarray(x)
-        return nb_cdf(x, self.alpha, self.beta, 0, np.inf)
+        return ptd_cdf(x, self.alpha, self.beta)
 
     def ppf(self, q):
-        q = np.asarray(q)
-        return nb_ppf(q, self.alpha, self.beta, 0, np.inf)
+        return ptd_ppf(q, self.alpha, self.beta)
 
     def logpdf(self, x):
-        return nb_logpdf(x, self.alpha, self.beta)
-
-    def _neg_logpdf(self, x):
-        return nb_neg_logpdf(x, self.alpha, self.beta)
+        return ptd_logpdf(x, self.alpha, self.beta)
 
     def entropy(self):
-        return nb_entropy(self.alpha, self.beta)
+        return ptd_entropy(self.alpha, self.beta)
 
     def mean(self):
-        return np.where(self.alpha > 1, self.beta / (self.alpha - 1), np.inf)
+        return ptd_mean(self.alpha, self.beta)
 
     def mode(self):
-        return self.beta / (self.alpha + 1)
+        return ptd_mode(self.alpha, self.beta)
 
     def median(self):
-        return self.ppf(0.5)
+        return ptd_median(self.alpha, self.beta)
 
     def var(self):
-        return np.where(
-            self.alpha > 2, self.beta**2 / ((self.alpha - 1) ** 2 * (self.alpha - 2)), np.inf
-        )
+        return ptd_var(self.alpha, self.beta)
 
     def std(self):
-        return self.var() ** 0.5
+        return ptd_std(self.alpha, self.beta)
 
     def skewness(self):
-        return np.where(self.alpha > 3, 4 * (self.alpha - 2) ** 0.5 / (self.alpha - 3), np.nan)
+        return ptd_skewness(self.alpha, self.beta)
 
     def kurtosis(self):
-        return np.where(
-            self.alpha > 4,
-            6 * (5 * self.alpha - 11) / ((self.alpha - 3) * (self.alpha - 4)),
-            np.nan,
-        )
+        return ptd_kurtosis(self.alpha, self.beta)
 
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
-        return 1 / random_state.gamma(self.alpha, 1 / self.beta, size)
+        return ptd_rvs(self.alpha, self.beta, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
         alpha, beta = _from_mu_sigma(mean, sigma)
@@ -157,32 +150,69 @@ class InverseGamma(Continuous):
         optimize_ml(self, sample)
 
 
-def nb_cdf(x, alpha, beta, lower, upper):
-    prob = gammaincc(alpha, beta / x)
-    return cdf_bounds(prob, x, lower, upper)
+@pytensor_jit
+def ptd_pdf(x, alpha, beta):
+    return ptd_inversegamma.pdf(x, alpha, beta)
 
 
-def nb_ppf(q, alpha, beta, lower, upper):
-    x_val = beta / gammainccinv(alpha, q)
-    return ppf_bounds_cont(x_val, q, lower, upper)
+@pytensor_jit
+def ptd_cdf(x, alpha, beta):
+    return ptd_inversegamma.cdf(x, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_entropy(alpha, beta):
-    return alpha + gammaln(alpha) - (1 + alpha) * digamma(alpha) + np.log(beta)
+@pytensor_jit
+def ptd_ppf(q, alpha, beta):
+    return ptd_inversegamma.ppf(q, alpha, beta)
 
 
-@nb.vectorize(nopython=True, cache=True)
-def nb_logpdf(x, alpha, beta):
-    if x <= 0:
-        return -np.inf
-    else:
-        return xlogy(alpha, beta) - gammaln(alpha) - xlogy((alpha + 1), x) - beta / x
+@pytensor_jit
+def ptd_logpdf(x, alpha, beta):
+    return ptd_inversegamma.logpdf(x, alpha, beta)
 
 
-@nb.njit(cache=True)
-def nb_neg_logpdf(x, alpha, beta):
-    return -(nb_logpdf(x, alpha, beta)).sum()
+@pytensor_jit
+def ptd_entropy(alpha, beta):
+    return ptd_inversegamma.entropy(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mean(alpha, beta):
+    return ptd_inversegamma.mean(alpha, beta)
+
+
+@pytensor_jit
+def ptd_mode(alpha, beta):
+    return ptd_inversegamma.mode(alpha, beta)
+
+
+@pytensor_jit
+def ptd_median(alpha, beta):
+    return ptd_inversegamma.median(alpha, beta)
+
+
+@pytensor_jit
+def ptd_var(alpha, beta):
+    return ptd_inversegamma.var(alpha, beta)
+
+
+@pytensor_jit
+def ptd_std(alpha, beta):
+    return ptd_inversegamma.std(alpha, beta)
+
+
+@pytensor_jit
+def ptd_skewness(alpha, beta):
+    return ptd_inversegamma.skewness(alpha, beta)
+
+
+@pytensor_jit
+def ptd_kurtosis(alpha, beta):
+    return ptd_inversegamma.kurtosis(alpha, beta)
+
+
+@pytensor_rng_jit
+def ptd_rvs(alpha, beta, size, rng):
+    return ptd_inversegamma.rvs(alpha, beta, size=size, random_state=rng)
 
 
 def _from_mu_sigma(mu, sigma):

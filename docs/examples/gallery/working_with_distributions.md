@@ -109,7 +109,7 @@ One important note is that PreliZ computes the [excess kurtosis](https://en.wiki
 
 ```{jupyter-execute}
 
-pz.Normal().kurtosis()
+pz.Normal(0, 1).kurtosis()
 ```
 
 ## Alternative parametrization
