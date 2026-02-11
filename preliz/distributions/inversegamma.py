@@ -1,3 +1,4 @@
+import numba as nb
 import numpy as np
 from pytensor_distributions import inversegamma as ptd_inversegamma
 
@@ -91,8 +92,8 @@ class InverseGamma(Continuous):
     def _update(self, alpha, beta):
         self.alpha = np.float64(alpha)
         self.beta = np.float64(beta)
-        self.mu = ptd_inversegamma.to_mu(self.alpha, self.beta)
-        self.sigma = ptd_inversegamma.to_sigma(self.alpha, self.beta)
+        self.mu = _to_mu(self.alpha, self.beta)
+        self.sigma = _to_sigma(self.alpha, self.beta)
 
         if self.param_names[0] == "alpha":
             self.params = (self.alpha, self.beta)
@@ -142,7 +143,7 @@ class InverseGamma(Continuous):
         return ptd_rvs(self.alpha, self.beta, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
-        alpha, beta = ptd_inversegamma.from_mu_sigma(mean, sigma)
+        alpha, beta = _from_mu_sigma(mean, sigma)
         self._update(alpha, beta)
 
     def _fit_mle(self, sample):
@@ -212,3 +213,25 @@ def ptd_kurtosis(alpha, beta):
 @pytensor_rng_jit
 def ptd_rvs(alpha, beta, size, rng):
     return ptd_inversegamma.rvs(alpha, beta, size=size, random_state=rng)
+
+
+def _from_mu_sigma(mu, sigma):
+    alpha = mu**2 / sigma**2 + 2
+    beta = mu**3 / sigma**2 + mu
+    return alpha, beta
+
+
+@nb.vectorize(nopython=True, cache=True)
+def _to_mu(alpha, beta):
+    if alpha > 1:
+        return beta / (alpha - 1)
+    else:
+        return np.nan
+
+
+@nb.vectorize(nopython=True, cache=True)
+def _to_sigma(alpha, beta):
+    if alpha > 2:
+        return beta / ((alpha - 1) * (alpha - 2) ** 0.5)
+    else:
+        return np.nan

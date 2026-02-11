@@ -76,7 +76,7 @@ class AsymmetricLaplace(Continuous):
 
         if q is not None:
             self.q = q
-            kappa = ptd_asymmetriclaplace.from_q(q)
+            kappa = _from_q(q)
             self.param_names = ("q", "mu", "b")
             self.params_support = ((eps, 1 - eps), (-pt.inf, pt.inf), (eps, pt.inf))
 
@@ -90,7 +90,7 @@ class AsymmetricLaplace(Continuous):
         self.kappa = np.float64(kappa)
         self.mu = np.float64(mu)
         self.b = np.float64(b)
-        self.q = ptd_asymmetriclaplace.to_q(self.kappa)
+        self.q = _to_q(self.kappa)
 
         if self.param_names[0] == "kappa":
             self.params = (self.kappa, self.mu, self.b)
@@ -212,3 +212,13 @@ def ptd_kurtosis(mu, b, kappa):
 @pytensor_rng_jit
 def ptd_rvs(mu, b, kappa, size, rng):
     return ptd_asymmetriclaplace.rvs(mu, b, kappa, size=size, random_state=rng)
+
+
+def _from_q(q):
+    kappa = (q / (1 - q)) ** 0.5
+    return kappa
+
+
+def _to_q(kappa):
+    q = kappa**2 / (1 + kappa**2)
+    return q
