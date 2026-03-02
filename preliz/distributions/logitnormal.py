@@ -134,7 +134,7 @@ class LogitNormal(Continuous):
 
     def _fit_moments(self, mean, sigma):
         mu = logit(mean)
-        sigma = np.diff((mean - sigma * 3, mean + sigma * 3))
+        sigma = np.diff((mean - sigma * 3, mean + sigma * 3)).squeeze()
         self._update(mu, sigma)
 
     def _fit_mle(self, sample):
