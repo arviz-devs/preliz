@@ -1,3 +1,24 @@
+<a id="0.24.0"></a>
+# [0.24.0](https://github.com/arviz-devs/preliz/releases/tag/0.24.0) - 2026-03-02
+
+## What's Changed
+
+### Maintenance and bug fixes 
+* Use PyTensor distributions by [@aloctavodia](https://github.com/aloctavodia) in [#706](https://github.com/arviz-devs/preliz/pull/706)
+ 
+### Documentation
+* Correct grammar issues in documentation by [@star1327p](https://github.com/star1327p) in [#703](https://github.com/arviz-devs/preliz/pull/703)
+* Change init val for AsymmetricLaplace by [@aloctavodia](https://github.com/aloctavodia) in [#704](https://github.com/arviz-devs/preliz/pull/704)
+* Add example for Scaled Inverse chi-squared by [@rohanbabbar04](https://github.com/rohanbabbar04) in [#705](https://github.com/arviz-devs/preliz/pull/705)
+* Fix sphinx version to avoid issue with sphinx-tabs by [@aloctavodia](https://github.com/aloctavodia) in [#707](https://github.com/arviz-devs/preliz/pull/707)
+
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.23.0...0.24.0
+
+[Changes][0.24.0]
+
+
 <a id="0.23.0"></a>
 # [0.23.0](https://github.com/arviz-devs/preliz/releases/tag/0.23.0) - 2025-11-05
 
@@ -941,6 +962,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.24.0]: https://github.com/arviz-devs/preliz/compare/0.23.0...0.24.0
 [0.23.0]: https://github.com/arviz-devs/preliz/compare/0.22.0...0.23.0
 [0.22.0]: https://github.com/arviz-devs/preliz/compare/0.21.0...0.22.0
 [0.21.0]: https://github.com/arviz-devs/preliz/compare/0.20.0...0.21.0
