@@ -224,14 +224,16 @@ def optimize_moments_rice(mean, std_dev):
             return (xi(theta) * (1 + ratio**2) - 2) ** 0.5
 
         def func(theta):
-            return np.abs(fpf(theta) - theta)
+            theta0 = theta[0]
+            return abs(fpf(theta0) - theta0)
 
-        theta = minimize(func, x0=fpf(1), bounds=[(0, None)]).x
+        theta0 = float(fpf(1.0))
+        theta = minimize(func, x0=np.array([theta0]), bounds=[(0, None)]).x.item()
         xi_theta = xi(theta)
         sigma = std_dev / xi_theta**0.5
         nu = (mean**2 + (xi_theta - 2) * sigma**2) ** 0.5
 
-    return nu, sigma
+    return float(nu), float(sigma)
 
 
 def optimize_ml(dist, sample):
