@@ -27,3 +27,4 @@ dependencies:
   - pip:
       - lxml
       - ipytest
+      - pytensor_distributions>=0.1.2
