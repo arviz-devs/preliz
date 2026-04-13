@@ -4,7 +4,7 @@ from sys import modules
 
 import numpy as np
 from pytensor import function
-from pytensor.compile.function.types import Function, In
+from pytensor.compile import Function, In
 from pytensor.tensor import tensor
 from pytensor.tensor.random.type import random_generator_type
 

@@ -8,7 +8,7 @@ nbformat
 lxml
 ipykernel
 pandas
-pymc>=5.24.0
+pymc @ git+https://github.com/pymc-devs/pymc.git@v6
 bambi>=0.13.0
 pymc-extras
 ruff
