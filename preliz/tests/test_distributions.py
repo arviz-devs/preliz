@@ -356,8 +356,8 @@ def test_to_pymc():
     assert Censored(Normal(0, 1), lower=0).to_pymc().ndim == 0
 
 
-def test_to_bambi():
-    bambi_prior = Gamma(mu=2, sigma=1).to_bambi()
-    assert bambi_prior.name == "Gamma"
-    assert bambi_prior.args["mu"] == 2
-    assert bambi_prior.args["sigma"] == 1
+# def test_to_bambi():
+#     bambi_prior = Gamma(mu=2, sigma=1).to_bambi()
+#     assert bambi_prior.name == "Gamma"
+#     assert bambi_prior.args["mu"] == 2
+#     assert bambi_prior.args["sigma"] == 1

@@ -8,6 +8,7 @@ from contextlib import contextmanager
 
 import matplotlib.pyplot as plt
 import numpy as np
+from arviz_base import extract
 
 from preliz import distributions
 from preliz.distributions import Gamma, HalfNormal, Normal
@@ -81,7 +82,7 @@ def posterior_to_prior(model, idata, new_families=None, engine="auto"):
 
 def back_fitting_idata(idata, model_info, new_families):
     new_priors = {}
-    posterior = idata.posterior.stack(sample=("chain", "draw"))
+    posterior = extract(idata)
 
     if new_families is None:
         for var, dist in model_info.items():
