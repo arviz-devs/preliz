@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import tri
 
-from preliz.internal.plot_helper import repr_to_matplotlib
 from preliz.internal.special import gammaln
 
 
@@ -194,7 +193,7 @@ def plot_dirichlet(
                 ax.set_ylim(*ylim)
 
         if legend == "title":
-            fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
+            fig.text(0.5, 1, dist, ha="center", va="center")
 
     elif dim == 3:
         dirichlet_ = DirichletOnSimplex(alpha)
@@ -203,7 +202,7 @@ def plot_dirichlet(
                 _, axes = plt.subplots(1, 1)
             dirichlet_.plot(ax=axes)
             if legend == "title":
-                axes.set_title(repr_to_matplotlib(dist))
+                axes.set_title(dist)
     else:
         raise ValueError("joint only works for Dirichlet of dim=3")
 
@@ -354,14 +353,14 @@ def plot_mvnormal(
             if xy_lim != "auto" and representation != "cdf":
                 ax.set_ylim(*ylim)
         if legend == "title":
-            fig.text(0.5, 1, repr_to_matplotlib(dist), ha="center", va="center")
+            fig.text(0.5, 1, dist, ha="center", va="center")
 
     elif dim == 2:
         if axes is None:
             _, axes = plt.subplots(1, 1)
         joint_normal(dist, axes)
         if legend == "title":
-            axes.set_title(repr_to_matplotlib(dist))
+            axes.set_title(dist)
     else:
         raise ValueError("joint only works for Multivariate Normal of dim=2")
 

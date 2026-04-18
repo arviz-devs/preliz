@@ -1,7 +1,6 @@
 import numpy as np
 
 from preliz.internal.distribution_helper import get_distributions
-from preliz.internal.plot_helper import repr_to_matplotlib
 from preliz.unidimensional import mle
 
 
@@ -11,7 +10,7 @@ def back_fitting_ppa(model, subset, new_families=True):
 
     for name, dist in model.items():
         dist._fit_mle(subset[name])
-        string += f"{name} = {repr_to_matplotlib(dist)}\n"
+        string += f"{name} = {dist}\n"
 
     if new_families:
         string += "\nYour selection is consistent with the priors (new families):\n"
@@ -26,7 +25,7 @@ def back_fitting_ppa(model, subset, new_families=True):
             elif dist.kind == "discrete":
                 distributions = get_distributions(set([dist.__class__.__name__] + common_disc))
             idx, _ = mle(distributions, subset[name], plot=False)
-            string += f"{name} = {repr_to_matplotlib(distributions[idx[0]])}\n"
+            string += f"{name} = {distributions[idx[0]]}\n"
 
     return string, np.concatenate([dist.params for dist in model.values()])
 
