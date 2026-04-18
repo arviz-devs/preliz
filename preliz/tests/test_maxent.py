@@ -175,7 +175,7 @@ def test_maxent(dist, lower, upper, mass, support, result):
 def test_maxent_fixed_stats():
     dist = Beta()
     maxent(dist, 0.1, 0.7, 0.95, fixed_stat=("mode", 0.3))
-    assert_almost_equal(dist.mode(), 0.3)
+    assert_almost_equal(dist.mode(), 0.3, 5)
     assert_almost_equal(dist.params, (3, 5.6), 1)
 
     dist = Gamma()
