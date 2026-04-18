@@ -19,11 +19,9 @@ except ImportError:
 
 def test_p2p_pymc():
     posterior_to_prior(model, idata)
-    assert 'Gamma\x1b[0m("b", alpha=' in posterior_to_prior(model, idata, new_families="auto")
+    assert 'Gamma("b", alpha=' in posterior_to_prior(model, idata, new_families="auto")
     posterior_to_prior(model, idata, new_families=[LogNormal()])
-    assert 'Gamma\x1b[0m("b", mu=' in posterior_to_prior(
-        model, idata, new_families={"b": [Gamma(mu=0)]}
-    )
+    assert 'Gamma("b", mu=' in posterior_to_prior(model, idata, new_families={"b": [Gamma(mu=0)]})
 
 
 # Temporarily disabled bambi test

@@ -39,37 +39,42 @@ class Distribution:
         self.is_frozen = False
         self.opt = None
 
-    def __repr__(self):
+    def _get_name(self):
+        """Return the display name for this distribution."""
         name = self.__class__.__name__
         if name in ["Truncated", "Censored", "Hurdle"]:
             name += self.dist.__class__.__name__
         if name == "Mixture":
-            name = (
-                "Mixture"
-                + "".join(dict.fromkeys(dist.__class__.__name__ for dist in self.dist))
-                + "\n"
+            name = "Mixture" + "".join(dict.fromkeys(dist.__class__.__name__ for dist in self.dist))
+        return name
+
+    def _get_description(self):
+        """Return a string of parameters, or empty string if not frozen."""
+        if not self.is_frozen:
+            return ""
+        return "".join(
+            (
+                f"{n}={v:.3g}, "
+                if np.isscalar(v) or np.ndim(v) == 0
+                else f"{n}=["
+                + "".join(f"{vi:.3g}, " for vi in np.atleast_1d(v)).strip(", ")
+                + "], "
             )
+            for n, v in zip(self.param_names, self.params)
+        ).strip(", ")
 
+    def __repr__(self):
+        name = self._get_name()
         if self.is_frozen:
-            if "Mixture" in name:
-                bolded_name = "\033[1m" + name.strip() + "\033[0m" + "\n"
-            else:
-                bolded_name = "\033[1m" + name + "\033[0m"
+            return f"{name}({self._get_description()})"
+        return name
 
-            description = "".join(
-                (
-                    f"{n}={v:.3g}, "
-                    if np.isscalar(v) or np.ndim(v) == 0
-                    else f"{n}=["
-                    + "".join(f"{vi:.3g}, " for vi in np.atleast_1d(v)).strip(", ")
-                    + "], "
-                )
-                for n, v in zip(self.param_names, self.params)
-            ).strip(", ")
-
-            return f"{bolded_name}({description})"
-        else:
-            return name
+    def _repr_html_(self):
+        name = self._get_name()
+        if self.is_frozen:
+            desc = self._get_description()
+            return f"<span style='font-weight:bold'>{name}</span><span'>({desc})</span>"
+        return f"<span style='font-weight:bold'>{name}</span>"
 
     @property
     def params_dict(self):

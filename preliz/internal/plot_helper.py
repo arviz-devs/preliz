@@ -311,13 +311,6 @@ def side_legend(legend, ax):
         ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
 
-def repr_to_matplotlib(distribution):
-    string = repr(distribution)
-    string = string.replace("\x1b[1m", r"$\bf{")
-    string = string.replace("\x1b[0m", "}$")
-    return string
-
-
 def get_moments(dist, moments):
     names = {
         "m": "μ",
@@ -727,7 +720,7 @@ def set_label(dist, legend, moments, ax):
         if isinstance(legend, str) and legend not in ["title", "legend"]:
             label = legend
         else:
-            label = repr_to_matplotlib(dist)
+            label = str(dist)
 
             if moments is not None:
                 label += get_moments(dist, moments)
