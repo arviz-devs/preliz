@@ -21,9 +21,9 @@ def match_moments(
 
     Parameters
     ----------
-    from_dist : PreliZ distribution or PyMC distribution
-        Instance of a fully parametrized PreliZ distribution. We will take the moments
-        from this distribution.
+    from_dist : PreliZ or PyMC distribution or array-like
+        Instance of a fully parametrized PreliZ distribution or array-like data.
+        We will take the moments from this distribution or data.
     to_dist : PreliZ distribution or PyMC distribution
         Instance of a distribution to be fitted to match the moments of `from_dist`.
         If a PreliZ distribution then it can have some parameters fixed.
@@ -91,10 +91,31 @@ def match_moments(
 
     none_idx, fixed = get_fixed_params(to_dist)
 
-    if not from_dist.is_frozen:
-        raise ValueError("`from_dist` must be a fully parametrized distribution.")
+    if hasattr(from_dist, "is_frozen"):
+        if not from_dist.is_frozen:
+            raise ValueError("`from_dist` must be a fully parametrized distribution.")
+        else:
+            target_values = np.array(from_dist.moments(moments))
+            mean = from_dist.mean()
+            std = from_dist.std()
+            is_array_like = False
+    else:
+        target_values = []
+        mean = np.mean(from_dist)
+        std = np.std(from_dist)
+        if "m" in moments:
+            target_values.append(mean)
+        if "v" in moments:
+            target_values.append(np.var(from_dist))
+        if "d" in moments:
+            target_values.append(std)
+        if "s" in moments:
+            target_values.append(np.mean(((from_dist - mean) / std) ** 3))
+        if "k" in moments:
+            target_values.append(np.mean(((from_dist - mean) / std) ** 4))
+        target_values = np.array(target_values)
+        is_array_like = True
 
-    target_values = np.array(from_dist.moments(moments))
     if not np.any(np.isfinite(target_values)):
         raise ValueError(
             f"At least one of the requested moments ({moments}) of `from_dist` is not finite."
@@ -103,7 +124,7 @@ def match_moments(
     # Initialize `to_dist` to a distribution matching the mean and standard deviation
     # of `from_dist`. The ``_fit_moments`` method is correct for some distributions,
     # but just a heuristic for others.
-    to_dist._fit_moments(from_dist.mean(), from_dist.std())
+    to_dist._fit_moments(mean, std)
 
     opt = optimize_moments(to_dist, moments, target_values, none_idx, fixed)
     to_dist.opt = opt
@@ -117,7 +138,8 @@ def match_moments(
     _check_relative_error(moments, target_values, requested_moments)
 
     if plot:
-        ax = from_dist.plot_pdf(**plot_kwargs)
+        if not is_array_like:
+            ax = from_dist.plot_pdf(**plot_kwargs)
         to_dist.plot_pdf(ax=ax, **plot_kwargs)
         return to_dist, ax
 
@@ -137,9 +159,9 @@ def match_quantiles(
 
     Parameters
     ----------
-    from_dist : PreliZ distribution or PyMC distribution
-        Instance of a fully parametrized PreliZ distribution. We will take the moments
-        from this distribution.
+    from_dist : PreliZ or PyMC distribution or array-like
+        Instance of a fully parametrized PreliZ distribution or an array-like object.
+        We will take the quantiles from this distribution or array.
     to_dist : PreliZ distribution or PyMC distribution
         Instance of a distribution to be fitted to match the quantiles of `from_dist`.
         If a PreliZ distribution then it can have some parameters fixed.
@@ -211,12 +233,24 @@ def match_quantiles(
 
     none_idx, fixed = get_fixed_params(to_dist)
 
-    target_values = np.array(from_dist.ppf(quantiles))
+    if hasattr(from_dist, "is_frozen"):
+        if not from_dist.is_frozen:
+            raise ValueError("`from_dist` must be a fully parametrized distribution.")
+        else:
+            target_values = np.array(from_dist.ppf(quantiles))
+            mean = from_dist.mean()
+            std = from_dist.std()
+            is_array_like = False
+    else:
+        target_values = np.quantile(from_dist, quantiles)
+        mean = np.mean(from_dist)
+        std = np.std(from_dist)
+        is_array_like = True
 
     # Initialize `to_dist` to a distribution matching the mean and standard deviation
     # of `from_dist`. The ``_fit_moments`` method is correct for some distributions,
     # but just a heuristic for others.
-    to_dist._fit_moments(from_dist.mean(), from_dist.std())
+    to_dist._fit_moments(mean, std)
 
     opt = optimize_quantiles(to_dist, quantiles, target_values, none_idx, fixed)
     to_dist.opt = opt
@@ -225,7 +259,8 @@ def match_quantiles(
     _check_relative_error(quantiles, target_values, requested_moments, tol=0.1)
 
     if plot:
-        ax = from_dist.plot_pdf(**plot_kwargs)
+        if not is_array_like:
+            ax = from_dist.plot_pdf(**plot_kwargs)
         to_dist.plot_pdf(ax=ax, **plot_kwargs)
         return to_dist, ax
 
