@@ -11,20 +11,29 @@ def normal_dist():
 
 
 @pytest.fixture
+def normal_array():
+    return pz.Normal(15, 1).rvs(size=1000, random_state=247)
+
+
+@pytest.fixture
 def gamma_dist():
     return pz.Gamma()
 
 
-def test_match_moments_basic(normal_dist, gamma_dist):
-    match_moments(normal_dist, gamma_dist)
-    assert np.isclose(gamma_dist.mean(), normal_dist.mean(), atol=1e-2)
-    assert np.isclose(gamma_dist.std(), normal_dist.std(), atol=1e-2)
+@pytest.mark.parametrize("dist", ["normal_dist", "normal_array"])
+def test_match_moments_basic_parametrized(dist, gamma_dist, request):
+    dist = request.getfixturevalue(dist)
+    match_moments(dist, gamma_dist)
+    assert np.isclose(gamma_dist.mean(), dist.mean(), atol=1e-2)
+    assert np.isclose(gamma_dist.std(), dist.std(), atol=1e-2)
 
 
-def test_match_moments_custom_moments(normal_dist, gamma_dist):
-    match_moments(normal_dist, gamma_dist, moments="mdk")
-    assert np.isclose(gamma_dist.mean(), normal_dist.mean(), atol=1e-2)
-    assert np.isclose(gamma_dist.std(), normal_dist.std(), atol=1e-2)
+@pytest.mark.parametrize("dist", ["normal_dist", "normal_array"])
+def test_match_moments_custom_moments(dist, gamma_dist, request):
+    dist = request.getfixturevalue(dist)
+    match_moments(dist, gamma_dist, moments="mdk")
+    assert np.isclose(gamma_dist.mean(), dist.mean(), atol=1e-2)
+    assert np.isclose(gamma_dist.std(), dist.std(), atol=1e-2)
 
 
 def test_match_moments_invalid_moments(normal_dist, gamma_dist):
@@ -39,6 +48,13 @@ def test_match_quantiles_basic(normal_dist, gamma_dist):
     match_quantiles(normal_dist, gamma_dist)
     q = np.array([0.25, 0.5, 0.5])
     assert np.allclose(gamma_dist.ppf(q), normal_dist.ppf(q), atol=1e-2)
+
+
+def test_match_quantiles_basic_array(normal_array):
+    dist = pz.Normal()
+    match_quantiles(normal_array, dist)
+    q = np.array([0.25, 0.5, 0.5])
+    assert np.allclose(dist.ppf(q), np.quantile(normal_array, q), atol=1e-2)
 
 
 def test_match_quantiles_custom_quantiles(normal_dist):
