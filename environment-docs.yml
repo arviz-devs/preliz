@@ -20,5 +20,5 @@ dependencies:
   - sphinx-tabs
   - sphinxcontrib-bibtex
   - jupyter-sphinx
-  - pymc>=5.24.0
+  - pymc>=6.0.0,<7.0.0
   - bambi>=0.13.0
