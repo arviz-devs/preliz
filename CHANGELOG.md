@@ -1,3 +1,27 @@
+<a id="0.25.0"></a>
+# [0.25.0](https://github.com/arviz-devs/preliz/releases/tag/0.25.0) - 2026-05-13
+
+## What's Changed
+
+### New Features
+* Use repr_html by [@aloctavodia](https://github.com/aloctavodia) in [#714](https://github.com/arviz-devs/preliz/pull/714)
+* Allow array-like for moment and quantile matching by [@aloctavodia](https://github.com/aloctavodia) in [#717](https://github.com/arviz-devs/preliz/pull/717)
+
+###  Maintenance and bug fixes
+* Remove deprecated pytensor.tensor arguments by [@jessegrabowski](https://github.com/jessegrabowski) in [#710](https://github.com/arviz-devs/preliz/pull/710)
+* Run on v6 by [@aloctavodia](https://github.com/aloctavodia) in [#712](https://github.com/arviz-devs/preliz/pull/712)
+* Make test more robust by [@aloctavodia](https://github.com/aloctavodia) in [#715](https://github.com/arviz-devs/preliz/pull/715)
+* Add cache for tests by [@aloctavodia](https://github.com/aloctavodia) in [#716](https://github.com/arviz-devs/preliz/pull/716)
+
+
+## New Contributors
+* [@jessegrabowski](https://github.com/jessegrabowski) made their first contribution in [#710](https://github.com/arviz-devs/preliz/pull/710)
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.24.0...0.25.0
+
+[Changes][0.25.0]
+
+
 <a id="0.24.0"></a>
 # [0.24.0](https://github.com/arviz-devs/preliz/releases/tag/0.24.0) - 2026-03-02
 
@@ -962,6 +986,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.25.0]: https://github.com/arviz-devs/preliz/compare/0.24.0...0.25.0
 [0.24.0]: https://github.com/arviz-devs/preliz/compare/0.23.0...0.24.0
 [0.23.0]: https://github.com/arviz-devs/preliz/compare/0.22.0...0.23.0
 [0.22.0]: https://github.com/arviz-devs/preliz/compare/0.21.0...0.22.0
