@@ -9,7 +9,7 @@ lxml
 ipykernel
 pandas
 pytensor>=3.0.0
-pymc @ git+https://github.com/pymc-devs/pymc.git@v6
+pymc>=6.0.0,<7.0.0
 bambi>=0.13.0
 pymc-extras
 ruff
