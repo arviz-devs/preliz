@@ -100,6 +100,18 @@ class VonMises(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.mu, self.kappa)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu, self.kappa)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu, self.kappa)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu, self.kappa)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu, self.kappa)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, self.kappa, size=size, rng=random_state)
@@ -200,6 +212,26 @@ def ptd_skewness(mu, kappa):
 @pytensor_jit
 def ptd_kurtosis(mu, kappa):
     return ptd_vonmises.kurtosis(mu, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu, kappa):
+    return ptd_vonmises.lmoment1(mu, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu, kappa):
+    return ptd_vonmises.lmoment2(mu, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu, kappa):
+    return ptd_vonmises.lmoment3(mu, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu, kappa):
+    return ptd_vonmises.lmoment4(mu, kappa)
 
 
 @pytensor_rng_jit

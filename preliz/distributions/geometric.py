@@ -90,6 +90,18 @@ class Geometric(Discrete):
     def kurtosis(self):
         return ptd_kurtosis(self.p)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.p)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.p)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.p)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.p)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.p, size=size, rng=random_state)
@@ -161,6 +173,26 @@ def ptd_skewness(p):
 @pytensor_jit
 def ptd_kurtosis(p):
     return ptd_geometric.kurtosis(p)
+
+
+@pytensor_jit
+def ptd_lmoment1(p):
+    return ptd_geometric.lmoment1(p)
+
+
+@pytensor_jit
+def ptd_lmoment2(p):
+    return ptd_geometric.lmoment2(p)
+
+
+@pytensor_jit
+def ptd_lmoment3(p):
+    return ptd_geometric.lmoment3(p)
+
+
+@pytensor_jit
+def ptd_lmoment4(p):
+    return ptd_geometric.lmoment4(p)
 
 
 @pytensor_rng_jit

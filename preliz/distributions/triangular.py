@@ -109,6 +109,18 @@ class Triangular(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.lower, self.c, self.upper)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.lower, self.c, self.upper)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.lower, self.c, self.upper)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.lower, self.c, self.upper)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.lower, self.c, self.upper)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.lower, self.c, self.upper, size=size, rng=random_state)
@@ -185,6 +197,26 @@ def ptd_skewness(lower, c, upper):
 @pytensor_jit
 def ptd_kurtosis(lower, c, upper):
     return ptd_triangular.kurtosis(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_lmoment1(lower, c, upper):
+    return ptd_triangular.lmoment1(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_lmoment2(lower, c, upper):
+    return ptd_triangular.lmoment2(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_lmoment3(lower, c, upper):
+    return ptd_triangular.lmoment3(lower, c, upper)
+
+
+@pytensor_jit
+def ptd_lmoment4(lower, c, upper):
+    return ptd_triangular.lmoment4(lower, c, upper)
 
 
 @pytensor_rng_jit

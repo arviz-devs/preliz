@@ -138,6 +138,18 @@ class InverseGamma(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.alpha, self.beta)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.alpha, self.beta)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.alpha, self.beta)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.alpha, self.beta)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.alpha, self.beta)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.alpha, self.beta, size=size, rng=random_state)
@@ -208,6 +220,26 @@ def ptd_skewness(alpha, beta):
 @pytensor_jit
 def ptd_kurtosis(alpha, beta):
     return ptd_inversegamma.kurtosis(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment1(alpha, beta):
+    return ptd_inversegamma.lmoment1(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment2(alpha, beta):
+    return ptd_inversegamma.lmoment2(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment3(alpha, beta):
+    return ptd_inversegamma.lmoment3(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment4(alpha, beta):
+    return ptd_inversegamma.lmoment4(alpha, beta)
 
 
 @pytensor_rng_jit

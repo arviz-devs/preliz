@@ -152,6 +152,18 @@ class NegativeBinomial(Discrete):
     def kurtosis(self):
         return ptd_kurtosis(self.n, self.p)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.n, self.p)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.n, self.p)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.n, self.p)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.n, self.p)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.n, self.p, size=size, rng=random_state)
@@ -221,6 +233,26 @@ def ptd_skewness(n, p):
 @pytensor_jit
 def ptd_kurtosis(n, p):
     return ptd_negativebinomial.kurtosis(n, p)
+
+
+@pytensor_jit
+def ptd_lmoment1(n, p):
+    return ptd_negativebinomial.lmoment1(n, p)
+
+
+@pytensor_jit
+def ptd_lmoment2(n, p):
+    return ptd_negativebinomial.lmoment2(n, p)
+
+
+@pytensor_jit
+def ptd_lmoment3(n, p):
+    return ptd_negativebinomial.lmoment3(n, p)
+
+
+@pytensor_jit
+def ptd_lmoment4(n, p):
+    return ptd_negativebinomial.lmoment4(n, p)
 
 
 @pytensor_rng_jit
