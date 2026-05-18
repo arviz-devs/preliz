@@ -139,6 +139,18 @@ class SkewNormal(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.mu, self.sigma, self.alpha)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu, self.sigma, self.alpha)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu, self.sigma, self.alpha)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu, self.sigma, self.alpha)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu, self.sigma, self.alpha)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, self.sigma, self.alpha, size=size, rng=random_state)
@@ -212,6 +224,26 @@ def ptd_skewness(mu, sigma, alpha):
 @pytensor_jit
 def ptd_kurtosis(mu, sigma, alpha):
     return ptd_skewnormal.kurtosis(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu, sigma, alpha):
+    return ptd_skewnormal.lmoment1(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu, sigma, alpha):
+    return ptd_skewnormal.lmoment2(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu, sigma, alpha):
+    return ptd_skewnormal.lmoment3(mu, sigma, alpha)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu, sigma, alpha):
+    return ptd_skewnormal.lmoment4(mu, sigma, alpha)
 
 
 @pytensor_rng_jit

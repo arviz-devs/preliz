@@ -143,6 +143,18 @@ class StudentT(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.nu, self.mu, self.sigma)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.nu, self.mu, self.sigma)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.nu, self.mu, self.sigma)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.nu, self.mu, self.sigma)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.nu, self.mu, self.sigma)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.nu, self.mu, self.sigma, size=size, rng=random_state)
@@ -222,6 +234,26 @@ def ptd_skewness(nu, mu, sigma):
 @pytensor_jit
 def ptd_kurtosis(nu, mu, sigma):
     return ptd_studentt.kurtosis(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment1(nu, mu, sigma):
+    return ptd_studentt.lmoment1(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment2(nu, mu, sigma):
+    return ptd_studentt.lmoment2(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment3(nu, mu, sigma):
+    return ptd_studentt.lmoment3(nu, mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment4(nu, mu, sigma):
+    return ptd_studentt.lmoment4(nu, mu, sigma)
 
 
 @pytensor_rng_jit

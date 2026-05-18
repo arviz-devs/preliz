@@ -101,6 +101,18 @@ class HyperGeometric(Discrete):
     def kurtosis(self):
         return ptd_kurtosis(self.N, self.k, self.n)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.N, self.k, self.n)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.N, self.k, self.n)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.N, self.k, self.n)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.N, self.k, self.n)
+
     def mode(self):
         return ptd_mode(self.N, self.k, self.n)
 
@@ -173,6 +185,26 @@ def ptd_skewness(N, k, n):
 @pytensor_jit
 def ptd_kurtosis(N, k, n):
     return ptd_hypergeometric.kurtosis(N, k, n)
+
+
+@pytensor_jit
+def ptd_lmoment1(N, k, n):
+    return ptd_hypergeometric.lmoment1(N, k, n)
+
+
+@pytensor_jit
+def ptd_lmoment2(N, k, n):
+    return ptd_hypergeometric.lmoment2(N, k, n)
+
+
+@pytensor_jit
+def ptd_lmoment3(N, k, n):
+    return ptd_hypergeometric.lmoment3(N, k, n)
+
+
+@pytensor_jit
+def ptd_lmoment4(N, k, n):
+    return ptd_hypergeometric.lmoment4(N, k, n)
 
 
 @pytensor_rng_jit

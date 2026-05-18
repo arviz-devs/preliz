@@ -95,6 +95,18 @@ class ChiSquared(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.nu)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.nu)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.nu)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.nu)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.nu)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.nu, size=size, rng=random_state)
@@ -164,6 +176,26 @@ def ptd_skewness(nu):
 @pytensor_jit
 def ptd_kurtosis(nu):
     return ptd_chisquared.kurtosis(nu)
+
+
+@pytensor_jit
+def ptd_lmoment1(nu):
+    return ptd_chisquared.lmoment1(nu)
+
+
+@pytensor_jit
+def ptd_lmoment2(nu):
+    return ptd_chisquared.lmoment2(nu)
+
+
+@pytensor_jit
+def ptd_lmoment3(nu):
+    return ptd_chisquared.lmoment3(nu)
+
+
+@pytensor_jit
+def ptd_lmoment4(nu):
+    return ptd_chisquared.lmoment4(nu)
 
 
 @pytensor_rng_jit

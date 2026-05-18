@@ -98,6 +98,18 @@ class Cauchy(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.alpha, self.beta)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.alpha, self.beta)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.alpha, self.beta)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.alpha, self.beta)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.alpha, self.beta)
+
     def logcdf(self, x):
         return ptd_logcdf(x, self.alpha, self.beta)
 
@@ -173,6 +185,26 @@ def ptd_skewness(alpha, beta):
 @pytensor_jit
 def ptd_kurtosis(alpha, beta):
     return ptd_cauchy.kurtosis(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment1(alpha, beta):
+    return ptd_cauchy.lmoment1(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment2(alpha, beta):
+    return ptd_cauchy.lmoment2(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment3(alpha, beta):
+    return ptd_cauchy.lmoment3(alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment4(alpha, beta):
+    return ptd_cauchy.lmoment4(alpha, beta)
 
 
 @pytensor_jit

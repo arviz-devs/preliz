@@ -98,6 +98,18 @@ class Kumaraswamy(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.a, self.b)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.a, self.b)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.a, self.b)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.a, self.b)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.a, self.b)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.a, self.b, size=size, rng=random_state)
@@ -167,6 +179,26 @@ def ptd_skewness(a, b):
 @pytensor_jit
 def ptd_kurtosis(a, b):
     return ptd_kumaraswamy.kurtosis(a, b)
+
+
+@pytensor_jit
+def ptd_lmoment1(a, b):
+    return ptd_kumaraswamy.lmoment1(a, b)
+
+
+@pytensor_jit
+def ptd_lmoment2(a, b):
+    return ptd_kumaraswamy.lmoment2(a, b)
+
+
+@pytensor_jit
+def ptd_lmoment3(a, b):
+    return ptd_kumaraswamy.lmoment3(a, b)
+
+
+@pytensor_jit
+def ptd_lmoment4(a, b):
+    return ptd_kumaraswamy.lmoment4(a, b)
 
 
 @pytensor_rng_jit

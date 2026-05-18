@@ -106,6 +106,18 @@ class LogNormal(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.mu, self.sigma)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu, self.sigma)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu, self.sigma)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu, self.sigma)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu, self.sigma)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, self.sigma, size=size, rng=random_state)
@@ -178,6 +190,26 @@ def ptd_skewness(mu, sigma):
 @pytensor_jit
 def ptd_kurtosis(mu, sigma):
     return ptd_lognormal.kurtosis(mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu, sigma):
+    return ptd_lognormal.lmoment1(mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu, sigma):
+    return ptd_lognormal.lmoment2(mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu, sigma):
+    return ptd_lognormal.lmoment3(mu, sigma)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu, sigma):
+    return ptd_lognormal.lmoment4(mu, sigma)
 
 
 @pytensor_rng_jit

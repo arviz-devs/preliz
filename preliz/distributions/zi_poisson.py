@@ -113,6 +113,18 @@ class ZeroInflatedPoisson(Discrete):
     def kurtosis(self):
         return ptd_kurtosis(self.psi, self.mu)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.psi, self.mu)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.psi, self.mu)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.psi, self.mu)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.psi, self.mu)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.psi, self.mu, size=size, rng=random_state)
@@ -176,6 +188,26 @@ def ptd_skewness(psi, mu):
 @pytensor_jit
 def ptd_kurtosis(psi, mu):
     return ptd_zipoisson.kurtosis(psi, mu)
+
+
+@pytensor_jit
+def ptd_lmoment1(psi, mu):
+    return ptd_zipoisson.lmoment1(psi, mu)
+
+
+@pytensor_jit
+def ptd_lmoment2(psi, mu):
+    return ptd_zipoisson.lmoment2(psi, mu)
+
+
+@pytensor_jit
+def ptd_lmoment3(psi, mu):
+    return ptd_zipoisson.lmoment3(psi, mu)
+
+
+@pytensor_jit
+def ptd_lmoment4(psi, mu):
+    return ptd_zipoisson.lmoment4(psi, mu)
 
 
 @pytensor_rng_jit
