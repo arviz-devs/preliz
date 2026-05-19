@@ -21,4 +21,4 @@ dependencies:
   - sphinxcontrib-bibtex
   - jupyter-sphinx
   - pymc>=6.0.0,<7.0.0
-  - bambi>=0.13.0
+  - bambi>=0.18.0,<1.0.0
