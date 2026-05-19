@@ -103,6 +103,18 @@ class Gumbel(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.mu, self.beta)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu, self.beta)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu, self.beta)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu, self.beta)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu, self.beta)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, self.beta, size=size, rng=random_state)
@@ -174,6 +186,26 @@ def ptd_skewness(mu, beta):
 @pytensor_jit
 def ptd_kurtosis(mu, beta):
     return ptd_gumbel.kurtosis(mu, beta)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu, beta):
+    return ptd_gumbel.lmoment1(mu, beta)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu, beta):
+    return ptd_gumbel.lmoment2(mu, beta)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu, beta):
+    return ptd_gumbel.lmoment3(mu, beta)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu, beta):
+    return ptd_gumbel.lmoment4(mu, beta)
 
 
 @pytensor_rng_jit
