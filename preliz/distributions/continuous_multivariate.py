@@ -1,5 +1,6 @@
 """Continuous multivariate probability distributions."""
 
+import warnings
 from copy import copy
 
 import numpy as np
@@ -376,6 +377,7 @@ class Dirichlet(Continuous):
         pointinterval=True,
         interval=None,
         levels=None,
+        baseline=True,
         legend="title",
         figsize=None,
     ):
@@ -402,6 +404,9 @@ class Dirichlet(Continuous):
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
             (in this last case nothing will be plotted).
+        baseline : bool
+            Whether to include a baseline in the plot. Defaults to True.
+            Only applicable for `pdf` plots.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"title"``
             or not include them ``None``.
@@ -409,6 +414,8 @@ class Dirichlet(Continuous):
             Size of the figure
         """
         check_inside_notebook()
+        if kind != "pdf" and baseline is not None:
+            warnings.warn("baseline is only applicable to PDF plots")
 
         args = dict(zip(self.param_names, self.params))
         self.__init__(**args)
@@ -441,6 +448,7 @@ class Dirichlet(Continuous):
                     interval,
                     levels,
                     "full",
+                    baseline,
                     legend,
                     figsize,
                     None,
@@ -455,6 +463,8 @@ class Dirichlet(Continuous):
                     interval,
                     levels,
                     "full",
+                    None,
+                    legend,
                     figsize,
                     None,
                     xy_lim,
@@ -468,6 +478,8 @@ class Dirichlet(Continuous):
                     interval,
                     levels,
                     None,
+                    None,
+                    legend,
                     figsize,
                     None,
                     xy_lim,
@@ -610,8 +622,8 @@ class MvNormal(Continuous):
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         baseline : bool
-            Whether to include a baseline in the plot. Defaults to True. Only used when
-            ``marginals=True``.
+            Whether to include a baseline in the plot. Defaults to True.
+            Only applicable for `pdf` plots.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"title"``
             or not include them ``None``.
@@ -857,6 +869,7 @@ class MvNormal(Continuous):
         pointinterval=True,
         interval=None,
         levels=None,
+        baseline=True,
         legend="title",
         figsize=None,
     ):
@@ -884,6 +897,9 @@ class MvNormal(Continuous):
             Mass of the intervals. For hdi or eti the number of elements should be 2 or 1.
             For quantiles the number of elements should be 5, 3, 1 or 0
             (in this last case nothing will be plotted).
+        baseline : bool
+            Whether to include a baseline in the plot. Defaults to True.
+            Only applicable for `pdf` plots.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"title"``
             or not include them ``None``.
@@ -891,7 +907,8 @@ class MvNormal(Continuous):
             Size of the figure
         """
         check_inside_notebook()
-
+        if kind != "pdf" and baseline is not None:
+            warnings.warn("baseline is only applicable to PDF plots")
         args = dict(zip(self.param_names, self.params))
         cov, tau = args.get("cov", None), args.get("tau", None)
         self.__init__(**args)
@@ -924,6 +941,7 @@ class MvNormal(Continuous):
                     interval,
                     levels,
                     "full",
+                    baseline,
                     legend,
                     figsize,
                     None,
@@ -939,6 +957,7 @@ class MvNormal(Continuous):
                     interval,
                     levels,
                     "full",
+                    None,
                     legend,
                     figsize,
                     None,
@@ -952,6 +971,7 @@ class MvNormal(Continuous):
                     pointinterval,
                     interval,
                     levels,
+                    None,
                     None,
                     legend,
                     figsize,
