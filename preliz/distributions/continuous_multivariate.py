@@ -622,8 +622,8 @@ class MvNormal(Continuous):
             If ``full`` use the finite end-points to set the limits of the plot. For unbounded
             end-points or if ``restricted`` use the 0.001 and 0.999 quantiles to set the limits.
         baseline : bool
-            Whether to include a baseline in the plot. Defaults to True.
-            Only applicable for `pdf` plots.
+            Whether to include a baseline in the plot. Defaults to True. Only used when
+            ``marginals=True``.
         legend : str
             Whether to include a string with the distribution and its parameter as a ``"title"``
             or not include them ``None``.
