@@ -414,7 +414,7 @@ class Dirichlet(Continuous):
             Size of the figure
         """
         check_inside_notebook()
-        if kind != "pdf" and baseline is not None:
+        if kind != "pdf" and baseline:
             warnings.warn("baseline is only applicable to PDF plots")
 
         args = dict(zip(self.param_names, self.params))
@@ -907,7 +907,7 @@ class MvNormal(Continuous):
             Size of the figure
         """
         check_inside_notebook()
-        if kind != "pdf" and baseline is not None:
+        if kind != "pdf" and baseline:
             warnings.warn("baseline is only applicable to PDF plots")
         args = dict(zip(self.param_names, self.params))
         cov, tau = args.get("cov", None), args.get("tau", None)
