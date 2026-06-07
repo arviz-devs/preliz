@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.special import logsumexp
 
 from preliz.distributions.distributions import DistributionTransformer
 from preliz.internal.distribution_helper import all_not_none, num_kurtosis, num_skewness
@@ -87,17 +88,21 @@ class Mixture(DistributionTransformer):
         return find_ppf(self, q)
 
     def logpdf(self, x):
-        return np.sum(
-            [dist.logpdf(x) * weight for dist, weight in zip(self.dist, self.weights)], axis=0
+        log_terms = np.array(
+            [np.log(weight) + dist.logpdf(x) for dist, weight in zip(self.dist, self.weights)]
         )
+        return logsumexp(log_terms, axis=0)
 
     def entropy(self):
         x_values = self.xvals("restricted")
         logpdf = self.logpdf(x_values)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            lala = np.exp(logpdf) * logpdf
+        lala = np.where(np.isfinite(lala), lala, 0.0)
         if self.kind == "discrete":
-            return -np.sum(np.exp(logpdf) * logpdf)
+            return -np.sum(lala)
         else:
-            return -np.trapzoid(np.exp(logpdf) * logpdf, x_values)
+            return -np.trapezoid(lala, x_values)
 
     def mean(self):
         return np.sum(
