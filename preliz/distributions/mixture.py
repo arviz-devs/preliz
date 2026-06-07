@@ -97,12 +97,12 @@ class Mixture(DistributionTransformer):
         x_values = self.xvals("restricted")
         logpdf = self.logpdf(x_values)
         with np.errstate(divide="ignore", invalid="ignore"):
-            lala = np.exp(logpdf) * logpdf
-        lala = np.where(np.isfinite(lala), lala, 0.0)
+            weighted_logpdf = np.exp(logpdf) * logpdf
+        weighted_logpdf = np.where(np.isfinite(weighted_logpdf), weighted_logpdf, 0.0)
         if self.kind == "discrete":
-            return -np.sum(lala)
+            return -np.sum(weighted_logpdf)
         else:
-            return -np.trapezoid(lala, x_values)
+            return -np.trapezoid(weighted_logpdf, x_values)
 
     def mean(self):
         return np.sum(
