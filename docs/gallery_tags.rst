@@ -33,7 +33,6 @@ These distributions are defined over a continuous range of values.
 - `Normal <./distributions/gallery/normal.html>`_
 - `Pareto <./distributions/gallery/pareto.html>`_
 - `Rice <./distributions/gallery/rice.html>`_
-- `Scaled Inverse Chi-Squared <./distributions/gallery/scaledinversechisquared.html>`_
 - `Skew-Normal <./distributions/gallery/skewnormal.html>`_
 - `Student's t <./distributions/gallery/students_t.html>`_
 - `Skew-Student's t <./distributions/gallery/skew_studentt.html>`_
@@ -107,7 +106,6 @@ Distributions with skewed (non‐symmetric) shapes include:
 - `Moyal <./distributions/gallery/moyal.html>`_
 - `Pareto <./distributions/gallery/pareto.html>`_
 - `Rice <./distributions/gallery/rice.html>`_
-- `Scaled Inverse Chi-Squared <./distributions/gallery/scaledinversechisquared.html>`_
 - `Skew-Normal <./distributions/gallery/skewnormal.html>`_
 - `Skew-Student's t <./distributions/gallery/skew_studentt.html>`_
 - `Weibull <./distributions/gallery/weibull.html>`_
@@ -188,7 +186,6 @@ Distributions supported on the non‐negative real numbers.
 - `Wald <./distributions/gallery/wald.html>`_
 - `Log-Logistic <./distributions/gallery/log_logistic.html>`_
 - `Logit-Normal <./distributions/gallery/logit_normal.html>`_
-- `Scaled Inverse Chi-Squared <./distributions/gallery/scaledinversechisquared.html>`_
 
 
 **Discrete:**
@@ -247,7 +244,6 @@ The following distributions are univariate (one-dimensional).
 - `Normal <./distributions/gallery/normal.html>`_
 - `Pareto <./distributions/gallery/pareto.html>`_
 - `Rice <./distributions/gallery/rice.html>`_
-- `Scaled Inverse Chi-Squared <./distributions/gallery/scaledinversechisquared.html>`_
 - `Skew-Normal <./distributions/gallery/skewnormal.html>`_
 - `Student's t <./distributions/gallery/students_t.html>`_
 - `Skew-Student's t <./distributions/gallery/skew_studentt.html>`_

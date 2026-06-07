@@ -35,7 +35,6 @@ from preliz.distributions.normal import Normal
 from preliz.distributions.pareto import Pareto
 from preliz.distributions.poisson import Poisson
 from preliz.distributions.rice import Rice
-from preliz.distributions.scaled_inverse_chi_squared import ScaledInverseChiSquared
 from preliz.distributions.skew_studentt import SkewStudentT
 from preliz.distributions.skewnormal import SkewNormal
 from preliz.distributions.studentt import StudentT
@@ -74,7 +73,6 @@ all_continuous = [
     Normal,
     Pareto,
     Rice,
-    ScaledInverseChiSquared,
     SkewNormal,
     SkewStudentT,
     StudentT,
