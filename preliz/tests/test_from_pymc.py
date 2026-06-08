@@ -18,7 +18,6 @@ def test_from_pymc():
         if dist_name in [
             "BetaScaled",
             "LogLogistic",
-            "ScaledInverseChiSquared",
             "ChiSquared",
             "Truncated",
             "Censored",
