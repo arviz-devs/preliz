@@ -110,6 +110,18 @@ class BetaBinomial(Discrete):
     def kurtosis(self):
         return ptd_kurtosis(self.n, self.alpha, self.beta)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.n, self.alpha, self.beta)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.n, self.alpha, self.beta)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.n, self.alpha, self.beta)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.n, self.alpha, self.beta)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.n, self.alpha, self.beta, size=size, rng=random_state)
@@ -179,6 +191,26 @@ def ptd_skewness(n, alpha, beta):
 @pytensor_jit
 def ptd_kurtosis(n, alpha, beta):
     return ptd_betabinomial.kurtosis(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment1(n, alpha, beta):
+    return ptd_betabinomial.lmoment1(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment2(n, alpha, beta):
+    return ptd_betabinomial.lmoment2(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment3(n, alpha, beta):
+    return ptd_betabinomial.lmoment3(n, alpha, beta)
+
+
+@pytensor_jit
+def ptd_lmoment4(n, alpha, beta):
+    return ptd_betabinomial.lmoment4(n, alpha, beta)
 
 
 @pytensor_rng_jit

@@ -96,6 +96,18 @@ class Poisson(Discrete):
     def kurtosis(self):
         return ptd_kurtosis(self.mu)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, size=size, rng=random_state)
@@ -165,6 +177,26 @@ def ptd_skewness(mu):
 @pytensor_jit
 def ptd_kurtosis(mu):
     return ptd_poisson.kurtosis(mu)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu):
+    return ptd_poisson.lmoment1(mu)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu):
+    return ptd_poisson.lmoment2(mu)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu):
+    return ptd_poisson.lmoment3(mu)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu):
+    return ptd_poisson.lmoment4(mu)
 
 
 @pytensor_rng_jit

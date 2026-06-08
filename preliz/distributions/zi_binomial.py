@@ -112,6 +112,18 @@ class ZeroInflatedBinomial(Discrete):
     def kurtosis(self):
         return ptd_kurtosis(self.psi, self.n, self.p)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.psi, self.n, self.p)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.psi, self.n, self.p)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.psi, self.n, self.p)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.psi, self.n, self.p)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.psi, self.n, self.p, size=size, rng=random_state)
@@ -181,6 +193,26 @@ def ptd_skewness(psi, n, p):
 @pytensor_jit
 def ptd_kurtosis(psi, n, p):
     return ptd_zibinomial.kurtosis(psi, n, p)
+
+
+@pytensor_jit
+def ptd_lmoment1(psi, n, p):
+    return ptd_zibinomial.lmoment1(psi, n, p)
+
+
+@pytensor_jit
+def ptd_lmoment2(psi, n, p):
+    return ptd_zibinomial.lmoment2(psi, n, p)
+
+
+@pytensor_jit
+def ptd_lmoment3(psi, n, p):
+    return ptd_zibinomial.lmoment3(psi, n, p)
+
+
+@pytensor_jit
+def ptd_lmoment4(psi, n, p):
+    return ptd_zibinomial.lmoment4(psi, n, p)
 
 
 @pytensor_rng_jit

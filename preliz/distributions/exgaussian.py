@@ -110,6 +110,18 @@ class ExGaussian(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.mu, self.sigma, self.nu)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu, self.sigma, self.nu)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu, self.sigma, self.nu)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu, self.sigma, self.nu)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu, self.sigma, self.nu)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, self.sigma, self.nu, size=size, rng=random_state)
@@ -185,6 +197,26 @@ def ptd_skewness(mu, sigma, nu):
 @pytensor_jit
 def ptd_kurtosis(mu, sigma, nu):
     return ptd_exgaussian.kurtosis(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu, sigma, nu):
+    return ptd_exgaussian.lmoment1(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu, sigma, nu):
+    return ptd_exgaussian.lmoment2(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu, sigma, nu):
+    return ptd_exgaussian.lmoment3(mu, sigma, nu)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu, sigma, nu):
+    return ptd_exgaussian.lmoment4(mu, sigma, nu)
 
 
 @pytensor_rng_jit

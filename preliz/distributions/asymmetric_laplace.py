@@ -135,6 +135,18 @@ class AsymmetricLaplace(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.mu, self.b, self.kappa)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu, self.b, self.kappa)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu, self.b, self.kappa)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu, self.b, self.kappa)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu, self.b, self.kappa)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, self.b, self.kappa, size=size, rng=random_state)
@@ -207,6 +219,26 @@ def ptd_skewness(mu, b, kappa):
 @pytensor_jit
 def ptd_kurtosis(mu, b, kappa):
     return ptd_asymmetriclaplace.kurtosis(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu, b, kappa):
+    return ptd_asymmetriclaplace.lmoment1(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu, b, kappa):
+    return ptd_asymmetriclaplace.lmoment2(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu, b, kappa):
+    return ptd_asymmetriclaplace.lmoment3(mu, b, kappa)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu, b, kappa):
+    return ptd_asymmetriclaplace.lmoment4(mu, b, kappa)
 
 
 @pytensor_rng_jit

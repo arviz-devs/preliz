@@ -268,6 +268,22 @@ class Distribution:
         """Excess kurtosis."""
         raise NotImplementedError
 
+    def lmoment1(self):
+        """L-moment1 (mean)."""
+        raise NotImplementedError
+
+    def lmoment2(self):
+        """L-moment2 (l-scale)."""
+        raise NotImplementedError
+
+    def lmoment3(self):
+        """L-moment3 (l-skewness). This the ratio of L-moment3 to L-moment2."""
+        raise NotImplementedError
+
+    def lmoment4(self):
+        """L-moment4 (l-kurtosis). This the ratio of L-moment4 to L-moment2."""
+        raise NotImplementedError
+
     def moments(self, types="mvsk"):
         """
         Compute moments of the distribution.
@@ -298,6 +314,36 @@ class Distribution:
                 moments.append(self.skewness())
             elif m_t == "k":
                 moments.append(self.kurtosis())
+
+        return moments
+
+    def lmoments(self, types="1234"):
+        """
+        Compute L-moments of the distribution.
+
+        Parameters
+        ----------
+        types : str
+            The type of moments to compute. Default is '1234'
+            where '1' = L-moment1 (mean), '2' = L-moment2 (l-scale),
+            '3' = L-moment3 (l-skewness), and '4' = L-moment4 (l-kurtosis).
+            To compute the standard deviation use 'd'
+            Valid combinations are any subset of '1234'.
+        """
+        moments = []
+        for m_t in types:
+            if m_t not in "1234":
+                raise ValueError(
+                    "The input string should only contain the letters '1', '2', '3', or '4'."
+                )
+            if m_t == "1":
+                moments.append(self.lmoment1())
+            elif m_t == "2":
+                moments.append(self.lmoment2())
+            elif m_t == "3":
+                moments.append(self.lmoment3())
+            elif m_t == "4":
+                moments.append(self.lmoment4())
 
         return moments
 

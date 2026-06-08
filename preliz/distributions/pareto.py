@@ -98,6 +98,18 @@ class Pareto(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.alpha, self.m)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.alpha, self.m)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.alpha, self.m)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.alpha, self.m)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.alpha, self.m)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.alpha, self.m, size=size, rng=random_state)
@@ -169,6 +181,26 @@ def ptd_skewness(alpha, m):
 @pytensor_jit
 def ptd_kurtosis(alpha, m):
     return ptd_pareto.kurtosis(alpha, m)
+
+
+@pytensor_jit
+def ptd_lmoment1(alpha, m):
+    return ptd_pareto.lmoment1(alpha, m)
+
+
+@pytensor_jit
+def ptd_lmoment2(alpha, m):
+    return ptd_pareto.lmoment2(alpha, m)
+
+
+@pytensor_jit
+def ptd_lmoment3(alpha, m):
+    return ptd_pareto.lmoment3(alpha, m)
+
+
+@pytensor_jit
+def ptd_lmoment4(alpha, m):
+    return ptd_pareto.lmoment4(alpha, m)
 
 
 @pytensor_rng_jit

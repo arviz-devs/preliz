@@ -98,6 +98,18 @@ class Laplace(Continuous):
     def kurtosis(self):
         return ptd_kurtosis(self.mu, self.b)
 
+    def lmoment1(self):
+        return ptd_lmoment1(self.mu, self.b)
+
+    def lmoment2(self):
+        return ptd_lmoment2(self.mu, self.b)
+
+    def lmoment3(self):
+        return ptd_lmoment3(self.mu, self.b)
+
+    def lmoment4(self):
+        return ptd_lmoment4(self.mu, self.b)
+
     def rvs(self, size=None, random_state=None):
         random_state = np.random.default_rng(random_state)
         return ptd_rvs(self.mu, self.b, size=size, rng=random_state)
@@ -169,6 +181,26 @@ def ptd_skewness(mu, b):
 @pytensor_jit
 def ptd_kurtosis(mu, b):
     return ptd_laplace.kurtosis(mu, b)
+
+
+@pytensor_jit
+def ptd_lmoment1(mu, b):
+    return ptd_laplace.lmoment1(mu, b)
+
+
+@pytensor_jit
+def ptd_lmoment2(mu, b):
+    return ptd_laplace.lmoment2(mu, b)
+
+
+@pytensor_jit
+def ptd_lmoment3(mu, b):
+    return ptd_laplace.lmoment3(mu, b)
+
+
+@pytensor_jit
+def ptd_lmoment4(mu, b):
+    return ptd_laplace.lmoment4(mu, b)
 
 
 @pytensor_rng_jit
