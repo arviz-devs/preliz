@@ -1,3 +1,21 @@
+<a id="0.26.0"></a>
+# [0.26.0](https://github.com/arviz-devs/preliz/releases/tag/0.26.0) - 2026-06-09
+
+## What's Changed
+
+### New Features
+* Add lmoments by [@aloctavodia](https://github.com/aloctavodia) in [#719](https://github.com/arviz-devs/preliz/pull/719)
+
+### Maintenance and bug fixes
+* Fix plot_interactive in MvNormal and Dirichlet  by [@rohanbabbar04](https://github.com/rohanbabbar04) in [#720](https://github.com/arviz-devs/preliz/pull/720)
+* Fix mixture by [@aloctavodia](https://github.com/aloctavodia) in [#722](https://github.com/arviz-devs/preliz/pull/722)
+* Remove scaled_inverse_chi2 by [@aloctavodia](https://github.com/aloctavodia) in [#723](https://github.com/arviz-devs/preliz/pull/723)
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.25.0...0.26.0
+
+[Changes][0.26.0]
+
+
 <a id="0.25.0"></a>
 # [0.25.0](https://github.com/arviz-devs/preliz/releases/tag/0.25.0) - 2026-05-13
 
@@ -986,6 +1004,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.26.0]: https://github.com/arviz-devs/preliz/compare/0.25.0...0.26.0
 [0.25.0]: https://github.com/arviz-devs/preliz/compare/0.24.0...0.25.0
 [0.24.0]: https://github.com/arviz-devs/preliz/compare/0.23.0...0.24.0
 [0.23.0]: https://github.com/arviz-devs/preliz/compare/0.22.0...0.23.0
