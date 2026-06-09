@@ -70,6 +70,8 @@ class Beta(Continuous):
         concentration > 0
     """
 
+    parametrizations = [("alpha", "beta"), ("mu", "sigma"), ("mu", "nu")]
+
     def __init__(self, alpha=None, beta=None, mu=None, sigma=None, nu=None):
         super().__init__()
         self.support = (0, 1)

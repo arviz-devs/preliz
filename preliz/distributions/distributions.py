@@ -71,10 +71,47 @@ class Distribution:
 
     def _repr_html_(self):
         name = self._get_name()
+
         if self.is_frozen:
             desc = self._get_description()
-            return f"<span style='font-weight:bold'>{name}</span><span'>({desc})</span>"
-        return f"<span style='font-weight:bold'>{name}</span>"
+            summary = f"<b>{name}</b>({desc})"
+        else:
+            summary = f"<b>{name}</b>"
+
+        td_label = "style='text-align:right;padding-right:10px'"
+        rows = []
+        rows.append(f"<tr><td {td_label}><i>Kind</i></td><td>{self.kind}</td></tr>")
+
+        support = _format_support(self.support)
+        if isinstance(support, tuple):
+            support_str = f"({support[0]}, {support[1]})"
+        else:
+            support_str = str(support)
+        rows.append(f"<tr><td {td_label}><i>Support</i></td><td>{support_str}</td></tr>")
+
+        if self.is_frozen:
+            try:
+                rows.append(f"<tr><td {td_label}><i>Mean</i></td><td>{self.mean():.2g}</td></tr>")
+            except Exception:
+                pass
+            try:
+                rows.append(f"<tr><td {td_label}><i>Std</i></td><td>{self.std():.2g}</td></tr>")
+            except Exception:
+                pass
+
+        parametrizations = getattr(self.__class__, "parametrizations", None)
+        if parametrizations:
+            params_str = ", ".join(f"({', '.join(p)})" for p in parametrizations)
+            rows.append(
+                f"<tr><td {td_label}><i>Parametrizations</i></td><td>{params_str}</td></tr>"
+            )
+
+        html = f"<details><summary>{summary}</summary>"
+        html += "<table style='margin-left:20px;margin-top:5px'>"
+        html += "".join(rows)
+        html += "</table></details>"
+
+        return html
 
     @property
     def params_dict(self):
@@ -82,6 +119,36 @@ class Distribution:
             return dict(zip(self.param_names, self.params))
         else:
             return None
+
+    def info(self):
+        """Return metadata about this distribution.
+
+        Returns
+        -------
+        dict
+            Dictionary with keys: name, kind, param_names, params, params_support,
+            support, is_frozen, parametrizations.
+        """
+        result = {
+            "name": self._get_name(),
+            "kind": self.kind,
+            "param_names": self.param_names,
+            "params_support": _format_support(self.params_support),
+            "support": _format_support(self.support),
+        }
+        if self.is_frozen:
+            result["params"] = self.params
+
+        parametrizations = getattr(self.__class__, "parametrizations", None)
+        if parametrizations is not None:
+            result["parametrizations"] = parametrizations
+            if self.is_frozen:
+                result["parametrization_values"] = {
+                    params: tuple(getattr(self, name) for name in params)
+                    for params in parametrizations
+                }
+
+        return result
 
     def summary(self, mass=None, interval=None, fmt=".2f"):
         """
@@ -1122,3 +1189,19 @@ def _discrete_xvals(lower_ep, upper_ep, n_points):
         x_vals = np.linspace(lower_ep, upper_ep + 1, n_points, dtype=int)
 
     return x_vals
+
+
+def _format_support_value(value):
+    if value == np.inf:
+        return "inf"
+    if value == -np.inf:
+        return "-inf"
+    if isinstance(value, float | np.floating) and 0 < abs(value) < 1e-10:
+        return 0
+    return value
+
+
+def _format_support(values):
+    if isinstance(values, tuple | list):
+        return tuple(_format_support(v) for v in values)
+    return _format_support_value(values)

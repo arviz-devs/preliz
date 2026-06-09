@@ -61,6 +61,8 @@ class Normal(Continuous):
         Precision (tau > 0).
     """
 
+    parametrizations = [("mu", "sigma"), ("mu", "tau")]
+
     def __init__(self, mu=None, sigma=None, tau=None):
         super().__init__()
         self.support = (-pt.inf, pt.inf)

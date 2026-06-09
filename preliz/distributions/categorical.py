@@ -37,8 +37,11 @@ class Categorical(Discrete):
         Alternative log odds for the probability of success.
     """
 
+    parametrizations = [("p",), ("logit_p",)]
+
     def __init__(self, p=None, logit_p=None):
         super().__init__()
+        self.support = (None, None)
         self._parametrization(p, logit_p)
 
     def _parametrization(self, p=None, logit_p=None):

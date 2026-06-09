@@ -101,13 +101,11 @@ all_discrete = [
 
 all_continuous_multivariate = [Dirichlet, MvNormal]
 
+all_modifiers = [Mixture, Truncated, Censored, Hurdle]
 
 __all__ = (  # noqa: PLE0604
     [s.__name__ for s in all_continuous]
     + [s.__name__ for s in all_discrete]
     + [s.__name__ for s in all_continuous_multivariate]
-    + [Mixture.__name__]
-    + [Truncated.__name__]
-    + [Censored.__name__]
-    + [Hurdle.__name__]
+    + [s.__name__ for s in all_modifiers]
 )

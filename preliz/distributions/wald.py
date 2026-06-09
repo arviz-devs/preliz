@@ -56,6 +56,8 @@ class Wald(Continuous):
         Shape parameter (phi > 0).
     """
 
+    parametrizations = [("mu", "lam"), ("mu", "phi"), ("lam", "phi")]
+
     def __init__(self, mu=None, lam=None, phi=None):
         super().__init__()
         self.support = (0, np.inf)
