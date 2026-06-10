@@ -201,21 +201,21 @@ class DistributionCatalog:
 
     Get instances by category::
 
-        >>> pz.dists.get("continuous")
-        >>> pz.dists.get("positive")
+        >>> pz.catalog.get("continuous")
+        >>> pz.catalog.get("positive")
 
     Get distribution names::
 
-        >>> pz.dists.names()
-        >>> pz.dists.names("discrete")
+        >>> pz.catalog.names()
+        >>> pz.catalog.names("discrete")
 
     Get info about a specific distribution::
 
-        >>> pz.dists.info("Gamma")
+        >>> pz.catalog.info("Gamma")
 
     Filter distributions by properties::
 
-        >>> pz.dists.find(kind="continuous", num_params=2)
+        >>> pz.catalog.find(kind="continuous", num_params=2)
     """
 
     def __repr__(self):
@@ -350,7 +350,7 @@ class DistributionCatalog:
         Parameters
         ----------
         kind : str, optional
-            Filter by kind: "continuous" or "discrete".
+            Filter by kind: "continuous", "discrete".
         num_params : int, optional
             Filter by number of parameters.
         support : str, optional
