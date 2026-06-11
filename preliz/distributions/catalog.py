@@ -197,7 +197,7 @@ class DistributionCatalog:
     --------
     List all distributions::
 
-        >>> pz.dists
+        >>> pz.catalog
 
     Get instances by category::
 
@@ -206,8 +206,8 @@ class DistributionCatalog:
 
     Get distribution names::
 
-        >>> pz.catalog.names()
-        >>> pz.catalog.names("discrete")
+        >>> pz.catalog.get(output="names")
+        >>> pz.catalog.get("discrete", output="names")
 
     Get info about a specific distribution::
 
@@ -362,7 +362,6 @@ class DistributionCatalog:
         list of PreliZ distribution instances
         """
         results = []
-        candidates = []
 
         if kind == "continuous":
             candidates = all_continuous
@@ -385,7 +384,8 @@ class DistributionCatalog:
 
         return results
 
-    def _matches_support(self, dist, support_type):
+    @staticmethod
+    def _matches_support(dist, support_type):
         lower, upper = dist.support
         if lower is None or upper is None:
             return False
