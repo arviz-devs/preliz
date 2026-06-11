@@ -72,6 +72,8 @@ class NegativeBinomial(Discrete):
         Number of target success trials (n > 0)
     """
 
+    parametrizations = [("mu", "alpha"), ("p", "n")]
+
     def __init__(self, mu=None, alpha=None, p=None, n=None):
         super().__init__()
         self.support = (0, np.inf)

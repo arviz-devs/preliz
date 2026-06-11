@@ -48,6 +48,8 @@ class Exponential(Continuous):
         Scale (scale > 0).
     """
 
+    parametrizations = [("lam",), ("scale",)]
+
     def __init__(self, lam=None, scale=None):
         super().__init__()
         self.support = (0, np.inf)

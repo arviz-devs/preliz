@@ -47,6 +47,8 @@ class Bernoulli(Discrete):
         Alternative log odds for the probability of success.
     """
 
+    parametrizations = [("p",), ("logit_p",)]
+
     def __init__(self, p=None, logit_p=None):
         super().__init__()
         self.support = (0, 1)

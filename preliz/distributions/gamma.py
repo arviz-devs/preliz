@@ -65,6 +65,8 @@ class Gamma(Continuous):
 
     """
 
+    parametrizations = [("alpha", "beta"), ("mu", "sigma")]
+
     def __init__(self, alpha=None, beta=None, mu=None, sigma=None):
         super().__init__()
         self.support = (0, np.inf)

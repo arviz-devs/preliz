@@ -62,6 +62,8 @@ class AsymmetricLaplace(Continuous):
         Symmetry parameter (0 < q < 1).
     """
 
+    parametrizations = [("kappa", "mu", "b"), ("q", "mu", "b")]
+
     def __init__(self, kappa=None, mu=None, b=None, q=None):
         super().__init__()
         self.support = (-pt.inf, pt.inf)

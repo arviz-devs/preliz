@@ -67,6 +67,8 @@ class StudentT(Continuous):
         Scale parameter (lam > 0). Converges to the precision as nu increases.
     """
 
+    parametrizations = [("nu", "mu", "sigma"), ("nu", "mu", "lam")]
+
     def __init__(self, nu=None, mu=None, sigma=None, lam=None):
         super().__init__()
         self.support = (-np.inf, np.inf)

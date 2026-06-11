@@ -56,6 +56,8 @@ class HalfNormal(Continuous):
         Precision :math:`\tau` (``tau`` > 0).
     """
 
+    parametrizations = [("sigma",), ("tau",)]
+
     def __init__(self, sigma=None, tau=None):
         super().__init__()
         self.support = (0, np.inf)

@@ -72,6 +72,8 @@ class HalfStudentT(Continuous):
         Scale parameter (lam > 0). Converges to the precision as nu increases.
     """
 
+    parametrizations = [("nu", "sigma"), ("nu", "lam")]
+
     def __init__(self, nu=None, sigma=None, lam=None):
         super().__init__()
         self.support = (0, np.inf)

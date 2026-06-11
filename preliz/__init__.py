@@ -11,6 +11,7 @@ from matplotlib import style
 
 from preliz.distributions import *
 from preliz.distributions.plot import plot
+from preliz.distributions.catalog import catalog
 from preliz.predictive import *
 from preliz.ppls import *
 from preliz.unidimensional import *
