@@ -29,8 +29,11 @@ mpl_rcParams["savefig.bbox"] = "tight"
 
 # add PreliZ's styles to matplotlib's styles
 _preliz_style_path = os_path.join(os_path.dirname(__file__), "styles")
-style.core.USER_LIBRARY_PATHS.append(_preliz_style_path)
-style.core.reload_library()
+if hasattr(style, "USER_LIBRARY_PATHS"):
+    style.USER_LIBRARY_PATHS.append(_preliz_style_path)
+else:
+    style.core.USER_LIBRARY_PATHS.append(_preliz_style_path)
+style.reload_library()
 
 # clean namespace
 del os_path, mpl_rcParams, _preliz_style_path
