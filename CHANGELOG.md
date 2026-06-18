@@ -1,3 +1,18 @@
+<a id="0.27.0"></a>
+# [0.27.0](https://github.com/arviz-devs/preliz/releases/tag/0.27.0) - 2026-06-18
+
+## What's Changed
+* Add catalog, richer HTML representation, and info method by [@aloctavodia](https://github.com/aloctavodia) in [#725](https://github.com/arviz-devs/preliz/pull/725)
+* Fix import failure on matplotlib 3.11 by [@anevolbap](https://github.com/anevolbap) in [#727](https://github.com/arviz-devs/preliz/pull/727)
+
+## New Contributors
+* [@anevolbap](https://github.com/anevolbap) made their first contribution in [#727](https://github.com/arviz-devs/preliz/pull/727)
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.26.0...0.27.0
+
+[Changes][0.27.0]
+
+
 <a id="0.26.0"></a>
 # [0.26.0](https://github.com/arviz-devs/preliz/releases/tag/0.26.0) - 2026-06-09
 
@@ -1004,6 +1019,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.27.0]: https://github.com/arviz-devs/preliz/compare/0.26.0...0.27.0
 [0.26.0]: https://github.com/arviz-devs/preliz/compare/0.25.0...0.26.0
 [0.25.0]: https://github.com/arviz-devs/preliz/compare/0.24.0...0.25.0
 [0.24.0]: https://github.com/arviz-devs/preliz/compare/0.23.0...0.24.0
