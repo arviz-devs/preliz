@@ -262,11 +262,11 @@ def ppl_plot_decorator(
             model = func(*args, **kwargs)
             model.build()
             if var_to_plot is None:
-                var_to_plot = model.observed_RVs[0].name
+                var_to_plot = model.backend.model.observed_RVs[0].name
 
             with disable_pymc_sampling_logs():
                 idata = model.prior_predictive(iterations)
-            results = idata[group].stack(sample=("chain", "draw"))[var_to_plot].values.T
+            results = idata[group].dataset.stack(sample=("chain", "draw"))[var_to_plot].values.T
             if group == "prior":
                 results = np.atleast_2d(results)
 
@@ -275,8 +275,8 @@ def ppl_plot_decorator(
                 if var_to_plot is None:
                     var_to_plot = model.observed_RVs[0].name
                 with disable_pymc_sampling_logs():
-                    idata = sample_prior_predictive(samples=iterations)
-                results = idata[group].stack(sample=("chain", "draw"))[var_to_plot].values.T
+                    idata = sample_prior_predictive(draws=iterations)
+                results = idata[group].dataset.stack(sample=("chain", "draw"))[var_to_plot].values.T
             if group == "prior":
                 results = np.atleast_2d(results)
 
