@@ -2,6 +2,7 @@ from preliz.distributions.asymmetric_laplace import AsymmetricLaplace
 from preliz.distributions.bernoulli import Bernoulli
 from preliz.distributions.beta import Beta
 from preliz.distributions.betabinomial import BetaBinomial
+from preliz.distributions.betaprime import BetaPrime
 from preliz.distributions.betascaled import BetaScaled
 from preliz.distributions.binomial import Binomial
 from preliz.distributions.categorical import Categorical
@@ -53,6 +54,7 @@ from preliz.distributions.zi_poisson import ZeroInflatedPoisson
 all_continuous = [
     AsymmetricLaplace,
     Beta,
+    BetaPrime,
     BetaScaled,
     Cauchy,
     ChiSquared,
