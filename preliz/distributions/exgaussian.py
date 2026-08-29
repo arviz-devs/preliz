@@ -127,8 +127,8 @@ class ExGaussian(Continuous):
         return ptd_rvs(self.mu, self.sigma, self.nu, size=size, rng=random_state)
 
     def _fit_moments(self, mean, sigma):
-        # Assume a Normal distribution
-        self._update(mean, sigma, 0)
+        # Just assume this is approximately Gaussian
+        self._update(mean, sigma, 1e-4)
 
     def _fit_mle(self, sample):
         mean, std = mean_and_std(sample)

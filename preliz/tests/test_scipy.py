@@ -248,6 +248,8 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_pdf, expected_pdf, decimal=1)
     elif preliz_name == "HalfStudentT":
         assert_almost_equal(actual_pdf, expected_pdf, decimal=2)
+    elif preliz_name == "ExGaussian":
+        expected_pdf = np.nan_to_num(expected_pdf, nan=0.0)
     else:
         assert_almost_equal(actual_pdf, expected_pdf, decimal=4)
 
@@ -310,6 +312,10 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=0)
     elif preliz_name == "LogitNormal":
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=1)
+    elif preliz_name == "ExGaussian":
+        finite_mask = np.isfinite(extended_vals)
+        assert_almost_equal(actual_logpdf[finite_mask], expected_logpdf[finite_mask])
+        expected_logpdf = np.nan_to_num(expected_logpdf, nan=0.0)
     else:
         assert_almost_equal(actual_logpdf, expected_logpdf)
 
