@@ -8,6 +8,7 @@ from preliz import (
     Bernoulli,
     Beta,
     BetaBinomial,
+    BetaPrime,
     BetaScaled,
     Binomial,
     Cauchy,
@@ -61,6 +62,7 @@ from preliz import (
             {"loc": 2.5, "scale": 3.5, "kappa": 0.7},
         ),
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
+        (BetaPrime, stats.betaprime, {"alpha": 3, "beta": 5}, {"a": 3, "b": 5}),
         (
             BetaScaled,
             stats.beta,

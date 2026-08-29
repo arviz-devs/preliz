@@ -11,6 +11,7 @@ from preliz.distributions import (
     Bernoulli,
     Beta,
     BetaBinomial,
+    BetaPrime,
     BetaScaled,
     Binomial,
     Cauchy,
@@ -72,6 +73,7 @@ def multivariates():
     [
         (AsymmetricLaplace, (1, 0, 1)),
         (Beta, (2, 5)),
+        (BetaPrime, (3, 5)),
         (ChiSquared, (1,)),
         (ExGaussian, (0, 1, 1e-6)),
         (Exponential, (0.5,)),
@@ -147,6 +149,7 @@ def test_moments(distribution, params):
     [
         (AsymmetricLaplace, (1, 4, 3)),
         (Beta, (2, 5)),
+        (BetaPrime, (3, 5)),
         (BetaScaled, (2, 2, -1, 2)),
         (Cauchy, (0, 1)),
         (ChiSquared, (1,)),
@@ -226,6 +229,7 @@ def test_mle(distribution, params):
     [
         (AsymmetricLaplace, (1, 4, 3)),
         (Beta, (2, 5)),
+        (BetaPrime, (3, 5)),
         (BetaScaled, (2, 2, -1, 2)),
         (Cauchy, (0, 1)),
         (ChiSquared, (1,)),

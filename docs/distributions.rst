@@ -11,6 +11,9 @@ Distributions
 .. automodule:: preliz.distributions.beta
    :members:
 
+.. automodule:: preliz.distributions.betaprime
+   :members:
+
 .. automodule:: preliz.distributions.betascaled
    :members:
 

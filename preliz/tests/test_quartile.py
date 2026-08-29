@@ -9,6 +9,7 @@ from preliz.distributions import (
     Beta,
     # Bernoulli, quartile is not useful for Bernoulli distribution as we only have two states
     BetaBinomial,
+    BetaPrime,
     Cauchy,
     ChiSquared,
     DiscreteUniform,
@@ -54,6 +55,7 @@ from preliz.distributions import (
     [
         (AsymmetricLaplace(), -1, 1, 3, (1.0, 1.0, 2.885)),
         (Beta(), 0.3, 0.5, 0.7, (1.528, 1.528)),
+        (BetaPrime(), 0.5, 1, 2, (2.000, 2.000)),
         (Cauchy(), -1, 0, 1, (0, 1)),
         (ChiSquared(), 2, 4, 5.5, (4.329)),
         (ExGaussian(), 8, 9, 10, (9, 1.482, 0)),

@@ -31,6 +31,18 @@ Continuous Distributions
       Beta
 
    .. grid-item-card::
+      :link: ./distributions/gallery/betaprime.html
+      :text-align: center
+      :shadow: none
+      :class-card: example-gallery
+
+      .. image:: distributions/img/BetaPrime.png
+         :alt: BetaPrime
+
+      +++
+      BetaPrime
+
+   .. grid-item-card::
       :link: ./distributions/gallery/beta_scaled.html
       :text-align: center
       :shadow: none

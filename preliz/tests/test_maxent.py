@@ -8,6 +8,7 @@ from preliz.distributions import (
     Beta,
     # Bernoulli, maxent is not useful for Bernoulli distribution as we only have two states
     BetaBinomial,
+    BetaPrime,
     BetaScaled,
     Binomial,
     Cauchy,
@@ -71,6 +72,7 @@ from preliz.distributions import (
             (-0.799, 0.260),
         ),
         (Beta(), 0.2, 0.6, 0.9, (0, 1), (6.112, 9.101)),
+        (BetaPrime(), 0.5, 2, 0.9, (0, np.inf), (14.534, 12.534)),
         (BetaScaled(lower=-2, upper=3), -1, 1, 0.8, (-2, 3), (3.883, 5.560)),
         (Cauchy(), -1, 1, 0.6, (-np.inf, np.inf), (0, 0.726)),
         (Cauchy(alpha=0.5), -1, 1, 0.6, (-np.inf, np.inf), (0.6000)),

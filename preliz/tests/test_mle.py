@@ -8,6 +8,7 @@ from preliz.distributions import (
     Bernoulli,
     Beta,
     BetaBinomial,
+    BetaPrime,
     BetaScaled,
     Binomial,
     Cauchy,
@@ -56,6 +57,7 @@ from preliz.distributions import (
     [
         (AsymmetricLaplace, (2, 3, 1)),
         (Beta, (2, 5)),
+        (BetaPrime, (3, 5)),
         (BetaScaled, (2, 5, -1, 4)),
         (Cauchy, (0, 1)),
         (ChiSquared, (5,)),

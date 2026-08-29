@@ -6,6 +6,7 @@ from preliz.internal.distribution_helper import init_vals
 dists_with_lmoments = [
     "AsymmetricLaplace",
     "Beta",
+    "BetaPrime",
     "Bernoulli",
     "Binomial",
     "Cauchy",
