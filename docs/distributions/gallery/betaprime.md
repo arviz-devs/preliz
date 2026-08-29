@@ -12,11 +12,13 @@ kernelspec:
 
 <audio controls> <source src="../../_static/betaprime.mp3" type="audio/mpeg"> This browser cannot play the pronunciation audio file for this distribution. </audio>
 
-[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Unbounded](../../gallery_tags.rst#unbounded), [Asymmetric](../../gallery_tags.rst#asymmetric)
+[Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Non-Negative](../../gallery_tags.rst#non-negative), [Asymmetric](../../gallery_tags.rst#asymmetric)
 
 The Beta prime distribution is a continuous probability distribution defined on the positive real line. It is usually defined by two positive shape parameters: ($\alpha$) and ($\beta$). An alternative parametrization in terms of mean ($\mu$) and precision ($\nu$) is also common.
 
-The Beta prime distribution is closely related to the Beta distribution: if $X$ follows a Beta$(\alpha, \beta)$ distribution, then $Y = X / (1 - X)$ follows a Beta prime$(\alpha, \beta)$ distribution. Because of this relationship, the Beta prime distribution is often used to model ratios or odds, such as the odds of success in a series of Bernoulli trials, where the Beta distribution would be used to model the probability of success itself.
+The Beta prime distribution is closely related to the Beta distribution: if $X$ follows a Beta$(\alpha, \beta)$ distribution, then $Y = X / (1 - X)$ follows a Beta prime$(\alpha, \beta)$ distribution. 
+Because of this relationship, the Beta prime distribution is often used to model ratios or odds, such as the odds of success in a series of Bernoulli trials, 
+where the Beta distribution would be used to model the probability of success itself. It also shows in the definition of priors like [R²D²](https://n-kall.github.io/priorDB/gen_linear_regression/r2d2.html), as $\tau^2=\frac{R^2}{1-R^2}$.
 
 ## Key properties and parameters
 
@@ -42,8 +44,10 @@ The Beta prime distribution has 2 alternative parameterizations. In terms of $\a
 The link between the parameters is given by:
 
 $$
-\alpha = \mu (1 + \nu) \\
-\beta = 2 + \nu
+\begin{align}
+\alpha &= \mu (1 + \nu) \\
+\beta &= 2 + \nu
+\end{align}
 $$
 
 ### Probability Density Function (PDF)
