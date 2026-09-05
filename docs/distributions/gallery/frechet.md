@@ -14,7 +14,7 @@ kernelspec:
 
 [Univariate](../../gallery_tags.rst#univariate), [Continuous](../../gallery_tags.rst#continuous), [Asymmetric](../../gallery_tags.rst#asymmetric)
 
-The Frechet distribution (also known as the inverse Weibull distribution) is a continuous probability distribution defined on the positive real line. It is one of the three extreme value distributions and is commonly used to model the distribution of maxima, such as maximum river levels, maximum wind speeds, or the largest observed value in a sample. It is parametrized by a shape parameter ($\alpha$) and a scale parameter ($\sigma$).
+The Fréchet distribution (also known as the inverse Weibull distribution) is a continuous probability distribution defined on the positive real line. It is one of the three extreme value distributions and is commonly used to model the distribution of maxima, such as maximum river levels, maximum wind speeds, or the largest observed value in a sample. It is parametrized by a shape parameter ($\alpha$) and a scale parameter ($\sigma$).
 
 ## Key properties and parameters
 
@@ -74,4 +74,4 @@ for alpha, sigma in zip(alphas, sigmas):
 
 ## References
 
-- Wikipedia - [Frechet distribution](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution)
+- Wikipedia - [Fréchet distribution](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distribution)

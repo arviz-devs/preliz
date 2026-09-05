@@ -1,4 +1,4 @@
-"""Frechet distribution."""
+"""Fréchet distribution."""
 
 import numpy as np
 from pytensor_distributions import frechet as ptd_frechet
@@ -16,7 +16,7 @@ from preliz.internal.special import gamma, mean_and_std
 
 class Frechet(Continuous):
     r"""
-    Frechet distribution.
+    Fréchet distribution.
 
     The pdf of this distribution is
 

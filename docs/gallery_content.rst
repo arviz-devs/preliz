@@ -112,7 +112,7 @@ Continuous Distributions
          :alt: Frechet
 
       +++
-      Frechet
+      Fréchet
 
    .. grid-item-card::
       :link: ./distributions/gallery/gamma.html
