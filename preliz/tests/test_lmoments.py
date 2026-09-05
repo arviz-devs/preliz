@@ -12,6 +12,7 @@ dists_with_lmoments = [
     "Cauchy",
     "DiscreteUniform",
     "ExGaussian",
+    "Frechet",
     "Gamma",
     "Gumbel",
     "HalfNormal",
