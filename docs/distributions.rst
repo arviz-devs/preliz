@@ -26,6 +26,9 @@ Distributions
 .. automodule:: preliz.distributions.exgaussian
    :members:
 
+.. automodule:: preliz.distributions.frechet
+   :members:
+
 .. automodule:: preliz.distributions.exponential
    :members:
 
