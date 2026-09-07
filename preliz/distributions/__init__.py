@@ -14,6 +14,7 @@ from preliz.distributions.discrete_uniform import DiscreteUniform
 from preliz.distributions.discrete_weibull import DiscreteWeibull
 from preliz.distributions.exgaussian import ExGaussian
 from preliz.distributions.exponential import Exponential
+from preliz.distributions.frechet import Frechet
 from preliz.distributions.gamma import Gamma
 from preliz.distributions.geometric import Geometric
 from preliz.distributions.gumbel import Gumbel
@@ -60,6 +61,7 @@ all_continuous = [
     ChiSquared,
     ExGaussian,
     Exponential,
+    Frechet,
     Gamma,
     Gumbel,
     HalfCauchy,

@@ -16,6 +16,7 @@ from preliz import (
     DiscreteUniform,
     ExGaussian,
     Exponential,
+    Frechet,
     Gamma,
     Geometric,
     Gumbel,
@@ -78,6 +79,7 @@ from preliz import (
             {"loc": -1, "scale": 2, "K": 5 / 2},
         ),
         (Exponential, stats.expon, {"scale": 3.7}, {"scale": 3.7}),
+        (Frechet, stats.invweibull, {"alpha": 5.0, "sigma": 2.0}, {"c": 5.0, "scale": 2.0}),
         (Gamma, stats.gamma, {"alpha": 2, "beta": 1 / 3}, {"a": 2, "scale": 3}),
         (Gumbel, stats.gumbel_r, {"mu": 2.5, "beta": 3.5}, {"loc": 2.5, "scale": 3.5}),
         (HalfCauchy, stats.halfcauchy, {"beta": 3.5}, {"scale": 3.5}),
@@ -204,6 +206,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         pass
     elif preliz_name in [
         "ExGaussian",
+        "Frechet",
         "HalfStudentT",
         "InverseGamma",
         "Kumaraswamy",

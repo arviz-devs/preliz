@@ -103,6 +103,18 @@ Continuous Distributions
       Exponential
 
    .. grid-item-card::
+      :link: ./distributions/gallery/frechet.html
+      :text-align: center
+      :shadow: none
+      :class-card: example-gallery
+
+      .. image:: distributions/img/Frechet.png
+         :alt: Frechet
+
+      +++
+      Fréchet
+
+   .. grid-item-card::
       :link: ./distributions/gallery/gamma.html
       :text-align: center
       :shadow: none
