@@ -11,6 +11,9 @@ Distributions
 .. automodule:: preliz.distributions.beta
    :members:
 
+.. automodule:: preliz.distributions.betaprime
+   :members:
+
 .. automodule:: preliz.distributions.betascaled
    :members:
 
@@ -21,6 +24,9 @@ Distributions
    :members:
 
 .. automodule:: preliz.distributions.exgaussian
+   :members:
+
+.. automodule:: preliz.distributions.frechet
    :members:
 
 .. automodule:: preliz.distributions.exponential
@@ -99,6 +105,9 @@ Distributions
    :members:
 
 .. automodule:: preliz.distributions.weibull
+   :members:
+
+.. automodule:: preliz.distributions.wishart
    :members:
 
 .. automodule:: preliz.distributions.continuous

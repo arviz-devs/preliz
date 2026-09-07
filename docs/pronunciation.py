@@ -46,7 +46,7 @@ names = {
         ("Gamma", "γάμμα"),
         ("chisquared", "χι-squared"),
     ],
-    "fr": ["Cauchy", "Dirichlet", "Laplace", "Poisson", "ZeroInflatedPoisson"],
+    "fr": ["Cauchy", "Dirichlet", "Frechet", "Laplace", "Poisson", "ZeroInflatedPoisson"],
     "it": ["pareto"],
     "hi": ["Kumaraswamy"],
     "es": ["Moyal"],

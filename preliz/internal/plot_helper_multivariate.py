@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import tri
 
+from preliz.distributions.gamma import Gamma
+from preliz.internal.plot_helper import get_ax, set_label
 from preliz.internal.special import gammaln
 
 
@@ -363,5 +365,77 @@ def plot_mvnormal(
             axes.set_title(dist)
     else:
         raise ValueError("joint only works for Multivariate Normal of dim=2")
+
+    return axes
+
+def plot_wishart(
+    dist,
+    representation,
+    pointinterval,
+    interval,
+    levels,
+    support,
+    baseline,
+    legend,
+    figsize,
+    axes,
+    xy_lim="auto",
+):
+    """Plot pdf of a 1x1 (or batch of 1x1) Wishart distribution(s).
+
+    For p=1, the Wishart(V, nu) reduces exactly to a scaled chi-squared
+    distribution, S ~ V * chi2(nu), which is equivalent to
+    Gamma(alpha=nu/2, beta=1/(2*V)).
+    This exact reduction only holds for p=1; for p>1 the Wishart is matrix-valued and
+    has no univariate representation.
+    """
+    nu, V = np.atleast_1d(dist.nu), np.asarray(dist.V)
+    if V.ndim == 2:
+        V = V[np.newaxis, ...]
+    if V.shape[-2:] != (1, 1):
+        raise ValueError(
+            "plot_wishart only supports p=1 (scalar) Wishart distributions, "
+            f"got a {V.shape[-1]}x{V.shape[-1]} scale matrix. For p>1 the Wishart "
+            "is matrix-valued and has no univariate representation."
+        )
+    if V.shape[0] != len(nu):
+        raise ValueError(
+            f"nu and V must have the same length, got {len(nu)} and {V.shape[0]}."
+        )
+    V_scalars = V[:, 0, 0]
+    if figsize is None:
+        figsize = (12, 4)
+    if isinstance(xy_lim, tuple):
+        xlim = xy_lim[:2]
+        ylim = xy_lim[2:]
+
+    equiv_dist = Gamma(alpha=nu / 2, beta=1 / (2 * V_scalars))
+
+    axes = get_ax(axes, figsize)
+
+    if xy_lim == "both":
+        xlim = equiv_dist._finite_endpoints("full")
+        xvals = equiv_dist.xvals("restricted")
+        if representation == "pdf":
+            max_pdf = np.max(equiv_dist.pdf(xvals))
+            ylim = (-max_pdf * 0.075, max_pdf * 1.5)
+
+    if representation == "pdf":
+        label = set_label(dist, legend, None, axes)
+        equiv_dist.plot_pdf(
+            pointinterval=pointinterval,
+            interval=interval,
+            levels=levels,
+            support=support,
+            baseline=baseline,
+            legend=label,
+            ax=axes,
+        )
+    else:
+        raise ValueError(f"Representation must be pdf, got {representation}")
+
+    if xy_lim != "auto":
+        axes.set_xlim(*xlim)
+        axes.set_ylim(*ylim)
 
     return axes

@@ -89,6 +89,7 @@ ignore = [
     "PLR0915",  # too many statements
     "PLC0415",  # import outside of top level
     "PLR0911",  # too many return statements
+    "PLR0917",  # too many positional arguments
     "D1"    # Missing docstring
 
 ]

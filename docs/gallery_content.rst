@@ -31,6 +31,18 @@ Continuous Distributions
       Beta
 
    .. grid-item-card::
+      :link: ./distributions/gallery/betaprime.html
+      :text-align: center
+      :shadow: none
+      :class-card: example-gallery
+
+      .. image:: distributions/img/BetaPrime.png
+         :alt: BetaPrime
+
+      +++
+      BetaPrime
+
+   .. grid-item-card::
       :link: ./distributions/gallery/beta_scaled.html
       :text-align: center
       :shadow: none
@@ -89,6 +101,18 @@ Continuous Distributions
 
       +++
       Exponential
+
+   .. grid-item-card::
+      :link: ./distributions/gallery/frechet.html
+      :text-align: center
+      :shadow: none
+      :class-card: example-gallery
+
+      .. image:: distributions/img/Frechet.png
+         :alt: Frechet
+
+      +++
+      Fréchet
 
    .. grid-item-card::
       :link: ./distributions/gallery/gamma.html
@@ -579,6 +603,18 @@ Continuous Multivariate Distributions
 
       +++
       Multivariate Normal
+
+   .. grid-item-card::
+      :link: ./distributions/gallery/wishart.html
+      :text-align: center
+      :shadow: none
+      :class-card: example-gallery
+
+      .. image:: distributions/img/Wishart.png
+         :alt: Wishart
+
+      +++
+      Wishart
 
 Distribution Modifiers
 

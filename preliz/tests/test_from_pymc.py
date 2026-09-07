@@ -23,6 +23,7 @@ def test_from_pymc():
             "Censored",
             "Mixture",
             "Dirichlet",
+            "Wishart"
         ]:
             continue
         pymc_dist = getattr(pm, dist_name).dist(**params)

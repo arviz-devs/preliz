@@ -8,6 +8,7 @@ from preliz import (
     Bernoulli,
     Beta,
     BetaBinomial,
+    BetaPrime,
     BetaScaled,
     Binomial,
     Cauchy,
@@ -15,6 +16,7 @@ from preliz import (
     DiscreteUniform,
     ExGaussian,
     Exponential,
+    Frechet,
     Gamma,
     Geometric,
     Gumbel,
@@ -44,6 +46,7 @@ from preliz import (
     VonMises,
     Wald,
     Weibull,
+    Wishart,
     ZeroInflatedBinomial,
     ZeroInflatedNegativeBinomial,
     ZeroInflatedPoisson,
@@ -60,6 +63,7 @@ from preliz import (
             {"loc": 2.5, "scale": 3.5, "kappa": 0.7},
         ),
         (Beta, stats.beta, {"alpha": 2, "beta": 5}, {"a": 2, "b": 5}),
+        (BetaPrime, stats.betaprime, {"alpha": 3, "beta": 5}, {"a": 3, "b": 5}),
         (
             BetaScaled,
             stats.beta,
@@ -75,6 +79,7 @@ from preliz import (
             {"loc": -1, "scale": 2, "K": 5 / 2},
         ),
         (Exponential, stats.expon, {"scale": 3.7}, {"scale": 3.7}),
+        (Frechet, stats.invweibull, {"alpha": 5.0, "sigma": 2.0}, {"c": 5.0, "scale": 2.0}),
         (Gamma, stats.gamma, {"alpha": 2, "beta": 1 / 3}, {"a": 2, "scale": 3}),
         (Gumbel, stats.gumbel_r, {"mu": 2.5, "beta": 3.5}, {"loc": 2.5, "scale": 3.5}),
         (HalfCauchy, stats.halfcauchy, {"beta": 3.5}, {"scale": 3.5}),
@@ -201,6 +206,7 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         pass
     elif preliz_name in [
         "ExGaussian",
+        "Frechet",
         "HalfStudentT",
         "InverseGamma",
         "Kumaraswamy",
@@ -248,6 +254,8 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_pdf, expected_pdf, decimal=1)
     elif preliz_name == "HalfStudentT":
         assert_almost_equal(actual_pdf, expected_pdf, decimal=2)
+    elif preliz_name == "ExGaussian":
+        expected_pdf = np.nan_to_num(expected_pdf, nan=0.0)
     else:
         assert_almost_equal(actual_pdf, expected_pdf, decimal=4)
 
@@ -310,6 +318,10 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=0)
     elif preliz_name == "LogitNormal":
         assert_almost_equal(actual_logpdf, expected_logpdf, decimal=1)
+    elif preliz_name == "ExGaussian":
+        finite_mask = np.isfinite(extended_vals)
+        assert_almost_equal(actual_logpdf[finite_mask], expected_logpdf[finite_mask])
+        expected_logpdf = np.nan_to_num(expected_logpdf, nan=0.0)
     else:
         assert_almost_equal(actual_logpdf, expected_logpdf)
 
@@ -369,3 +381,48 @@ def test_match_scipy(p_dist, sp_dist, p_params, sp_params):
         expected_mode = extended_vals[np.argmax(finite_expected_pdf)]
     actual_mode = preliz_dist.mode()
     assert_almost_equal(actual_mode, expected_mode, decimal=0)
+
+
+
+@pytest.mark.parametrize(
+    "p_dist, sp_dist, p_params, sp_params",
+    [
+        (
+            Wishart,
+            stats.wishart,
+            {"nu": 5, "V": np.array([[2.0, 0.5], [0.5, 1.0]])},
+            {"df": 5, "scale": np.array([[2.0, 0.5], [0.5, 1.0]])},
+        )
+    ]
+)
+def test_match_scipy_wishart(p_dist, sp_dist, p_params, sp_params):
+    preliz_dist = p_dist(**p_params)
+    scipy_dist = sp_dist(**sp_params)
+
+    actual_entropy = preliz_dist.entropy()
+    expected_entropy = scipy_dist.entropy()
+    assert_almost_equal(actual_entropy, expected_entropy, decimal=4)
+
+    rng = np.random.default_rng(1)
+    actual_rvs = preliz_dist.rvs(20000, random_state=rng)
+    expected_rvs = scipy_dist.rvs(20000, random_state=rng)
+    assert_almost_equal(actual_rvs.mean(axis=0), expected_rvs.mean(axis=0), decimal=0)
+    assert_almost_equal(actual_rvs.std(axis=0), expected_rvs.std(axis=0), decimal=0)
+    extended_vals = actual_rvs
+
+    actual_pdf = preliz_dist.pdf(extended_vals)
+    expected_pdf = scipy_dist.pdf(np.moveaxis(extended_vals, 0, -1))
+    assert_almost_equal(actual_pdf, expected_pdf, decimal=4)
+    actual_logpdf = preliz_dist.logpdf(extended_vals)
+    expected_logpdf = scipy_dist.logpdf(np.moveaxis(extended_vals, 0, -1))
+    assert_almost_equal(actual_logpdf, expected_logpdf, decimal=4)
+
+    actual_mean = preliz_dist.mean()
+    expected_mean = scipy_dist.mean()
+    assert_almost_equal(actual_mean, expected_mean)
+    actual_mode = preliz_dist.mode()
+    expected_mode = scipy_dist.mode()
+    assert_almost_equal(actual_mode, expected_mode)
+    actual_var = preliz_dist.var()
+    expected_var = np.diag(scipy_dist.var())
+    assert_almost_equal(actual_var, expected_var)

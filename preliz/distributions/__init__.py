@@ -2,6 +2,7 @@ from preliz.distributions.asymmetric_laplace import AsymmetricLaplace
 from preliz.distributions.bernoulli import Bernoulli
 from preliz.distributions.beta import Beta
 from preliz.distributions.betabinomial import BetaBinomial
+from preliz.distributions.betaprime import BetaPrime
 from preliz.distributions.betascaled import BetaScaled
 from preliz.distributions.binomial import Binomial
 from preliz.distributions.categorical import Categorical
@@ -13,6 +14,7 @@ from preliz.distributions.discrete_uniform import DiscreteUniform
 from preliz.distributions.discrete_weibull import DiscreteWeibull
 from preliz.distributions.exgaussian import ExGaussian
 from preliz.distributions.exponential import Exponential
+from preliz.distributions.frechet import Frechet
 from preliz.distributions.gamma import Gamma
 from preliz.distributions.geometric import Geometric
 from preliz.distributions.gumbel import Gumbel
@@ -45,6 +47,7 @@ from preliz.distributions.uniform import Uniform
 from preliz.distributions.vonmises import VonMises
 from preliz.distributions.wald import Wald
 from preliz.distributions.weibull import Weibull
+from preliz.distributions.wishart import Wishart
 from preliz.distributions.zi_binomial import ZeroInflatedBinomial
 from preliz.distributions.zi_negativebinomial import ZeroInflatedNegativeBinomial
 from preliz.distributions.zi_poisson import ZeroInflatedPoisson
@@ -52,11 +55,13 @@ from preliz.distributions.zi_poisson import ZeroInflatedPoisson
 all_continuous = [
     AsymmetricLaplace,
     Beta,
+    BetaPrime,
     BetaScaled,
     Cauchy,
     ChiSquared,
     ExGaussian,
     Exponential,
+    Frechet,
     Gamma,
     Gumbel,
     HalfCauchy,
@@ -99,7 +104,7 @@ all_discrete = [
     ZeroInflatedPoisson,
 ]
 
-all_continuous_multivariate = [Dirichlet, MvNormal]
+all_continuous_multivariate = [Dirichlet, MvNormal, Wishart]
 
 all_modifiers = [Mixture, Truncated, Censored, Hurdle]
 
