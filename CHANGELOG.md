@@ -1,3 +1,17 @@
+<a id="0.28.0"></a>
+# [0.28.0](https://github.com/arviz-devs/preliz/releases/tag/0.28.0) - 2026-09-07
+
+## What's Changed
+* Add Wishart distribution by [@rohanbabbar04](https://github.com/rohanbabbar04) in [#731](https://github.com/arviz-devs/preliz/pull/731)
+* Add Betaprime distribution by [@rohanbabbar04](https://github.com/rohanbabbar04) in [#732](https://github.com/arviz-devs/preliz/pull/732)
+* Add Frechet Distribution by [@rohanbabbar04](https://github.com/rohanbabbar04) in [#735](https://github.com/arviz-devs/preliz/pull/735)
+
+
+**Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.27.1...0.28.0
+
+[Changes][0.28.0]
+
+
 <a id="0.27.1"></a>
 # [0.27.1](https://github.com/arviz-devs/preliz/releases/tag/0.27.1) - 2026-07-07
 
@@ -1032,6 +1046,7 @@ Full Changelog**: https://github.com/arviz-devs/preliz/compare/0.7.0...0.8.0
 [Changes][0.0.2]
 
 
+[0.28.0]: https://github.com/arviz-devs/preliz/compare/0.27.1...0.28.0
 [0.27.1]: https://github.com/arviz-devs/preliz/compare/0.27.0...0.27.1
 [0.27.0]: https://github.com/arviz-devs/preliz/compare/0.26.0...0.27.0
 [0.26.0]: https://github.com/arviz-devs/preliz/compare/0.25.0...0.26.0
