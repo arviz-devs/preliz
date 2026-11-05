@@ -3,7 +3,7 @@ import pytest
 from numpy.testing import assert_almost_equal
 from scipy.stats import kurtosis, skew
 
-from preliz.distributions import Censored, Normal, Poisson
+from preliz.distributions import Beta, Binomial, Censored, Gamma, Normal, Poisson
 
 
 @pytest.mark.parametrize(
@@ -53,3 +53,26 @@ def test_censored(dist, lower, upper):
     assert c_l >= d_l
     assert c_u <= d_u
     assert_almost_equal(cen_dist_inf.hdi(), dist.hdi())
+
+
+@pytest.mark.parametrize(
+    "dist, lower, upper",
+    [
+        (Normal(0, 1), -1, 1),
+        (Gamma(2, 1), 0.5, 3),
+        (Beta(2, 3), 0.2, 0.8),
+        (Poisson(4), 2, 6),
+        (Binomial(10, 0.4), 2, 5),
+    ],
+)
+def test_censored_skewness_kurtosis_entropy(dist, lower, upper):
+    cen_dist = Censored(dist, lower, upper)
+    x_vals = cen_dist.rvs(1000000, random_state=1)
+
+    assert_almost_equal(skew(x_vals), cen_dist.skewness(), decimal=2)
+    assert_almost_equal(kurtosis(x_vals), cen_dist.kurtosis(), decimal=2)
+
+    if dist.kind == "discrete":
+        pmf = np.exp(cen_dist.logpdf(np.arange(lower, upper + 1)))
+        assert_almost_equal(pmf.sum(), 1)
+        assert_almost_equal(cen_dist.entropy(), -np.sum(pmf * np.log(pmf)))
