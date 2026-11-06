@@ -145,7 +145,7 @@ class TruncatedNormal(Continuous):
 
     def _fit_mle(self, sample):
         self._update(None, None, np.min(sample), np.max(sample))
-        optimize_ml(self, sample)
+        optimize_ml(self, sample, none_idx=[0, 1])
 
 
 @pytensor_jit

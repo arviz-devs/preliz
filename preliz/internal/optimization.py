@@ -18,21 +18,21 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_sta
             lower -= 1
         cdf0 = dist.cdf(lower)
         cdf1 = dist.cdf(upper)
-        loss = (cdf1 - cdf0) - mass
-        if fixed_stat:
-            loss = loss - abs(getattr(dist, fixed_stat[0])() - fixed_stat[1])
-        return loss
+        return (cdf1 - cdf0) - mass
+
+    def stat_bound(params, dist, fixed_stat):
+        params = get_params(dist, params, none_idx, fixed_params)
+        dist._parametrization(**params)
+        return getattr(dist, fixed_stat[0])() - fixed_stat[1]
 
     def entropy_loss(params, dist):
         params = get_params(dist, params, none_idx, fixed_params)
         dist._parametrization(**params)
         return -dist.entropy()
 
-    cons = {
-        "type": "eq",
-        "fun": prob_bound,
-        "args": (dist, lower, upper, mass),
-    }
+    cons = [{"type": "eq", "fun": prob_bound, "args": (dist, lower, upper, mass)}]
+    if fixed_stat:
+        cons.append({"type": "eq", "fun": stat_bound, "args": (dist, fixed_stat)})
 
     bounds = np.array(dist.params_support)[none_idx]
     current_params = np.array(dist.params)[none_idx]
@@ -60,6 +60,8 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_sta
 
     for opt in all_results:
         constraint_error = abs(prob_bound(opt.x, dist, lower, upper, mass))
+        if fixed_stat:
+            constraint_error = max(constraint_error, abs(stat_bound(opt.x, dist, fixed_stat)))
         if constraint_error < 1e-4:
             current_entropy = -opt.fun
             if current_entropy > best_entropy:
@@ -236,17 +238,33 @@ def optimize_moments_rice(mean, std_dev):
     return float(nu), float(sigma)
 
 
-def optimize_ml(dist, sample):
-    def negll(params, dist, sample):
+def optimize_ml(dist, sample, none_idx=None):
+    if none_idx is None:
+        none_idx = list(range(len(dist.param_names)))
+
+    def negll(params, dist, sample, none_idx, fixed_params):
+        params = get_params(dist, params, none_idx, fixed_params)
+        params = np.array([params[name] for name in dist.param_names], dtype=float)
+        if not np.all(np.isfinite(params)):
+            return np.inf
         dist._update(*params)
         return -dist.logpdf(sample).sum()
 
     dist._fit_moments(np.mean(sample), np.std(sample))
-    init_vals = dist.params
+    current_params = np.asarray(dist.params, dtype=float)
+    fixed_params = [value for idx, value in enumerate(current_params) if idx not in none_idx]
+    init_vals = current_params[none_idx]
+    bounds = np.array(dist.params_support)[none_idx]
 
-    opt = minimize(negll, x0=init_vals, bounds=dist.params_support, args=(dist, sample))
+    opt = minimize(
+        negll,
+        x0=init_vals,
+        bounds=bounds,
+        args=(dist, sample, none_idx, fixed_params),
+    )
 
-    dist._update(*opt["x"])
+    params = get_params(dist, opt["x"], none_idx, fixed_params)
+    dist._update(*[params[name] for name in dist.param_names])
 
     return opt
 
