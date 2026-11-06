@@ -240,6 +240,8 @@ def optimize_moments_rice(mean, std_dev):
 
 def optimize_ml(dist, sample):
     def negll(params, dist, sample):
+        if not np.all(np.isfinite(params)):
+            return np.inf
         dist._update(*params)
         return -dist.logpdf(sample).sum()
 
