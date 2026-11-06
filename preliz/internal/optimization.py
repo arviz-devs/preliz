@@ -18,21 +18,21 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_sta
             lower -= 1
         cdf0 = dist.cdf(lower)
         cdf1 = dist.cdf(upper)
-        loss = (cdf1 - cdf0) - mass
-        if fixed_stat:
-            loss = loss - abs(getattr(dist, fixed_stat[0])() - fixed_stat[1])
-        return loss
+        return (cdf1 - cdf0) - mass
+
+    def stat_bound(params, dist, fixed_stat):
+        params = get_params(dist, params, none_idx, fixed_params)
+        dist._parametrization(**params)
+        return getattr(dist, fixed_stat[0])() - fixed_stat[1]
 
     def entropy_loss(params, dist):
         params = get_params(dist, params, none_idx, fixed_params)
         dist._parametrization(**params)
         return -dist.entropy()
 
-    cons = {
-        "type": "eq",
-        "fun": prob_bound,
-        "args": (dist, lower, upper, mass),
-    }
+    cons = [{"type": "eq", "fun": prob_bound, "args": (dist, lower, upper, mass)}]
+    if fixed_stat:
+        cons.append({"type": "eq", "fun": stat_bound, "args": (dist, fixed_stat)})
 
     bounds = np.array(dist.params_support)[none_idx]
     current_params = np.array(dist.params)[none_idx]
@@ -60,6 +60,8 @@ def optimize_max_ent(dist, lower, upper, mass, none_idx, fixed_params, fixed_sta
 
     for opt in all_results:
         constraint_error = abs(prob_bound(opt.x, dist, lower, upper, mass))
+        if fixed_stat:
+            constraint_error = max(constraint_error, abs(stat_bound(opt.x, dist, fixed_stat)))
         if constraint_error < 1e-4:
             current_entropy = -opt.fun
             if current_entropy > best_entropy:
