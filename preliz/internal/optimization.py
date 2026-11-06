@@ -238,19 +238,33 @@ def optimize_moments_rice(mean, std_dev):
     return float(nu), float(sigma)
 
 
-def optimize_ml(dist, sample):
-    def negll(params, dist, sample):
+def optimize_ml(dist, sample, none_idx=None):
+    if none_idx is None:
+        none_idx = list(range(len(dist.param_names)))
+
+    def negll(params, dist, sample, none_idx, fixed_params):
+        params = get_params(dist, params, none_idx, fixed_params)
+        params = np.array([params[name] for name in dist.param_names], dtype=float)
         if not np.all(np.isfinite(params)):
             return np.inf
         dist._update(*params)
         return -dist.logpdf(sample).sum()
 
     dist._fit_moments(np.mean(sample), np.std(sample))
-    init_vals = dist.params
+    current_params = np.asarray(dist.params, dtype=float)
+    fixed_params = [value for idx, value in enumerate(current_params) if idx not in none_idx]
+    init_vals = current_params[none_idx]
+    bounds = np.array(dist.params_support)[none_idx]
 
-    opt = minimize(negll, x0=init_vals, bounds=dist.params_support, args=(dist, sample))
+    opt = minimize(
+        negll,
+        x0=init_vals,
+        bounds=bounds,
+        args=(dist, sample, none_idx, fixed_params),
+    )
 
-    dist._update(*opt["x"])
+    params = get_params(dist, opt["x"], none_idx, fixed_params)
+    dist._update(*[params[name] for name in dist.param_names])
 
     return opt
 
