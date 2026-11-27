@@ -139,7 +139,8 @@ class Censored(DistributionTransformer):
         mean_trunc = trunc.mean()
         std_trunc = trunc.std()
 
-        skew_trunc = trunc.skewness() + ((mean_trunc - mean) / std_trunc) ** 3
+        diff = mean_trunc - mean
+        skew_trunc = (trunc.skewness() * std_trunc**3 + 3 * diff * std_trunc**2 + diff**3) / std**3
         return (
             xprody(((self.lower - mean) / std) ** 3, p_low)
             + skew_trunc * p_int
@@ -159,7 +160,13 @@ class Censored(DistributionTransformer):
         mean_trunc = trunc.mean()
         std_trunc = trunc.std()
 
-        kurt_trunc = trunc.kurtosis() + 3 + ((mean_trunc - mean) / std_trunc) ** 4
+        diff = mean_trunc - mean
+        kurt_trunc = (
+            (trunc.kurtosis() + 3) * std_trunc**4
+            + 4 * diff * trunc.skewness() * std_trunc**3
+            + 6 * diff**2 * std_trunc**2
+            + diff**4
+        ) / std**4
         return (
             xprody(((self.lower - mean) / std) ** 4, p_low)
             + kurt_trunc * p_int
@@ -201,8 +208,8 @@ class Censored(DistributionTransformer):
             p_u = np.nan_to_num(self.dist.pdf(self.upper))
             p_low = p_low_inc - p_l
             p_up_inc = p_up + p_u
-            xlogx_pl = xlogx(p_low)
-            xlogx_pu = xlogx(p_up)
+            xlogx_pl = xlogx(p_l)
+            xlogx_pu = xlogx(p_u)
         else:
             p_low = p_low_inc
             p_up_inc = p_up
