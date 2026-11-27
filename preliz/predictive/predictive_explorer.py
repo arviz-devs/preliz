@@ -1,8 +1,12 @@
+from numbers import Integral
+
 try:
     from IPython.display import display
     from ipywidgets import HBox, VBox, interactive_output
+
+    _HAS_WIDGETS = True
 except ImportError:
-    pass
+    _HAS_WIDGETS = False
 from preliz.internal.plot_helper import get_textboxes
 from preliz.ppls.agnostic import (
     inspect_source,
@@ -38,7 +42,7 @@ def predictive_explorer(
     samples : int, optional
         The number of samples to draw from the prior predictive distribution (default is 50).
     kind_plot : str, optional
-        The type of plot to display. Defaults to "kde". Options are "hist" (histogram),
+        The type of plot to display. Defaults to "ecdf". Options are "hist" (histogram),
         "kde" (kernel density estimate), "ecdf" (empirical cumulative distribution function).
     references : int, float, list, tuple or dictionary
         Value(s) used as reference points representing prior knowledge. For example expected
@@ -61,8 +65,16 @@ def predictive_explorer(
         Additional keyword arguments to pass to the statistics function.
         Defaults to an empty dictionary.
     """
-    if stats_kwargs is None:
-        stats_kwargs = {}
+    if kind_plot not in {"hist", "kde", "ecdf"}:
+        raise ValueError(f"kind_plot must be one of 'hist', 'kde' or 'ecdf', got {kind_plot!r}.")
+    if not isinstance(samples, Integral) or samples < 1:
+        raise ValueError(f"samples must be a positive integer, got {samples!r}.")
+    if not _HAS_WIDGETS:
+        raise ImportError(
+            "predictive_explorer requires IPython and ipywidgets. "
+            "Install them with `pip install ipywidgets`."
+        )
+    stats_kwargs = {} if stats_kwargs is None else dict(stats_kwargs)
     source, signature, engine = inspect_source(fmodel)
     model = parse_function_for_pred_textboxes(source, signature, engine)
     textboxes = get_textboxes(signature, model, kind_plot)

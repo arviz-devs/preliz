@@ -1,7 +1,16 @@
+import re
 from os import path
 
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
+
+_ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def _output_text(output):
+    if hasattr(output, "text"):
+        return output.text
+    return getattr(output, "data", {}).get("text/plain", "")
 
 
 def run_notebook(notebook):
@@ -18,11 +27,22 @@ def run_notebook(notebook):
     except Exception as e:
         raise RuntimeError(f"Notebook execution failed: {e}") from e
 
-    for cell in inb.cells:
-        if cell.cell_type == "code" and "outputs" in cell:
-            for output in cell.outputs:
-                try:
-                    if "FAILED" in output.text:
-                        raise RuntimeError(f"Error in notebook cell:\n{output.text}")
-                except AttributeError:
-                    pass
+    text = "\n".join(
+        _output_text(output)
+        for cell in inb.cells
+        if cell.cell_type == "code" and "outputs" in cell
+        for output in cell.outputs
+    )
+    text = _ANSI_ESCAPE.sub("", text)
+
+    failed = re.search(r"^(FAILED|ERROR)\b", text, flags=re.MULTILINE)
+    failed_count = re.search(r"\b[1-9]\d* (?:failed|error|errors)\b", text)
+    if failed or failed_count:
+        raise RuntimeError(f"Error in notebook cell:\n{text}")
+
+    runs_tests = any(
+        cell.cell_type == "code" and ("%%ipytest" in cell.source or "ipytest.run" in cell.source)
+        for cell in inb.cells
+    )
+    if runs_tests and not re.search(r"\[100%\]|\b\d+ passed\b", text):
+        raise RuntimeError(f"No tests were run in the notebook:\n{text}")
