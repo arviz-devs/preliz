@@ -388,9 +388,46 @@ def get_boxes(name, value, lower, upper):
     return text
 
 
+def _transform_support(func, lower, upper):
+    eps = np.finfo(float).eps
+    func = func.strip()
+    is_power = func.replace(".", "", 1).isdigit()
+
+    if lower == eps:
+        if func in {"exp", "abs", "expit", "logistic"}:
+            lower = -np.inf
+        elif func == "log":
+            lower = 1.0
+        elif is_power and not float(func) % 2:
+            lower = -np.inf
+
+    if upper == 1 - eps:
+        if func in {"expit", "logistic"}:
+            upper = np.inf
+        elif is_power and not float(func) % 2:
+            lower = -1.0
+            upper = 1.0
+
+    return lower, upper
+
+
 def get_textboxes(signature, model, kind_plot):
     textboxes = {}
     for name, param in signature.parameters.items():
+        if param.kind in (
+            inspect.Parameter.VAR_POSITIONAL,
+            inspect.Parameter.VAR_KEYWORD,
+        ):
+            continue
+        if name not in model:
+            if param.default is inspect.Parameter.empty:
+                raise ValueError(
+                    f"Parameter {name!r} is not used to define any distribution and has no "
+                    "default value. Either add a default value or use it in the definition of "
+                    "a distribution."
+                )
+            continue
+
         if isinstance(param.default, int | float):
             value = float(param.default)
         else:
@@ -398,22 +435,8 @@ def get_textboxes(signature, model, kind_plot):
 
         dist, idx, func = model[name]
         lower, upper = dist.params_support[idx]
-        # ((eps, 1 - eps),
-        # (-np.inf, np.inf),
-        # (eps, np.inf))
-        # ((-np.pi, np.pi)
-        if func is not None and lower == np.finfo(float).eps:
-            if func in ["exp", "abs", "expit", "logistic"]:
-                lower = -np.inf
-            elif func in ["log"]:
-                lower = 1.0
-            elif func.replace(".", "", 1).isdigit():
-                if not float(func) % 2:
-                    lower = -np.inf
-
-        if func is not None and upper == 1 - np.finfo(float).eps:
-            if func in ["expit", "logistic"]:
-                lower = np.inf
+        if func is not None:
+            lower, upper = _transform_support(func, lower, upper)
 
         if value is None:
             value = getattr(dist, dist.param_names[idx])
@@ -489,7 +512,7 @@ def plot_decorator(func, iterations, kind_plot, references, plot_func):
 
         for _ in range(iterations):
             val = func(*args, **kwargs)
-            if not any(np.isnan(val)):
+            if not np.any(np.isnan(val)):
                 results.append(val)
         results = np.array(results)
 
@@ -497,7 +520,7 @@ def plot_decorator(func, iterations, kind_plot, references, plot_func):
         ax.set_xlim(x_min, x_max, auto=auto)
 
         if plot_func is None:
-            plot_repr(results, kind_plot, references, iterations, ax)
+            plot_repr(results, kind_plot, references, iterations, {}, ax)
         else:
             plot_func(results, ax)
 
@@ -505,6 +528,24 @@ def plot_decorator(func, iterations, kind_plot, references, plot_func):
 
 
 def plot_repr(results, kind_plot, references, iterations, stats_kwargs, ax):
+    if kind_plot not in {"hist", "kde", "ecdf"}:
+        raise ValueError(f"kind_plot must be one of 'hist', 'kde' or 'ecdf', got {kind_plot!r}.")
+
+    stats_kwargs = {} if stats_kwargs is None else dict(stats_kwargs)
+    results = np.asarray(results)
+
+    if results.size == 0:
+        ax.text(
+            0.5,
+            0.5,
+            "No valid samples",
+            transform=ax.transAxes,
+            ha="center",
+            va="center",
+        )
+        plot_references(references, ax)
+        return
+
     alpha = max(0.01, 1 - iterations * 0.009)
     stats_kwargs.setdefault("alpha", alpha)
 
@@ -520,29 +561,44 @@ def plot_repr(results, kind_plot, references, iterations, stats_kwargs, ax):
         stats_kwargs.setdefault("density", True)
         stats_kwargs.setdefault("histtype", "step")
         stats_kwargs.setdefault("alpha", alpha)
-        stats_kwargs.setdefault("color", ["0.5"] * iterations)
 
-        ax.hist(results.T, **stats_kwargs)
-        stats_kwargs.pop("color")
-        stats_kwargs.pop("ls", None)
-        ax.hist(np.concatenate(results), color="k", ls="--", **stats_kwargs)
+        if results.ndim == 1:
+            stats_kwargs.setdefault("color", "0.5")
+            ax.hist(results, **stats_kwargs)
+        else:
+            stats_kwargs.setdefault("color", ["0.5"] * iterations)
+            ax.hist(results.T, **stats_kwargs)
+            stats_kwargs.pop("color")
+            stats_kwargs.pop("ls", None)
+            ax.hist(np.concatenate(results), color="k", ls="--", **stats_kwargs)
     elif kind_plot == "kde":
         stats_kwargs.setdefault("color", "0.5")
-        for result in results:
-            grid, pdf, _ = array_stats.kde(result)
-            ax.plot(grid, pdf, **stats_kwargs)
-        grid, pdf, _ = array_stats.kde(np.concatenate(results))
-        ax.plot(grid, pdf, "k--")
+        if results.ndim == 1:
+            grid, pdf, _ = array_stats.kde(results)
+            ax.plot(grid, pdf, "k--")
+        else:
+            for result in results:
+                grid, pdf, _ = array_stats.kde(result)
+                ax.plot(grid, pdf, **stats_kwargs)
+            grid, pdf, _ = array_stats.kde(np.concatenate(results))
+            ax.plot(grid, pdf, "k--")
 
     elif kind_plot == "ecdf":
         stats_kwargs.setdefault("color", "0.5")
-        ax.plot(
-            np.sort(results, axis=1).T,
-            np.linspace(0, 1, len(results[0]), endpoint=False),
-            **stats_kwargs,
-        )
-        a = np.concatenate(results)
-        ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
+        if results.ndim == 1:
+            ax.plot(
+                np.sort(results),
+                np.linspace(0, 1, results.size, endpoint=False),
+                **stats_kwargs,
+            )
+        else:
+            ax.plot(
+                np.sort(results, axis=1).T,
+                np.linspace(0, 1, len(results[0]), endpoint=False),
+                **stats_kwargs,
+            )
+            a = np.concatenate(results)
+            ax.plot(np.sort(a), np.linspace(0, 1, len(a), endpoint=False), "k--")
 
     plot_references(references, ax)
 

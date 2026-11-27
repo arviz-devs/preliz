@@ -223,6 +223,42 @@ def match_preliz_dist(all_dist_str, source, engine):
     return matches
 
 
+def _get_default_var_name(model, group):
+    if group == "prior":
+        rvs = getattr(model, "free_RVs", [])
+        if not rvs:
+            raise ValueError("The model does not contain any free variables to plot.")
+        return rvs[-1].name
+
+    rvs = getattr(model, "observed_RVs", [])
+    if not rvs:
+        raise ValueError("The model does not contain any observed variables to plot.")
+    return rvs[0].name
+
+
+def _available_groups(idata):
+    if hasattr(idata, "children"):
+        return list(idata.children)
+    groups = getattr(idata, "groups", [])
+    return list(groups() if callable(groups) else groups)
+
+
+def _extract_var(idata, group, var_to_plot):
+    try:
+        dataset = idata[group].dataset
+    except KeyError as err:
+        raise ValueError(
+            f"Group {group!r} not found in the generated InferenceData. "
+            f"Available groups are: {_available_groups(idata)}."
+        ) from err
+    if var_to_plot not in dataset:
+        raise ValueError(
+            f"Variable {var_to_plot!r} not found in group {group!r}. "
+            f"Available variables are: {list(dataset.data_vars)}."
+        )
+    return dataset.stack(sample=("chain", "draw"))[var_to_plot].values.T
+
+
 def ppl_plot_decorator(
     func, iterations, kind_plot, references, plot_func, engine, group, var_name, stats_kwargs
 ):
@@ -254,7 +290,7 @@ def ppl_plot_decorator(
             results = []
             for _ in range(iterations):
                 val = func(*args, **kwargs)
-                if not any(np.isnan(val)):
+                if not np.any(np.isnan(val)):
                     results.append(val)
             results = np.array(results)
 
@@ -262,21 +298,21 @@ def ppl_plot_decorator(
             model = func(*args, **kwargs)
             model.build()
             if var_to_plot is None:
-                var_to_plot = model.backend.model.observed_RVs[0].name
+                var_to_plot = _get_default_var_name(model.backend.model, group)
 
             with disable_pymc_sampling_logs():
                 idata = model.prior_predictive(iterations)
-            results = idata[group].dataset.stack(sample=("chain", "draw"))[var_to_plot].values.T
+            results = _extract_var(idata, group, var_to_plot)
             if group == "prior":
                 results = np.atleast_2d(results)
 
         elif engine == "pymc":
             with func(*args, **kwargs) as model:
                 if var_to_plot is None:
-                    var_to_plot = model.observed_RVs[0].name
+                    var_to_plot = _get_default_var_name(model, group)
                 with disable_pymc_sampling_logs():
                     idata = sample_prior_predictive(draws=iterations)
-                results = idata[group].dataset.stack(sample=("chain", "draw"))[var_to_plot].values.T
+                results = _extract_var(idata, group, var_to_plot)
             if group == "prior":
                 results = np.atleast_2d(results)
 
